@@ -1,0 +1,14 @@
+﻿<resources>
+    <string-array name="radioLocalMessages">
+        <item>Hallo! Zet nu je radio aan en geniet van de dag met geweldige muziek!</item>
+        <item>Mis de nummers van je favoriete artiest niet! Onthoud om af te stemmen op de radio.</item>
+        <item>Als je wat muziek nodig hebt in je leven, zet dan de radio aan en luister!</item>
+        <item>Verbeter je stemming door de radio aan te zetten en te genieten van opgewekte deuntjes!</item>
+        <item>Als je je verveelt, hoef je alleen maar de radio aan te zetten. Begin nu met luisteren!</item>
+        <item>Voor muziek op elk moment van de dag, stem af op de radio en luister.</item>
+        <item>Mis je favoriete radioprogramma niet! Zet de radio aan en begin met luisteren.</item>
+        <item>Zet de radio aan en verlies jezelf in de muziek. Onvergetelijke nummers wachten op je.</item>
+        <item>Zet de radio aan en geniet van het geluid van geweldige muziek!</item>
+        <item>Voeg wat energie toe aan je dag met mooie muziek. Vergeet niet om de radio aan te zetten!</item>
+    </string-array>
+</resources>

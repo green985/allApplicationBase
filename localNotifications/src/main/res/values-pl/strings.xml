@@ -1,0 +1,14 @@
+<resources>
+    <string-array name="radioLocalMessages">
+        <item>Cześć! Otwórz swoje radio teraz i ciesz się dniem wspaniałą muzyką!</item>
+        <item>Nie przegap swoich ulubionych utworów artysty! Pamiętaj, aby włączyć radio.</item>
+        <item>Jeśli potrzebujesz trochę muzyki w swoim życiu, włącz radio i słuchaj!</item>
+        <item>Podnieś sobie nastrój, włączając radio i słuchając energicznych utworów!</item>
+        <item>Kiedy czujesz się znudzony, wszystko, co musisz zrobić, to włączyć radio. Zacznij słuchać teraz!</item>
+        <item>Dla muzyki o dowolnej porze dnia, włącz radio i słuchaj.</item>
+        <item>Nie przegap swojego ulubionego programu radiowego! Włącz radio i zacznij słuchać.</item>
+        <item>Włącz radio i zatrac się w muzyce. Niezapomniane piosenki czekają na Ciebie.</item>
+        <item>Włącz radio i ciesz się dźwiękiem wspaniałej muzyki!</item>
+        <item>Dodaj trochę energii do swojego dnia piękną muzyką. Nie zapomnij włączyć radia!</item>
+    </string-array>
+</resources>

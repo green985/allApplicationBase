@@ -1,0 +1,31 @@
+apply plugin: 'com.android.library'
+apply from: '../../android_commons.gradle'
+
+android {
+    namespace 'com.oyetech.remote'
+
+}
+dependencies {
+    implementation project(Modules.secureKeys)
+    // KOTLIN
+    implementation KotlinLibraries.kotlin
+
+
+    // NETWORK
+    implementation Libraries.retrofitCoroutineAdapter
+    implementation Libraries.gson
+    implementation Libraries.moshi
+    implementation Libraries.moshiKotlin
+    implementation Libraries.retrofit
+    implementation Libraries.retrofitGsonConverter
+    implementation Libraries.retrofitMoshiConverter
+    kapt Libraries.retrofitMoshiConverterKapt
+    implementation Libraries.httpLoggingInterceptor
+    // DATA MODULE
+
+    testImplementation TestLibraries.junit
+    testImplementation TestLibraries.mockWebServer
+
+    implementation Libraries.koinCore
+
+}

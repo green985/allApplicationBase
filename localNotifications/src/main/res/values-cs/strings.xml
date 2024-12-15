@@ -1,0 +1,14 @@
+<resources>
+    <string-array name="radioLocalMessages">
+        <item>Ahoj! Otevřete své rádio a užijte si den s výbornou hudbou!</item>
+        <item>Nenechte si ujít písně svého oblíbeného umělce! Nezapomeňte naladit na rádio.</item>
+        <item>Pokud potřebujete trochu hudby ve svém životě, zapněte rádio a poslouchejte!</item>
+        <item>Zlepšete si náladu tím, že zapnete rádio a užijete si nějakou veselou hudbu!</item>
+        <item>Když se nudíte, stačí zapnout rádio. Začněte poslouchat hned teď!</item>
+        <item>Pro hudbu kdykoliv v průběhu dne naladit na rádio a poslouchat.</item>
+        <item>Nenechte si ujít svůj oblíbený rozhlasový program! Zapněte rádio a začněte poslouchat.</item>
+        <item>Zapněte rádio a nechte se unést hudbou. Nezapomenutelné písně na vás čekají.</item>
+        <item>Zapněte rádio a užijte si zvuk skvělé hudby!</item>
+        <item>Přidejte si energii do svého dne krásnou hudbou. Nezapomeňte zapnout rádio!</item>
+    </string-array>
+</resources>

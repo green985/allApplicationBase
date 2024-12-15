@@ -1,0 +1,26 @@
+apply plugin: 'com.android.library'
+apply from: '../android_commons.gradle'
+apply plugin: 'kotlin-kapt'
+
+android {
+    namespace 'com.oyetech.analyticsHelper'
+    defaultConfig {
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+}
+
+dependencies {
+    // ROOM
+//     implementation AndroidLibraries.lifecycleLiveData
+    // TEST MODULE
+    //androidTestImplementation project(Modules.commonTest)
+    // DATA MODULE
+    implementation project(Modules.model)
+    // KOIN
+    implementation project(Modules.domain)
+
+
+    implementation platform(FirebaseLibrary.firebaseBom)
+    implementation FirebaseLibrary.analytics
+    implementation FirebaseLibrary.crashlytics
+}

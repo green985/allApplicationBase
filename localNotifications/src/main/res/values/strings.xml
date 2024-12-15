@@ -1,0 +1,15 @@
+<resources>
+    <string-array name="radioLocalMessages">
+        <item>Hello! Open your radio now and enjoy the day with great music!</item>
+        <item>Don\'t miss out on your favorite artist\'s songs! Remember to tune into the radio.</item>
+        <item>If you need some music in your life, turn on the radio and listen!</item>
+        <item>Elevate your mood by turning on the radio and enjoying some upbeat tunes!</item>
+        <item>When you\'re feeling bored, all you need to do is turn on the radio. Start listening now!</item>
+        <item>For music at any time of day, tune into the radio and listen.</item>
+        <item>Don\'t miss your favorite radio program! Turn on the radio and start listening.</item>
+        <item>Turn on the radio and lose yourself in the music. Unforgettable songs are waiting for you.</item>
+        <item>Turn on the radio and enjoy the sound of great music!</item>
+        <item>Add some energy to your day with beautiful music. Don\'t forget to turn on the radio!</item>
+    </string-array>
+
+</resources>

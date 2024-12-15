@@ -1,0 +1,15 @@
+apply plugin: 'com.android.library'
+apply from: '../android_commons.gradle'
+
+android {
+    namespace 'com.oyetech.adsModule'
+}
+
+dependencies {
+    implementation project(Modules.domain)
+
+
+    implementation FirebaseLibrary.admob
+
+
+}

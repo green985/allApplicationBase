@@ -1,0 +1,14 @@
+<resources>
+    <string-array name="radioLocalMessages">
+        <item>Tervehdys! Avaa radio ja nauti päivästä hyvän musiikin parissa!</item>
+        <item>Älä jätä väliin suosikkiartistiesi kappaleita! Muista virittää radio oikealle asemalle.</item>
+        <item>Jos kaipaat musiikkia elämääsi, kytke radio päälle ja kuuntele!</item>
+        <item>Paranna mielialaasi kytkeämällä radio päälle ja nauttimalla pirteästä musiikista!</item>
+        <item>Kun tunnet tylsistyneesi, kaikki mitä tarvitset on radion kytkeäminen päälle. Aloita kuuntelu nyt!</item>
+        <item>Musiikkia mihin vuorokauden aikaan tahansa, virittäydy oikealle asemalle ja kuuntele radiota.</item>
+        <item>Älä jätä väliin suosikkiradiolähetystäsi! Kytke radio päälle ja aloita kuuntelu.</item>
+        <item>Kytke radio päälle ja häivytä itsesi musiikkiin. Unohtumattomat kappaleet odottavat sinua.</item>
+        <item>Kytke radio päälle ja nauti upeasta musiikista!</item>
+        <item>Lisää energiaa päivääsi kauniilla musiikilla. Älä unohda kytkeä radio päälle!</item>
+    </string-array>
+</resources>

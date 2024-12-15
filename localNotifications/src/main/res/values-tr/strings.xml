@@ -1,0 +1,14 @@
+<resources>
+    <string-array name="radioLocalMessages">
+        <item>Merhaba! Radyonuzu açın ve harika müziklerle dolu bir günün tadını çıkarın!</item>
+        <item>Favori sanatçılarınızın şarkılarını kaçırmayın! Radyoya ayarlamayı unutmayın.</item>
+        <item>Hayatınızda biraz müzik ihtiyacınız varsa, radyoyu açın ve dinleyin!</item>
+        <item>Radyoyu açarak keyfinizi yükseltin ve neşeli parçaların tadını çıkarın!</item>
+        <item>Sıkıldığınızda yapmanız gereken tek şey radyoyu açmak. Hemen dinlemeye başlayın!</item>
+        <item>Günün herhangi bir saatinde müzik için radyoya ayarlanın ve dinleyin.</item>
+        <item>Favori radyo programınızı kaçırmayın! Radyoyu açın ve dinlemeye başlayın.</item>
+        <item>Radyoyu açın ve müziğin içinde kaybolun. Unutulmaz şarkılar sizi bekliyor.</item>
+        <item>Radyoyu açın ve harika müziğin tadını çıkarın!</item>
+        <item>Güzel müzikle gününüze enerji katın. Radyoyu açmayı unutmayın!</item>
+    </string-array>
+</resources>

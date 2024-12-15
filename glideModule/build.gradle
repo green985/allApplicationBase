@@ -1,0 +1,17 @@
+apply plugin: 'com.android.library'
+apply from: '../android_commons.gradle'
+
+android {
+    namespace 'com.oyetech.glideModule'
+
+}
+
+dependencies {
+
+    implementation Libraries.glide
+    annotationProcessor Libraries.glideComplier
+    kapt Libraries.glideComplier
+    implementation Libraries.glideAnnotation
+    implementation Libraries.glideIntegration
+    implementation project(Modules.domain)
+}

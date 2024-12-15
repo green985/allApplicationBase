@@ -1,0 +1,15 @@
+apply plugin: 'com.android.library'
+apply from: '../android_commons.gradle'
+apply plugin: 'kotlin-kapt'
+
+
+android {
+    namespace 'com.oyetech.reviewer'
+
+}
+dependencies {
+     implementation project(Modules.domain)
+
+
+    // implementation FirebaseLibrary.review
+}

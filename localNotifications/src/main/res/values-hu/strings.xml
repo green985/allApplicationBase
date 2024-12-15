@@ -1,0 +1,14 @@
+<resources>
+    <string-array name="radioLocalMessages">
+        <item>Halló! Nyisd ki a rádiódat, és élvezd a nagyszerű zenéket a nap folyamán!</item>
+        <item>Ne hagyd ki kedvenc előadóid dalait! Ne felejtsd el beállítani a rádiót.</item>
+        <item>Ha zenére van szükséged az életedben, kapcsold be a rádiót és hallgass!</item>
+        <item>Növeld a hangulatodat azzal, hogy bekapcsolod a rádiót, és élvezed a vidám dallamokat!</item>
+        <item>Ha unatkozol, csak be kell kapcsolnod a rádiót. Kezdd el hallgatni most!</item>
+        <item>Bármikor hallgass zenét a rádióban, csak kapcsold be és hallgass.</item>
+        <item>Ne hagyd ki kedvenc rádióműsorodat! Kapcsold be a rádiót és kezdd el hallgatni.</item>
+        <item>Kapcsold be a rádiót, és veszítsd el magad a zenében. Felejthetetlen dalok várnak rád.</item>
+        <item>Kapcsold be a rádiót és élvezd a nagyszerű zenék hangját!</item>
+        <item>Adj energiát a napodnak szép zenével. Ne felejtsd el bekapcsolni a rádiót!</item>
+    </string-array>
+</resources>

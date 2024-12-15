@@ -1,0 +1,55 @@
+/**
+ * Feature dependencies
+ */
+apply plugin: 'com.android.library'
+apply from: '../../android_core_dependencies.gradle'
+apply from: '../../android_commons.gradle'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'org.jlleitschuh.gradle.ktlint'
+apply plugin: "androidx.navigation.safeargs.kotlin"
+
+dependencies {
+    implementation project(Modules.base)
+//    implementation project(Modules.navigation)
+    implementation project(Modules.domain)
+    implementation project(Modules.materialViews)
+
+
+    // TEST
+    androidTestImplementation TestLibraries.androidTestRunner
+    androidTestImplementation TestLibraries.junit
+    androidTestImplementation TestLibraries.mockkAndroid
+    debugImplementation TestLibraries.fragmentNav
+    androidTestImplementation TestLibraries.espresso
+    androidTestImplementation TestLibraries.espressoContrib
+
+
+    androidTestImplementation TestLibraries.koin
+    androidTestImplementation TestLibraries.archCoreTest
+    testImplementation TestLibraries.androidTestRunner
+    testImplementation TestLibraries.junit
+    testImplementation TestLibraries.mockk
+    testImplementation TestLibraries.archCoreTest
+    kaptAndroidTest TestLibraries.databinding
+
+
+    debugImplementation TestLibraries.testCore
+
+
+    implementation TestLibraries.espressoIdling
+
+    //testImplementation project(Modules.commonTest)
+    //androidTestImplementation project(Modules.commonTest)
+
+}
+
+android {
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+}

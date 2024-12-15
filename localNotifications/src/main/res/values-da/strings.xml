@@ -1,0 +1,14 @@
+<resources>
+    <string-array name="radioLocalMessages">
+        <item>Hej! Åbn din radio nu og nyd dagen med god musik!</item>
+        <item>Gå ikke glip af dine yndlingskunstneres sange! Husk at tune ind på radioen.</item>
+        <item>Hvis du har brug for lidt musik i dit liv, så tænd for radioen og lyt!</item>
+        <item>Forøg dit humør ved at tænde for radioen og nyde nogle upbeat numre!</item>
+        <item>Når du keder dig, er alt hvad du behøver at gøre, at tænde for radioen. Start med at lytte nu!</item>
+        <item>Til musik når som helst på dagen, skal du tune ind på radioen og lytte.</item>
+        <item>Gå ikke glip af dit yndlings radioprogram! Tænd for radioen og begynd at lytte.</item>
+        <item>Tænd for radioen og mist dig selv i musikken. Uforglemmelige sange venter på dig.</item>
+        <item>Tænd for radioen og nyd lyden af god musik!</item>
+        <item>Tilføj noget energi til din dag med smuk musik. Glem ikke at tænde for radioen!</item>
+    </string-array>
+</resources>

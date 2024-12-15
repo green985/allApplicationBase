@@ -1,0 +1,16 @@
+apply plugin: 'com.android.library'
+apply from: '../android_commons.gradle'
+
+
+android {
+    namespace 'com.oyetech.firebaseDB'
+}
+
+dependencies {
+    implementation project(Modules.domain)
+
+    implementation platform(FirebaseLibrary.firebaseBom)
+
+
+    implementation FirebaseLibrary.firestoreDB
+}

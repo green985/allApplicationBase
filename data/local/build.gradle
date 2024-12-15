@@ -1,0 +1,34 @@
+apply plugin: 'com.android.library'
+apply from: '../../android_commons.gradle'
+apply plugin: 'kotlin-kapt'
+
+android {
+    namespace 'com.oyetech.local'
+
+}
+
+dependencies {
+    // ROOM
+    kapt Libraries.roomCompiler
+    implementation Libraries.roomRunTime
+
+
+    implementation Libraries.roomKtx
+
+
+    implementation AndroidLibraries.lifecycleLiveData
+    // TEST MODULE
+    //androidTestImplementation project(Modules.commonTest)
+    // DATA MODULE
+    implementation project(Modules.model)
+    // KOIN
+    implementation Libraries.koin
+    // TEST
+    /*
+    androidTestImplementation TestLibraries.androidTestRunner
+    androidTestImplementation TestLibraries.junit
+    androidTestImplementation TestLibraries.koin
+    androidTestImplementation TestLibraries.archCoreTest
+
+     */
+}

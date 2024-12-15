@@ -1,0 +1,14 @@
+<resources>
+    <string-array name="radioLocalMessages">
+        <item>Olá! Abra seu rádio agora e aproveite o dia com ótima música!</item>
+        <item>Não perca as músicas do seu artista favorito! Lembre-se de sintonizar o rádio.</item>
+        <item>Se você precisa de um pouco de música na vida, ligue o rádio e ouça!</item>
+        <item>Eleva seu humor ligando o rádio e curtindo algumas músicas animadas!</item>
+        <item>Quando estiver se sentindo entediado, tudo o que precisa fazer é ligar o rádio. Comece a ouvir agora!</item>
+        <item>Para música a qualquer hora do dia, sintonize o rádio e ouça.</item>
+        <item>Não perca seu programa de rádio favorito! Ligue o rádio e comece a ouvir.</item>
+        <item>Ligue o rádio e se perca na música. Músicas inesquecíveis estão esperando por você.</item>
+        <item>Ligue o rádio e aproveite o som de ótima música!</item>
+        <item>Adicione um pouco de energia ao seu dia com música bonita. Não se esqueça de ligar o rádio!</item>
+    </string-array>
+</resources>

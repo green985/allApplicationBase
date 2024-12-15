@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/clRoot"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/includeToolbar"
+            tools:viewBindingIgnore="true"
+            layout="@layout/toolbar_simple_toolbar_layout" />
+
+
+        <com.oyetech.materialViews.customViews.layouts.recyclerView.RecyclerPagingView
+            android:id="@+id/rvCategoryList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+
+        <com.oyetech.materialViews.customViews.layouts.bannerAdView.BannerAdCustomView
+            android:id="@+id/csAdView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorWindowBackground"
+            android:visibility="visible" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</layout>

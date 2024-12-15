@@ -1,0 +1,209 @@
+plugins {
+    id 'com.android.application'
+    id 'com.google.gms.google-services'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'org.jlleitschuh.gradle.ktlint'
+    id 'io.gitlab.arturbosch.detekt'
+    id 'kotlin-android'
+    id 'kotlin-parcelize'
+    id 'org.lsposed.lsparanoid'
+    id 'com.google.firebase.crashlytics'
+    id 'org.jetbrains.kotlin.plugin.compose'
+}
+apply from: '../android_commons.gradle'
+ext.getArtifactNameRadio = {
+    defaultConfig ->
+        def project = "radioEveryone"
+        def SEP = "_"
+        def version = defaultConfig.versionName
+        version = version.replace(".", "_")
+
+        def date = new Date()
+        def formattedDate = date.format('dd-MM-yyyy')
+
+        def buildNumber = defaultConfig.versionCode
+
+
+        def newApkName = project + SEP + version + SEP + buildNumber + SEP + formattedDate
+        return newApkName
+}
+
+android {
+    namespace 'com.oyetech.radioeveryonee'
+
+    defaultConfig {
+        vectorDrawables.useSupportLibrary = true
+        versionCode WallpaperReleaseProperty.versionCode
+        versionName WallpaperReleaseProperty.versionName
+    }
+    setProperty("archivesBaseName", getArtifactNameRadio(defaultConfig))
+
+    buildFeatures {
+        dataBinding true
+        buildConfig = true
+        viewBinding true
+    }
+
+    compileOptions {
+
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+        freeCompilerArgs += "-Xcontext-receivers"
+    }
+
+    ktlint {
+        debug = true
+    }
+
+    lintOptions {
+        abortOnError false        // true by default
+        checkAllWarnings false
+        checkReleaseBuilds false
+        ignoreWarnings true       // false by default
+        quiet true
+    }
+
+
+    signingConfigs {
+        release {
+            /*
+            storeFile file('/Users/balbazar/Desktop/releaseKeys/nac/oyetechReleaseKey')
+            storePassword '7SPd@WF0Lx!RGb2S'
+            keyPassword '7SPd@WF0Lx!RGb2S'
+            keyAlias 'oyetech'
+
+             */
+        }
+    }
+    buildTypes {
+        debug {
+            ext.alwaysUpdateBuildId = false
+            crunchPngs false
+            minifyEnabled false
+            debuggable true
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            splits.abi.enable = false
+            splits.density.enable = false
+            aaptOptions.cruncherEnabled = false
+        }
+        release {
+            shrinkResources true
+            minifyEnabled true
+            debuggable false
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation project(Modules.base)
+    implementation project(Modules.domain)
+
+//    implementation project(Modules.navigation)
+    implementation project(Modules.core)
+    implementation project(Modules.remote)
+    implementation project(Modules.local)
+    implementation project(Modules.repository)
+    implementation project(Modules.composeBase)
+    implementation project(Modules.radioService)
+    implementation project(Modules.glideModule)
+
+
+    implementation platform(FirebaseLibrary.firebaseBom)
+    implementation FirebaseLibrary.performance
+    //implementation FirebaseLibrary.messaging
+    implementation FirebaseLibrary.crashlytics
+    implementation FirebaseLibrary.analytics
+    //implementation project(Modules.reviewer)
+
+
+/*
+    implementation project(Modules.remote)
+    implementation project(Modules.notifications)
+    implementation project(Modules.loginRegister)
+    implementation project(Modules.repository)
+    implementation project(Modules.profile)
+    implementation project(Modules.editProfileInfo)
+    implementation project(Modules.connectList)
+    implementation project(Modules.languageSelect)
+    implementation project(Modules.splash)
+    implementation project(Modules.appBrowser)
+    implementation project(Modules.filter)
+    implementation project(Modules.settings)
+
+ */
+
+
+    //GOOGLE
+    /*
+
+    implementation project(Modules.analyticsModule)
+
+    implementation project(Modules.reviewer)
+
+    implementation project(Modules.paymentModule)
+    implementation FirebaseLibrary.googleBilling
+
+     */
+    implementation project(Modules.adsModule)
+    implementation project(Modules.firebaseDB)
+    implementation project(Modules.exoplayerModule)
+
+
+    implementation project(Modules.radioOperationModule)
+
+
+    //Retrofit
+    implementation Libraries.retrofitCoroutineAdapter
+    implementation Libraries.gson
+    implementation Libraries.moshi
+    implementation Libraries.moshiKotlin
+    implementation Libraries.retrofit
+    implementation Libraries.retrofitGsonConverter
+    implementation Libraries.retrofitMoshiConverter
+
+    kapt Libraries.retrofitMoshiConverterKapt
+    implementation Libraries.httpLoggingInterceptor
+
+
+    implementation Libraries.gson
+    implementation Libraries.moshi
+    implementation Libraries.moshiKotlin
+
+
+    // ANDROID
+    implementation AndroidLibraries.appCompat
+    implementation AndroidLibraries.navigation
+    implementation AndroidLibraries.navigationFrag
+    implementation Libraries.splashscreen
+
+
+    implementation("androidx.compose.runtime:runtime:1.7.6")
+    /*
+    //Features
+    implementation project(Modules.featureFeedList)
+    implementation project(Modules.messages)
+    implementation project(Modules.imageViewer)
+    implementation project(Modules.userNotification)
+
+     */
+
+
+}
+ktlint {
+    android.set(true)
+
+    outputColorName.set("RED")
+
+    filter {
+        exclude("**/generated/**")
+        include("**/kotlin/**")
+    }
+}

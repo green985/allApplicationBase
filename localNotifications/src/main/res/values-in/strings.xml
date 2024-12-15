@@ -1,0 +1,14 @@
+<resources>
+    <string-array name="radioLocalMessages">
+        <item>Hai! Buka radio kamu sekarang dan nikmati hari dengan musik yang bagus!</item>
+        <item>Jangan lewatkan lagu-lagu artis favoritmu! Ingat untuk menyetel radio.</item>
+        <item>Jika kamu membutuhkan sedikit musik dalam hidupmu, hidupkan radio dan dengarkan!</item>
+        <item>Naikkan moodmu dengan menyalakan radio dan menikmati lagu-lagu yang ceria!</item>
+        <item>Saat kamu merasa bosan, yang perlu kamu lakukan hanyalah menyalakan radio. Mulailah mendengarkan sekarang!</item>
+        <item>Untuk musik kapan saja, setel radio dan dengarkan.</item>
+        <item>Jangan lewatkan program radio favoritmu! Hidupkan radio dan mulai mendengarkan.</item>
+        <item>Nyalakan radio dan hilangkah dirimu dalam musik. Lagu-lagu yang tak terlupakan menunggumu.</item>
+        <item>Nyalakan radio dan nikmati suara musik yang hebat!</item>
+        <item>Tambahkan sedikit energi dalam hari mu dengan musik yang indah. Jangan lupa untuk menyalakan radio!</item>
+    </string-array>
+</resources>

@@ -1,0 +1,47 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-parcelize'
+apply plugin: 'org.lsposed.lsparanoid'
+
+android {
+    namespace 'com.oyetech.models'
+
+    compileSdkVersion Versions.compileSdk
+    defaultConfig {
+        minSdkVersion Versions.minSdk
+        targetSdkVersion Versions.targetSdk
+        testInstrumentationRunner Runner.testRunner
+    }
+
+
+    buildFeatures {
+        dataBinding true
+        buildConfig = true
+        viewBinding true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+}
+
+dependencies {
+    implementation KotlinLibraries.kotlin
+
+
+    implementation Libraries.timber
+
+    api Libraries.koin
+
+    implementation KotlinLibraries.kotlin
+    implementation Libraries.gson
+    implementation Libraries.moshi
+    implementation Libraries.moshiKotlin
+    implementation Libraries.roomRunTime
+}

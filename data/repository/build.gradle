@@ -1,0 +1,20 @@
+apply plugin: 'com.android.library'
+apply from: '../../android_commons.gradle'
+
+android {
+    namespace 'com.oyetech.repository'
+}
+
+dependencies {
+    // MODULES
+    implementation project(Modules.domain)
+    implementation project(Modules.remote)
+    implementation project(Modules.local)
+    // ANDROID
+    implementation KotlinLibraries.kotlinCoroutineCore
+    implementation AndroidLibraries.kotlinCoroutineAndroid
+    implementation Libraries.timber
+    implementation Libraries.retrofit
+
+
+}

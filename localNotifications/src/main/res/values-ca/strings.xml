@@ -1,0 +1,14 @@
+<resources>
+    <string-array name="radioLocalMessages">
+        <item>Hola! Obri la teva ràdio ara i gaudeix del dia amb bona música!</item>
+        <item>No et perdis les cançons del teu artista preferit! Recorda sintonitzar la ràdio.</item>
+        <item>Si necessites música a la teva vida, connecta la ràdio i escolta!</item>
+        <item>Eleva el teu estat d\'ànim connectant la ràdio i gaudeixent de melodies alegres!</item>
+        <item>Quan t\'avorreixis, només has de connectar la ràdio. Comença a escoltar ara!</item>
+        <item>Per a música a qualsevol hora del dia, sintonitza la ràdio i escolta.</item>
+        <item>No et perdis el teu programa de ràdio preferit! Connecta la ràdio i comença a escoltar.</item>
+        <item>Connecta la ràdio i perd-te en la música. Cançons inoblidables et estan esperant.</item>
+        <item>Connecta la ràdio i gaudeix del so de la música fantàstica!</item>
+        <item>Afegeix energia al teu dia amb música bonica. No oblidis connectar la ràdio!</item>
+    </string-array>
+</resources>

@@ -1,0 +1,14 @@
+﻿<resources>
+    <string-array name="radioLocalMessages">
+        <item>你好！打开收音机，享受美妙音乐吧！</item>
+        <item>不要错过你最喜爱的艺术家的歌曲！记得收听收音机。</item>
+        <item>如果你需要一些音乐，打开收音机来听听吧！</item>
+        <item>打开收音机，享受一些欢快的曲子，提高你的心情吧！</item>
+        <item>当你感到无聊时，打开收音机就好了。现在就开始听吧！</item>
+        <item>想要随时随地听音乐，就打开收音机吧。</item>
+        <item>不要错过你最喜欢的广播节目！打开收音机开始收听吧。</item>
+        <item>打开收音机，沉浸在音乐中。难忘的歌曲正在等着你。</item>
+        <item>打开收音机，享受美妙音乐的声音吧！</item>
+        <item>加入美妙的音乐，为你的一天注入能量。别忘了打开收音机！</item>
+    </string-array>
+</resources>

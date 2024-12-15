@@ -1,0 +1,58 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+
+        maven {
+            url "https://jitpack.io"
+        }
+
+        maven {
+            url "https://maven.google.com"
+        }
+        maven {
+            url "https://storage.googleapis.com/r8-releases/raw"
+        }
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url "https://jitpack.io"
+        }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        maven {
+            url "https://storage.googleapis.com/r8-releases/raw"
+        }
+    }
+}
+
+rootProject.name = "AllApplicationBase"
+//include ':app'
+include ':secureKeys'
+include ':baseOperation'
+include ':core'
+include ':domain'
+include ':data:models'
+include ':data:remote'
+include ':data:local'
+include ':data:repository'
+include ':radioService'
+include ':adsModule'
+include ':languageModule'
+include ':firebaseDB'
+include ':exoplayerModule'
+include ':radioOperationModule'
+include ':googleAppReview'
+
+//include ':googleLogin'
+//include ':features:googleSignUp'
+include ':composeBase'
+include ':glideModule'
+include ':radioeveryonee'

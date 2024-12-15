@@ -1,0 +1,12 @@
+apply plugin: 'com.android.library'
+apply from: '../android_commons.gradle'
+apply plugin: 'org.lsposed.lsparanoid'
+
+
+android {
+    namespace 'com.oyetech.secureKeys'
+}
+
+dependencies {
+    implementation KotlinLibraries.kotlin
+}

@@ -1,0 +1,44 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    namespace 'com.oyetech.languageModule'
+
+    compileSdkVersion Versions.compileSdk
+    defaultConfig {
+        minSdkVersion Versions.minSdk
+        targetSdkVersion Versions.targetSdk
+        testInstrumentationRunner Runner.testRunner
+    }
+
+
+    buildFeatures {
+        dataBinding true
+        buildConfig = true
+        viewBinding true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+}
+
+dependencies {
+    implementation project(Modules.model)
+    implementation KotlinLibraries.kotlin
+    implementation Libraries.timber
+
+    api Libraries.koin
+
+    implementation KotlinLibraries.kotlin
+    implementation Libraries.gson
+    implementation Libraries.moshi
+    implementation Libraries.moshiKotlin
+    implementation Libraries.roomRunTime
+}

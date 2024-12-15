@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/llRoot"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/includeToolbar"
+            layout="@layout/toolbar_simple_toolbar_layout" />
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nsRoot"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+                <com.oyetech.materialViews.old.layouts.settings.SettingsSimpleTextInfoLayout
+                    android:id="@+id/csPrivacyPolicy"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+
+                <com.oyetech.materialViews.old.layouts.settings.SettingsSimpleTextInfoLayout
+                    android:id="@+id/csTerms"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <com.oyetech.materialViews.old.layouts.settings.SettingsSimpleTextInfoLayout
+                    android:id="@+id/csAdFree"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+
+                <com.oyetech.materialViews.old.layouts.settings.SettingsSimpleTextInfoLayout
+                    android:id="@+id/csContactWithUs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+        </androidx.core.widget.NestedScrollView>
+
+
+        <com.oyetech.materialViews.customViews.layouts.bannerAdView.BannerAdCustomView
+            android:id="@+id/csAdView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorWindowBackground"
+            android:visibility="visible" />
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</layout>

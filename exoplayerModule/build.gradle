@@ -1,0 +1,12 @@
+apply plugin: 'com.android.library'
+apply from: '../android_commons.gradle'
+
+android {
+    namespace 'com.oyetech.exoplayermodule'
+
+}
+
+dependencies {
+    implementation Libraries.exoPlayer
+    implementation project(Modules.domain)
+}

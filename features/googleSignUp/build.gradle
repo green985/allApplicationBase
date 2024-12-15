@@ -1,0 +1,12 @@
+apply from: '../../android_feature_dependencies.gradle'
+apply plugin: 'kotlin-android'
+
+android {
+
+    namespace 'com.oyetech.googlesignup'
+
+
+}
+dependencies {
+
+}
