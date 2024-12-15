@@ -1,7 +1,8 @@
 package com.oyetech.domain.repository.helpers
 
 import android.app.Activity
-import com.oyetech.core.utils.SingleLiveEvent
+import com.oyetech.models.enums.ReviewStatus
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
 Created by Erdi Özbek
@@ -11,14 +12,16 @@ Created by Erdi Özbek
 
 interface AppReviewRepository {
 
-    fun startAppReviewOperation(resultRepository: AppReviewResultRepository)
-    fun fakeStartAppReviewOperation(resultRepository: AppReviewResultRepository)
+    fun startAppReviewOperation()
+    fun fakeStartAppReviewOperation()
+
+    fun getReviewStatusState(): MutableStateFlow<ReviewStatus>
 }
 
 interface AppReviewControllerRepository {
 
     fun controlReviewCanShow()
-    fun getReviewCanShowSingleLiveEvent(): SingleLiveEvent<Boolean>
+    fun getReviewCanShowState(): MutableStateFlow<Boolean>
 }
 
 interface AppReviewResultRepository {

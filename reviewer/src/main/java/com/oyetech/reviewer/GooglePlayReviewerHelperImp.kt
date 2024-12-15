@@ -6,8 +6,11 @@ import com.google.android.play.core.review.ReviewInfo
 import com.google.android.play.core.review.ReviewManager
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.android.play.core.review.testing.FakeReviewManager
+import com.oyetech.domain.helper.ActivityProviderUseCase
 import com.oyetech.domain.repository.helpers.AppReviewRepository
-import com.oyetech.domain.repository.helpers.AppReviewResultRepository
+import com.oyetech.models.enums.ReviewStatus
+import com.oyetech.models.enums.ReviewStatus.Error
+import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
 
 /**
@@ -16,29 +19,37 @@ Created by Erdi Özbek
 -17:20-
  **/
 
-class GooglePlayReviewerHelperImp(private var context: Context) : AppReviewRepository {
+class GooglePlayReviewerHelperImp(
+    private var context: Context,
+    private val activityProviderUseCase: ActivityProviderUseCase,
+) : AppReviewRepository {
 
     lateinit var appReviewManager: ReviewManager
     lateinit var fakeAppReviewManager: FakeReviewManager
 
-    override fun startAppReviewOperation(resultRepository: AppReviewResultRepository) {
+    val reviewOperationStatusFlow = MutableStateFlow(ReviewStatus.Idle)
+
+    override fun startAppReviewOperation() {
         appReviewManager = ReviewManagerFactory.create(context)
 
         val request = appReviewManager.requestReviewFlow()
-        resultRepository.onStartAppReviewOperation()
-        request.addOnCompleteListener(getOnCompleteListener(resultRepository))
+        reviewOperationStatusFlow.value = ReviewStatus.Start
+        request.addOnCompleteListener(getOnCompleteListener())
     }
 
-    override fun fakeStartAppReviewOperation(resultRepository: AppReviewResultRepository) {
+    override fun fakeStartAppReviewOperation() {
         fakeAppReviewManager = FakeReviewManager(context)
 
         val request = fakeAppReviewManager.requestReviewFlow()
-        resultRepository.onStartAppReviewOperation()
-        request.addOnCompleteListener(getOnCompleteListener(resultRepository, true))
+        reviewOperationStatusFlow.value = ReviewStatus.Start
+        request.addOnCompleteListener(getOnCompleteListener(true))
+    }
+
+    override fun getReviewStatusState(): MutableStateFlow<ReviewStatus> {
+        return reviewOperationStatusFlow
     }
 
     private fun getOnCompleteListener(
-        resultRepository: AppReviewResultRepository,
         isFake: Boolean = false,
     ): OnCompleteListener<ReviewInfo> {
         return OnCompleteListener<ReviewInfo> { task ->
@@ -47,31 +58,32 @@ class GooglePlayReviewerHelperImp(private var context: Context) : AppReviewRepos
                 val reviewInfo = task.result
                 Timber.d("reviewInffooooo ?= " + reviewInfo.toString())
                 if (isFake) {
-                    launchFakeAppReviewOperation(reviewInfo, resultRepository)
+                    launchFakeAppReviewOperation(reviewInfo)
                 } else {
-                    launchAppReviewOperation(reviewInfo, resultRepository)
+                    launchAppReviewOperation(reviewInfo)
                 }
             } else {
+                reviewOperationStatusFlow.value = Error
                 // There was some problem, log or handle the error code.
-                resultRepository.onErrorAppReviewOperation(task.exception)
             }
         }
     }
 
     private fun launchAppReviewOperation(
         reviewInfo: ReviewInfo?,
-        resultRepository: AppReviewResultRepository,
     ) {
         if (reviewInfo == null) {
+            reviewOperationStatusFlow.value = ReviewStatus.Error
             Timber.d("reviewInfoNulll")
-            resultRepository.onErrorAppReviewOperation(Exception("null"))
             return
         }
-        if (resultRepository.getActivityy() == null) return
-        val flow = appReviewManager.launchReviewFlow(resultRepository.getActivityy()!!, reviewInfo)
+        if (activityProviderUseCase.getCurrentActivity() == null) return
+        val flow = appReviewManager.launchReviewFlow(
+            activityProviderUseCase.getCurrentActivity()!!,
+            reviewInfo
+        )
         flow.addOnCompleteListener { _ ->
-
-            resultRepository.onCompleteAppReviewOperation()
+            reviewOperationStatusFlow.value = ReviewStatus.Completed
             // The flow has finished. The API does not indicate whether the user
             // reviewed or not, or even whether the review dialog was shown. Thus, no
             // matter the result, we continue our app flow.
@@ -80,21 +92,21 @@ class GooglePlayReviewerHelperImp(private var context: Context) : AppReviewRepos
 
     private fun launchFakeAppReviewOperation(
         reviewInfo: ReviewInfo?,
-        resultRepository: AppReviewResultRepository,
     ) {
         if (reviewInfo == null) {
             Timber.d("reviewInfoNulll")
-            resultRepository.onErrorAppReviewOperation(Exception("null"))
+            reviewOperationStatusFlow.value = ReviewStatus.Error
             return
         }
-        if (resultRepository.getActivityy() == null) return
+        if (activityProviderUseCase.getCurrentActivity() == null) return
         val flow =
-            fakeAppReviewManager.launchReviewFlow(resultRepository.getActivityy()!!, reviewInfo)
+            fakeAppReviewManager.launchReviewFlow(
+                activityProviderUseCase.getCurrentActivity()!!,
+                reviewInfo
+            )
         flow.addOnCompleteListener { _ ->
-            resultRepository.onCompleteAppReviewOperation()
-            // The flow has finished. The API does not indicate whether the user
-            // reviewed or not, or even whether the review dialog was shown. Thus, no
-            // matter the result, we continue our app flow.
+            reviewOperationStatusFlow.value = ReviewStatus.Completed
         }
     }
 }
+

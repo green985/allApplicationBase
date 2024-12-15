@@ -18,7 +18,7 @@ object GoogleAppReviewerModule {
 
     var googlePlayReviewerModule = module {
         single<AppReviewControllerRepository> { ReviewOperationController(get()) }
-        single<AppReviewRepository> { GooglePlayReviewerHelperImp(get()) }
+        single<AppReviewRepository> { GooglePlayReviewerHelperImp(get(), get()) }
         single<AppReviewResultRepository> { AppReviewResultRepositoryImp() }
     }
 }

@@ -21,6 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.BuildConfig
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
+import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.GeneralOperationVM
 import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.views.SimpleSettingsInfoViewSetup
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarSetup
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarState
@@ -40,16 +41,22 @@ Created by Erdi Özbek
 fun TabSettingsScreenSetup(
     navigationRoute: (navigationRoute: String) -> Unit = {},
     viewModel: TabSettingsVM = koinViewModel(),
+    generalViewModel: GeneralOperationVM = koinViewModel(),
 ) {
     val toolbarUiState by viewModel.toolbarUiState.collectAsStateWithLifecycle()
 
-    TabSettingsScreen(navigationRoute, toolbarUiState)
+    val startReviewOperation = {
+        generalViewModel.startReviewOperation()
+    }
+
+    TabSettingsScreen(navigationRoute, startReviewOperation, toolbarUiState)
 
 }
 
 @Composable
 fun TabSettingsScreen(
     navigationRoute: (navigationRoute: String) -> Unit,
+    startReviewOperation: () -> Unit,
     toolbarUiState: RadioToolbarState,
 ) {
 
@@ -72,7 +79,7 @@ fun TabSettingsScreen(
                 modifier = Modifier.height(1.dp)
             )
             SimpleSettingsInfoViewSetup(
-                onClick = { navigationRoute.invoke(RadioAppProjectRoutes.ContactScreen.route) },
+                onClick = { startReviewOperation.invoke() },
                 text = "Rate us"
             )
             HorizontalDivider(
@@ -105,7 +112,9 @@ private fun AppInfoViewProperty() {
 @Composable
 fun PreviewTabSettingsScreenSetup() {
     TabSettingsScreen(
-        navigationRoute = {}, toolbarUiState = RadioToolbarState(
+        navigationRoute = {},
+        startReviewOperation = {},
+        toolbarUiState = RadioToolbarState(
             title = "Settings",
             showBackButton = true,
         )

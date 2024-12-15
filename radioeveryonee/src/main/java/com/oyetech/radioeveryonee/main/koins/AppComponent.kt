@@ -20,6 +20,7 @@ import com.oyetech.remote.di.WallpaperRemoteModule
 import com.oyetech.remote.di.dataSourceModule
 import com.oyetech.repository.di.RadioRepositoryDI
 import com.oyetech.repository.di.WallpaperRepositoryModule
+import com.oyetech.reviewer.di.GoogleAppReviewerModule
 import org.koin.dsl.module
 
 /**
@@ -54,7 +55,8 @@ object AppComponent {
         RadioOperationModuleDi.radioModule,
         ExoPlayerModuleDi.exoPlayerModule,
         RadioServiceModule.serviceModule,
-        GlideModuleDi.glideModule
+        GlideModuleDi.glideModule,
+        GoogleAppReviewerModule.googlePlayReviewerModule
     )
 }
 

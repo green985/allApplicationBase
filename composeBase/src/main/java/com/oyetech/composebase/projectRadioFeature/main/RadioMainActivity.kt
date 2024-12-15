@@ -18,6 +18,7 @@ import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationBar
 import com.oyetech.composebase.navigator.rememberNavigator
 import com.oyetech.composebase.projectRadioFeature.RadioAppNavigation
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
+import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.GeneralOperationScreenSetup
 import com.oyetech.composebase.projectRadioFeature.theme.RadioAppTheme
 import com.oyetech.radioservice.serviceUtils.PlayerServiceUtils
 
@@ -37,16 +38,18 @@ class RadioMainActivity : ComponentActivity() {
             RadioAppTheme {
                 val navController = rememberNavController()
 
-                Column(
-                    verticalArrangement = Arrangement.Bottom,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background)
-                ) {
-                    RadioAppNavigation(
-                        navController = navController,
-                        startDestination = RadioAppProjectRoutes.TabRadioAllList.route
-                    )
+                GeneralOperationScreenSetup {
+                    Column(
+                        verticalArrangement = Arrangement.Bottom,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background)
+                    ) {
+                        RadioAppNavigation(
+                            navController = navController,
+                            startDestination = RadioAppProjectRoutes.TabRadioAllList.route
+                        )
+                    }
                 }
 
             }

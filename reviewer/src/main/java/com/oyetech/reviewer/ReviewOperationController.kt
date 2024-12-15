@@ -1,9 +1,9 @@
 package com.oyetech.reviewer
 
-import com.oyetech.core.utils.SingleLiveEvent
 import com.oyetech.domain.repository.helpers.AppReviewControllerRepository
 import com.oyetech.domain.repository.helpers.SharedHelperRepository
 import com.oyetech.models.utils.const.HelperConstant
+import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
 
 /**
@@ -22,7 +22,7 @@ class ReviewOperationController(
     // private var messageOperationUseCase: MessagesOperationUseCase,
 ) : AppReviewControllerRepository {
 
-    private var reviewCanShowSingleLiveEvent = SingleLiveEvent<Boolean>()
+    private var reviewCanShowStateFlow = MutableStateFlow<Boolean>(false)
 
     override fun controlReviewCanShow() {
         if (sharedPrefKey.getReviewUserDontWantSee()) {
@@ -33,27 +33,16 @@ class ReviewOperationController(
             return
         }
 
-        var totalAppOpenCount = sharedPrefKey.getTotalAppOpenCount()
+        val totalAppOpenCount = sharedPrefKey.getTotalAppOpenCount()
         if (totalAppOpenCount < HelperConstant.APP_FIRST_OPEN_COUNT_THRESHOLD) {
             Timber.d("first open thressholl " + totalAppOpenCount)
             return
         }
-        /*
-                messageOperationUseCase.getTotalReceivedMessageCount()
-                    .globalScopeOnEachTryCatch { receivedMessageCount ->
-                        Timber.d("receivedMessageCount coutnttajsdkand " + receivedMessageCount)
 
-                        if (receivedMessageCount > HelperConstant.RECEIVED_MESSAGE_COUNT_THRESHOLD) {
-                            Timber.d("receivedMessageCount thressholl " + receivedMessageCount)
-
-                            reviewCanShowSingleLiveEvent.postValue(true)
-                        }
-                    }
-
-         */
+        reviewCanShowStateFlow.value = true
     }
 
-    override fun getReviewCanShowSingleLiveEvent(): SingleLiveEvent<Boolean> {
-        return reviewCanShowSingleLiveEvent
+    override fun getReviewCanShowState(): MutableStateFlow<Boolean> {
+        return reviewCanShowStateFlow
     }
 }

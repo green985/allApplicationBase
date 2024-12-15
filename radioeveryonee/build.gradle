@@ -114,6 +114,7 @@ dependencies {
     implementation project(Modules.composeBase)
     implementation project(Modules.radioService)
     implementation project(Modules.glideModule)
+    implementation project(Modules.reviewer)
 
 
     implementation platform(FirebaseLibrary.firebaseBom)

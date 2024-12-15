@@ -49,7 +49,7 @@ include ':languageModule'
 include ':firebaseDB'
 include ':exoplayerModule'
 include ':radioOperationModule'
-include ':googleAppReview'
+include ':reviewer'
 
 //include ':googleLogin'
 //include ':features:googleSignUp'

@@ -8,8 +8,8 @@ android {
 
 }
 dependencies {
-     implementation project(Modules.domain)
+    implementation project(Modules.domain)
 
 
-    // implementation FirebaseLibrary.review
+    implementation FirebaseLibrary.review
 }

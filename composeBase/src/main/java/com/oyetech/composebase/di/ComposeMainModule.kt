@@ -6,6 +6,7 @@ import com.oyetech.composebase.helpers.vibrationHelper.IVibrationHelper
 import com.oyetech.composebase.helpers.vibrationHelper.VibrationHelperImpl
 import com.oyetech.composebase.projectRadioFeature.helper.RadioListSortRepositoryImp
 import com.oyetech.composebase.projectRadioFeature.screens.countryList.CountryVM
+import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.GeneralOperationVM
 import com.oyetech.composebase.projectRadioFeature.screens.languageList.LanguageVM
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.RadioListVM
 import com.oyetech.composebase.projectRadioFeature.screens.radioPlayer.vm.RadioPlayerVM
@@ -47,6 +48,9 @@ object ComposeMainModule {
         viewModelOf(::TabSettingsVM)
         viewModelOf(::ContactViewModel)
         viewModelOf(::TagListVM)
+        viewModelOf(::GeneralOperationVM)
+
+
 
         single<IRadioPlayerViewModelSlice> { RadioPlayerViewModelSliceImp(get(), get()) }
         single<IRadioFavViewModelSlice> { RadioFavViewModelSliceImp(get()) }

@@ -1,9 +1,8 @@
 package com.oyetech.domain.useCases.helpers
 
-import com.oyetech.core.utils.SingleLiveEvent
 import com.oyetech.domain.repository.helpers.AppReviewControllerRepository
 import com.oyetech.domain.repository.helpers.AppReviewRepository
-import com.oyetech.domain.repository.helpers.AppReviewResultRepository
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
 Created by Erdi Özbek
@@ -13,22 +12,24 @@ Created by Erdi Özbek
 
 class AppReviewOperationUseCase(
     private var reviewRepository: AppReviewRepository,
-    private var reviewControllerRepository: AppReviewControllerRepository
+    private var reviewControllerRepository: AppReviewControllerRepository,
 ) {
 
-    fun startAppReviewOperation(repository: AppReviewResultRepository) {
-        reviewRepository.startAppReviewOperation(repository)
+    fun getReviewOperationStateFlow() = reviewRepository.getReviewStatusState()
+
+    fun startAppReviewOperation() {
+        reviewRepository.startAppReviewOperation()
     }
 
-    fun fakeStartAppReviewOperation(repository: AppReviewResultRepository) {
-        reviewRepository.fakeStartAppReviewOperation(repository)
+    fun fakeStartAppReviewOperation() {
+        reviewRepository.fakeStartAppReviewOperation()
     }
 
     fun controlReviewCanShow() {
         reviewControllerRepository.controlReviewCanShow()
     }
 
-    fun getReviewCanShowSingleLiveEvent(): SingleLiveEvent<Boolean> {
-        return reviewControllerRepository.getReviewCanShowSingleLiveEvent()
+    fun getReviewCanShowState(): MutableStateFlow<Boolean> {
+        return reviewControllerRepository.getReviewCanShowState()
     }
 }
