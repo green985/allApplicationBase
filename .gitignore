@@ -31,3 +31,7 @@ google-services.json
 
 # Android Profiling
 *.hprof
+/buildSrc.zip
+/radioeveryonee/release/nac_1_0_0_1_14-12-2024-release.aab
+/radioeveryonee/release/radioEveryone_1_0_0_1_14-12-2024-release.aab
+/composeBase/src/main/java/com/oyetech/composebase/projectvibration.zip
