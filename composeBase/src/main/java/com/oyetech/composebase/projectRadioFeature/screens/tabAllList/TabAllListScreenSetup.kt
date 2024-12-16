@@ -3,8 +3,10 @@ package com.oyetech.composebase.projectRadioFeature.screens.tabAllList
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -30,6 +32,7 @@ import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.Radio
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarActionItems
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarEvent
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarSetup
+import com.oyetech.composebase.projectRadioFeature.views.randomQuotesViewer.QuotesListViewSetup
 import com.oyetech.models.radioProject.enums.RadioListEnums
 import com.oyetech.models.radioProject.enums.RadioListEnums.Country
 import com.oyetech.models.radioProject.enums.RadioListEnums.Languages
@@ -80,6 +83,8 @@ fun TabAllListScreenSetup(
                 })
         }) { padding ->
         Column(modifier = Modifier.padding(padding)) {
+            QuotesListViewSetup()
+            Spacer(modifier = Modifier.height(8.dp))
             TabAllScreenView(
                 pagerState = pagerState,
                 tabEnums = uiState.tabEnumList, uiState.tabNameList,

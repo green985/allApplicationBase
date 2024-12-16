@@ -7,6 +7,7 @@ import com.oyetech.composebase.helpers.vibrationHelper.VibrationHelperImpl
 import com.oyetech.composebase.projectRadioFeature.helper.RadioListSortRepositoryImp
 import com.oyetech.composebase.projectRadioFeature.screens.countryList.CountryVM
 import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.GeneralOperationVM
+import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.generalPlayground.GeneralPlaygroundVm
 import com.oyetech.composebase.projectRadioFeature.screens.languageList.LanguageVM
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.RadioListVM
 import com.oyetech.composebase.projectRadioFeature.screens.radioPlayer.vm.RadioPlayerVM
@@ -20,6 +21,7 @@ import com.oyetech.composebase.projectRadioFeature.viewModelSlice.IRadioFavViewM
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.IRadioPlayerViewModelSlice
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.RadioFavViewModelSliceImp
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.RadioPlayerViewModelSliceImp
+import com.oyetech.composebase.projectRadioFeature.views.randomQuotesViewer.QuotesVM
 import com.oyetech.domain.repository.helpers.logicRepositories.RadioListSortRepository
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
@@ -49,11 +51,16 @@ object ComposeMainModule {
         viewModelOf(::ContactViewModel)
         viewModelOf(::TagListVM)
         viewModelOf(::GeneralOperationVM)
-
-
+        viewModelOf(::GeneralPlaygroundVm)
 
         single<IRadioPlayerViewModelSlice> { RadioPlayerViewModelSliceImp(get(), get()) }
         single<IRadioFavViewModelSlice> { RadioFavViewModelSliceImp(get()) }
         single<RadioListSortRepository> { RadioListSortRepositoryImp() }
+
+
+
+
+
+        viewModelOf(::QuotesVM)
     }
 }

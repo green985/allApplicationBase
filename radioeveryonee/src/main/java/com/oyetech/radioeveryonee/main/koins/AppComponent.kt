@@ -18,8 +18,10 @@ import com.oyetech.radioservice.di.RadioServiceModule
 import com.oyetech.remote.di.RadioModuleDI
 import com.oyetech.remote.di.WallpaperRemoteModule
 import com.oyetech.remote.di.dataSourceModule
+import com.oyetech.remote.quotesRemote.QuotesRemoteModule
 import com.oyetech.repository.di.RadioRepositoryDI
 import com.oyetech.repository.di.WallpaperRepositoryModule
+import com.oyetech.repository.quotesImp.QuotesImpModule
 import com.oyetech.reviewer.di.GoogleAppReviewerModule
 import org.koin.dsl.module
 
@@ -56,7 +58,10 @@ object AppComponent {
         ExoPlayerModuleDi.exoPlayerModule,
         RadioServiceModule.serviceModule,
         GlideModuleDi.glideModule,
-        GoogleAppReviewerModule.googlePlayReviewerModule
+        GoogleAppReviewerModule.googlePlayReviewerModule,
+
+        QuotesImpModule.quoteImpModule,
+        QuotesRemoteModule.createZenQuotesRemoteModule()
     )
 }
 
