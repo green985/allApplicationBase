@@ -98,7 +98,7 @@ object KoinHelperInits {
 
         single<SharedOperationRepository> { SharedPrefRepository(get()) }
 
-        singleOf(::HeaderInterceptor)
+        single { HeaderInterceptor(get(), get()) }
         singleOf(::AuthOperationBodyHelper)
         singleOf(::UnreadMessageCalculatorHelper)
         singleOf(::OnlineOfflineStatusHelper)

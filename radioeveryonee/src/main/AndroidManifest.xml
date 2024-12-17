@@ -31,6 +31,7 @@
         <activity
             android:name="com.oyetech.composebase.projectRadioFeature.main.RadioMainActivity"
             android:exported="true"
+            android:launchMode="standard"
             android:theme="@style/Theme.WallPaperApp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
