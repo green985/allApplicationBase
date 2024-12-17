@@ -3,14 +3,13 @@ package com.oyetech.glidemodule
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.oyetech.core.contextHelper.getApplicationLogo
 import com.oyetech.core.ext.doInTryCatch
 import com.oyetech.domain.repository.GlideOperationRepository
-import com.oyetech.glideModule.R
 import timber.log.Timber
 
 class GlideOperationRepositoryImp(private val context: Context) : GlideOperationRepository {
@@ -56,7 +55,7 @@ class GlideOperationRepositoryImp(private val context: Context) : GlideOperation
 
     private fun getAppIconUrl(): Bitmap? {
 
-        val bm = ContextCompat.getDrawable(context, R.mipmap.ic_launcher)?.toBitmap()
+        val bm = context.getApplicationLogo()?.toBitmap()
 
 
         if (bm == null) {

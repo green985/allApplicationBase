@@ -7,12 +7,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.oyetech.composebase.projectRadioFeature.RadioDimensions
+import com.oyetech.core.contextHelper.getApplicationLogo
 
 /**
 Created by Erdi Özbek
@@ -23,7 +25,7 @@ Created by Erdi Özbek
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun RadioLogoView(faviconUrl: String, size: Dp = RadioDimensions.radioLogoSmallWidthHeight) {
-
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .padding(start = 6.dp)
@@ -32,7 +34,7 @@ fun RadioLogoView(faviconUrl: String, size: Dp = RadioDimensions.radioLogoSmallW
         GlideImage(
             model = faviconUrl,
             contentDescription = "RadioImage",
-            failure = placeholder(com.oyetech.glideModule.R.mipmap.ic_launcher),
+            failure = placeholder(context.getApplicationLogo()),
             modifier = Modifier
                 .size(size),
         )

@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.oyetech.composebase"
-    compileSdk = 34
+    compileSdk = Versions.compileSdk
 
     defaultConfig {
-        minSdk = 24
+        minSdk = Versions.minSdk
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+//        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
         vectorDrawables {
             useSupportLibrary = true

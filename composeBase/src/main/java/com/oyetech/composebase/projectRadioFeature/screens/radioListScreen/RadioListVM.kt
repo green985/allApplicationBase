@@ -93,7 +93,6 @@ class RadioListVM(
     override val complexItemViewState: MutableStateFlow<ComplexItemListState<RadioUIState>> =
         MutableStateFlow<ComplexItemListState<RadioUIState>>(
             ComplexItemListState(
-                items = persistentListOf(),
                 isLoadingInitial = true
             )
         )

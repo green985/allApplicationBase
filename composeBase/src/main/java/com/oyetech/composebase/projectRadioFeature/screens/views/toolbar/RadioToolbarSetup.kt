@@ -11,7 +11,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -41,55 +40,50 @@ fun RadioToolbarSetup(
     val isCenterText = false
 
     Column {
-        Surface(
-//        shadowElevation = 8.dp,
-        ) {
-            TopAppBar(
-                title = {
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = uiState.title,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = if (isCenterText) TextAlign.Center else null
-                    )
-                },
-                navigationIcon = {
-                    if (uiState.showBackButton) {
-                        IconButton(onClick = {
-                            onEvent(
-                                RadioToolbarEvent.BackButtonClick(
-                                    handleWithNavigation = true
-                                )
+        TopAppBar(
+            title = {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = uiState.title,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = if (isCenterText) TextAlign.Center else null
+                )
+            },
+            navigationIcon = {
+                if (uiState.showBackButton) {
+                    IconButton(onClick = {
+                        onEvent(
+                            RadioToolbarEvent.BackButtonClick(
+                                handleWithNavigation = true
                             )
-                        }) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                        }
-                    }
-                },
-                actions = {
-                    uiState.actionButtonState.forEach { button ->
-                        BadgedBox(
-                            badge = {
-                                if (button is Timer && uiState.timeLeftBadge > 0) {
-                                    Badge() { Text(uiState.timeLeftBadge.toString()) }
-                                }
-                            }
-                        ) {
-                            IconButton(
-                                onClick = { onEvent(RadioToolbarEvent.OnActionButtonClick(button)) }) {
-                                Icon(
-                                    painter = painterResource(button.getDrawableResource()),
-                                    contentDescription = button.javaClass.name
-                                )
-                            }
-                        }
-
+                        )
+                    }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 }
-            )
-        }
+            },
+            actions = {
+                uiState.actionButtonState.forEach { button ->
+                    BadgedBox(
+                        badge = {
+                            if (button is Timer && uiState.timeLeftBadge > 0) {
+                                Badge() { Text(uiState.timeLeftBadge.toString()) }
+                            }
+                        }
+                    ) {
+                        IconButton(
+                            onClick = { onEvent(RadioToolbarEvent.OnActionButtonClick(button)) }) {
+                            Icon(
+                                painter = painterResource(button.getDrawableResource()),
+                                contentDescription = button.javaClass.name
+                            )
+                        }
+                    }
 
+                }
+            }
+        )
         HorizontalDivider(
             modifier = Modifier.height(1.dp)
         )
