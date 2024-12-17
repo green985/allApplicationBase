@@ -23,6 +23,7 @@ class GeneralOperationVM(
     fun getReviewCanShowState() = appReviewOperationUseCase.getReviewCanShowState()
 
     fun getReviewOperationStatus() = appReviewOperationUseCase.getReviewOperationStateFlow()
+
     fun dismissReviewState() {
         getReviewCanShowState().value = false
         sharedHelperRepository.setReviewAlreadyShown(true)
@@ -31,6 +32,11 @@ class GeneralOperationVM(
     fun startReviewOperation() {
         getReviewCanShowState().value = false
         appReviewOperationUseCase.startAppReviewOperation()
+    }
+
+    fun dismissDialog() {
+        getReviewCanShowState().value = false
+        sharedHelperRepository.setReviewAlreadyShown(true)
     }
 
     init {

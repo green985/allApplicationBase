@@ -53,7 +53,11 @@ dependencies {
     implementation(Libraries.composeUi)
     implementation(Libraries.composeUiGraphics)
     implementation(Libraries.composeUiToolingPreview)
+    debugImplementation(Libraries.composeUiTooling)
+    debugImplementation(Libraries.composeUiTestManifest)
     implementation(Libraries.material3)
+
+
     implementation(project(":core"))
 
     // Test dependencies
@@ -62,8 +66,6 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(Libraries.composeUiTestJunit4)
     // Debug dependencies
-    debugImplementation(Libraries.composeUiTooling)
-    debugImplementation(Libraries.composeUiTestManifest)
 
 
     implementation(project(Modules.domain))

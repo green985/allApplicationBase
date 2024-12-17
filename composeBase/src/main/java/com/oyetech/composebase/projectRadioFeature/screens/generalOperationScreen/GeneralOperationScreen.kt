@@ -32,11 +32,14 @@ fun GeneralOperationScreenSetup(content: @Composable () -> Unit) {
     Timber.d("Review State: $reviewOperationStatus")
 
     if (reviewState) {
-        RateUsDialog(onDismiss = {
-            viewModel.dismissReviewState()
-        }) {
-            viewModel.startReviewOperation()
-        }
+        RateUsDialog(
+            onDismiss = {
+                viewModel.dismissDialog()
+            }, onRefuse = {
+                viewModel.dismissReviewState()
+            }, onSuccess = {
+                viewModel.startReviewOperation()
+            })
     }
 
 

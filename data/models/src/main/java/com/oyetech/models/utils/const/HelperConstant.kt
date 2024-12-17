@@ -18,7 +18,7 @@ object HelperConstant {
     val HERE_PLACE_SIZE: Int = 100
     const val SNACKBAR_SHOW_TIME = 3000L
 
-    const val APP_FIRST_OPEN_COUNT_THRESHOLD: Int = 1
+    const val APP_FIRST_OPEN_COUNT_THRESHOLD: Int = 6
     const val RECEIVED_MESSAGE_COUNT_THRESHOLD: Int = 10
     const val ONE_DAY_IN_MILLIS = 24 * 60 * 60 * 1000
     const val HistoryDatabaseVersion: Int = 6
