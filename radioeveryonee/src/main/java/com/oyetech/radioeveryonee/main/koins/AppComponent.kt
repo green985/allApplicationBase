@@ -22,7 +22,6 @@ import com.oyetech.remote.quotesRemote.QuotesRemoteModule
 import com.oyetech.repository.di.RadioRepositoryDI
 import com.oyetech.repository.di.WallpaperRepositoryModule
 import com.oyetech.repository.quotesImp.QuotesImpModule
-import com.oyetech.revenuecatoperationmodule.RevenueCatModuleDi
 import com.oyetech.reviewer.di.GoogleAppReviewerModule
 import org.koin.dsl.module
 
@@ -63,7 +62,7 @@ object AppComponent {
 
         QuotesImpModule.quoteImpModule,
         QuotesRemoteModule.createZenQuotesRemoteModule(),
-        RevenueCatModuleDi.revenueCatOperationModule
+//        RevenueCatModuleDi.revenueCatOperationModule
     )
 }
 
