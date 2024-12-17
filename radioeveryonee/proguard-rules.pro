@@ -759,7 +759,7 @@ public static *** e(...);
 -dontwarn com.oyetech.core.coroutineHelper.ResultHelperKt
 -dontwarn com.oyetech.core.deviceExt.DeviceHelperExt
 -dontwarn com.oyetech.core.di.CommonsModuleKt
--dontwarn com.oyetech.core.shareOperations.ClipboardOperationHelper
+#-dontwarn com.oyetech.core.shareOperations.ClipboardOperationHelper
 -dontwarn com.oyetech.core.stringOperation.StringHelper
 -dontwarn com.oyetech.core.utils.SingleLiveEvent
 -dontwarn org.bouncycastle.jsse.BCSSLParameters

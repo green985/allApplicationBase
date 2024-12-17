@@ -3,7 +3,6 @@ package com.oyetech.radioeveryonee.main.koins
 import android.content.Context
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
-import com.oyetech.core.shareOperations.ClipboardOperationHelper
 import com.oyetech.domain.helper.isDebug
 import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.domain.repository.helpers.SharedHelperRepository
@@ -90,7 +89,7 @@ object KoinHelperInits {
 //        single { VerseNoteSpanHelper(com.oyetech.materialViews.R.drawable.ic_verse_note_img) }
         singleOf(::SharedPrefRepositoryImp)
         single<SharedHelperRepository> { SharedPrefRepositoryImp(get()) }
-        singleOf(::ClipboardOperationHelper)
+//        singleOf(::ClipboardOperationHelper)
         singleOf(::TokenAuthenticator)
         singleOf(::RefreshTokenHelper)
         singleOf(::ForceUpdateHelper)

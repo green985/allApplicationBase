@@ -3,7 +3,7 @@ package com.oyetech.radioeveryonee.main.koins
 import com.oyetech.adshelper.di.AdsHelperModule
 import com.oyetech.composebase.baseViews.globalLoading.di.GlobalComposeModule
 import com.oyetech.composebase.di.ComposeMainModule
-import com.oyetech.core.di.commonsModule
+import com.oyetech.core.di.CommonsModule
 import com.oyetech.cripto.privateKeys.WallpaperAppFragmentArgs
 import com.oyetech.domain.di.DomainModule
 import com.oyetech.domain.di.RadioDomainModule
@@ -37,7 +37,7 @@ object AppComponent {
         LanguageModuleDi.wallpaperLanguageModule,
         Modules.MainModule,
         KoinHelperInits.HelperModule,
-        commonsModule,
+        CommonsModule.module,
         dataSourceModule,
         WallpaperRemoteModule.createWallpaperAppRemoteModule(WallpaperAppFragmentArgs.WALLPAPER_API_BASE_URL),
         WallpaperRepositoryModule.wallpaperRepositoryModule,

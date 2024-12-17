@@ -30,7 +30,7 @@ class GeneralOperationVM(
 
     fun startReviewOperation() {
         getReviewCanShowState().value = false
-        appReviewOperationUseCase.fakeStartAppReviewOperation()
+        appReviewOperationUseCase.startAppReviewOperation()
     }
 
     init {

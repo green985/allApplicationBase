@@ -16,11 +16,6 @@ android {
         targetSdkVersion Versions.targetSdk
         testInstrumentationRunner Runner.testRunner
     }
-    buildTypes {
-        release {
-            minifyEnabled true
-        }
-    }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

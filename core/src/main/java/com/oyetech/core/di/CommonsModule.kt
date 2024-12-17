@@ -9,9 +9,10 @@ Created by Erdi Özbek
 -10.04.2022-
 -17:20-
  **/
-
-var commonsModule = module {
-    single {
-        AppDispatchers(Dispatchers.Main, Dispatchers.IO)
+object CommonsModule {
+    val module = module {
+        single {
+            AppDispatchers(Dispatchers.Main, Dispatchers.IO)
+        }
     }
 }
