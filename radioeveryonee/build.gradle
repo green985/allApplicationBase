@@ -32,10 +32,11 @@ ext.getArtifactNameRadio = {
 android {
     namespace 'com.oyetech.radioeveryonee'
 
+    compileSdkVersion Versions.compileSdk
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
-        versionCode WallpaperReleaseProperty.versionCode
-        versionName WallpaperReleaseProperty.versionName
+        versionCode RadioReleaseProperty.versionCode
+        versionName RadioReleaseProperty.versionName
     }
     setProperty("archivesBaseName", getArtifactNameRadio(defaultConfig))
 
@@ -90,6 +91,9 @@ android {
             aaptOptions.cruncherEnabled = false
         }
         release {
+            ndk {
+                debugSymbolLevel 'FULL'
+            }
             shrinkResources true
             minifyEnabled true
             debuggable false
