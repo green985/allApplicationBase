@@ -30,6 +30,8 @@ class QuotesVM(appDispatchers: AppDispatchers, private val quotesRepository: Quo
 
     val complexItemListState = MutableStateFlow(ComplexItemListState<QuotesUiState>())
 
+    val currentPage = MutableStateFlow(0)
+
     init {
         fetchRandomQuotes()
     }

@@ -26,6 +26,7 @@ import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.views.Sim
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarSetup
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarState
 import com.oyetech.composebase.projectRadioFeature.views.AboutAppView
+import com.oyetech.composebase.projectRadioFeature.views.randomQuotesViewer.QuotesListViewSetup
 import com.oyetech.core.contextHelper.getAppName
 import com.oyetech.core.contextHelper.getApplicationLogo
 import com.oyetech.core.contextHelper.getVersionName
@@ -82,6 +83,9 @@ fun TabSettingsScreen(
                 onClick = { startReviewOperation.invoke() },
                 text = "Rate us"
             )
+            Spacer(modifier = Modifier.height(32.dp))
+            QuotesListViewSetup()
+
             HorizontalDivider(
                 modifier = Modifier.height(1.dp)
             )

@@ -82,7 +82,6 @@ fun TabAllListScreenSetup(
                 })
         }) { padding ->
         Column(modifier = Modifier.padding(padding)) {
-//            QuotesListViewSetup()
             Spacer(modifier = Modifier.height(8.dp))
             TabAllScreenView(
                 pagerState = pagerState,
