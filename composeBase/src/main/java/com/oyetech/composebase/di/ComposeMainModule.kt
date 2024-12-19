@@ -22,6 +22,7 @@ import com.oyetech.composebase.projectRadioFeature.viewModelSlice.IRadioPlayerVi
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.RadioFavViewModelSliceImp
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.RadioPlayerViewModelSliceImp
 import com.oyetech.composebase.projectRadioFeature.views.quotes.randomQuotesViewer.QuotesVM
+import com.oyetech.composebase.projectRadioFeature.views.quotes.tagList.QuoteTagListVM
 import com.oyetech.domain.repository.helpers.logicRepositories.RadioListSortRepository
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
@@ -62,5 +63,6 @@ object ComposeMainModule {
 
 
         viewModelOf(::QuotesVM)
+        viewModelOf(::QuoteTagListVM)
     }
 }

@@ -7,9 +7,36 @@ Created by Erdi Özbek
  **/
 
 object QuotesTagResponseData {
-    val jsonData = """[
-    "Anxiety", "Change", "Choice", "Confidence", "Courage", "Death", "Dreams", "Excellence", "Failure", "Fairness",
-    "Fear", "Forgiveness", "Freedom", "Future", "Happiness", "Inspiration", "Kindness", "Leadership", "Life", "Living",
-    "Love", "Pain", "Past", "Success", "Time", "Today", "Truth", "Work"
-]"""
+    fun getTopicsList(): List<String> {
+        return listOf(
+            "Anxiety",
+            "Change",
+            "Choice",
+            "Confidence",
+            "Courage",
+            "Death",
+            "Dreams",
+            "Excellence",
+            "Failure",
+            "Fairness",
+            "Fear",
+            "Forgiveness",
+            "Freedom",
+            "Future",
+            "Happiness",
+            "Inspiration",
+            "Kindness",
+            "Leadership",
+            "Life",
+            "Living",
+            "Love",
+            "Pain",
+            "Past",
+            "Success",
+            "Time",
+            "Today",
+            "Truth",
+            "Work"
+        )
+    }
 }
