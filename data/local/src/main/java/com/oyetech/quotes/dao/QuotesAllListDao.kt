@@ -27,11 +27,21 @@ interface QuotesAllListDao : BaseDao<QuoteResponseData> {
     @Query("delete FROM quoteDataModel ")
     fun deleteAllList()
 
+    @Query(
+        "SELECT COUNT(*) \n" +
+                "FROM quoteDataModel \n" +
+                "WHERE quoteId NOT IN (:oldList) AND isSeen = 0 "
+    )
+    fun getListCount(oldList: Array<String>): Int
+
     @Query("select * FROM quoteDataModel " + "WHERE quoteId in (:quoteIdList)")
     fun findQuoteWithQuotesIdList(quoteIdList: List<String>): List<QuoteResponseData>
 
-    @Query("select * FROM quoteDataModel " + "WHERE isSeen = 0 ORDER BY RANDOM() LIMIT 20")
-    fun getQuoteUnseenFlow(): List<QuoteResponseData>
+    @Query(
+        "select * FROM quoteDataModel " + "WHERE isSeen = 0  " +
+                "AND quoteId NOT IN (:oldList) ORDER BY RANDOM() LIMIT 20"
+    )
+    fun getQuoteUnseenFlow(oldList: Array<String>): List<QuoteResponseData>
 
     @Transaction
     fun insertLastList(list: List<QuoteResponseData>) {

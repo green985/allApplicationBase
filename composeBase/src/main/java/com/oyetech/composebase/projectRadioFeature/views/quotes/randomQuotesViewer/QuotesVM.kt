@@ -70,36 +70,31 @@ class QuotesVM(
     private fun Flow<List<QuoteResponseData>>.mapToUiState(): Flow<List<QuotesUiState>> {
         return this.map {
             it.map {
-                if (it.charCount < 200) {
-                    QuotesUiState(
-                        quoteId = it.quoteId,
-                        text = it.text,
-                        author = it.author,
-                        authorImage = it.authorImage,
-                        htmlFormatted = it.htmlFormatted,
-                        annotatedStringText = it.htmlFormatted.parseAsHtml().toAnnotatedString()
-                    )
-                } else {
-                    null
-                }
-            }.filterNotNull()
-        }.map {
-            it
+                QuotesUiState(
+                    quoteId = it.quoteId,
+                    text = it.text,
+                    author = it.author,
+                    authorImage = it.authorImage,
+                    htmlFormatted = it.htmlFormatted,
+                    annotatedStringText = it.htmlFormatted.parseAsHtml().toAnnotatedString()
+                )
+            }
         }
     }
 
     private fun getList(isFromRefresh: Boolean = false, isFromLoadMore: Boolean = false): Job {
-        Timber.d(" getRandomRemoteQuote  ==" + isFromRefresh + " " + isFromLoadMore)
-        if (!isFromRefresh && !isFromLoadMore) {
-            complexItemViewState.updateState { copy(isLoadingInitial = true) }
-        }
-        if (isFromLoadMore) {
-            complexItemViewState.updateState { copy(isLoadingMore = true) }
-        }
-
         return viewModelScope.launch(getDispatcherIo()) {
-            delay(1000)
-            quoteDataOperationRepository.getQuoteUnseenFlow().mapToUiState().asResult()
+            delay(250)
+            Timber.d(" getRandomRemoteQuote  ==" + isFromRefresh + " " + isFromLoadMore)
+            if (!isFromRefresh && !isFromLoadMore) {
+                complexItemViewState.updateState { copy(isLoadingInitial = true) }
+            }
+            if (isFromLoadMore) {
+                complexItemViewState.updateState { copy(isLoadingMore = true) }
+            }
+
+            val oldList = complexItemViewState.value.items.map { it.quoteId }.toTypedArray()
+            quoteDataOperationRepository.getQuoteUnseenFlow(oldList).mapToUiState().asResult()
                 .collectLatest {
                     it.fold(
                         onSuccess = {
