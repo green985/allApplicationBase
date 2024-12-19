@@ -13,6 +13,7 @@ import com.oyetech.glidemodule.GlideModuleDi
 import com.oyetech.helper.BaseUrlConfigHelper
 import com.oyetech.languageModule.di.LanguageModuleDi
 import com.oyetech.local.di.RadioLocalModuleDi
+import com.oyetech.quotes.QuotesLocalModuleDi
 import com.oyetech.radiooperationmodule.di.RadioOperationModuleDi
 import com.oyetech.radioservice.di.RadioServiceModule
 import com.oyetech.remote.di.RadioModuleDI
@@ -62,6 +63,7 @@ object AppComponent {
 
         QuotesImpModule.quoteImpModule,
         QuotesRemoteModule.createZenQuotesRemoteModule(),
+        QuotesLocalModuleDi.localModule
 //        RevenueCatModuleDi.revenueCatOperationModule
     )
 }

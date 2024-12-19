@@ -6,6 +6,11 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
+fun ComplexItemListState<*>.getItemSize(): Int {
+    return this.items.size
+
+}
+
 data class ComplexItemListState<T>(
     val items: ImmutableList<T> = emptyList<T>().toImmutableList(),
     val isRefreshing: Boolean = false,
@@ -75,6 +80,7 @@ data class ComplexItemListState<T>(
             errorMessage = errorMessage ?: this.errorMessage,
         )
     }
+
 
 }
 

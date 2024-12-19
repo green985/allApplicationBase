@@ -8,6 +8,7 @@ import android.text.style.StyleSpan
 import android.util.Base64
 import android.webkit.URLUtil
 import timber.log.Timber
+import java.security.MessageDigest
 import java.util.UUID
 
 /**
@@ -21,6 +22,13 @@ object StringHelper {
     fun getApplicationName(context: Context): String? {
         val stringId = context.applicationInfo.labelRes
         return context.getString(stringId)
+    }
+
+    fun String.toMD5(): String {
+        val bytes = MessageDigest.getInstance("MD5").digest(this.toByteArray())
+        return bytes.joinToString("") {
+            "%02x".format(it)
+        }
     }
 
     fun generateRandomGuid(): String {

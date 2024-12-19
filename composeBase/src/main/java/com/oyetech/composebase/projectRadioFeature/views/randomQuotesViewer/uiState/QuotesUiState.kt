@@ -9,6 +9,7 @@ Created by Erdi Özbek
  **/
 
 data class QuotesUiState(
+    val quoteId: String = "",
     val text: String = "",
     val author: String = "",
     val authorImage: String = "",
@@ -18,3 +19,9 @@ data class QuotesUiState(
 //    val tag : String = ""
 
 )
+
+sealed class QuoteListUiEvent {
+    data class LoadMore(val currentItem: Int) : QuoteListUiEvent()
+    data class QuoteSeen(val quotesUiState: QuotesUiState) : QuoteListUiEvent()
+//    object Refresh : QutoeListUiEvent()
+}

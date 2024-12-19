@@ -1,5 +1,6 @@
 package com.oyetech.composebase.projectRadioFeature.views.randomQuotesViewer
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,8 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.rememberCoroutineScope
@@ -24,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.oyetech.composebase.projectRadioFeature.views.randomQuotesViewer.uiState.QuoteListUiEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -36,14 +40,18 @@ Created by Erdi Özbek
 -23:12-
  **/
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun QuotesListViewSetup(vm: QuotesVM = koinViewModel()) {
     val complexItemListState by vm.complexItemListState.collectAsStateWithLifecycle()
 
     val quotesList = complexItemListState.items
-
-    val pagerState = rememberPagerState { quotesList.size }
+    val currentPage by vm.currentPage.collectAsState()
+    val pagerState = rememberPagerState(initialPage = currentPage) { quotesList.size }
     val coroutineScope = rememberCoroutineScope()
+    val event = { event: QuoteListUiEvent ->
+        vm.onEvent(event = event)
+    }
 
     fun previousAction() {
         coroutineScope.launch {
@@ -68,7 +76,14 @@ fun QuotesListViewSetup(vm: QuotesVM = koinViewModel()) {
         HorizontalPager(
             state = pagerState,
         ) { page ->
-            Timber.d("page == $page")
+
+            LaunchedEffect(page) {
+                Timber.d("page == $page")
+                vm.currentPage.value = page
+                event.invoke(QuoteListUiEvent.LoadMore(page))
+                event.invoke(QuoteListUiEvent.QuoteSeen(quotesList[page]))
+            }
+
             key(quotesList[page]) {
                 RandomQuotesSmallView(uiState = quotesList[page])
             }
