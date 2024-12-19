@@ -21,7 +21,7 @@ import com.oyetech.composebase.projectRadioFeature.viewModelSlice.IRadioFavViewM
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.IRadioPlayerViewModelSlice
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.RadioFavViewModelSliceImp
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.RadioPlayerViewModelSliceImp
-import com.oyetech.composebase.projectRadioFeature.views.randomQuotesViewer.QuotesVM
+import com.oyetech.composebase.projectRadioFeature.views.quotes.randomQuotesViewer.QuotesVM
 import com.oyetech.domain.repository.helpers.logicRepositories.RadioListSortRepository
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module

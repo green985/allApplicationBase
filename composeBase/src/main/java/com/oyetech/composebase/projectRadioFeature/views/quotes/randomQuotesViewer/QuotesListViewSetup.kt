@@ -1,4 +1,4 @@
-package com.oyetech.composebase.projectRadioFeature.views.randomQuotesViewer
+package com.oyetech.composebase.projectRadioFeature.views.quotes.randomQuotesViewer
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.oyetech.composebase.projectRadioFeature.views.randomQuotesViewer.uiState.QuoteListUiEvent
+import com.oyetech.composebase.projectRadioFeature.views.quotes.uiState.QuoteListUiEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -43,7 +43,7 @@ Created by Erdi Özbek
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun QuotesListViewSetup(vm: QuotesVM = koinViewModel()) {
-    val complexItemListState by vm.complexItemListState.collectAsStateWithLifecycle()
+    val complexItemListState by vm.complexItemViewState.collectAsStateWithLifecycle()
 
     val quotesList = complexItemListState.items
     val currentPage by vm.currentPage.collectAsState()
@@ -91,7 +91,7 @@ fun QuotesListViewSetup(vm: QuotesVM = koinViewModel()) {
 
         PagerButtonStyle(
             coroutineScope = coroutineScope,
-            fetchRandomQuotes = { vm.fetchRandomQuotes() },
+            fetchRandomQuotes = { vm.loadMoreItem() },
             pagerState = pagerState,
             previousAction = { previousAction() },
             nextAction = { nextAction() }

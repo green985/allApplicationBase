@@ -1,4 +1,4 @@
-package com.oyetech.composebase.projectRadioFeature.views.randomQuotesViewer.uiState
+package com.oyetech.composebase.projectRadioFeature.views.quotes.uiState
 
 import androidx.compose.ui.text.AnnotatedString
 

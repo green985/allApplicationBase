@@ -1,4 +1,4 @@
-package com.oyetech.composebase.projectRadioFeature.views.randomQuotesViewer
+package com.oyetech.composebase.projectRadioFeature.views.quotes.randomQuotesViewer
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,7 +19,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.oyetech.composebase.projectRadioFeature.views.randomQuotesViewer.uiState.QuotesUiState
+import com.oyetech.composebase.projectRadioFeature.views.quotes.uiState.QuotesUiState
 
 /**
 Created by Erdi Özbek
