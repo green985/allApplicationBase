@@ -8,7 +8,7 @@ import androidx.room.TypeConverter
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
-import java.util.UUID
+import java.security.MessageDigest
 
 /**
 Created by Erdi Özbek
@@ -25,13 +25,13 @@ Created by Erdi Özbek
 data class QuoteResponseData(
 //    @Json(name = "quoteId")
 
+    @Json(name = "q")
+    var text: String = "",
     @PrimaryKey
-    var quoteId: String = UUID.randomUUID().toString(),
+    var quoteId: String = text.toMd5WithFixedLength(),
 
     var isSeen: Boolean = false,
 
-    @Json(name = "q")
-    var text: String = "",
     @Json(name = "a")
     var author: String = "",
     @Json(name = "c")
@@ -43,6 +43,19 @@ data class QuoteResponseData(
     @Json(name = "tags")
     var tags: List<String> = emptyList(),
 ) : Parcelable
+
+fun String.toMd5WithFixedLength(): String {
+    // Convert string to MD5 hash
+    val md5Hash = MessageDigest.getInstance("MD5").digest(this.toByteArray())
+        .joinToString("") { "%02x".format(it) }
+
+    // Ensure the resulting string is exactly 40 characters
+    return if (md5Hash.length >= 40) {
+        md5Hash.substring(0, 40)
+    } else {
+        md5Hash.padEnd(40, ' ')
+    }
+}
 
 class TagsTypeConverter {
 

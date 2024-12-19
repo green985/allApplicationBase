@@ -32,17 +32,11 @@ class QuoteDataOperationRepositoryImp(
         }
     }
 
-    //will be return quote list but not visible quotes
-
     override fun getQuoteUnseenFlow(oldList: Array<String>): Flow<List<QuoteResponseData>> {
         return flowOf(quotesAllListDao.getQuoteUnseenFlow(oldList)).map {
             val leftCount = quotesAllListDao.getListCount(oldList)
-            if (leftCount < HelperConstant.QUOTES_PAGER_LIMIT) {
+            if (leftCount < HelperConstant.QUOTES_PAGER_LIMIT * 3) {
                 val remoteQuotesList =
-                    getRandomRemoteQuote().firstOrNull()
-                val remoteQuotesList1 =
-                    getRandomRemoteQuote().firstOrNull()
-                val remoteQuotesList2 =
                     getRandomRemoteQuote().firstOrNull()
                 remoteQuotesList?.subList(0, 10) ?: emptyList()
             } else {
