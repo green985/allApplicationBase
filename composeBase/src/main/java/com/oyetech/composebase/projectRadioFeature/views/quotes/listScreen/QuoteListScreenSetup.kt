@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.base.baseList.ComplexItemListState
+import com.oyetech.composebase.base.baseList.ListCustomLoadingView
 import com.oyetech.composebase.base.baseList.ListUIEvent
 import com.oyetech.composebase.base.baseList.LoadableLazyColumn
 import com.oyetech.composebase.base.baseList.rememberLoadableLazyColumnState
@@ -64,11 +65,14 @@ fun QuoteListScreen(
         state = lazyListState,
         isRefreshing = complexItemViewState.isRefreshing,
         isLoadingInitial = complexItemViewState.isLoadingInitial,
+        isLoadingMore = complexItemViewState.isLoadingMore,
         isErrorInitial = complexItemViewState.isErrorInitial,
         onRetry = { radioListEventHandle(ListUIEvent.Retry) },
         isEmptyList = complexItemViewState.isEmptyList,
         onRefresh = { radioListEventHandle(ListUIEvent.Refresh) },
         errorMessage = complexItemViewState.errorMessage,
+        onItemVisible = { radioListEventHandle.invoke(ListUIEvent.ItemVisible(it)) },
+        loadMoreLoadingContent = { ListCustomLoadingView() },
         content = {
             items(items = complexItemViewState.items, key = { it.quoteId }, itemContent = { quote ->
                 RandomQuotesSmallView(uiState = quote)

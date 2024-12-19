@@ -5,7 +5,6 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.oyetech.dao.BaseDao
 import com.oyetech.models.quotes.responseModel.QuoteResponseData
-import kotlinx.coroutines.flow.Flow
 
 /**
 Created by Erdi Özbek
@@ -31,8 +30,8 @@ interface QuotesAllListDao : BaseDao<QuoteResponseData> {
     @Query("select * FROM quoteDataModel " + "WHERE quoteId in (:quoteIdList)")
     fun findQuoteWithQuotesIdList(quoteIdList: List<String>): List<QuoteResponseData>
 
-    @Query("select * FROM quoteDataModel " + "WHERE isSeen = 0 LIMIT 10")
-    fun getQuoteUnseenFlow(): Flow<List<QuoteResponseData>>
+    @Query("select * FROM quoteDataModel " + "WHERE isSeen = 0 ORDER BY RANDOM() LIMIT 20")
+    fun getQuoteUnseenFlow(): List<QuoteResponseData>
 
     @Transaction
     fun insertLastList(list: List<QuoteResponseData>) {

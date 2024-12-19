@@ -2,6 +2,10 @@ package com.oyetech.composebase.base.baseList
 
 import com.oyetech.composebase.R
 import com.oyetech.composebase.base.BaseViewModel
+import com.oyetech.composebase.base.baseList.ListUIEvent.ItemVisible
+import com.oyetech.composebase.base.baseList.ListUIEvent.LoadMore
+import com.oyetech.composebase.base.baseList.ListUIEvent.Refresh
+import com.oyetech.composebase.base.baseList.ListUIEvent.Retry
 import com.oyetech.core.coroutineHelper.AppDispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -18,20 +22,25 @@ abstract class BaseListViewModel<T>(dispatchers: AppDispatchers) : BaseViewModel
     open fun loadMoreItem() {}
     open fun refreshList() {}
     open fun retry() {}
+    open fun itemVisible(index: Int) {}
 
     fun handleListEvent(listUiEvent: ListUIEvent) {
         when (listUiEvent) {
-            ListUIEvent.LoadMore -> {
+            LoadMore -> {
                 loadMoreItem()
             }
 
-            ListUIEvent.Refresh -> {
+            Refresh -> {
                 refreshList()
             }
 
-            ListUIEvent.Retry -> {
+            Retry -> {
                 retry()
                 // Tekrar dene işlemi burada yapılabilir
+            }
+
+            is ItemVisible -> {
+                itemVisible(listUiEvent.index)
             }
         }
 

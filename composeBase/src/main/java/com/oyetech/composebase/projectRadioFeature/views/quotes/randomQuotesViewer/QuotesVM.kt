@@ -15,13 +15,17 @@ import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.core.coroutineHelper.asResult
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
 import com.oyetech.models.quotes.responseModel.QuoteResponseData
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 /**
 Created by Erdi Özbek
@@ -41,7 +45,6 @@ class QuotesVM(
     val currentPage = MutableStateFlow(0)
 
     init {
-//        fetchRandomQuotes()
         getList()
     }
 
@@ -85,26 +88,34 @@ class QuotesVM(
         }
     }
 
-    private fun getList(isFromRefresh: Boolean = false, isFromLoadMore: Boolean = false) {
-        if (!isFromRefresh || !isFromLoadMore) {
+    private fun getList(isFromRefresh: Boolean = false, isFromLoadMore: Boolean = false): Job {
+        Timber.d(" getRandomRemoteQuote  ==" + isFromRefresh + " " + isFromLoadMore)
+        if (!isFromRefresh && !isFromLoadMore) {
             complexItemViewState.updateState { copy(isLoadingInitial = true) }
         }
         if (isFromLoadMore) {
             complexItemViewState.updateState { copy(isLoadingMore = true) }
         }
 
-        viewModelScope.launch(getDispatcherIo()) {
+        return viewModelScope.launch(getDispatcherIo()) {
+            delay(1000)
             quoteDataOperationRepository.getQuoteUnseenFlow().mapToUiState().asResult()
                 .collectLatest {
                     it.fold(
                         onSuccess = {
+                            Timber.d(" getRandomRemoteQuote  " + it.size)
                             if (it.isEmpty()) {
                                 complexItemViewState.value = ComplexItemListState(
                                     isEmptyList = true
                                 )
                             } else {
                                 val list = complexItemViewState.value.items
-                                val mergedList = list.toPersistentList().addAll(it)
+                                val mergedList =
+                                    list.toPersistentList().addAll(it).distinctBy { model ->
+                                        model.quoteId
+                                    }.toImmutableList()
+                                Timber.d(" getRandomRemoteQuote  mergedList " + mergedList.size)
+
                                 complexItemViewState.value = ComplexItemListState(mergedList)
                             }
                         },
@@ -128,8 +139,10 @@ class QuotesVM(
         }
     }
 
+    var loadMoreJob: Job? = null
     override fun loadMoreItem() {
-        getList(isFromLoadMore = true)
+        loadMoreJob?.cancel()
+        loadMoreJob = getList(isFromLoadMore = true)
     }
 
     override fun refreshList() {
@@ -146,6 +159,29 @@ class QuotesVM(
             )
         }
         getList()
+    }
+
+    private var isVisibleControl = false
+    override fun itemVisible(index: Int) {
+        Timber.d(" itemVisible index = $index")
+        viewModelScope.launch(getDispatcherIo()) {
+            if (index == 0) {
+                isVisibleControl = true
+            }
+            if (isVisibleControl) {
+                isVisibleControl = false
+                val quoteIdMap = complexItemViewState.value.items.subList(0, index).map {
+                    quoteDataOperationRepository.setSeenQuote(it.quoteId)
+                        .collect()
+                }
+                return@launch
+            }
+            val quoteId = complexItemViewState.value.items.getOrNull(index)?.quoteId
+            if (quoteId != null) {
+                quoteDataOperationRepository.setSeenQuote(quoteId)
+                    .collect()
+            }
+        }
     }
 }
 

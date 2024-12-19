@@ -3,10 +3,12 @@ package com.oyetech.repository.quotesImp
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
 import com.oyetech.domain.quotesDomain.quotesData.QuotesRepository
 import com.oyetech.models.quotes.responseModel.QuoteResponseData
+import com.oyetech.models.utils.const.HelperConstant
 import com.oyetech.quotes.dao.QuotesAllListDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import timber.log.Timber
 
@@ -33,11 +35,11 @@ class QuoteDataOperationRepositoryImp(
     //will be return quote list but not visible quotes
 
     override fun getQuoteUnseenFlow(): Flow<List<QuoteResponseData>> {
-        return quotesAllListDao.getQuoteUnseenFlow().map {
-            if (it.size < 5) {
+        return flowOf(quotesAllListDao.getQuoteUnseenFlow()).map {
+            if (it.size < HelperConstant.QUOTES_PAGER_LIMIT) {
                 val remoteQuotesList =
                     getRandomRemoteQuote().firstOrNull()
-                remoteQuotesList ?: emptyList()
+                remoteQuotesList?.subList(0, HelperConstant.QUOTES_PAGER_LIMIT) ?: emptyList()
             } else {
                 it
             }

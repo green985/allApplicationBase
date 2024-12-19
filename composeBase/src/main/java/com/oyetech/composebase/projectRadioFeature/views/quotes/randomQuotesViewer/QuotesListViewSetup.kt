@@ -80,7 +80,7 @@ fun QuotesListViewSetup(vm: QuotesVM = koinViewModel()) {
             LaunchedEffect(page) {
                 Timber.d("page == $page")
                 vm.currentPage.value = page
-                event.invoke(QuoteListUiEvent.LoadMore(page))
+//                event.invoke(QuoteListUiEvent.LoadMore(page))
                 event.invoke(QuoteListUiEvent.QuoteSeen(quotesList[page]))
             }
 

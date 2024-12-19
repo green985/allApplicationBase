@@ -99,6 +99,8 @@ sealed class ListUIEvent {
     object LoadMore : ListUIEvent()
     object Refresh : ListUIEvent()
     object Retry : ListUIEvent()
+    data class ItemVisible(val index: Int) : ListUIEvent()
+
 }
 
 sealed class ItemSortType {

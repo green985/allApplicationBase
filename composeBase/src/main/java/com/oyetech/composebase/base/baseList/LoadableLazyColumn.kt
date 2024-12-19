@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -67,6 +68,7 @@ fun LoadableLazyColumn(
     flingBehavior: FlingBehavior = ScrollableDefaults.flingBehavior(),
     userScrollEnabled: Boolean = true,
     loadMoreLoadingContent: @Composable() (() -> Unit)? = null,
+    onItemVisible: (Int) -> Unit = {},
     content: LazyListScope.() -> Unit,
 ) {
     val lazyListState = state.lazyListState
@@ -89,6 +91,7 @@ fun LoadableLazyColumn(
             userScrollEnabled = userScrollEnabled,
             content = {
                 content()
+
                 item {
                     if (!isLoadingInitial) {
                         loadMoreLoadingContent?.invoke()
@@ -135,6 +138,10 @@ fun LoadableLazyColumn(
         lastTimeLastVisibleIndex = currentLastVisibleIndex
     }
     lastTimeIsScrollInProgress = currentIsScrollInProgress
+
+    LaunchedEffect(currentLastVisibleIndex) {
+        onItemVisible(currentLastVisibleIndex)
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -143,7 +150,7 @@ fun LoadableLazyColumn(
 fun rememberLoadableLazyColumnState(
     onLoadMore: () -> Unit,
     refreshThreshold: Dp = PullToRefreshDefaults.PositionalThreshold,
-    loadMoreRemainCountThreshold: Int = 5,
+    loadMoreRemainCountThreshold: Int = 1,
     initialFirstVisibleItemIndex: Int = 0,
     initialFirstVisibleItemScrollOffset: Int = 0,
 ): LoadableLazyColumnState {
@@ -176,10 +183,11 @@ fun rememberLoadMoreState(
 }
 
 @Composable
-fun RadioLoadingView() {
+fun ListCustomLoadingView() {
     Box(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
+            .height(100.dp)
             .background(Color.Black.copy(alpha = 0.7f))
             .clickable(
                 enabled = false,
