@@ -67,11 +67,12 @@ dependencies {
     androidTestImplementation(Libraries.composeUiTestJunit4)
     // Debug dependencies
 
-
     implementation(project(Modules.domain))
     implementation(project(Modules.glideModule))
     implementation(project(Modules.model))
     implementation(project(Modules.radioService))
+    implementation(project(Modules.languageModule))
+
     implementation(Libraries.timber)
     api(Libraries.koin)
 

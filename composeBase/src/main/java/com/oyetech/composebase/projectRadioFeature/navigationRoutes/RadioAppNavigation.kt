@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
 import com.oyetech.composebase.experimental.commentScreen.CommentScreenSetup
+import com.oyetech.composebase.experimental.loginOperations.CompleteProfileScreenSetup
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.RadioListScreenSetup
@@ -85,6 +86,12 @@ fun NavGraphBuilder.radioAppNavigation(navController: NavController) {
     // TabHistory Route
     composable(RadioAppProjectRoutes.LoginOperationScreen.route) {
         LoginOperationScreenSetup(
+            navigationRoute = navigateRoute(navController)
+        )
+    }
+    // TabHistory Route
+    composable(RadioAppProjectRoutes.CompleteProfileScreen.route) {
+        CompleteProfileScreenSetup(
             navigationRoute = navigateRoute(navController)
         )
     }

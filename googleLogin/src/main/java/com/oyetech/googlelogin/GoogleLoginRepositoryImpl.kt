@@ -25,7 +25,6 @@ import com.oyetech.models.firebaseModels.googleAuth.ProviderDataInfo
 import com.oyetech.models.firebaseModels.googleAuth.UserMetadata
 import com.oyetech.models.firebaseModels.googleAuth.isUserLogin
 import kotlinx.coroutines.flow.MutableStateFlow
-import timber.log.Timber
 
 class GoogleLoginRepositoryImpl(
     private val activityProviderUseCase: ActivityProviderUseCase,
@@ -45,7 +44,6 @@ class GoogleLoginRepositoryImpl(
     override fun signInWithGoogleAnonymous() {
         activity = getActivityOrSetError("setupGoogleSignIn activity problem") ?: return
         try {
-            throw Exception("setupGoogleSignIn activity problem")
             val currentUser = firebaseAuth.currentUser
 
             if (currentUser == null) {
@@ -53,41 +51,24 @@ class GoogleLoginRepositoryImpl(
                     .addOnCompleteListener(activity) { task ->
                         if (task.isSuccessful) {
                             // Sign in success, update UI with the signed-in user's information
-                            val user = firebaseAuth.currentUser
-                            val userGoogleData = user?.toGoogleUserResponseData()
+                            val userGoogleData = updateCurrentUser()
                             if (userGoogleData?.isUserLogin() == true) {
                                 googleUserStateFlow.value = userGoogleData
                             } else {
-                                GoogleUserResponseData(
-                                    errorException
-                                    = Exception("setupGoogleSignInLauncher Google sign in failed")
-                                )
+                                updateCurrentUser("setupGoogleSignInLauncher Google sign in failed")
                             }
                         } else {
-                            GoogleUserResponseData(
-                                errorException =
-                                Exception("setupGoogleSignInLauncher Google sign in failed")
-                            )
-
+                            updateCurrentUser("setupGoogleSignInLauncher Google sign in failed")
                         }
                     }
             } else {
-                val userGoogleData = currentUser.toGoogleUserResponseData()
-                if (userGoogleData.isUserLogin()) {
-                    googleUserStateFlow.value = userGoogleData
-                    Timber.d(" signInWithGoogleAnonymous: success")
-                    Timber.d(" signInWithGoogleAnonymous: success ${userGoogleData.toString()}")
-                } else {
-                    googleUserStateFlow.value =
-                        GoogleUserResponseData(
-                            errorException =
-                            Exception("setupGoogleSignInLauncher Google sign in failed")
-                        )
+                val userGoogleData = updateCurrentUser()
+                if (!userGoogleData.isUserLogin()) {
+                    updateCurrentUser("setupGoogleSignInLauncher Google sign in failed")
                 }
             }
         } catch (e: Exception) {
-            googleUserStateFlow.value =
-                GoogleUserResponseData(errorException = e)
+            updateCurrentUser(exception = e)
         }
 
     }
@@ -95,8 +76,7 @@ class GoogleLoginRepositoryImpl(
     override fun updateUserName(name: String) {
         val user = firebaseAuth.currentUser
         if (user == null) {
-            googleUserStateFlow.value =
-                GoogleUserResponseData(errorException = Exception("updateUserName user is null"))
+            updateCurrentUser(errorMessage = ("updateUserName user is null"))
             return
         }
         val profileUpdates = com.google.firebase.auth.UserProfileChangeRequest.Builder()
@@ -106,13 +86,38 @@ class GoogleLoginRepositoryImpl(
         user?.updateProfile(profileUpdates)
             ?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Timber.d("User profile updated.")
+                    updateCurrentUser()
+                } else {
+                    updateCurrentUser("User profile update failed.")
                 }
             }
     }
 
-    fun getCurrentUser(): FirebaseUser? {
-        return firebaseAuth.currentUser
+    fun updateCurrentUser(
+        errorMessage: String = "",
+        exception: java.lang.Exception? = null,
+    ): GoogleUserResponseData? {
+        if (errorMessage.isNotBlank()) {
+            googleUserStateFlow.value = GoogleUserResponseData(
+                errorException
+                = Exception(errorMessage)
+            )
+            return null
+        }
+        if (exception != null) {
+            googleUserStateFlow.value = GoogleUserResponseData(
+                errorException = exception
+            )
+            return null
+        }
+
+        val currentUser = firebaseAuth.currentUser
+        val userGoogleData = currentUser?.toGoogleUserResponseData()
+
+        if (userGoogleData != null) {
+            googleUserStateFlow.value = userGoogleData
+        }
+        return userGoogleData
     }
 
     override fun controlUserAlreadySignIn() {

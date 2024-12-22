@@ -10,9 +10,11 @@ data class LoginOperationUiState(
     val isLoading: Boolean = false,
     val isError: Boolean = false,
     val errorMessage: String = "",
+    val isUsernameEmpty: Boolean = false,
+    val displayName: String = "",
 
     val uid: String = "",
-    val displayName: String = "",
+    val displayNameRemote: String = "",
     val photoUrl: String = "",
     val isLogin: Boolean = uid.isNotBlank(),
     val isAnonymous: Boolean = false,
@@ -25,7 +27,7 @@ sealed class LoginOperationEvent {
     object ErrorDismiss : LoginOperationEvent()
     object LoginClicked : LoginOperationEvent()
     object UsernameSetClicked : LoginOperationEvent()
-    object UsernameChanged : LoginOperationEvent()
+    data class UsernameChanged(val username: String) : LoginOperationEvent()
 
 //    object OnIdle : LoginOperationEvent()
 //    object OnLoading : LoginOperationEvent()

@@ -56,6 +56,10 @@ class LoginOperationVM(
     fun handleEvent(event: LoginOperationEvent) {
         when (event) {
             LoginClicked -> {
+                if (loginOperationState.value.isLogin) {
+                    googleLoginRepository.updateUserName("green985")
+                    return
+                }
                 loginOperationState.value = LoginOperationUiState(isLoading = true)
                 googleLoginRepository.signInWithGoogleAnonymous()
             }
@@ -64,11 +68,20 @@ class LoginOperationVM(
                 loginOperationState.value = LoginOperationUiState()
             }
 
-            UsernameChanged -> {
+            is UsernameChanged -> {
+                loginOperationState.updateState {
+                    copy(
+                        displayName = event.username,
+                        isUsernameEmpty = event.username.isBlank()
+                    )
+                }
             }
 
             UsernameSetClicked -> {
-
+                loginOperationState.updateState {
+                    copy(isLoading = true)
+                }
+                googleLoginRepository.updateUserName(loginOperationState.value.displayName)
             }
         }
     }
@@ -77,7 +90,7 @@ class LoginOperationVM(
         if (googleUserResponseData.isUserLogin()) {
             loginOperationState.updateState {
                 LoginOperationUiState(
-                    displayName = googleUserResponseData.displayName ?: "",
+                    displayNameRemote = googleUserResponseData.displayName ?: "",
                     uid = googleUserResponseData.uid
                 )
             }

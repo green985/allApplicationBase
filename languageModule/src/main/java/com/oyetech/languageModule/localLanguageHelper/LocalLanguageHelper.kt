@@ -34,7 +34,8 @@ class LocalLanguageHelper(private val context: Context) {
             if (languageHashMap.isEmpty()) {
                 // if languageHashMap is empty, we need to init again.
                 Timber.d("languageHashMap is empty, we need to init again.")
-                return defaultString
+                return languageKey
+//                return defaultString
             }
 
             val languageValue = languageHashMap[languageKey] ?: languageKey
