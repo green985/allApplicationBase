@@ -15,6 +15,7 @@ data class CommentData(
     val content: String,
     val userId: String = "green985",
     val createdAt: Date = Date(),
+    val createdAtFieldValue: Any? = null,
 //    val likes: Int,
 //    val replies: List<Reply> = listOf()
 )

@@ -1,6 +1,7 @@
 package com.oyetech.firebaseDB.firebaseDB.comment
 
 import android.util.Log
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
 import com.oyetech.firebaseDB.databaseKeys.FirebaseDatabaseKeys
@@ -41,7 +42,7 @@ class FirebaseCommentOperationRepositoryImp :
         firestore.collection(FirebaseDatabaseKeys.commentTable)
             .document(contentId)
             .collection("comments")
-            .add(CommentData(content = content))
+            .add(CommentData(content = content, createdAtFieldValue = FieldValue.serverTimestamp()))
             .addOnSuccessListener {
                 Timber.d("Comment added")
             }
