@@ -3,6 +3,8 @@ package com.oyetech.domain.di
 import com.oyetech.domain.helper.ActivityProviderUseCase
 import com.oyetech.domain.radioOperationUseCases.remoteUseCase.RadioDataOperationUseCase
 import com.oyetech.domain.radioOperationUseCases.remoteUseCase.RadioStationListOperationUseCase
+import com.oyetech.domain.repository.usernameGeneratorRepository.UsernameGeneratorImp
+import com.oyetech.domain.repository.usernameGeneratorRepository.UsernameGeneratorRepository
 import com.oyetech.domain.useCases.AdsHelperUseCase
 import com.oyetech.domain.useCases.AlarmOperationUseCase
 import com.oyetech.domain.useCases.AnalyticsOperationUseCase
@@ -44,6 +46,7 @@ object DomainModule {
 //        single { LocalNotificationUseCase(get()) }
 //        single { DynamicLinkOperationUseCase(get()) }
         single { AnalyticsOperationUseCase(get()) }
+        single<UsernameGeneratorRepository> { UsernameGeneratorImp() }
     }
 }
 

@@ -7,19 +7,25 @@ Created by Erdi Özbek
  **/
 import android.app.Activity
 import android.content.Intent
+import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.oyetech.domain.helper.ActivityProviderUseCase
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.models.firebaseModels.googleAuth.GoogleAuthResponseData
+import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData
+import com.oyetech.models.firebaseModels.googleAuth.ProviderDataInfo
+import com.oyetech.models.firebaseModels.googleAuth.UserMetadata
+import com.oyetech.models.firebaseModels.googleAuth.isUserLogin
 import kotlinx.coroutines.flow.MutableStateFlow
+import timber.log.Timber
 
 class GoogleLoginRepositoryImpl(
     private val activityProviderUseCase: ActivityProviderUseCase,
@@ -27,11 +33,80 @@ class GoogleLoginRepositoryImpl(
     override val googleAuthStateFlow =
         MutableStateFlow<GoogleAuthResponseData>(GoogleAuthResponseData())
 
+    override val googleUserStateFlow =
+        MutableStateFlow<GoogleUserResponseData>(GoogleUserResponseData())
+
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var googleSignInLauncher: ActivityResultLauncher<Intent>
 
-    private lateinit var activity: AppCompatActivity
+    private lateinit var activity: ComponentActivity
+
+    override fun signInWithGoogleAnonymous() {
+        activity = getActivityOrSetError("setupGoogleSignIn activity problem") ?: return
+        if (activity == null) {
+            googleUserStateFlow.value =
+                GoogleUserResponseData(errorException = Exception("setupGoogleSignIn activity problem"))
+            return
+        }
+
+        val currentUser = firebaseAuth.currentUser
+
+        if (currentUser == null) {
+            firebaseAuth.signInAnonymously()
+                .addOnCompleteListener(activity) { task ->
+                    if (task.isSuccessful) {
+                        // Sign in success, update UI with the signed-in user's information
+                        val user = firebaseAuth.currentUser
+                        val userGoogleData = user?.toGoogleUserResponseData()
+                        if (userGoogleData?.isUserLogin() == true) {
+                            googleUserStateFlow.value = userGoogleData
+                            Timber.d(" signInWithGoogleAnonymous: success")
+                            Timber.d(" signInWithGoogleAnonymous: success ${userGoogleData.toString()}")
+                        } else {
+                            GoogleUserResponseData(errorException = Exception("setupGoogleSignInLauncher Google sign in failed"))
+                        }
+                    } else {
+                        GoogleUserResponseData(errorException = Exception("setupGoogleSignInLauncher Google sign in failed"))
+
+                    }
+                }
+        } else {
+            val userGoogleData = currentUser.toGoogleUserResponseData()
+            if (userGoogleData.isUserLogin()) {
+                googleUserStateFlow.value = userGoogleData
+                Timber.d(" signInWithGoogleAnonymous: success")
+                Timber.d(" signInWithGoogleAnonymous: success ${userGoogleData.toString()}")
+            } else {
+                GoogleUserResponseData(errorException = Exception("setupGoogleSignInLauncher Google sign in failed"))
+            }
+        }
+
+
+    }
+
+    override fun updateUserName(name: String) {
+        val user = firebaseAuth.currentUser
+        if (user == null) {
+            googleUserStateFlow.value =
+                GoogleUserResponseData(errorException = Exception("updateUserName user is null"))
+            return
+        }
+        val profileUpdates = com.google.firebase.auth.UserProfileChangeRequest.Builder()
+            .setDisplayName(name)
+            .build()
+
+        user?.updateProfile(profileUpdates)
+            ?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Timber.d("User profile updated.")
+                }
+            }
+    }
+
+    fun getCurrentUser(): FirebaseUser? {
+        return firebaseAuth.currentUser
+    }
 
     override fun controlUserAlreadySignIn() {
         activity = getActivityOrSetError("setupGoogleSignIn activity problem") ?: return
@@ -114,7 +189,7 @@ class GoogleLoginRepositoryImpl(
         }
     }
 
-    private fun getActivityOrSetError(errorString: String): AppCompatActivity? {
+    private fun getActivityOrSetError(errorString: String): ComponentActivity? {
         val activity = activityProviderUseCase.getCurrentActivity()
 
         if (activity == null) {
@@ -122,7 +197,35 @@ class GoogleLoginRepositoryImpl(
                 GoogleAuthResponseData(errorException = Exception(errorString))
             return null
         }
-        return activity as? AppCompatActivity
+        return activity as? ComponentActivity
     }
 
+    fun FirebaseUser.toGoogleUserResponseData(): GoogleUserResponseData {
+        return GoogleUserResponseData(
+            uid = this.uid,
+            email = this.email,
+            displayName = this.displayName,
+            phoneNumber = this.phoneNumber,
+            photoUrl = this.photoUrl?.toString(),
+            providerId = this.providerId,
+            tenantId = this.tenantId,
+            isAnonymous = this.isAnonymous,
+            metadata = this.getMetadata()?.let {
+                UserMetadata(
+                    creationTimestamp = it.creationTimestamp,
+                    lastSignInTimestamp = it.lastSignInTimestamp
+                )
+            },
+            providerData = this.providerData.map {
+                ProviderDataInfo(
+                    providerId = it.providerId,
+                    uid = it.uid,
+                    displayName = it.displayName,
+                    email = it.email,
+                    phoneNumber = it.phoneNumber,
+                    photoUrl = it.photoUrl?.toString()
+                )
+            }
+        )
+    }
 }

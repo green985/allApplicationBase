@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.domain.repository.helpers.SharedHelperRepository
+import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.domain.useCases.helpers.AppReviewOperationUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -18,6 +19,7 @@ class GeneralOperationVM(
     appDispatchers: AppDispatchers,
     private val appReviewOperationUseCase: AppReviewOperationUseCase,
     private val sharedHelperRepository: SharedHelperRepository,
+    private val googleLoginRepository: GoogleLoginRepository,
 ) : BaseViewModel(appDispatchers) {
 
     fun getReviewCanShowState() = appReviewOperationUseCase.getReviewCanShowState()
@@ -37,6 +39,18 @@ class GeneralOperationVM(
     fun dismissDialog() {
         getReviewCanShowState().value = false
         sharedHelperRepository.setReviewAlreadyShown(true)
+    }
+
+    fun signInWithGoogleAnonymous() {
+        viewModelScope.launch(getDispatcherIo()) {
+            googleLoginRepository.signInWithGoogleAnonymous()
+        }
+    }
+
+    fun updateUserName(username: String) {
+        viewModelScope.launch(getDispatcherIo()) {
+            googleLoginRepository.updateUserName(username)
+        }
     }
 
     init {

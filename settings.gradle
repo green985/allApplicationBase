@@ -51,7 +51,7 @@ include ':exoplayerModule'
 include ':radioOperationModule'
 include ':reviewer'
 
-//include ':googleLogin'
+include ':googleLogin'
 //include ':features:googleSignUp'
 include ':composeBase'
 include ':glideModule'

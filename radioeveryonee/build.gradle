@@ -116,6 +116,7 @@ dependencies {
     implementation project(Modules.radioService)
     implementation project(Modules.glideModule)
     implementation project(Modules.reviewer)
+    implementation project(Modules.googleLogin)
 
 
     implementation platform(FirebaseLibrary.firebaseBom)

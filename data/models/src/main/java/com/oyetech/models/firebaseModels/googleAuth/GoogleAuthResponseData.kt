@@ -30,3 +30,17 @@ data class GoogleAuthResponseData(
     val errorException: Exception? = null,
 
     ) : Parcelable
+
+@Parcelize
+@Keep
+@JsonClass(generateAdapter = true)
+data class GoogleAnonymousAuthResponseData(
+    val id: String? = "",
+    val token: String? = "",
+    val refreshToken: String? = "",
+    val expiresIn: Long = 0,
+    val timeStamp: Long = 0,
+    val idToken: String? = "",
+    val errorMessage: String? = null,
+    val errorException: Exception? = null,
+) : Parcelable

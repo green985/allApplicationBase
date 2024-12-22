@@ -4,6 +4,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
@@ -41,6 +44,21 @@ fun GeneralOperationScreenSetup(content: @Composable () -> Unit) {
             })
     }
 
+    var dialogState by remember { mutableStateOf(true) }
+
+    if (dialogState) {
+        RateUsDialog(
+            onDismiss = {
+                dialogState = false
+                viewModel.dismissDialog()
+            }, onRefuse = {
+                viewModel.dismissReviewState()
+            }, onSuccess = {
+                viewModel.updateUserName("green985")
+                //viewModel.startReviewOperation()
+
+            })
+    }
 
 
 

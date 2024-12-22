@@ -10,6 +10,7 @@ import com.oyetech.domain.di.RadioDomainModule
 import com.oyetech.exoplayermodule.di.ExoPlayerModuleDi
 import com.oyetech.firebaseDB.di.FirebaseDBModule
 import com.oyetech.glidemodule.GlideModuleDi
+import com.oyetech.googlelogin.di.GoogleSignInModule
 import com.oyetech.helper.BaseUrlConfigHelper
 import com.oyetech.languageModule.di.LanguageModuleDi
 import com.oyetech.local.di.RadioLocalModuleDi
@@ -63,7 +64,8 @@ object AppComponent {
 
         QuotesImpModule.quoteImpModule,
         QuotesRemoteModule.createZenQuotesRemoteModule(),
-        QuotesLocalModuleDi.localModule
+        QuotesLocalModuleDi.localModule,
+        GoogleSignInModule.googleSignInModulee
 //        RevenueCatModuleDi.revenueCatOperationModule
     )
 }
