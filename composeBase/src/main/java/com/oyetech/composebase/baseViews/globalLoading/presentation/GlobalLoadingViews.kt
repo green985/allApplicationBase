@@ -41,6 +41,32 @@ fun GlobalLoadingView() {
 
 @Composable
 fun GlobalErrorView(
+    message: String = "",
+    onDismiss: () -> Unit = {},
+    onRetry: (() -> Unit),
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = backgroudAlpha)),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(text = message, color = Color.White)
+            Button(onClick = onDismiss) {
+                Text(text = "Dismiss")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = onRetry) {
+                Text(text = "Retry")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
+}
+
+@Composable
+fun GlobalErrorView(
     uiState: GlobalLoadingUiState.Error = GlobalLoadingUiState.Error(""),
     onEvent: (GlobalLoadingUiEvent) -> Unit = {},
 ) {

@@ -44,44 +44,51 @@ class GoogleLoginRepositoryImpl(
 
     override fun signInWithGoogleAnonymous() {
         activity = getActivityOrSetError("setupGoogleSignIn activity problem") ?: return
-        if (activity == null) {
-            googleUserStateFlow.value =
-                GoogleUserResponseData(errorException = Exception("setupGoogleSignIn activity problem"))
-            return
-        }
+        try {
+            throw Exception("setupGoogleSignIn activity problem")
+            val currentUser = firebaseAuth.currentUser
 
-        val currentUser = firebaseAuth.currentUser
-
-        if (currentUser == null) {
-            firebaseAuth.signInAnonymously()
-                .addOnCompleteListener(activity) { task ->
-                    if (task.isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
-                        val user = firebaseAuth.currentUser
-                        val userGoogleData = user?.toGoogleUserResponseData()
-                        if (userGoogleData?.isUserLogin() == true) {
-                            googleUserStateFlow.value = userGoogleData
-                            Timber.d(" signInWithGoogleAnonymous: success")
-                            Timber.d(" signInWithGoogleAnonymous: success ${userGoogleData.toString()}")
+            if (currentUser == null) {
+                firebaseAuth.signInAnonymously()
+                    .addOnCompleteListener(activity) { task ->
+                        if (task.isSuccessful) {
+                            // Sign in success, update UI with the signed-in user's information
+                            val user = firebaseAuth.currentUser
+                            val userGoogleData = user?.toGoogleUserResponseData()
+                            if (userGoogleData?.isUserLogin() == true) {
+                                googleUserStateFlow.value = userGoogleData
+                            } else {
+                                GoogleUserResponseData(
+                                    errorException
+                                    = Exception("setupGoogleSignInLauncher Google sign in failed")
+                                )
+                            }
                         } else {
-                            GoogleUserResponseData(errorException = Exception("setupGoogleSignInLauncher Google sign in failed"))
+                            GoogleUserResponseData(
+                                errorException =
+                                Exception("setupGoogleSignInLauncher Google sign in failed")
+                            )
+
                         }
-                    } else {
-                        GoogleUserResponseData(errorException = Exception("setupGoogleSignInLauncher Google sign in failed"))
-
                     }
-                }
-        } else {
-            val userGoogleData = currentUser.toGoogleUserResponseData()
-            if (userGoogleData.isUserLogin()) {
-                googleUserStateFlow.value = userGoogleData
-                Timber.d(" signInWithGoogleAnonymous: success")
-                Timber.d(" signInWithGoogleAnonymous: success ${userGoogleData.toString()}")
             } else {
-                GoogleUserResponseData(errorException = Exception("setupGoogleSignInLauncher Google sign in failed"))
+                val userGoogleData = currentUser.toGoogleUserResponseData()
+                if (userGoogleData.isUserLogin()) {
+                    googleUserStateFlow.value = userGoogleData
+                    Timber.d(" signInWithGoogleAnonymous: success")
+                    Timber.d(" signInWithGoogleAnonymous: success ${userGoogleData.toString()}")
+                } else {
+                    googleUserStateFlow.value =
+                        GoogleUserResponseData(
+                            errorException =
+                            Exception("setupGoogleSignInLauncher Google sign in failed")
+                        )
+                }
             }
+        } catch (e: Exception) {
+            googleUserStateFlow.value =
+                GoogleUserResponseData(errorException = e)
         }
-
 
     }
 

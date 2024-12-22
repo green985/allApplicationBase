@@ -23,6 +23,7 @@ object RadioAppProjectRoutes {
 
     val QuotesListScreen = Route("radioList/QuotesListScreen")
     val CommentScreen = Route("CommentScreen")
+    val LoginOperationScreen = Route("LoginOperationScreen")
 
     val radioApplicationBottomTabNavList = listOf(
         RadioAppNavItem.TabRadioAllList,
@@ -65,7 +66,7 @@ sealed class RadioAppNavItem {
 
     object SettingsTab :
         BottomNavigationItem(
-            path = RadioAppProjectRoutes.QuotesListScreen.route.toString(),
+            path = RadioAppProjectRoutes.TabSettings.route.toString(),
             title = R.string.nav_item_settings,
             icon = R.drawable.ic_settings
         )

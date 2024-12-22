@@ -7,10 +7,26 @@ Created by Erdi Özbek
  **/
 
 data class LoginOperationUiState(
-    val isIdle: Boolean = true,
+    val isLoading: Boolean = false,
+    val isError: Boolean = false,
+    val errorMessage: String = "",
+
+    val uid: String = "",
+    val displayName: String = "",
+    val photoUrl: String = "",
+    val isLogin: Boolean = uid.isNotBlank(),
+    val isAnonymous: Boolean = false,
+
+//    val creationTimestamp: Long? = null,
+//    val lastSignInTimestamp: Long? = null,
 )
 
 sealed class LoginOperationEvent {
+    object ErrorDismiss : LoginOperationEvent()
+    object LoginClicked : LoginOperationEvent()
+    object UsernameSetClicked : LoginOperationEvent()
+    object UsernameChanged : LoginOperationEvent()
+
 //    object OnIdle : LoginOperationEvent()
 //    object OnLoading : LoginOperationEvent()
 //    object OnSuccess : LoginOperationEvent()

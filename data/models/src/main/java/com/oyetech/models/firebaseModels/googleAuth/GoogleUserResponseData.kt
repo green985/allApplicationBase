@@ -13,8 +13,7 @@ data class GoogleUserResponseData(
     val providerData: List<ProviderDataInfo> = emptyList(),
     val errorException: Exception? = null, // Added field
     val errorMessage: String? = errorException?.message, // Added field
-) {
-}
+)
 
 fun GoogleUserResponseData?.isUserAnonymous() = this?.isAnonymous ?: false
 

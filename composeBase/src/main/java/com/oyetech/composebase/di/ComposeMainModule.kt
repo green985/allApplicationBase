@@ -1,6 +1,7 @@
 package com.oyetech.composebase.di
 
 import com.oyetech.composebase.experimental.commentScreen.CommentScreenVM
+import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
 import com.oyetech.composebase.helpers.adViewDelegate.AdViewOperationDelegate
 import com.oyetech.composebase.helpers.adViewDelegate.AdViewOperationDelegateImpl
 import com.oyetech.composebase.helpers.vibrationHelper.IVibrationHelper
@@ -63,7 +64,7 @@ object ComposeMainModule {
 
 
 
-
+        viewModelOf(::LoginOperationVM)
         viewModelOf(::QuotesVM)
         viewModelOf(::QuoteTagListVM)
     }

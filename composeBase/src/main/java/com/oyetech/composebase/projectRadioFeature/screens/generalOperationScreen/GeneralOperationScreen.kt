@@ -54,7 +54,8 @@ fun GeneralOperationScreenSetup(content: @Composable () -> Unit) {
             }, onRefuse = {
                 viewModel.dismissReviewState()
             }, onSuccess = {
-                viewModel.updateUserName("green985")
+                viewModel.signInWithGoogleAnonymous()
+//                viewModel.updateUserName("green985")
                 //viewModel.startReviewOperation()
 
             })
