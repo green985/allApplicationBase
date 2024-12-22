@@ -10,5 +10,7 @@ object FirebaseDatabaseKeys {
     const val RADIO_FEEDBACK_COLLECTION = "radioFeedback"
     const val Radio_Playing_Time_Collection = "Radio_Playing_Time_Collection"
 
+    const val commentTable = "commentTable"
+
 
 }

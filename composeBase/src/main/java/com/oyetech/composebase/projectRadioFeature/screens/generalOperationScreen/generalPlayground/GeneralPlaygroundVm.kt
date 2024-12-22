@@ -5,6 +5,7 @@ import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.core.coroutineHelper.asResult
 import com.oyetech.domain.quotesDomain.quotesData.QuotesRepository
+import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -18,10 +19,12 @@ Created by Erdi Özbek
 class GeneralPlaygroundVm(
     appDispatchers: AppDispatchers,
     private val quotesRepository: QuotesRepository,
+    private val firebaseCommentOperationRepository: FirebaseCommentOperationRepository,
 ) : BaseViewModel(appDispatchers) {
 
     init {
         fetchRandomQuotes()
+        firebaseCommentOperationRepository.getCommentsWithId("commentId")
     }
 
     fun initt() {

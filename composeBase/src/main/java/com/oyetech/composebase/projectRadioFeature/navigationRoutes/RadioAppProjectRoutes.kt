@@ -22,6 +22,7 @@ object RadioAppProjectRoutes {
     val ContactScreen = Route("radioList/ContactScreen")
 
     val QuotesListScreen = Route("radioList/QuotesListScreen")
+    val CommentScreen = Route("CommentScreen")
 
     val radioApplicationBottomTabNavList = listOf(
         RadioAppNavItem.TabRadioAllList,

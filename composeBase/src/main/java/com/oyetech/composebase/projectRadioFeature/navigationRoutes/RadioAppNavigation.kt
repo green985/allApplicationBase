@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
+import com.oyetech.composebase.experimental.commentScreen.CommentScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.RadioListScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.radioSearchList.RadioSearchListScreenSetup
@@ -14,7 +15,6 @@ import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.TabSettin
 import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactWithMe.ContactScreen
 import com.oyetech.composebase.projectRadioFeature.screens.tagList.TagListScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.views.dialogs.timerDialog.RadioCountTimerDialogSetup
-import com.oyetech.composebase.projectRadioFeature.views.quotes.tagList.QuoteTagListSetup
 import com.oyetech.models.radioProject.enums.RadioListEnums
 import timber.log.Timber
 
@@ -67,8 +67,15 @@ fun NavGraphBuilder.radioAppNavigation(navController: NavController) {
 
     // TabHistory Route
     composable(RadioAppProjectRoutes.QuotesListScreen.route) {
-        QuoteTagListSetup(
-            navigationRoute = navigateRoute(navController)
+        CommentScreenSetup(
+//            navigationRoute = navigateRoute(navController)
+        )
+    }
+
+    // TabHistory Route
+    composable(RadioAppProjectRoutes.CommentScreen.route) {
+        CommentScreenSetup(
+//            navigationRoute = navigateRoute(navController)
         )
     }
 
