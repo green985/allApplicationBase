@@ -4,7 +4,6 @@ import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
 import com.oyetech.firebaseDB.databaseKeys.FirebaseDatabaseKeys
-import com.oyetech.firebaseDB.helperFunctions.FirebaseHelperUtil
 import com.oyetech.models.firebaseModels.commentModel.CommentData
 import kotlinx.coroutines.flow.flowOf
 import timber.log.Timber
@@ -22,7 +21,7 @@ class FirebaseCommentOperationRepositoryImp(private val firestore: FirebaseFires
         firestore.collection(FirebaseDatabaseKeys.commentTable)
             .document(commentId)
             .collection("comments")
-            .orderBy("createdAtFieldValue")
+//            .orderBy("createdAtFieldValue")
             .get()
             .addOnSuccessListener { result ->
                 result.documents.forEach {
@@ -43,7 +42,6 @@ class FirebaseCommentOperationRepositoryImp(private val firestore: FirebaseFires
             .add(
                 CommentData(
                     content = content,
-                    createdAtFieldValue = FirebaseHelperUtil.getFirebaseTimeStamp()
                 )
             )
             .addOnSuccessListener {

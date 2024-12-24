@@ -25,6 +25,17 @@ data class GoogleUserResponseData(
             errorException = errorException,
         )
     }
+
+    companion object {
+
+        fun getNewWithException(message: String?): GoogleUserResponseData {
+            if (message.isNullOrBlank()) {
+                return GoogleUserResponseData(errorException = Exception(message))
+            } else {
+                return GoogleUserResponseData(errorException = Exception("exceptionError"))
+            }
+        }
+    }
 }
 
 fun GoogleUserResponseData?.isUserAnonymous() = this?.isAnonymous ?: false

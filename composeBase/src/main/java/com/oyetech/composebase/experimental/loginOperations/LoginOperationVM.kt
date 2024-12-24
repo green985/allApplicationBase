@@ -3,10 +3,12 @@ package com.oyetech.composebase.experimental.loginOperations
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
+import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.DeleteAccountClick
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.ErrorDismiss
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.LoginClicked
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.UsernameChanged
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.UsernameSetClicked
+import com.oyetech.composebase.experimental.viewModelSlice.UserOperationViewModelSlice
 import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.core.coroutineHelper.asResult
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
@@ -28,9 +30,11 @@ class LoginOperationVM(
     appDispatchers: AppDispatchers,
     val googleLoginRepository: GoogleLoginRepository,
     val profileRepository: FirebaseUserRepository,
+    val userOperationViewModelSlice: UserOperationViewModelSlice,
 ) : BaseViewModel(appDispatchers) {
 
-    val loginOperationState = MutableStateFlow(LoginOperationUiState())
+    val loginOperationState =
+        MutableStateFlow(LoginOperationUiState())
 
     init {
         observeProfileData()
@@ -80,6 +84,12 @@ class LoginOperationVM(
                         isError = false,
                         errorMessage = ""
                     )
+                }
+            }
+
+            DeleteAccountClick -> {
+                viewModelScope.launch(getDispatcherIo()) {
+                    userOperationViewModelSlice.deleteUser(loginOperationState.value.uid)
                 }
             }
 

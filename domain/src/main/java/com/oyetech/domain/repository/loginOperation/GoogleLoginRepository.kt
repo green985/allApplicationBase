@@ -18,5 +18,4 @@ interface GoogleLoginRepository {
 
     val googleUserStateFlow: MutableStateFlow<GoogleUserResponseData>
     fun signInWithGoogleAnonymous()
-    fun updateUserName(username: String)
 }

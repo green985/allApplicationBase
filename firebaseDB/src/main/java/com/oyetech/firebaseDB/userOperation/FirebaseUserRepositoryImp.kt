@@ -3,6 +3,7 @@ package com.oyetech.firebaseDB.userOperation
 import com.google.firebase.firestore.FirebaseFirestore
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.firebaseDB.userOperation.databaseKey.FirebaseUserDatabaseKey
+import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,13 +49,17 @@ class FirebaseUserRepositoryImp(
     }
 
     fun createProfile(user: FirebaseUserProfileModel) {
+        userDataStateFlow.value = FirebaseUserProfileModel()
         firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION)
             .document(user.uid)
             .set(user)
             .addOnSuccessListener {
-                userDataStateFlow.tryEmit(user)
+                userDataStateFlow.value = user.copy()
             }
             .addOnFailureListener { exception ->
+                userDataStateFlow.value =
+                    FirebaseUserProfileModel(errorException = Exception(LanguageKey.createUserErrorMessage))
+
                 println("Error creating user: ${exception.message}")
             }
     }
@@ -72,10 +77,11 @@ class FirebaseUserRepositoryImp(
             .document(uid)
             .delete()
             .addOnSuccessListener {
-                userDataStateFlow.tryEmit(null)
+                userDataStateFlow.value = FirebaseUserProfileModel(isUserDeleted = true)
             }
             .addOnFailureListener { exception ->
-                println("Error deleting user: ${exception.message}")
+                userDataStateFlow.value =
+                    userDataStateFlow.value?.copy(errorException = Exception(LanguageKey.deleteUserErrorMessage))
             }
     }
 

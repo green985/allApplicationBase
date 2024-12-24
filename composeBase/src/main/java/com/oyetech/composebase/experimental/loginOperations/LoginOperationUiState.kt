@@ -11,6 +11,7 @@ data class LoginOperationUiState(
     val isError: Boolean = false,
     val errorMessage: String = "",
     val isUsernameEmpty: Boolean = false,
+    val isUserDeleted: Boolean = false,
     val displayName: String = "",
 
     val uid: String = "",
@@ -26,6 +27,7 @@ data class LoginOperationUiState(
 sealed class LoginOperationEvent {
     object ErrorDismiss : LoginOperationEvent()
     object LoginClicked : LoginOperationEvent()
+    object DeleteAccountClick : LoginOperationEvent()
     object UsernameSetClicked : LoginOperationEvent()
     data class UsernameChanged(val username: String) : LoginOperationEvent()
 

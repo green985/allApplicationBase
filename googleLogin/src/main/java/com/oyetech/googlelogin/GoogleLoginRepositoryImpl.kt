@@ -21,6 +21,7 @@ import com.oyetech.domain.helper.ActivityProviderUseCase
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.models.firebaseModels.googleAuth.GoogleAuthResponseData
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData
+import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData.Companion.getNewWithException
 import com.oyetech.models.firebaseModels.googleAuth.ProviderDataInfo
 import com.oyetech.models.firebaseModels.googleAuth.UserMetadata
 import com.oyetech.models.firebaseModels.googleAuth.isUserLogin
@@ -30,10 +31,10 @@ class GoogleLoginRepositoryImpl(
     private val activityProviderUseCase: ActivityProviderUseCase,
 ) : GoogleLoginRepository {
     override val googleAuthStateFlow =
-        MutableStateFlow<GoogleAuthResponseData>(GoogleAuthResponseData())
+        MutableStateFlow(GoogleAuthResponseData())
 
     override val googleUserStateFlow =
-        MutableStateFlow<GoogleUserResponseData>(GoogleUserResponseData())
+        MutableStateFlow(GoogleUserResponseData())
 
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -44,79 +45,46 @@ class GoogleLoginRepositoryImpl(
     override fun signInWithGoogleAnonymous() {
         activity = getActivityOrSetError("setupGoogleSignIn activity problem") ?: return
         try {
+            googleUserStateFlow.value = GoogleUserResponseData()
             val currentUser = firebaseAuth.currentUser
-
             if (currentUser == null) {
                 firebaseAuth.signInAnonymously()
                     .addOnCompleteListener(activity) { task ->
                         if (task.isSuccessful) {
                             // Sign in success, update UI with the signed-in user's information
-                            val userGoogleData = updateCurrentUser()
+                            val userGoogleData = getCurrentUserResponse()
                             if (userGoogleData?.isUserLogin() == true) {
                                 googleUserStateFlow.value = userGoogleData
                             } else {
-                                updateCurrentUser("setupGoogleSignInLauncher Google sign in failed")
+                                googleUserStateFlow.value =
+                                    getNewWithException("setupGoogleSignInLauncher Google sign in failed")
                             }
                         } else {
-                            updateCurrentUser("setupGoogleSignInLauncher Google sign in failed")
+                            googleUserStateFlow.value =
+                                getNewWithException("setupGoogleSignInLauncher Google sign in failed")
                         }
                     }
             } else {
-                val userGoogleData = updateCurrentUser()
-                if (!userGoogleData.isUserLogin()) {
-                    updateCurrentUser("setupGoogleSignInLauncher Google sign in failed")
+                val userGoogleData = getCurrentUserResponse()
+                if (userGoogleData == null || !userGoogleData.isUserLogin()) {
+                    googleUserStateFlow.value =
+                        getNewWithException("setupGoogleSignInLauncher Google sign in failed")
+                } else {
+                    googleUserStateFlow.value = userGoogleData.copy()
                 }
             }
         } catch (e: Exception) {
-            updateCurrentUser(exception = e)
+            googleUserStateFlow.value = getNewWithException(e.message)
         }
 
     }
 
-    override fun updateUserName(name: String) {
-        val user = firebaseAuth.currentUser
-        if (user == null) {
-            updateCurrentUser(errorMessage = ("updateUserName user is null"))
-            return
-        }
-        val profileUpdates = com.google.firebase.auth.UserProfileChangeRequest.Builder()
-            .setDisplayName(name)
-            .build()
-
-        user?.updateProfile(profileUpdates)
-            ?.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    updateCurrentUser()
-                } else {
-                    updateCurrentUser("User profile update failed.")
-                }
-            }
-    }
-
-    fun updateCurrentUser(
-        errorMessage: String = "",
-        exception: java.lang.Exception? = null,
+    fun getCurrentUserResponse(
     ): GoogleUserResponseData? {
-        if (errorMessage.isNotBlank()) {
-            googleUserStateFlow.value = GoogleUserResponseData(
-                errorException
-                = Exception(errorMessage)
-            )
-            return null
-        }
-        if (exception != null) {
-            googleUserStateFlow.value = GoogleUserResponseData(
-                errorException = exception
-            )
-            return null
-        }
 
         val currentUser = firebaseAuth.currentUser
         val userGoogleData = currentUser?.toGoogleUserResponseData()
 
-        if (userGoogleData != null) {
-            googleUserStateFlow.value = userGoogleData
-        }
         return userGoogleData
     }
 
@@ -127,8 +95,8 @@ class GoogleLoginRepositoryImpl(
         if (account != null) {
             handleSignInResult(account)
         } else {
-            googleAuthStateFlow.value =
-                GoogleAuthResponseData(errorException = Exception("controlUserAlreadySignIn Google sign in failed"))
+            googleUserStateFlow.value =
+                getNewWithException("controlUserAlreadySignIn Google sign in failed")
         }
     }
 
@@ -145,8 +113,8 @@ class GoogleLoginRepositoryImpl(
 
     private fun setupGoogleSignIn() {
         if (activity == null) {
-            googleAuthStateFlow.value =
-                GoogleAuthResponseData(errorException = Exception("setupGoogleSignIn activity problem"))
+            googleUserStateFlow.value =
+                getNewWithException("setupGoogleSignIn activity problem")
             return
         }
 
@@ -158,8 +126,8 @@ class GoogleLoginRepositoryImpl(
 
     private fun setupGoogleSignInLauncher() {
         if (activity == null) {
-            googleAuthStateFlow.value =
-                GoogleAuthResponseData(errorException = Exception("setupGoogleSignIn activity problem"))
+            googleUserStateFlow.value =
+                getNewWithException("setupGoogleSignIn activity problem")
             return
         }
         googleSignInLauncher = activityProviderUseCase!!.registerActivityResultLauncher(
@@ -170,8 +138,8 @@ class GoogleLoginRepositoryImpl(
                     val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                     handleSignInResult(task.result)
                 } else {
-                    googleAuthStateFlow.value =
-                        GoogleAuthResponseData(errorException = Exception("setupGoogleSignInLauncher Google sign in failed"))
+                    googleUserStateFlow.value =
+                        getNewWithException("setupGoogleSignInLauncher Google sign in failed")
                 }
             }
         )
@@ -194,8 +162,8 @@ class GoogleLoginRepositoryImpl(
                                 timeStamp = System.currentTimeMillis()
                             )
                     } else {
-                        googleAuthStateFlow.value =
-                            GoogleAuthResponseData(errorException = Exception("handleSignInResult Google sign in failed"))
+                        googleUserStateFlow.value =
+                            getNewWithException("handleSignInResult Google sign in failed")
                     }
                 }
         }
@@ -205,8 +173,7 @@ class GoogleLoginRepositoryImpl(
         val activity = activityProviderUseCase.getCurrentActivity()
 
         if (activity == null) {
-            googleAuthStateFlow.value =
-                GoogleAuthResponseData(errorException = Exception(errorString))
+            googleUserStateFlow.value = getNewWithException(errorString)
             return null
         }
         return activity as? ComponentActivity

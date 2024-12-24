@@ -5,6 +5,7 @@ import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData
 import com.oyetech.models.firebaseModels.googleAuth.isUserLogin
 import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
+import kotlinx.coroutines.flow.getAndUpdate
 
 /**
 Created by Erdi Özbek
@@ -28,6 +29,19 @@ fun LoginOperationVM.mapToProfileValue(userData: FirebaseUserProfileModel?) {
     if (userData == null) {
         return
     }
+
+    if (userData.isUserDeleted) {
+        loginOperationState.updateState {
+            copy(
+                isLoading = false,
+                errorMessage = "",
+                isUserDeleted = userData.isUserDeleted
+            )
+        }
+        return
+    }
+
+
     if (userData.errorException != null) {
         loginOperationState.updateState {
             copy(
@@ -47,7 +61,17 @@ fun LoginOperationVM.mapToProfileValue(userData: FirebaseUserProfileModel?) {
             isAnonymous = userData.isAnonymous,
             lastSignInTimestamp = userData.lastSignInTimestamp
         )
+    } else {
+        loginOperationState.updateState {
+            val isLoading = loginOperationState.getAndUpdate {
+                LoginOperationUiState()
+            }
+            LoginOperationUiState(
+                isLoading = isLoading.isLoading,
+            )
+        }
     }
+
 
 }
 

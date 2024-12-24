@@ -2,6 +2,7 @@ package com.oyetech.composebase.di
 
 import com.oyetech.composebase.experimental.commentScreen.CommentScreenVM
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
+import com.oyetech.composebase.experimental.viewModelSlice.UserOperationViewModelSlice
 import com.oyetech.composebase.helpers.adViewDelegate.AdViewOperationDelegate
 import com.oyetech.composebase.helpers.adViewDelegate.AdViewOperationDelegateImpl
 import com.oyetech.composebase.helpers.vibrationHelper.IVibrationHelper
@@ -27,6 +28,7 @@ import com.oyetech.composebase.projectRadioFeature.views.quotes.randomQuotesView
 import com.oyetech.composebase.projectRadioFeature.views.quotes.tagList.QuoteTagListVM
 import com.oyetech.domain.repository.helpers.logicRepositories.RadioListSortRepository
 import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 /**
@@ -63,9 +65,9 @@ object ComposeMainModule {
 
 
 
-
         viewModelOf(::LoginOperationVM)
         viewModelOf(::QuotesVM)
         viewModelOf(::QuoteTagListVM)
+        singleOf(::UserOperationViewModelSlice)
     }
 }

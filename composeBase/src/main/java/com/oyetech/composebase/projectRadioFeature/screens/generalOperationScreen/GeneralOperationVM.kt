@@ -47,11 +47,6 @@ class GeneralOperationVM(
         }
     }
 
-    fun updateUserName(username: String) {
-        viewModelScope.launch(getDispatcherIo()) {
-            googleLoginRepository.updateUserName(username)
-        }
-    }
 
     init {
         sharedHelperRepository.increaseAppOpenCount()

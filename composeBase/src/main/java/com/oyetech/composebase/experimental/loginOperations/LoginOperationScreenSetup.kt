@@ -61,12 +61,22 @@ fun LoginOperationScreen(uiState: LoginOperationUiState, onEvent: (LoginOperatio
         Column {
             Spacer(modifier = Modifier.height(64.dp))
             Row(modifier = Modifier.fillMaxWidth()) {
-                Text(text = "Login Operation Screen == " + uiState.toString())
+
+                if (uiState.isUserDeleted) {
+                    Text(text = LanguageKey.accountDeleted + uiState.toString())
+                } else {
+                    Text(text = "Login Operation Screen == " + uiState.toString())
+                }
             }
             Spacer(modifier = Modifier.height(32.dp))
 
             Button({ onEvent.invoke(LoginOperationEvent.LoginClicked) }) {
                 Text(text = LanguageKey.login)
+            }
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Button({ onEvent.invoke(LoginOperationEvent.DeleteAccountClick) }) {
+                Text(text = LanguageKey.deleteAccountButtonText)
             }
         }
 

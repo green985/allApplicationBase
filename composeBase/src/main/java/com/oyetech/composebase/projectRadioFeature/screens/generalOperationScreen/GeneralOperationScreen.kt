@@ -44,7 +44,7 @@ fun GeneralOperationScreenSetup(content: @Composable () -> Unit) {
             })
     }
 
-    var dialogState by remember { mutableStateOf(true) }
+    var dialogState by remember { mutableStateOf(false) }
 
     if (dialogState) {
         RateUsDialog(

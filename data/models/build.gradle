@@ -44,4 +44,5 @@ dependencies {
     implementation Libraries.moshi
     implementation Libraries.moshiKotlin
     implementation Libraries.roomRunTime
+    implementation 'com.google.firebase:firebase-firestore-ktx:25.1.1'
 }
