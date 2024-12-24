@@ -1,5 +1,7 @@
 package com.oyetech.models.firebaseModels.googleAuth
 
+import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
+
 data class GoogleUserResponseData(
     val uid: String = "",
     val email: String? = null,
@@ -12,8 +14,18 @@ data class GoogleUserResponseData(
     val metadata: UserMetadata? = null,
     val providerData: List<ProviderDataInfo> = emptyList(),
     val errorException: Exception? = null, // Added field
-    val errorMessage: String? = errorException?.message, // Added field
-)
+) {
+    fun toFirebaseUserProfileModel(): FirebaseUserProfileModel {
+        return FirebaseUserProfileModel(
+            uid = uid,
+            username = displayName ?: "",
+            isAnonymous = isAnonymous,
+            creationTimestamp = metadata?.creationTimestamp ?: 0,
+            lastSignInTimestamp = metadata?.lastSignInTimestamp,
+            errorException = errorException,
+        )
+    }
+}
 
 fun GoogleUserResponseData?.isUserAnonymous() = this?.isAnonymous ?: false
 

@@ -18,7 +18,7 @@ data class LoginOperationUiState(
     val photoUrl: String = "",
     val isLogin: Boolean = uid.isNotBlank(),
     val isAnonymous: Boolean = false,
-
+    val lastSignInTimestamp: Long? = null,
 //    val creationTimestamp: Long? = null,
 //    val lastSignInTimestamp: Long? = null,
 )

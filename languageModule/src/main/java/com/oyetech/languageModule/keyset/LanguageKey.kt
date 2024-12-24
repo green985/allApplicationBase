@@ -9,6 +9,7 @@ Created by Erdi Özbek
  **/
 
 object LanguageKey {
+    var generalErrorText set(value) {} get() = LocalLanguageHelper.getStringWithKey("Error")
     var login set(value) {} get() = LocalLanguageHelper.getStringWithKey("Login")
     var denemeKey set(value) {} get() = LocalLanguageHelper.getStringWithKey("denemeKey")
 

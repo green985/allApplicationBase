@@ -1,6 +1,6 @@
 package com.oyetech.domain.repository.firebase
 
-import com.oyetech.models.firebaseModels.userModel.FirebaseUserModel
+import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
@@ -10,9 +10,14 @@ Created by Erdi Özbek
  **/
 
 interface FirebaseUserRepository {
-    val userDataStateFlow: MutableStateFlow<FirebaseUserModel?>
-    fun createProfile(user: FirebaseUserModel)
-    fun checkUsername(username: String): Boolean
+    val userDataStateFlow: MutableStateFlow<FirebaseUserProfileModel?>
+
+    //    fun createProfile(user: FirebaseUserProfileModel)
+//    fun checkUsername(username: String): Boolean
     fun deleteUser(uid: String)
-    fun updateLastLogin(uid: String)
+
+    //    fun updateLastLogin(uid: String)
+    fun getUserProfileWithUid(firebaseProfileUserModel: FirebaseUserProfileModel)
+
+    suspend fun updateUserName(username: String)
 }

@@ -1,11 +1,12 @@
 package com.oyetech.firebaseDB.firebaseDB.comment
 
 import android.util.Log
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
 import com.oyetech.firebaseDB.databaseKeys.FirebaseDatabaseKeys
+import com.oyetech.firebaseDB.helperFunctions.FirebaseHelperUtil
 import com.oyetech.models.firebaseModels.commentModel.CommentData
+import kotlinx.coroutines.flow.flowOf
 import timber.log.Timber
 
 /**
@@ -17,16 +18,16 @@ Created by Erdi Özbek
 class FirebaseCommentOperationRepositoryImp(private val firestore: FirebaseFirestore) :
     FirebaseCommentOperationRepository {
 
-
     override fun getCommentsWithId(commentId: String) {
         firestore.collection(FirebaseDatabaseKeys.commentTable)
             .document(commentId)
             .collection("comments")
-//            .orderBy("createdAt")
+            .orderBy("createdAtFieldValue")
             .get()
             .addOnSuccessListener { result ->
                 result.documents.forEach {
                     val commentModel = it.toObject(CommentData::class.java)
+                    flowOf(commentModel)
                     Timber.d("it ... " + it.toString())
                 }
             }
@@ -39,7 +40,12 @@ class FirebaseCommentOperationRepositoryImp(private val firestore: FirebaseFires
         firestore.collection(FirebaseDatabaseKeys.commentTable)
             .document(contentId)
             .collection("comments")
-            .add(CommentData(content = content, createdAtFieldValue = FieldValue.serverTimestamp()))
+            .add(
+                CommentData(
+                    content = content,
+                    createdAtFieldValue = FirebaseHelperUtil.getFirebaseTimeStamp()
+                )
+            )
             .addOnSuccessListener {
                 Timber.d("Comment added")
             }

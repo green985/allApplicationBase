@@ -9,9 +9,8 @@ import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.UsernameSetClicked
 import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.core.coroutineHelper.asResult
+import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
-import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData
-import com.oyetech.models.firebaseModels.googleAuth.isUserLogin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
@@ -27,7 +26,8 @@ Created by Erdi Özbek
 
 class LoginOperationVM(
     appDispatchers: AppDispatchers,
-    private val googleLoginRepository: GoogleLoginRepository,
+    val googleLoginRepository: GoogleLoginRepository,
+    val profileRepository: FirebaseUserRepository,
 ) : BaseViewModel(appDispatchers) {
 
     val loginOperationState = MutableStateFlow(LoginOperationUiState())
@@ -43,7 +43,21 @@ class LoginOperationVM(
                 Timber.d(" Google User State Flow: $it")
                 it.fold(
                     onSuccess = { googleUserResponseData ->
-                        mapToProfileResult(googleUserResponseData)
+                        mapToSignInValue(googleUserResponseData)
+                    },
+                    onFailure = {
+                        Timber.d(" Google User State Flow Error: $it")
+                    }
+                )
+            }.collect()
+        }
+        viewModelScope.launch(getDispatcherIo()) {
+            profileRepository.userDataStateFlow.asResult().onEach {
+                delay(1000)
+                Timber.d(" Google User State Flow: $it")
+                it.fold(
+                    onSuccess = { userData ->
+                        mapToProfileValue(userData)
                     },
                     onFailure = {
                         Timber.d(" Google User State Flow Error: $it")
@@ -56,16 +70,17 @@ class LoginOperationVM(
     fun handleEvent(event: LoginOperationEvent) {
         when (event) {
             LoginClicked -> {
-                if (loginOperationState.value.isLogin) {
-                    googleLoginRepository.updateUserName("green985")
-                    return
-                }
                 loginOperationState.value = LoginOperationUiState(isLoading = true)
                 googleLoginRepository.signInWithGoogleAnonymous()
             }
 
             ErrorDismiss -> {
-                loginOperationState.value = LoginOperationUiState()
+                loginOperationState.updateState {
+                    copy(
+                        isError = false,
+                        errorMessage = ""
+                    )
+                }
             }
 
             is UsernameChanged -> {
@@ -81,24 +96,10 @@ class LoginOperationVM(
                 loginOperationState.updateState {
                     copy(isLoading = true)
                 }
-                googleLoginRepository.updateUserName(loginOperationState.value.displayName)
+                viewModelScope.launch(getDispatcherIo()) {
+                    profileRepository.updateUserName(loginOperationState.value.displayName)
+                }
             }
-        }
-    }
-
-    fun mapToProfileResult(googleUserResponseData: GoogleUserResponseData) {
-        if (googleUserResponseData.isUserLogin()) {
-            loginOperationState.updateState {
-                LoginOperationUiState(
-                    displayNameRemote = googleUserResponseData.displayName ?: "",
-                    uid = googleUserResponseData.uid
-                )
-            }
-        } else if (googleUserResponseData.errorMessage?.isNotBlank() == true) {
-            loginOperationState.value = LoginOperationUiState(
-                isError = true,
-                errorMessage = googleUserResponseData.errorMessage ?: ""
-            )
         }
     }
 

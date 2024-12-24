@@ -3,17 +3,51 @@ package com.oyetech.firebaseDB.userOperation
 import com.google.firebase.firestore.FirebaseFirestore
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.firebaseDB.userOperation.databaseKey.FirebaseUserDatabaseKey
-import com.oyetech.models.firebaseModels.userModel.FirebaseUserModel
-import com.oyetech.models.utils.helper.TimeFunctions
+import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 
 class FirebaseUserRepositoryImp(
     private val firestore: FirebaseFirestore,
 ) : FirebaseUserRepository {
 
-    override val userDataStateFlow = MutableStateFlow<FirebaseUserModel?>(null)
+    override val userDataStateFlow = MutableStateFlow<FirebaseUserProfileModel?>(null)
 
-    override fun createProfile(user: FirebaseUserModel) {
+    override suspend fun updateUserName(username: String) {
+        var userData = userDataStateFlow.value
+        if (userData == null) {
+            userDataStateFlow.value = userDataStateFlow.value?.copy(
+                errorException = Exception("User not found")
+            )
+            return
+        }
+
+        val isUsernameInUse = checkIsUsernameInUse(username).firstOrNull() ?: false
+        Timber.d("isUsernameInUse: $isUsernameInUse")
+        if (isUsernameInUse) {
+            userDataStateFlow.value =
+                userDataStateFlow.value?.copy(errorException = Exception("Username is already in use"))
+            return
+        }
+
+        var newUserDataModel = userData.copy(username = username)
+
+        firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(userData.uid).set(
+            newUserDataModel,
+        ).addOnSuccessListener {
+            newUserDataModel = newUserDataModel.copy(errorException = null)
+            userDataStateFlow.value = newUserDataModel
+        }.addOnFailureListener { exception ->
+            userDataStateFlow.value = userDataStateFlow.value?.copy(errorException = exception)
+        }
+
+    }
+
+    fun createProfile(user: FirebaseUserProfileModel) {
         firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION)
             .document(user.uid)
             .set(user)
@@ -25,18 +59,12 @@ class FirebaseUserRepositoryImp(
             }
     }
 
-    override fun checkUsername(username: String): Boolean {
-        var isAvailable = false
-        firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION)
+    suspend fun checkIsUsernameInUse(username: String): Flow<Boolean> {
+        val result = firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION)
             .whereEqualTo("username", username)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                isAvailable = querySnapshot.isEmpty
-            }
-            .addOnFailureListener { exception ->
-                println("Error checking username: ${exception.message}")
-            }
-        return isAvailable
+            .get().await()
+
+        return flowOf(!result.isEmpty)
     }
 
     override fun deleteUser(uid: String) {
@@ -51,31 +79,48 @@ class FirebaseUserRepositoryImp(
             }
     }
 
-    override fun updateLastLogin(uid: String) {
-        val userDocRef = firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(uid)
+    override fun getUserProfileWithUid(firebaseProfileUserModel: FirebaseUserProfileModel) {
+        val uid = firebaseProfileUserModel.uid
+        firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(uid).get()
+            .addOnSuccessListener {
+                var userData = it.toObject(FirebaseUserProfileModel::class.java)
 
-        userDocRef.get()
-            .addOnSuccessListener { documentSnapshot ->
-                val currentUser = documentSnapshot.toObject(FirebaseUserModel::class.java)
+                userData = userData?.copy(
+                    lastSignInTimestamp = firebaseProfileUserModel.lastSignInTimestamp,
+                    isAnonymous = firebaseProfileUserModel.isAnonymous
+                )
 
-                if (currentUser != null) {
-                    val lastLoginDate =
-                        TimeFunctions.getFullDateFromLongMilis(System.currentTimeMillis())
-                    val updatedUser = currentUser.copy(lastLoginDateString = lastLoginDate)
-
-                    userDocRef.set(updatedUser)
-                        .addOnSuccessListener {
-                            userDataStateFlow.tryEmit(updatedUser)
-                        }
-                        .addOnFailureListener { exception ->
-                            println("Error updating user: ${exception.message}")
-                        }
+                if (userData != null && userData.uid == uid) {
+                    userDataStateFlow.tryEmit(userData)
                 } else {
-                    println("User not found!")
+                    createProfile(firebaseProfileUserModel)
                 }
-            }
-            .addOnFailureListener { exception ->
-                println("Error fetching user: ${exception.message}")
+
+            }.addOnFailureListener {
+                userDataStateFlow.value =
+                    FirebaseUserProfileModel(errorException = it)
             }
     }
+//
+//    fun updateLastLogin(uid: String) {
+//        val userDocRef = firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(uid)
+//
+//        userDocRef.get()
+//            .addOnSuccessListener { documentSnapshot ->
+//                val currentUser = documentSnapshot.toObject(FirebaseUserProfileModel::class.java)
+//                if (currentUser != null) {
+//                        .addOnSuccessListener {
+//                            userDataStateFlow.tryEmit(updatedUser)
+//                        }
+//                        .addOnFailureListener { exception ->
+//                            println("Error updating user: ${exception.message}")
+//                        }
+//                } else {
+//                    println("User not found!")
+//                }
+//            }
+//            .addOnFailureListener { exception ->
+//                println("Error fetching user: ${exception.message}")
+//            }
+//    }
 }

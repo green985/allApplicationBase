@@ -59,7 +59,7 @@ fun LoginOperationScreenSetup(navigationRoute: (navigationRoute: String) -> Unit
 fun LoginOperationScreen(uiState: LoginOperationUiState, onEvent: (LoginOperationEvent) -> Unit) {
     BaseScaffold {
         Column {
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(64.dp))
             Row(modifier = Modifier.fillMaxWidth()) {
                 Text(text = "Login Operation Screen == " + uiState.toString())
             }
