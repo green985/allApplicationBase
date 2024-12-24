@@ -14,12 +14,9 @@ Created by Erdi Özbek
 -22:13-
  **/
 
-class FirebaseCommentOperationRepositoryImp :
+class FirebaseCommentOperationRepositoryImp(private val firestore: FirebaseFirestore) :
     FirebaseCommentOperationRepository {
 
-    private val firestore: FirebaseFirestore by lazy {
-        FirebaseFirestore.getInstance()
-    }
 
     override fun getCommentsWithId(commentId: String) {
         firestore.collection(FirebaseDatabaseKeys.commentTable)

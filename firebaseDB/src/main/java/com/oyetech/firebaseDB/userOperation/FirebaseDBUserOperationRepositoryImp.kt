@@ -1,6 +1,7 @@
 package com.oyetech.firebaseDB.userOperation
 
 import android.util.Log
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.oyetech.domain.repository.firebase.FirebaseDBUserOperationRepository
 import com.oyetech.firebaseDB.userOperation.databaseKey.FirebaseUserDatabaseKey
@@ -13,10 +14,11 @@ Created by Erdi Özbek
 -23:22-
  **/
 
-class FirebaseDBUserOperationRepositoryImp() : FirebaseDBUserOperationRepository {
+class FirebaseDBUserOperationRepositoryImp(private val firestore: FirebaseFirestore) :
+    FirebaseDBUserOperationRepository {
 
-    private val firestore: FirebaseFirestore by lazy {
-        FirebaseFirestore.getInstance()
+    private val firebaseDatabase: CollectionReference by lazy {
+        firestore.collection("users")
     }
 
     override val userDataStateFlow = MutableStateFlow<FirebaseUserModel?>(null)

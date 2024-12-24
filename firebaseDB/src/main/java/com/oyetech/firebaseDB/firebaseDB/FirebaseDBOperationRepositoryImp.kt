@@ -12,12 +12,9 @@ Created by Erdi Özbek
 -23:43-
  **/
 
-class FirebaseDBOperationRepositoryImp :
+class FirebaseDBOperationRepositoryImp(private val firestore: FirebaseFirestore) :
     FirebaseContactWithMeOperationRepository {
 
-    private val firestore: FirebaseFirestore by lazy {
-        FirebaseFirestore.getInstance()
-    }
 
     override val sendFeedbackOperationStateFlow = MutableStateFlow<Boolean?>(null)
 

@@ -12,11 +12,9 @@ Created by Erdi Özbek
 -01:24-
  **/
 
-class RadioAnalyticsOperationRepositoryImp : RadioAnalyticsOperationRepository {
+class RadioAnalyticsOperationRepositoryImp(private val firestore: FirebaseFirestore) :
+    RadioAnalyticsOperationRepository {
 
-    private val firestore: FirebaseFirestore by lazy {
-        FirebaseFirestore.getInstance()
-    }
 
     override fun sendRadioPlayingAnalytics(radioPlayingData: RadioPlayingAnalyticsData) {
         firestore.collection(FirebaseDatabaseKeys.Radio_Playing_Time_Collection)
