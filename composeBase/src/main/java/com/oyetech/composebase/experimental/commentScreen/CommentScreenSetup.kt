@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -49,7 +50,7 @@ fun CommentScreenSetup() {
             Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedTextField(
-                value = commentScreenUiState.inputContent,
+                value = commentScreenUiState.commentContent,
                 onValueChange = {
                     viewModel.onEvent(CommentScreenEvent.UpdateContent(it))
                 },
@@ -78,7 +79,14 @@ fun CommentScreenSetup() {
                 onRefresh = { viewModel.handleListEvent(ListUIEvent.Refresh) },
                 errorMessage = complexItemViewState.errorMessage,
                 content = {
-
+                    items(
+                        items = complexItemViewState.items,
+                        key = { it.createdAt.time },
+                        itemContent = { itemResponse ->
+                            Spacer(Modifier.height(16.dp))
+                            Text(text = itemResponse.commentContent)
+                            Spacer(Modifier.height(16.dp))
+                        })
                 },
             )
         }

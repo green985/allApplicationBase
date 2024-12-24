@@ -3,16 +3,13 @@ package com.oyetech.models.firebaseModels.commentModel
 import java.util.Date
 
 data class CommentWrapper(
-    val contentId: String,
-    val createdAt: Date = Date(),
-    val userId: String = "green985",
-    val comments: List<CommentData>,
+    val comments: List<CommentResponseData>,
 )
 
-data class CommentData(
+data class CommentResponseData(
     val contentId: String = "contentId",
     val connectionId: String = "connectionId",
-    val content: String,
+    val content: String = "",
     val userId: String = "green985",
     val createdAt: Date = Date(),
 //    val likes: Int,

@@ -26,7 +26,7 @@ class GeneralPlaygroundVm(
 
     init {
         fetchRandomQuotes()
-        firebaseCommentOperationRepository.getCommentsWithId("commentId")
+//        firebaseCommentOperationRepository.getCommentsWithId("commentId")
     }
 
     fun initt() {

@@ -4,8 +4,10 @@ import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
 import com.oyetech.firebaseDB.databaseKeys.FirebaseDatabaseKeys
-import com.oyetech.models.firebaseModels.commentModel.CommentData
+import com.oyetech.models.firebaseModels.commentModel.CommentResponseData
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
 /**
@@ -17,22 +19,21 @@ Created by Erdi Özbek
 class FirebaseCommentOperationRepositoryImp(private val firestore: FirebaseFirestore) :
     FirebaseCommentOperationRepository {
 
-    override fun getCommentsWithId(commentId: String) {
-        firestore.collection(FirebaseDatabaseKeys.commentTable)
+    override suspend fun getCommentsWithId(commentId: String): Flow<List<CommentResponseData>> {
+
+        val result = firestore.collection(FirebaseDatabaseKeys.commentTable)
             .document(commentId)
             .collection("comments")
-//            .orderBy("createdAtFieldValue")
-            .get()
-            .addOnSuccessListener { result ->
-                result.documents.forEach {
-                    val commentModel = it.toObject(CommentData::class.java)
-                    flowOf(commentModel)
-                    Timber.d("it ... " + it.toString())
-                }
-            }
-            .addOnFailureListener { e ->
-                Log.w("Firestore", "Error getting comments", e)
-            }
+            .get().await()
+
+        if (result.size() == 0) {
+            Timber.d("No comments found")
+            return flowOf(emptyList())
+        }
+
+        val wrapperResult = result.toObjects(CommentResponseData::class.java)
+        return flowOf(wrapperResult)
+
     }
 
     override fun addComment(contentId: String, content: String) {
@@ -40,7 +41,7 @@ class FirebaseCommentOperationRepositoryImp(private val firestore: FirebaseFires
             .document(contentId)
             .collection("comments")
             .add(
-                CommentData(
+                CommentResponseData(
                     content = content,
                 )
             )

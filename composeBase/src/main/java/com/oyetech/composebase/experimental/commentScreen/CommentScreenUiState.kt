@@ -1,5 +1,7 @@
 package com.oyetech.composebase.experimental.commentScreen
 
+import java.util.Date
+
 /**
 Created by Erdi Özbek
 -20.12.2024-
@@ -8,7 +10,8 @@ Created by Erdi Özbek
 
 data class CommentScreenUiState(
     val id: String = "",
-    val inputContent: String = "",
+    val commentContent: String = "",
+    val createdAt: Date = Date(),
 )
 
 sealed class CommentScreenEvent {
