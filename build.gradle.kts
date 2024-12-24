@@ -34,6 +34,8 @@ plugins {
     id("org.lsposed.lsparanoid") version "0.5.2" apply false
     id("io.gitlab.arturbosch.detekt").version("1.20.0-RC2")
     id("com.google.devtools.ksp").version("1.6.0-1.0.1")
+    id("com.android.test") version "8.7.0" apply false
+    id("androidx.baselineprofile") version "1.2.4" apply false
 }
 apply(plugin = "kover")
 
