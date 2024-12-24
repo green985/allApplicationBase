@@ -16,6 +16,7 @@ import com.oyetech.composebase.projectRadioFeature.screens.tabAllList.TabAllList
 import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactWithMe.ContactScreen
 import com.oyetech.composebase.projectRadioFeature.screens.tagList.TagListScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.views.dialogs.timerDialog.RadioCountTimerDialogSetup
+import com.oyetech.composebase.projectRadioFeature.views.quotes.listScreen.QuoteListScreenSetup
 import com.oyetech.models.radioProject.enums.RadioListEnums
 import timber.log.Timber
 
@@ -72,7 +73,7 @@ fun NavGraphBuilder.radioAppNavigation(navController: NavController) {
 
     // TabHistory Route
     composable(RadioAppProjectRoutes.QuotesListScreen.route) {
-        CommentScreenSetup(
+        QuoteListScreenSetup(
 //            navigationRoute = navigateRoute(navController)
         )
     }

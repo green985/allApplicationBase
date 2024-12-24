@@ -12,7 +12,7 @@ Created by Erdi Özbek
 -23:43-
  **/
 
-class FirebaseDBOperationRepositoryImp(private val firestore: FirebaseFirestore) :
+class FirebaseContactWithMeOperationRepositoryImp(private val firestore: FirebaseFirestore) :
     FirebaseContactWithMeOperationRepository {
 
 

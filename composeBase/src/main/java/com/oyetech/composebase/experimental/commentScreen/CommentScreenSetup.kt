@@ -65,9 +65,6 @@ fun CommentScreenSetup() {
                 Text("Add Comment")
             }
 
-
-
-
             LoadableLazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 state = lazyListState,

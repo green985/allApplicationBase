@@ -5,7 +5,7 @@ import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.firebase.RadioAnalyticsOperationRepository
 import com.oyetech.domain.repository.helpers.FirebaseContactWithMeOperationRepository
-import com.oyetech.firebaseDB.firebaseDB.FirebaseDBOperationRepositoryImp
+import com.oyetech.firebaseDB.firebaseDB.FirebaseContactWithMeOperationRepositoryImp
 import com.oyetech.firebaseDB.firebaseDB.comment.FirebaseCommentOperationRepositoryImp
 import com.oyetech.firebaseDB.firebaseDB.radio.RadioAnalyticsOperationRepositoryImp
 import com.oyetech.firebaseDB.userOperation.FirebaseUserRepositoryImp
@@ -23,7 +23,11 @@ object FirebaseDBModule {
         single<FirebaseFirestore> { FirebaseFirestore.getInstance() }
         single<RadioAnalyticsOperationRepository> { RadioAnalyticsOperationRepositoryImp(get()) }
 
-        single<FirebaseContactWithMeOperationRepository> { FirebaseDBOperationRepositoryImp(get()) }
+        single<FirebaseContactWithMeOperationRepository> {
+            FirebaseContactWithMeOperationRepositoryImp(
+                get()
+            )
+        }
 
         single<FirebaseCommentOperationRepository> { FirebaseCommentOperationRepositoryImp(get()) }
         single<FirebaseUserRepository> { FirebaseUserRepositoryImp(get()) }
