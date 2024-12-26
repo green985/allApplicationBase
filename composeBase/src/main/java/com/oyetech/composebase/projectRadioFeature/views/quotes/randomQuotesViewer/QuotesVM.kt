@@ -2,11 +2,15 @@ package com.oyetech.composebase.projectRadioFeature.views.quotes.randomQuotesVie
 
 import androidx.core.text.parseAsHtml
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
 import com.oyetech.composebase.base.baseList.BaseListViewModel
 import com.oyetech.composebase.base.baseList.ComplexItemListState
 import com.oyetech.composebase.base.baseList.getItemSize
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.helpers.viewProperties.toAnnotatedString
+import com.oyetech.composebase.projectRadioFeature.views.quotes.listScreen.QuotePagingSource
 import com.oyetech.composebase.projectRadioFeature.views.quotes.uiState.QuoteListUiEvent
 import com.oyetech.composebase.projectRadioFeature.views.quotes.uiState.QuoteListUiEvent.LoadMore
 import com.oyetech.composebase.projectRadioFeature.views.quotes.uiState.QuoteListUiEvent.QuoteSeen
@@ -35,24 +39,40 @@ Created by Erdi Özbek
  **/
 
 class QuotesVM(
-    appDispatchers: AppDispatchers,
+    private val appDispatchers: AppDispatchers,
     private val quoteDataOperationRepository: QuoteDataOperationRepository,
 ) :
     BaseListViewModel<QuotesUiState>(appDispatchers) {
+
+    fun getQuotesPager() =
+
+        Pager(
+            config = PagingConfig(
+                pageSize = 20,
+//                enablePlaceholders = false,
+//                prefetchDistance = 1,
+
+            ),
+            pagingSourceFactory = {
+                QuotePagingSource(
+                    quoteDataOperationRepository,
+                    getOldDataList = {
+                        getOldDataList()
+                    }
+                )
+            }
+        ).flow.cachedIn(viewModelScope)
 
     override val complexItemViewState: MutableStateFlow<ComplexItemListState<QuotesUiState>> =
         MutableStateFlow(ComplexItemListState())
 
     val currentPage = MutableStateFlow(0)
 
-    init {
-        getList()
-    }
-
     fun onEvent(event: QuoteListUiEvent) {
         when (event) {
             is LoadMore -> {
-                val i = (complexItemViewState.value.getItemSize() - event.currentItem) == 2
+                val i =
+                    (complexItemViewState.value.getItemSize() - event.currentItem) == 2
                 if (i) {
                     getList()
                 }
@@ -78,13 +98,22 @@ class QuotesVM(
                     createdAtString = TimeFunctions.getDateFromLongWithoutHour(it.createdAt),
                     authorImage = it.authorImage,
                     htmlFormatted = it.htmlFormatted,
-                    annotatedStringText = it.htmlFormatted.parseAsHtml().toAnnotatedString()
+                    annotatedStringText = it.htmlFormatted.parseAsHtml()
+                        .toAnnotatedString()
                 )
             }
         }
     }
 
-    private fun getList(isFromRefresh: Boolean = false, isFromLoadMore: Boolean = false): Job {
+    fun getOldDataList(): Array<String> {
+        val oldList = complexItemViewState.value.items.map { it.quoteId }.toTypedArray()
+        return oldList
+    }
+
+    private fun getList(
+        isFromRefresh: Boolean = false,
+        isFromLoadMore: Boolean = false,
+    ): Job {
         return viewModelScope.launch(getDispatcherIo()) {
             delay(250)
 //            Timber.d(" getRandomRemoteQuote  ==" + isFromRefresh + " " + isFromLoadMore)
@@ -95,8 +124,10 @@ class QuotesVM(
                 complexItemViewState.updateState { copy(isLoadingMore = true) }
             }
 
-            val oldList = complexItemViewState.value.items.map { it.quoteId }.toTypedArray()
-            quoteDataOperationRepository.getQuoteUnseenFlow(oldList).mapToUiState().asResult()
+            val oldList =
+                complexItemViewState.value.items.map { it.quoteId }.toTypedArray()
+            quoteDataOperationRepository.getQuoteUnseenFlow(oldList).mapToUiState()
+                .asResult()
                 .collectLatest {
                     it.fold(
                         onSuccess = {
@@ -108,12 +139,14 @@ class QuotesVM(
                             } else {
                                 val list = complexItemViewState.value.items
                                 val mergedList =
-                                    list.toPersistentList().addAll(it).distinctBy { model ->
-                                        model.quoteId
-                                    }.toImmutableList()
+                                    list.toPersistentList().addAll(it)
+                                        .distinctBy { model ->
+                                            model.quoteId
+                                        }.toImmutableList()
 //                                Timber.d(" getRandomRemoteQuote  mergedList " + mergedList.size)
 
-                                complexItemViewState.value = ComplexItemListState(mergedList)
+                                complexItemViewState.value =
+                                    ComplexItemListState(mergedList)
                             }
                         },
                         onFailure = { exception ->
@@ -167,16 +200,18 @@ class QuotesVM(
 
     private var isVisibleControl = false
     override fun itemVisible(index: Int) {
+        Timber.d("itemVisible  $index")
         viewModelScope.launch(getDispatcherIo()) {
             if (index == 0) {
                 isVisibleControl = true
             }
             if (isVisibleControl) {
                 isVisibleControl = false
-                val quoteIdMap = complexItemViewState.value.items.subList(0, index).map {
-                    quoteDataOperationRepository.setSeenQuote(it.quoteId)
-                        .collect()
-                }
+                val quoteIdMap =
+                    complexItemViewState.value.items.subList(0, index).map {
+                        quoteDataOperationRepository.setSeenQuote(it.quoteId)
+                            .collect()
+                    }
                 return@launch
             }
             val quoteId = complexItemViewState.value.items.getOrNull(index)?.quoteId
@@ -188,3 +223,18 @@ class QuotesVM(
     }
 }
 
+fun Flow<List<QuoteResponseData>>.mapToUiState(): Flow<List<QuotesUiState>> {
+    return this.map {
+        it.map {
+            QuotesUiState(
+                quoteId = it.quoteId,
+                text = it.text,
+                author = it.author,
+                createdAtString = TimeFunctions.getDateFromLongWithoutHour(it.createdAt),
+                authorImage = it.authorImage,
+                htmlFormatted = it.htmlFormatted,
+                annotatedStringText = it.htmlFormatted.parseAsHtml().toAnnotatedString()
+            )
+        }
+    }
+}

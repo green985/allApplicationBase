@@ -55,7 +55,7 @@ class QuoteDataOperationRepositoryImp(
         }.map {
             val quoteResponseList = it
             if (it.isEmpty()) {
-
+                it
                 throw Exception(ExceptionKeys.emptyList)
             } else {
                 Timber.d(" getRandomRemoteQuote  " + it.size)
@@ -67,17 +67,24 @@ class QuoteDataOperationRepositoryImp(
         }
     }
 
-    override fun getQuoteUnseenFlow(oldList: Array<String>): Flow<List<QuoteResponseData>> {
-        return flowOf(quotesAllListDao.getQuoteUnseenFlow(oldList)).map {
-            val leftCount = quotesAllListDao.getListCount(oldList)
-            if (leftCount < HelperConstant.QUOTES_PAGER_LIMIT * 3) {
-                val remoteQuotesList =
-                    getRandomRemoteQuote().firstOrNull()
-                remoteQuotesList?.subList(0, 20) ?: emptyList()
-            } else {
-                it
+    override suspend fun getQuoteUnseenFlow(oldList: Array<String>): Flow<List<QuoteResponseData>> {
+        return quotesAllListDao.getQuoteUnseenFlow(oldList)
+            .let {
+                var list = emptyList<QuoteResponseData>()
+                val leftCount = quotesAllListDao.getListCount(oldList)
+                if (leftCount < HelperConstant.QUOTES_PAGER_LIMIT * 3) {
+                    val remoteQuotesList =
+                        getRandomRemoteQuote().firstOrNull()
+
+                    list = remoteQuotesList?.subList(0, 20) ?: emptyList<QuoteResponseData>()
+
+                } else {
+                    list = it
+                }
+                Timber.d(" getQuoteUnseenFlow  " + list.size)
+
+                flowOf(list)
             }
-        }
     }
 
     override fun setSeenQuote(quoteId: String): Flow<Unit> {
