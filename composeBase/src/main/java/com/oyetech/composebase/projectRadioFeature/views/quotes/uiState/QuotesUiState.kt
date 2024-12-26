@@ -12,6 +12,7 @@ data class QuotesUiState(
     val quoteId: String = "",
     val text: String = "",
     val author: String = "",
+    val createdAtString: String = "",
     val authorImage: String = "",
     val htmlFormatted: String = "",
     val annotatedStringText: AnnotatedString = AnnotatedString(""),

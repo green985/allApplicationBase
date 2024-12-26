@@ -15,7 +15,6 @@ Created by Erdi Özbek
 class FirebaseContactWithMeOperationRepositoryImp(private val firestore: FirebaseFirestore) :
     FirebaseContactWithMeOperationRepository {
 
-
     override val sendFeedbackOperationStateFlow = MutableStateFlow<Boolean?>(null)
 
     override fun sendFeedback(email: String, message: String, name: String) {

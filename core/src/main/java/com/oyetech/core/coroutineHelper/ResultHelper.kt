@@ -2,12 +2,24 @@ package com.oyetech.core.coroutineHelper
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlin.coroutines.cancellation.CancellationException
 
 /**
 Created by Erdi Özbek
 -10.12.2024-
 -15:31-
  **/
+
+suspend fun <T> suspendRunCatching(block: suspend () -> T): Result<T> = try {
+    Result.success(block())
+} catch (e: Exception) {
+    if (e is CancellationException) {
+        throw e
+    } else {
+        e.printStackTrace()
+        Result.failure(e)
+    }
+}
 
 fun <T> Flow<T>.asResult(): Flow<Result<T>> = flow {
     try {

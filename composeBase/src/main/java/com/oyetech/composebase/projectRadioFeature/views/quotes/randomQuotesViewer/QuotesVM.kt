@@ -15,6 +15,7 @@ import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.core.coroutineHelper.asResult
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
 import com.oyetech.models.quotes.responseModel.QuoteResponseData
+import com.oyetech.models.utils.helper.TimeFunctions
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Job
@@ -74,6 +75,7 @@ class QuotesVM(
                     quoteId = it.quoteId,
                     text = it.text,
                     author = it.author,
+                    createdAtString = TimeFunctions.getDateFromLongWithoutHour(it.createdAt),
                     authorImage = it.authorImage,
                     htmlFormatted = it.htmlFormatted,
                     annotatedStringText = it.htmlFormatted.parseAsHtml().toAnnotatedString()
@@ -85,7 +87,7 @@ class QuotesVM(
     private fun getList(isFromRefresh: Boolean = false, isFromLoadMore: Boolean = false): Job {
         return viewModelScope.launch(getDispatcherIo()) {
             delay(250)
-            Timber.d(" getRandomRemoteQuote  ==" + isFromRefresh + " " + isFromLoadMore)
+//            Timber.d(" getRandomRemoteQuote  ==" + isFromRefresh + " " + isFromLoadMore)
             if (!isFromRefresh && !isFromLoadMore) {
                 complexItemViewState.updateState { copy(isLoadingInitial = true) }
             }
@@ -98,7 +100,7 @@ class QuotesVM(
                 .collectLatest {
                     it.fold(
                         onSuccess = {
-                            Timber.d(" getRandomRemoteQuote  " + it.size)
+//                            Timber.d(" getRandomRemoteQuote  " + it.size)
                             if (it.isEmpty()) {
                                 complexItemViewState.value = ComplexItemListState(
                                     isEmptyList = true
@@ -109,17 +111,21 @@ class QuotesVM(
                                     list.toPersistentList().addAll(it).distinctBy { model ->
                                         model.quoteId
                                     }.toImmutableList()
-                                Timber.d(" getRandomRemoteQuote  mergedList " + mergedList.size)
+//                                Timber.d(" getRandomRemoteQuote  mergedList " + mergedList.size)
 
                                 complexItemViewState.value = ComplexItemListState(mergedList)
                             }
                         },
-                        onFailure = {
+                        onFailure = { exception ->
+                            Timber.d(" getRandomRemoteQuote  " + exception.message)
                             if (isFromLoadMore) {
-                                complexItemViewState.value = ComplexItemListState(
-                                    isErrorOnMore = true,
-                                    errorMessage = errorMessage
-                                )
+                                complexItemViewState.updateState {
+                                    copy(
+                                        isLoadingMore = false,
+                                        isErrorMore = true,
+                                        errorMessage = exception.message ?: ""
+                                    )
+                                }
                             } else {
                                 complexItemViewState.value = ComplexItemListState(
                                     isErrorInitial = true,
@@ -127,7 +133,7 @@ class QuotesVM(
                                 )
                             }
                             // handle error
-                            it.printStackTrace()
+                            exception.printStackTrace()
                         }
                     )
                 }
@@ -136,6 +142,7 @@ class QuotesVM(
 
     var loadMoreJob: Job? = null
     override fun loadMoreItem() {
+
         loadMoreJob?.cancel()
         loadMoreJob = getList(isFromLoadMore = true)
     }
@@ -148,17 +155,18 @@ class QuotesVM(
     }
 
     override fun retry() {
-        complexItemViewState.updateState {
-            ComplexItemListState(
-                isLoadingInitial = true
-            )
+        val items = complexItemViewState.value.items
+
+        if (items.size > 0) {
+            getList(isFromLoadMore = true)
+        } else {
+            getList()
         }
-        getList()
+
     }
 
     private var isVisibleControl = false
     override fun itemVisible(index: Int) {
-        Timber.d(" itemVisible index = $index")
         viewModelScope.launch(getDispatcherIo()) {
             if (index == 0) {
                 isVisibleControl = true

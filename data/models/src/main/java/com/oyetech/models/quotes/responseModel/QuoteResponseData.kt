@@ -5,10 +5,12 @@ import androidx.annotation.Keep
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
+import com.google.firebase.firestore.Exclude
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
 import java.security.MessageDigest
+import java.util.Date
 
 /**
 Created by Erdi Özbek
@@ -29,7 +31,10 @@ data class QuoteResponseData(
     var text: String = "",
     @PrimaryKey
     var quoteId: String = text.toMd5WithFixedLength(),
+    @Json(name = "createdAt")
+    var createdAt: Long = Date().time,
 
+    @get:Exclude
     var isSeen: Boolean = false,
 
     @Json(name = "a")

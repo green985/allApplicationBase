@@ -7,6 +7,7 @@ Created by Erdi Özbek
  **/
 
 object FirebaseDatabaseKeys {
+    const val quotesNoTagCollection: String = "quotesNoTagCollection"
     const val RADIO_FEEDBACK_COLLECTION = "radioFeedback"
     const val Radio_Playing_Time_Collection = "Radio_Playing_Time_Collection"
 

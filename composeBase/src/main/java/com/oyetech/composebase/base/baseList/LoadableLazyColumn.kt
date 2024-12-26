@@ -54,8 +54,9 @@ fun LoadableLazyColumn(
     state: LoadableLazyColumnState,
     isRefreshing: Boolean,
     isLoadingInitial: Boolean,
-    isLoadingMore: Boolean = false,
     isErrorInitial: Boolean = false,
+    isLoadingMore: Boolean = false,
+    isErrorMore: Boolean = false,
     isEmptyList: Boolean = false,
     errorMessage: String = "",
     onRetry: () -> Unit = { },
@@ -93,12 +94,15 @@ fun LoadableLazyColumn(
                 content()
 
                 item {
-                    if (!isLoadingInitial) {
+                    if (!isLoadingInitial && !isErrorMore && !isErrorInitial) {
                         loadMoreLoadingContent?.invoke()
                     }
 
                     if (isLoadingMore) {
                         loadMoreLoadingContent?.invoke()
+                    }
+                    if (isErrorMore) {
+                        ErrorOnMoreContent(onRetry = onRetry)
                     }
                 }
             },
@@ -141,6 +145,33 @@ fun LoadableLazyColumn(
 
     LaunchedEffect(currentLastVisibleIndex) {
         onItemVisible(currentLastVisibleIndex)
+    }
+}
+
+@Composable
+fun ErrorOnMoreContent(errorMessage: String = "Loading Error", onRetry: () -> Unit = {}) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+            .background(color = MaterialTheme.colorScheme.error),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            style = MaterialTheme.typography.displaySmall,
+            text = errorMessage,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        IconButton(onClick = onRetry) {
+            Icon(
+                modifier = Modifier.size(40.dp),
+                imageVector = Icons.Default.Refresh,
+                contentDescription = "Retry",
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 

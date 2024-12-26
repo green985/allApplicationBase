@@ -53,6 +53,14 @@ fun RandomQuotesSmallView(uiState: QuotesUiState = QuotesUiState()) {
                 modifier = Modifier
                     .padding(bottom = 8.dp)
             )
+            // Alıntı Text
+            Text(
+                text = uiState.createdAtString,
+                style = MaterialTheme.typography.labelSmall,
+                fontSize = 14.sp,
+                modifier = Modifier
+                    .padding(bottom = 8.dp)
+            )
 
             // Sağ Alt Köşe: Yazar İsmi
             Box(

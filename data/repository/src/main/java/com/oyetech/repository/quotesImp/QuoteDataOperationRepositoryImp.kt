@@ -2,6 +2,8 @@ package com.oyetech.repository.quotesImp
 
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
 import com.oyetech.domain.quotesDomain.quotesData.QuotesRepository
+import com.oyetech.domain.repository.firebase.FirebaseQuotesOperationRepository
+import com.oyetech.languageModule.keyset.ExceptionKeys
 import com.oyetech.models.quotes.responseModel.QuoteResponseData
 import com.oyetech.models.utils.const.HelperConstant
 import com.oyetech.quotes.dao.QuotesAllListDao
@@ -21,14 +23,47 @@ Created by Erdi Özbek
 class QuoteDataOperationRepositoryImp(
     private val quotesRepository: QuotesRepository,
     private val quotesAllListDao: QuotesAllListDao,
+    private val firebaseQuotesOperationRepository: FirebaseQuotesOperationRepository,
 ) : QuoteDataOperationRepository {
+
+    var flaggg = false
+    private val errorQuotesString = "Too many requests. Obtain an auth key for unlimited access."
 
     override fun getRandomRemoteQuote(): Flow<List<QuoteResponseData>> {
         return quotesRepository.fetchQuotes().map {
             val quoteResponseList = it
-            Timber.d(" getRandomRemoteQuote  " + it.size)
-            quotesAllListDao.insert(quoteResponseList)
+            val isError = quoteResponseList.firstOrNull()?.let {
+                it.text == errorQuotesString
+            } ?: false
+            Timber.d(" isError  " + isError)
+
+            if (flaggg) {
+                Timber.d(" isError  " + isError)
+                return@map emptyList<QuoteResponseData>()
+            } else {
+                flaggg = true
+            }
+
+            if (isError) {
+                emptyList<QuoteResponseData>()
+//                delay(5000)
+//                quotesRepository.fetchQuotes().firstOrNull() ?: emptyList()
+            } else {
+                quoteResponseList
+            }
             quoteResponseList
+        }.map {
+            val quoteResponseList = it
+            if (it.isEmpty()) {
+
+                throw Exception(ExceptionKeys.emptyList)
+            } else {
+                Timber.d(" getRandomRemoteQuote  " + it.size)
+                quotesAllListDao.insert(quoteResponseList)
+                firebaseQuotesOperationRepository.saveListWithNoTag(quoteResponseList)
+                quoteResponseList
+            }
+
         }
     }
 
@@ -38,7 +73,7 @@ class QuoteDataOperationRepositoryImp(
             if (leftCount < HelperConstant.QUOTES_PAGER_LIMIT * 3) {
                 val remoteQuotesList =
                     getRandomRemoteQuote().firstOrNull()
-                remoteQuotesList?.subList(0, 10) ?: emptyList()
+                remoteQuotesList?.subList(0, 20) ?: emptyList()
             } else {
                 it
             }
@@ -47,7 +82,6 @@ class QuoteDataOperationRepositoryImp(
 
     override fun setSeenQuote(quoteId: String): Flow<Unit> {
         return flow {
-            Timber.d(" setSeenQuote  $quoteId")
             quotesAllListDao.setSeenQuote(quoteId)
         }
     }

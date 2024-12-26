@@ -67,6 +67,7 @@ fun QuoteListScreen(
         isLoadingInitial = complexItemViewState.isLoadingInitial,
         isLoadingMore = complexItemViewState.isLoadingMore,
         isErrorInitial = complexItemViewState.isErrorInitial,
+        isErrorMore = complexItemViewState.isErrorMore,
         onRetry = { radioListEventHandle(ListUIEvent.Retry) },
         isEmptyList = complexItemViewState.isEmptyList,
         onRefresh = { radioListEventHandle(ListUIEvent.Refresh) },

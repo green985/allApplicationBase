@@ -15,6 +15,12 @@ object QuotesImpModule {
 
     val quoteImpModule = module {
         single<QuotesRepository> { QuotesRepositoryImp(get()) }
-        single<QuoteDataOperationRepository> { QuoteDataOperationRepositoryImp(get(), get()) }
+        single<QuoteDataOperationRepository> {
+            QuoteDataOperationRepositoryImp(
+                get(),
+                get(),
+                get()
+            )
+        }
     }
 }

@@ -10,6 +10,9 @@ fun ComplexItemListState<*>.getItemSize(): Int {
     return this.items.size
 
 }
+fun ComplexItemListState<*>.isHasItem(): Boolean {
+    return items.isNotEmpty()
+}
 
 data class ComplexItemListState<T>(
     val items: ImmutableList<T> = emptyList<T>().toImmutableList(),
@@ -17,12 +20,13 @@ data class ComplexItemListState<T>(
     val isLoadingInitial: Boolean = false,
     val isLoadingMore: Boolean = false,
     val isErrorInitial: Boolean = false,
-    val isErrorOnMore: Boolean = false,
+    val isErrorMore: Boolean = false,
     val isEmptyList: Boolean = false,
     val errorMessage: String = "",
 
     val itemSortType: ItemSortType = ItemSortType.DefaultSortType,
 ) {
+
 
     fun makeEmptyListState(): ComplexItemListState<T> {
         return copy(
@@ -32,7 +36,7 @@ data class ComplexItemListState<T>(
             isLoadingInitial = false,
             isLoadingMore = false,
             isErrorInitial = false,
-            isErrorOnMore = false,
+            isErrorMore = false,
         )
     }
 
@@ -45,7 +49,7 @@ data class ComplexItemListState<T>(
             isLoadingInitial = false,
             isLoadingMore = false,
             isErrorInitial = false,
-            isErrorOnMore = false,
+            isErrorMore = false,
         )
     }
 
@@ -69,14 +73,14 @@ data class ComplexItemListState<T>(
     fun ComplexItemListState<T>.makeLoadingMoreState(): ComplexItemListState<T> {
         return copy(
             isLoadingMore = true,
-            isErrorOnMore = false,
+            isErrorMore = false,
         )
     }
 
     fun ComplexItemListState<T>.makeErrorOnMoreState(errorMessage: String? = null): ComplexItemListState<T> {
         return copy(
             isLoadingMore = false,
-            isErrorOnMore = true,
+            isErrorMore = true,
             errorMessage = errorMessage ?: this.errorMessage,
         )
     }

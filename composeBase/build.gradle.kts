@@ -51,6 +51,7 @@ dependencies {
     // Compose dependencies
     implementation(platform(Libraries.composeBom))
     implementation(Libraries.composeUi)
+    implementation("androidx.paging:paging-compose:3.3.5")
     implementation(Libraries.composeUiGraphics)
     implementation(Libraries.composeUiToolingPreview)
     debugImplementation(Libraries.composeUiTooling)
