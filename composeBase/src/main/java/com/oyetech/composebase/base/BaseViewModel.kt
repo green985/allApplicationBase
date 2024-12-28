@@ -13,10 +13,6 @@ open class BaseViewModel(private val dispatcher: AppDispatchers) : ViewModel() {
         Context::class.java
     )
 
-    fun changeState() {
-        Result.success("")
-    }
-
     val navigationRouteStateFlow = MutableStateFlow("")
 
     fun navigateTo(route: Route) {

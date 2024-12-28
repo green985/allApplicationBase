@@ -26,7 +26,6 @@ import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.views.Sim
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarSetup
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarState
 import com.oyetech.composebase.projectRadioFeature.views.AboutAppView
-import com.oyetech.composebase.projectRadioFeature.views.quotes.randomQuotesViewer.QuotesListViewSetup
 import com.oyetech.core.contextHelper.getAppName
 import com.oyetech.core.contextHelper.getApplicationLogo
 import com.oyetech.core.contextHelper.getVersionName
@@ -72,11 +71,8 @@ fun TabSettingsScreen(
                 .padding(it)
         )
         {
+            Spacer(modifier = Modifier.height(32.dp))
 
-            Spacer(modifier = Modifier.height(32.dp))
-            QuotesListViewSetup()
-            Spacer(modifier = Modifier.height(32.dp))
-            
             SimpleSettingsInfoViewSetup(
                 onClick = { navigationRoute.invoke(RadioAppProjectRoutes.ContactScreen.route) },
                 text = "Contact with us"

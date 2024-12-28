@@ -7,5 +7,5 @@ Created by Erdi Özbek
  **/
 
 object ProjectUtil {
-    const val backgroudAlpha = 0.3f
+    const val backgroudAlpha = 0.33f
 }

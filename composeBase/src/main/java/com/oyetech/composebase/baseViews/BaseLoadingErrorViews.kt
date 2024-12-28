@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.helpers.ProjectUtil
+import com.oyetech.composebase.helpers.viewProperties.DialogHelper
 
 /**
 Created by Erdi Özbek
@@ -118,3 +119,56 @@ fun PagingMoreLoading() {
         CircularProgressIndicator(color = Color.White)
     }
 }
+
+@Composable
+fun LoadingDialogFullScreen(
+) {
+    androidx.compose.ui.window.Dialog(
+        properties = DialogHelper.fullScreenDialogProperties,
+        onDismissRequest = {}) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = ProjectUtil.backgroudAlpha)),
+            contentAlignment = Alignment.Center,
+        ) {
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.onBackground)
+        }
+    }
+
+}
+
+@Composable
+fun ErrorDialogFullScreen(
+    errorMessage: String = "An error occurred.",
+    onDismiss: (() -> Unit)? = null,
+    onRetry: () -> Unit,
+) {
+    androidx.compose.ui.window.Dialog(
+        properties = DialogHelper.fullScreenDialogProperties,
+        onDismissRequest = { onDismiss?.invoke() }) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = ProjectUtil.backgroudAlpha)),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(text = errorMessage, color = Color.White)
+                if (onDismiss != null) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(onClick = onDismiss) {
+                        Text(text = "Dismiss")
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(onClick = onRetry) {
+                    Text(text = "Retry")
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+        }
+    }
+}
+

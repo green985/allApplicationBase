@@ -15,8 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationBar
-import com.oyetech.composebase.navigator.rememberNavigator
-import com.oyetech.composebase.projectRadioFeature.RadioAppNavigation
+import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppNavigationWrapperWithPlayerSetup
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
 import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.GeneralOperationScreenSetup
 import com.oyetech.composebase.projectRadioFeature.theme.RadioAppTheme
@@ -45,7 +44,7 @@ class RadioMainActivity : ComponentActivity() {
                             .fillMaxSize()
                             .background(MaterialTheme.colorScheme.background)
                     ) {
-                        RadioAppNavigation(
+                        RadioAppNavigationWrapperWithPlayerSetup(
                             navController = navController,
                             startDestination = RadioAppProjectRoutes.TabRadioAllList.route
                         )
@@ -67,12 +66,12 @@ class RadioMainActivity : ComponentActivity() {
 @Preview
 fun GreetingVibrationPreview() {
     RadioAppTheme {
-        val navigator = rememberNavigator()
+        val navigator = rememberNavController()
 
         Scaffold(
             bottomBar = {
                 BottomNavigationBar(
-                    navigator.navController,
+                    navigator,
                     navItems = RadioAppProjectRoutes.radioApplicationBottomTabNavList
                 )
             },

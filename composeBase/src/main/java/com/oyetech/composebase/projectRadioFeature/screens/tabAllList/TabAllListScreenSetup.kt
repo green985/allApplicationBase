@@ -32,7 +32,7 @@ import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.Radio
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarActionItems
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarEvent
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarSetup
-import com.oyetech.composebase.projectRadioFeature.views.quotes.listScreen.QuoteListScreenSetup
+import com.oyetech.composebase.sharedScreens.quotes.listScreen.QuoteListScreenSetup
 import com.oyetech.models.radioProject.enums.RadioListEnums
 import com.oyetech.models.radioProject.enums.RadioListEnums.Country
 import com.oyetech.models.radioProject.enums.RadioListEnums.Languages

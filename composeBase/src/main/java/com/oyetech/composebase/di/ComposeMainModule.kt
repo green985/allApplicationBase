@@ -24,8 +24,8 @@ import com.oyetech.composebase.projectRadioFeature.viewModelSlice.IRadioFavViewM
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.IRadioPlayerViewModelSlice
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.RadioFavViewModelSliceImp
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.RadioPlayerViewModelSliceImp
-import com.oyetech.composebase.projectRadioFeature.views.quotes.randomQuotesViewer.QuotesVM
-import com.oyetech.composebase.projectRadioFeature.views.quotes.tagList.QuoteTagListVM
+import com.oyetech.composebase.sharedScreens.quotes.randomQuotesViewer.QuotesVM
+import com.oyetech.composebase.sharedScreens.quotes.tagList.QuoteTagListVM
 import com.oyetech.domain.repository.helpers.logicRepositories.RadioListSortRepository
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.singleOf
@@ -41,11 +41,7 @@ object ComposeMainModule {
     val composeMainModule1 = module {
         single<IVibrationHelper> { VibrationHelperImpl(get()) }
         factory<AdViewOperationDelegate> { AdViewOperationDelegateImpl() }
-//        viewModelOf(::RadioListViewModel)
         viewModelOf(::RadioListVM)
-//        factory(::RadioListVM)
-//        factory(::RadioListVM)
-
         viewModelOf(::RadioAllListFragmentVM)
         viewModelOf(::LanguageVM)
         viewModelOf(::RadioPlayerVM)

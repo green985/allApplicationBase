@@ -1,7 +1,6 @@
 package com.oyetech.radioeveryonee.main.koins
 
 import com.oyetech.adshelper.di.AdsHelperModule
-import com.oyetech.composebase.baseViews.globalLoading.di.GlobalComposeModule
 import com.oyetech.composebase.di.ComposeMainModule
 import com.oyetech.core.di.CommonsModule
 import com.oyetech.cripto.privateKeys.WallpaperAppFragmentArgs
@@ -50,7 +49,6 @@ object AppComponent {
         AdsHelperModule.adsHelperModulee,
         FirebaseDBModule.firebaseDBModulee,
         ComposeMainModule.composeMainModule1,
-        GlobalComposeModule.globalComposeModuleV,
 
         RadioDomainModule.radioDomainModule,
         RadioModuleDI.createRemoteModule(BaseUrlConfigHelper.BASE_DOMAIN_RADIO),

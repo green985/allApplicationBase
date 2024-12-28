@@ -93,7 +93,6 @@ class RadioPlayerViewModelSliceImp(
     private fun playPauseSelectedRadio(
         selectedItem: RadioUIState,
     ) {
-        changeState()
         if (selectedItem.playerState == Playing) {
             radioOperationUseCase.stopPlayer()
             return
