@@ -34,7 +34,7 @@ Created by Erdi Özbek
 @Composable
 fun QuoteListScreenSetup() {
     val vm = koinViewModel<QuotesVM>()
-    val lazyPagingItems = vm.getQuotesPager().collectAsLazyPagingItems()
+    val lazyPagingItems = vm.quotesPage.collectAsLazyPagingItems()
 
     val state = rememberLazyListState()
 
@@ -69,7 +69,7 @@ fun QuoteListScreenSetup() {
                     if (lazyPagingItems.loadState.append is LoadState.Error) {
                         val errorMessage =
                             (lazyPagingItems.loadState.append as LoadState.Error).error.message
-                        Timber.d("LoadState.Loading")
+                        Timber.d("LoadState.Error")
                         PagingMoreError(
                             errorMessage = errorMessage ?: "",
                             onRetry = {

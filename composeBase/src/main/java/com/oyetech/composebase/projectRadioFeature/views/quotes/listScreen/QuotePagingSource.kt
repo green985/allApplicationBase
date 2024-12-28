@@ -41,7 +41,6 @@ class QuotePagingSource(
                         var listt = it
                         listt = listt.filterNot {
                             val result = oldList.contains(it.quoteId)
-                            Timber.d("getRefreshKey result == " + result)
                             result
                         }
                         listt

@@ -34,7 +34,7 @@ class QuotesVM(
     private val quoteDataOperationRepository: QuoteDataOperationRepository,
 ) : BaseViewModel(appDispatchers) {
 
-    fun getQuotesPager() =
+    val quotesPage =
         Pager(
             config = PagingConfig(
                 pageSize = 20,
@@ -51,6 +51,10 @@ class QuotesVM(
         MutableStateFlow(ComplexItemListState())
 
     val currentPage = MutableStateFlow(0)
+
+    init {
+        Timber.d("QuotesVM init")
+    }
 
     fun onEvent(event: QuoteListUiEvent) {
         when (event) {
