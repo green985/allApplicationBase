@@ -11,10 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
-import com.oyetech.composebase.baseViews.ErrorScreenFullSize
-import com.oyetech.composebase.baseViews.LoadingScreenFullSize
-import com.oyetech.composebase.baseViews.PagingMoreError
-import com.oyetech.composebase.baseViews.PagingMoreLoading
+import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
+import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
+import com.oyetech.composebase.baseViews.loadingErrors.PagingMoreError
+import com.oyetech.composebase.baseViews.loadingErrors.PagingMoreLoading
 
 @Composable
 fun <T : Any> BasePagingListScreen(

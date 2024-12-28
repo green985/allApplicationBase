@@ -16,6 +16,7 @@ object LanguageKey {
     var deleteUserErrorMessage set(value) {} get() = LocalLanguageHelper.getStringWithKey("deleteAccountButtonText")
 
     var generalErrorText set(value) {} get() = LocalLanguageHelper.getStringWithKey("Error")
+    var internetConnectionErrorText set(value) {} get() = LocalLanguageHelper.getStringWithKey("internetConnectionErrorText")
     var login set(value) {} get() = LocalLanguageHelper.getStringWithKey("Login")
     var denemeKey set(value) {} get() = LocalLanguageHelper.getStringWithKey("denemeKey")
 

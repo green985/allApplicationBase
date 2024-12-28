@@ -5,13 +5,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 object RadioDimensions {
+    val listLoadingItemHeight: Dp = 100.dp
     val appLogoSize: Dp = 80.dp
     val lineHeight = 0.35.dp
-
-
-
-
-
 
     val radioBigLogoSize: Dp = 100.dp
     val buttonWidthDp = 36.dp

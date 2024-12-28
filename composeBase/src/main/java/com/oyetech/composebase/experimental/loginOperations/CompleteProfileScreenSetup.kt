@@ -18,8 +18,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.oyetech.composebase.baseViews.ErrorScreenFullSize
-import com.oyetech.composebase.baseViews.LoadingScreenFullSize
+import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
+import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
+import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.ErrorDismiss
+import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.LoginClicked
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarSetup
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarState
 import org.koin.androidx.compose.koinViewModel
@@ -54,8 +56,8 @@ fun CompleteProfileScreenSetup(navigationRoute: (navigationRoute: String) -> Uni
         // ErrorView
         ErrorScreenFullSize(
             errorMessage = "Error",
-            onDismiss = { vm.handleEvent(LoginOperationEvent.ErrorDismiss) },
-            onRetry = { vm.handleEvent(LoginOperationEvent.LoginClicked) }
+            onDismiss = { vm.handleEvent(ErrorDismiss) },
+            onRetry = { vm.handleEvent(LoginClicked) }
         )
     }
 

@@ -43,7 +43,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.R
-import com.oyetech.composebase.baseViews.LoadingScreenFullSize
+import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import timber.log.Timber
 
 @Deprecated("Use Paging for everything instead")
