@@ -13,6 +13,7 @@ import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.RadioListScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.radioSearchList.RadioSearchListScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.tabAllList.TabAllListScreenSetup
+import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.TabSettingsScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactWithMe.ContactScreen
 import com.oyetech.composebase.projectRadioFeature.screens.tagList.TagListScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.views.dialogs.timerDialog.RadioCountTimerDialogSetup
@@ -62,13 +63,12 @@ fun NavGraphBuilder.radioAppNavigation(navController: NavController) {
 
     // TabHistory Route
     composable(RadioAppProjectRoutes.TabSettings.route) {
-        LoginOperationScreenSetup(
-            navigationRoute = navigateRoute(navController)
-        )
-
-//        TabSettingsScreenSetup(
+//        LoginOperationScreenSetup(
 //            navigationRoute = navigateRoute(navController)
 //        )
+        TabSettingsScreenSetup(
+            navigationRoute = navigateRoute(navController)
+        )
     }
 
     // TabHistory Route

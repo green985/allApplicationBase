@@ -9,11 +9,11 @@ Created by Erdi Özbek
  **/
 
 object LanguageKey {
+    var quotes set(value) {} get() = LocalLanguageHelper.getStringWithKey("quotes")
     var createUserErrorMessage set(value) {} get() = LocalLanguageHelper.getStringWithKey("createUserErrorMessage")
     var accountDeleted set(value) {} get() = LocalLanguageHelper.getStringWithKey("accountDeleted")
     var deleteAccountButtonText set(value) {} get() = LocalLanguageHelper.getStringWithKey("deleteAccountButtonText")
     var deleteUserErrorMessage set(value) {} get() = LocalLanguageHelper.getStringWithKey("deleteAccountButtonText")
-
 
     var generalErrorText set(value) {} get() = LocalLanguageHelper.getStringWithKey("Error")
     var login set(value) {} get() = LocalLanguageHelper.getStringWithKey("Login")

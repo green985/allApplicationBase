@@ -72,6 +72,11 @@ fun TabSettingsScreen(
                 .padding(it)
         )
         {
+
+            Spacer(modifier = Modifier.height(32.dp))
+            QuotesListViewSetup()
+            Spacer(modifier = Modifier.height(32.dp))
+            
             SimpleSettingsInfoViewSetup(
                 onClick = { navigationRoute.invoke(RadioAppProjectRoutes.ContactScreen.route) },
                 text = "Contact with us"
@@ -83,8 +88,6 @@ fun TabSettingsScreen(
                 onClick = { startReviewOperation.invoke() },
                 text = "Rate us"
             )
-            Spacer(modifier = Modifier.height(32.dp))
-            QuotesListViewSetup()
 
             HorizontalDivider(
                 modifier = Modifier.height(1.dp)

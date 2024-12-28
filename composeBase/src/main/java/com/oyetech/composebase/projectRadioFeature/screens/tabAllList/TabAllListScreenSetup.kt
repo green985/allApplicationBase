@@ -32,9 +32,11 @@ import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.Radio
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarActionItems
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarEvent
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarSetup
+import com.oyetech.composebase.projectRadioFeature.views.quotes.listScreen.QuoteListScreenSetup
 import com.oyetech.models.radioProject.enums.RadioListEnums
 import com.oyetech.models.radioProject.enums.RadioListEnums.Country
 import com.oyetech.models.radioProject.enums.RadioListEnums.Languages
+import com.oyetech.models.radioProject.enums.RadioListEnums.Quotes
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -53,7 +55,8 @@ fun TabAllListScreenSetup(
 
     val radioToolbarState by viewModel.radioToolbarState.collectAsState()
 
-    val pagerState = rememberPagerState { uiState.tabEnumList.size }
+    val pagerState = rememberPagerState(initialPage = 1,
+        pageCount = { uiState.tabEnumList.size })
     BaseScaffold(
         showTopBar = true,
         topBarContent = {
@@ -145,6 +148,11 @@ private fun TabAllScreenView(
             Timber.d("page == $page")
             key(tabEnums[page]) {
                 when (tabEnums[page]) {
+                    Quotes -> {
+                        QuoteListScreenSetup()
+                        Timber.d("Quotes")
+                    }
+
                     Languages -> {
                         LanguageListScreenSetup(navigationRoute)
                         Timber.d("Languages")

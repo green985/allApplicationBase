@@ -47,7 +47,7 @@ class RadioMainActivity : ComponentActivity() {
                     ) {
                         RadioAppNavigation(
                             navController = navController,
-                            startDestination = RadioAppProjectRoutes.QuotesListScreen.route
+                            startDestination = RadioAppProjectRoutes.TabRadioAllList.route
                         )
                     }
                 }

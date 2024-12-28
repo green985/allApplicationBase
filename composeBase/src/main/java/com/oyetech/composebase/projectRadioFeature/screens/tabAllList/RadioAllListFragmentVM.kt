@@ -17,6 +17,7 @@ import com.oyetech.core.appUtil.AppUtil
 import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.domain.radioOperationUseCases.remoteUseCase.RadioStationListOperationUseCase
 import com.oyetech.domain.useCases.TimerOperationUseCase
+import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.radioProject.enums.RadioListEnums
 import com.oyetech.models.radioProject.enums.RadioListEnums.Country
 import com.oyetech.models.radioProject.enums.RadioListEnums.Favorites
@@ -26,6 +27,7 @@ import com.oyetech.models.radioProject.enums.RadioListEnums.Languages
 import com.oyetech.models.radioProject.enums.RadioListEnums.Last_Change
 import com.oyetech.models.radioProject.enums.RadioListEnums.Last_Click
 import com.oyetech.models.radioProject.enums.RadioListEnums.Local
+import com.oyetech.models.radioProject.enums.RadioListEnums.Quotes
 import com.oyetech.models.radioProject.enums.RadioListEnums.Search
 import com.oyetech.models.radioProject.enums.RadioListEnums.Tag
 import com.oyetech.models.radioProject.enums.RadioListEnums.Top_Click
@@ -92,9 +94,9 @@ class RadioAllListFragmentVM(
 
     private fun prepareRadioPathList(): ImmutableList<RadioListEnums> {
         val countryCode = AppUtil.getCountryCode(context)
-
         val list = arrayListOf<RadioListEnums>()
 
+        list.add(Quotes)
         if (countryCode.isNotBlank()) {
             list.add(Local)
         }
@@ -133,9 +135,11 @@ class RadioAllListFragmentVM(
             return tabString
         }
 
-
-
         when (listType) {
+            Quotes -> {
+                tabString = LanguageKey.quotes
+            }
+
             Local -> {
                 getTextWithListType(R.string.action_local)
             }
