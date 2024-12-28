@@ -14,8 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
-import com.oyetech.composebase.baseViews.globalLoading.presentation.GlobalErrorView
-import com.oyetech.composebase.baseViews.globalLoading.presentation.GlobalLoadingView
+import com.oyetech.composebase.baseViews.ErrorScreenFullSize
+import com.oyetech.composebase.baseViews.LoadingScreenFullSize
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
 import com.oyetech.languageModule.keyset.LanguageKey
 import org.koin.androidx.compose.koinViewModel
@@ -45,10 +45,10 @@ fun LoginOperationScreenSetup(navigationRoute: (navigationRoute: String) -> Unit
     }
 
     if (uiState.isLoading) {
-        GlobalLoadingView()
+        LoadingScreenFullSize()
     } else if (uiState.isError) {
-        GlobalErrorView(
-            message = uiState.errorMessage,
+        ErrorScreenFullSize(
+            errorMessage = uiState.errorMessage,
             onDismiss = { vm.handleEvent(LoginOperationEvent.ErrorDismiss) },
             onRetry = { vm.handleEvent(LoginOperationEvent.LoginClicked) }
         )

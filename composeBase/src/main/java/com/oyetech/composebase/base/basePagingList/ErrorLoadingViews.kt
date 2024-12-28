@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -74,48 +73,4 @@ fun PagingInitialErrorView(errorMessage: String, onRetry: () -> Unit) {
     }
 
 
-}
-
-@Composable
-fun PagingMoreLoading() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp)
-            .background(Color.Black.copy(alpha = 0.7f))
-            .clickable(
-                enabled = false,
-                onClick = {}), // Kullanıcı aksiyonlarını bloklamak için
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator(color = Color.White)
-    }
-}
-
-// also is firing when there is no more data
-@Composable
-fun PagingMoreError(errorMessage: String = "Loading Error", onRetry: () -> Unit = {}) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp)
-            .background(color = MaterialTheme.colorScheme.error),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            style = MaterialTheme.typography.displaySmall,
-            text = errorMessage,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        IconButton(onClick = onRetry) {
-            Icon(
-                modifier = Modifier.size(40.dp),
-                imageVector = Icons.Default.Refresh,
-                contentDescription = "Retry",
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-    }
 }

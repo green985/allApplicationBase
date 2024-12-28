@@ -43,9 +43,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.R
-import com.oyetech.composebase.baseViews.globalLoading.presentation.GlobalLoadingView
+import com.oyetech.composebase.baseViews.LoadingScreenFullSize
 import timber.log.Timber
 
+@Deprecated("Use Paging for everything instead")
 @Suppress("LongParameterList")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -109,7 +110,7 @@ fun LoadableLazyColumn(
         )
 
         if (isLoadingInitial) {
-            GlobalLoadingView()
+            LoadingScreenFullSize()
         } else {
             RadioErrorListView(
                 errorMessage = errorMessage,
