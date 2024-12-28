@@ -22,7 +22,6 @@ data class QuotesUiState(
 )
 
 sealed class QuoteListUiEvent {
-    data class LoadMore(val currentItem: Int) : QuoteListUiEvent()
-    data class QuoteSeen(val quotesUiState: QuotesUiState) : QuoteListUiEvent()
+    data class QuoteSeen(val index: Int) : QuoteListUiEvent()
 //    object Refresh : QutoeListUiEvent()
 }

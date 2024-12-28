@@ -81,7 +81,7 @@ fun QuotesListViewSetup(vm: QuotesVM = koinViewModel()) {
                 Timber.d("page == $page")
                 vm.currentPage.value = page
 //                event.invoke(QuoteListUiEvent.LoadMore(page))
-                event.invoke(QuoteListUiEvent.QuoteSeen(quotesList[page]))
+//                event.invoke(QuoteListUiEvent.QuoteSeen(quotesList[page]))
             }
 
             key(quotesList[page]) {
@@ -91,7 +91,7 @@ fun QuotesListViewSetup(vm: QuotesVM = koinViewModel()) {
 
         PagerButtonStyle(
             coroutineScope = coroutineScope,
-            fetchRandomQuotes = { vm.loadMoreItem() },
+//            fetchRandomQuotes = { vm.loadMoreItem() },
             pagerState = pagerState,
             previousAction = { previousAction() },
             nextAction = { nextAction() }

@@ -3,7 +3,6 @@ package com.oyetech.repository.quotesImp
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
 import com.oyetech.domain.quotesDomain.quotesData.QuotesRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuotesOperationRepository
-import com.oyetech.languageModule.keyset.ExceptionKeys
 import com.oyetech.models.quotes.responseModel.QuoteResponseData
 import com.oyetech.models.utils.const.HelperConstant
 import com.oyetech.quotes.dao.QuotesAllListDao
@@ -26,37 +25,29 @@ class QuoteDataOperationRepositoryImp(
     private val firebaseQuotesOperationRepository: FirebaseQuotesOperationRepository,
 ) : QuoteDataOperationRepository {
 
-    var flaggg = false
     private val errorQuotesString = "Too many requests. Obtain an auth key for unlimited access."
-
+    var isError = false
     override fun getRandomRemoteQuote(): Flow<List<QuoteResponseData>> {
         return quotesRepository.fetchQuotes().map {
-            val quoteResponseList = it
-            val isError = quoteResponseList.firstOrNull()?.let {
-                it.text == errorQuotesString
-            } ?: false
-            Timber.d(" isError  " + isError)
+            var quoteResponseList = it
+            quoteResponseList = it.map {
+                if (it.text != errorQuotesString) {
+                    it
+                } else {
+                    null
+                }
+            }.filterNotNull()
 
-            if (flaggg) {
-                Timber.d(" isError  " + isError)
-                return@map emptyList<QuoteResponseData>()
-            } else {
-                flaggg = true
-            }
-
-            if (isError) {
-                emptyList<QuoteResponseData>()
-//                delay(5000)
-//                quotesRepository.fetchQuotes().firstOrNull() ?: emptyList()
-            } else {
-                quoteResponseList
-            }
+//            if (isError) {
+//                return@map emptyList<QuoteResponseData>()
+//            } else {
+//                isError = true
+//            }
             quoteResponseList
         }.map {
             val quoteResponseList = it
             if (it.isEmpty()) {
                 it
-                throw Exception(ExceptionKeys.emptyList)
             } else {
                 Timber.d(" getRandomRemoteQuote  " + it.size)
                 quotesAllListDao.insert(quoteResponseList)
@@ -81,7 +72,6 @@ class QuoteDataOperationRepositoryImp(
                 } else {
                     list = it
                 }
-                Timber.d(" getQuoteUnseenFlow  " + list.size)
 
                 flowOf(list)
             }
