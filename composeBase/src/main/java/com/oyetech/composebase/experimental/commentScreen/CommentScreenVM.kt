@@ -12,11 +12,14 @@ import com.oyetech.core.coroutineHelper.asResult
 import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.firebaseModels.commentModel.CommentResponseData
+import com.oyetech.models.utils.helper.TimeFunctions
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
+import java.util.Date
 
 /**
 Created by Erdi Özbek
@@ -56,7 +59,25 @@ class CommentScreenVM(
 
     fun addComment() {
         val content = commentScreenUiState.value.commentContent
-        commentOperationRepository.addComment("firstComment", content)
+
+        viewModelScope.launch(getDispatcherIo()) {
+            commentOperationRepository.addCommentFlow("firstComment", content).asResult()
+                .collectLatest {
+                    it.fold(
+                        onSuccess = {
+                            Timber.d("Comment Added ==" + it.toString())
+                        },
+                        onFailure = {
+                            Timber.d("Comment fail ==" + it.toString())
+
+                        }
+                    )
+                }
+        }
+
+        //commentOperationRepository.addComment("firstComment", content)
+
+        popilateCommentScreenList()
     }
 
     fun popilateCommentScreenList() {
@@ -84,8 +105,18 @@ class CommentScreenVM(
 
 private fun List<CommentResponseData>.mapToResponse(): ImmutableList<CommentScreenUiState> {
     return this.map {
-        CommentScreenUiState(
-            commentContent = it.content, createdAt = it.createdAt,
-        )
-    }.toImmutableList()
+        if (it.createdAt != null) {
+            val createdTimeString = TimeFunctions.getDateFromLongWithHour(it.createdAt!!.time)
+            CommentScreenUiState(
+                commentContent = it.content,
+                createdAtString = createdTimeString,
+                createdAt = it.createdAt ?: Date(),
+            )
+
+        } else {
+            null
+        }
+    }.filterNotNull().toImmutableList()
+
+
 }

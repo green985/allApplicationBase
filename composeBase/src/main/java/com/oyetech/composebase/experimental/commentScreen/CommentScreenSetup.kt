@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -80,9 +81,15 @@ fun CommentScreenSetup() {
                         items = complexItemViewState.items,
                         key = { it.createdAt.time },
                         itemContent = { itemResponse ->
-                            Spacer(Modifier.height(16.dp))
-                            Text(text = itemResponse.commentContent)
-                            Spacer(Modifier.height(16.dp))
+                            Card(modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)) {
+
+                                Spacer(Modifier.height(16.dp))
+                                Text(text = itemResponse.commentContent)
+                                Spacer(Modifier.height(16.dp))
+                                Text(text = itemResponse.createdAtString)
+                            }
                         })
                 },
             )

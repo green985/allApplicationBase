@@ -7,6 +7,7 @@ Created by Erdi Özbek
  **/
 
 object HelperConstant {
+    val FirebaseDB_TRANSACTION_TIMEOUT: Long = 30000L
     val QUOTES_PAGER_LIMIT = 20
     val SPAN_DUMMY_STRING: String = "∫"
 

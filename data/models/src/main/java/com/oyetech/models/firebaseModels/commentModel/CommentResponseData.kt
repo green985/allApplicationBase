@@ -1,5 +1,6 @@
 package com.oyetech.models.firebaseModels.commentModel
 
+import com.google.firebase.firestore.ServerTimestamp
 import java.util.Date
 
 data class CommentWrapper(
@@ -11,7 +12,9 @@ data class CommentResponseData(
     val connectionId: String = "connectionId",
     val content: String = "",
     val userId: String = "green985",
-    val createdAt: Date = Date(),
+
+    @ServerTimestamp
+    val createdAt: Date? = null,
 //    val likes: Int,
 //    val replies: List<Reply> = listOf()
 )

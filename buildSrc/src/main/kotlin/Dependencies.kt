@@ -9,6 +9,7 @@ object FirebaseLibrary {
     const val googleServices = "com.google.gms:google-services"
     const val performance = "com.google.firebase:firebase-perf-ktx"
     const val firestoreDB = "com.google.firebase:firebase-firestore-ktx"
+    const val firestoreDatabase = "com.google.firebase:firebase-database-ktx"
     const val messaging = "com.google.firebase:firebase-messaging-ktx"
     const val googleAuth = "com.google.android.gms:play-services-auth:${Versions.googleAuth}"
     const val googleAuthBOM = "com.google.android.gms:play-services-auth"

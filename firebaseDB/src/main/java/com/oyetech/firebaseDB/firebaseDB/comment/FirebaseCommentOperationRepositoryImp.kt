@@ -4,8 +4,12 @@ import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
 import com.oyetech.firebaseDB.databaseKeys.FirebaseDatabaseKeys
+import com.oyetech.firebaseDB.firebaseDB.helper.runTransactionWithTimeout
 import com.oyetech.models.firebaseModels.commentModel.CommentResponseData
+import com.oyetech.models.newPackages.helpers.OperationState
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
@@ -19,12 +23,21 @@ Created by Erdi Özbek
 class FirebaseCommentOperationRepositoryImp(private val firestore: FirebaseFirestore) :
     FirebaseCommentOperationRepository {
 
+    override val addCommentOperationState =
+        MutableStateFlow<OperationState<Boolean>>(OperationState.Idle)
+
     override suspend fun getCommentsWithId(commentId: String): Flow<List<CommentResponseData>> {
 
         val result = firestore.collection(FirebaseDatabaseKeys.commentTable)
             .document(commentId)
             .collection("comments")
+            .orderBy("createdAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
             .get().await()
+
+        val creationResultList = result.map {
+            it.getTimestamp("createdAt")
+        }
+        Timber.d("creationResultList: $creationResultList")
 
         if (result.size() == 0) {
             Timber.d("No comments found")
@@ -37,6 +50,7 @@ class FirebaseCommentOperationRepositoryImp(private val firestore: FirebaseFires
     }
 
     override fun addComment(contentId: String, content: String) {
+        addCommentOperationState.value = OperationState.Loading
         firestore.collection(FirebaseDatabaseKeys.commentTable)
             .document(contentId)
             .collection("comments")
@@ -47,9 +61,38 @@ class FirebaseCommentOperationRepositoryImp(private val firestore: FirebaseFires
             )
             .addOnSuccessListener {
                 Timber.d("Comment added")
+                addCommentOperationState.value = OperationState.Success(true)
             }
             .addOnFailureListener { e ->
                 Log.w("Firestore", "Error adding comment", e)
+                addCommentOperationState.value = OperationState.Error(e)
             }
+    }
+
+    override fun addCommentFlow(
+        contentId: String,
+        content: String,
+    ): Flow<OperationState<Boolean>> = flow {
+        emit(OperationState.Loading)
+        try {
+            val comment = CommentResponseData(content = content)
+
+            val documentReference =
+                firestore.runTransactionWithTimeout() { transaction ->
+                    val commentRef = firestore.collection(FirebaseDatabaseKeys.commentTable)
+                        .document(contentId)
+                        .collection("comments")
+                        .document()
+
+                    transaction.set(commentRef, comment)
+                    commentRef
+                }
+
+            Timber.d("Comment added: ${documentReference.id}")
+            emit(OperationState.Success(true))
+        } catch (e: Exception) {
+            Log.w("Firestore", "Error adding comment", e)
+            emit(OperationState.Error(e))
+        }
     }
 }

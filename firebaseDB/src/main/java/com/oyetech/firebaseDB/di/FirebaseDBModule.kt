@@ -8,6 +8,7 @@ import com.oyetech.domain.repository.firebase.RadioAnalyticsOperationRepository
 import com.oyetech.domain.repository.helpers.FirebaseContactWithMeOperationRepository
 import com.oyetech.firebaseDB.firebaseDB.FirebaseContactWithMeOperationRepositoryImp
 import com.oyetech.firebaseDB.firebaseDB.comment.FirebaseCommentOperationRepositoryImp
+import com.oyetech.firebaseDB.firebaseDB.helper.FirebaseOnlineHelper
 import com.oyetech.firebaseDB.firebaseDB.quotes.FirebaseQuotesOperationRepositoryImp
 import com.oyetech.firebaseDB.firebaseDB.radio.RadioAnalyticsOperationRepositoryImp
 import com.oyetech.firebaseDB.userOperation.FirebaseUserRepositoryImp
@@ -22,7 +23,17 @@ Created by Erdi Özbek
 object FirebaseDBModule {
 
     var firebaseDBModulee = module {
-        single<FirebaseFirestore> { FirebaseFirestore.getInstance() }
+        single<FirebaseFirestore> {
+            FirebaseFirestore.setLoggingEnabled(true)
+
+            val firestore = FirebaseFirestore.getInstance()
+
+//            val settings = firestoreSettings {
+//                isPersistenceEnabled = false
+//            }
+//            firestore.firestoreSettings = settings
+            firestore
+        }
         single<RadioAnalyticsOperationRepository> { RadioAnalyticsOperationRepositoryImp(get()) }
 
         single<FirebaseContactWithMeOperationRepository> {
@@ -34,5 +45,8 @@ object FirebaseDBModule {
         single<FirebaseCommentOperationRepository> { FirebaseCommentOperationRepositoryImp(get()) }
         single<FirebaseUserRepository> { FirebaseUserRepositoryImp(get()) }
         single<FirebaseQuotesOperationRepository> { FirebaseQuotesOperationRepositoryImp(get()) }
+
+
+        single { FirebaseOnlineHelper() }
     }
 }

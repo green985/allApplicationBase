@@ -12,6 +12,7 @@ data class CommentScreenUiState(
     val id: String = "",
     val commentContent: String = "",
     val createdAt: Date = Date(),
+    val createdAtString: String = "",
 )
 
 sealed class CommentScreenEvent {
