@@ -53,7 +53,7 @@ fun CommentScreenSetup() {
             OutlinedTextField(
                 value = commentScreenUiState.commentContent,
                 onValueChange = {
-                    viewModel.onEvent(CommentScreenEvent.UpdateContent(it))
+                    viewModel.onEvent(CommentScreenEvent.OnCommentChanged(it))
                 },
                 label = { Text("Name") },
                 modifier = Modifier.fillMaxWidth()
@@ -81,9 +81,11 @@ fun CommentScreenSetup() {
                         items = complexItemViewState.items,
                         key = { it.createdAt.time },
                         itemContent = { itemResponse ->
-                            Card(modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)) {
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp)
+                            ) {
 
                                 Spacer(Modifier.height(16.dp))
                                 Text(text = itemResponse.commentContent)

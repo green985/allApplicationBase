@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.baseList.BaseListViewModel
 import com.oyetech.composebase.base.baseList.ComplexItemListState
 import com.oyetech.composebase.experimental.commentScreen.CommentScreenEvent.AddComment
-import com.oyetech.composebase.experimental.commentScreen.CommentScreenEvent.UpdateContent
+import com.oyetech.composebase.experimental.commentScreen.CommentScreenEvent.OnCommentChanged
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarState
 import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.core.coroutineHelper.asResult
@@ -31,8 +31,8 @@ class CommentScreenVM(
     appDispatchers: AppDispatchers,
     private val commentOperationRepository: FirebaseCommentOperationRepository,
 ) :
-    BaseListViewModel<CommentScreenUiState>(appDispatchers) {
-    override val complexItemViewState: MutableStateFlow<ComplexItemListState<CommentScreenUiState>> =
+    BaseListViewModel<CommentItemUiState>(appDispatchers) {
+    override val complexItemViewState: MutableStateFlow<ComplexItemListState<CommentItemUiState>> =
         MutableStateFlow(ComplexItemListState(errorMessage = errorMessage))
 
     val toolbarState = mutableStateOf(
@@ -41,7 +41,7 @@ class CommentScreenVM(
         )
     )
 
-    val commentScreenUiState = MutableStateFlow(CommentScreenUiState())
+    val commentScreenUiState = MutableStateFlow(CommentItemUiState())
 
     init {
         popilateCommentScreenList()
@@ -50,7 +50,7 @@ class CommentScreenVM(
     fun onEvent(event: CommentScreenEvent) {
         when (event) {
             is AddComment -> addComment()
-            is UpdateContent -> {
+            is OnCommentChanged -> {
                 commentScreenUiState.value =
                     commentScreenUiState.value.copy(commentContent = event.content)
             }
@@ -103,11 +103,11 @@ class CommentScreenVM(
 
 }
 
-private fun List<CommentResponseData>.mapToResponse(): ImmutableList<CommentScreenUiState> {
+private fun List<CommentResponseData>.mapToResponse(): ImmutableList<CommentItemUiState> {
     return this.map {
         if (it.createdAt != null) {
             val createdTimeString = TimeFunctions.getDateFromLongWithHour(it.createdAt!!.time)
-            CommentScreenUiState(
+            CommentItemUiState(
                 commentContent = it.content,
                 createdAtString = createdTimeString,
                 createdAt = it.createdAt ?: Date(),
