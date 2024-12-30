@@ -53,7 +53,7 @@ fun LoadingScreenFullSize() {
 fun ErrorScreenFullSize(
     errorMessage: String = "",
     onDismiss: (() -> Unit)? = null,
-    onRetry: (() -> Unit),
+    onRetry: (() -> Unit)? = null,
 ) {
     Box(
         modifier = Modifier
@@ -71,8 +71,10 @@ fun ErrorScreenFullSize(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = onRetry) {
-                Text(text = "Retry")
+            if (onRetry != null) {
+                Button(onClick = onRetry) {
+                    Text(text = "Retry")
+                }
             }
             Spacer(modifier = Modifier.height(16.dp))
         }

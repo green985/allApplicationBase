@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,15 +25,22 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.basePagingList.BasePagingListScreen
+import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
+import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.experimental.commentScreen.CommentItemUiState
 import com.oyetech.composebase.experimental.commentScreen.CommentScreenEvent
 import com.oyetech.composebase.experimental.commentScreen.CommentScreenUiState
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationScreenSetup
+import com.oyetech.composebase.experimental.loginOperations.LoginOperationUiState
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
 import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.models.newPackages.helpers.OperationState.Error
+import com.oyetech.models.newPackages.helpers.OperationState.Loading
+import com.oyetech.models.newPackages.helpers.OperationState.Success
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
+import timber.log.Timber
 
 /**
 Created by Erdi Özbek
@@ -58,72 +66,106 @@ fun CommentScreenWithContentScreenSetup(
         Column(modifier = Modifier.padding(it)) {
             LoginOperationScreenSetup(navigationRoute = navigationRoute)
 
-            Column(
-                verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Button(onClick = {
-                    loginOperationVM.handleEvent(LoginOperationEvent.LoginClicked)
-                }) {
-                    Text(LanguageKey.login)
+            val uiState by vm.uiState.collectAsStateWithLifecycle()
+
+            val lazyPagingItems = vm.commentPageState.collectAsLazyPagingItems()
+
+            when (uiState.addCommentState) {
+                is Error -> {
+                    val errorMessage = (uiState.addCommentState as Error).exception.message ?: ""
+                    ErrorScreenFullSize(errorMessage)
+                }
+
+                Loading -> {
+                    LoadingScreenFullSize()
+                }
+
+                is Success -> {
+                    // todo will be add snacbar but now refresh...
+                    LaunchedEffect(Unit) {
+                        Timber.d("Successsssss")
+
+                    }
+                }
+
+                else -> {
+
                 }
             }
 
-            if (loginOperationState.isLogin) {
 
-                val uiState by vm.uiState.collectAsStateWithLifecycle()
-
-                val lazyPagingItems = vm.commentPageState.collectAsLazyPagingItems()
-
-                BasePagingListScreen(
-                    modifier = Modifier.weight(1f),
-                    items = lazyPagingItems, // This parameter is abstracted, not used here
-                    itemKey = { item -> item.createdAt.time },
-                    onBindItem = { item ->
-                        CommentItemView(uiState = item, onEvent = { event ->
-                            vm.onEvent(event)
-                        })
-                    },
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-                CommentInputView(
-                    uiState = uiState,
-                    onEvent = { event ->
+            BasePagingListScreen(
+                reverseLayout = true,
+                modifier = Modifier.weight(1f),
+                items = lazyPagingItems, // This parameter is abstracted, not used here
+                itemKey = { item -> item.createdAt.time },
+                onBindItem = { item ->
+                    CommentItemView(uiState = item, onEvent = { event ->
                         vm.onEvent(event)
-                    }
-                )
-            }
+                    })
+                },
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+            CommentInputView(
+                uiState = uiState,
+                onEvent = { event ->
+                    vm.onEvent(event)
+                },
+                userUiState = loginOperationState,
+                onUserEvent = { event ->
+                    loginOperationVM.handleEvent(event)
+                }
+            )
         }
     }
 
 }
 
 @Composable
-fun CommentInputView(uiState: CommentScreenUiState, onEvent: (CommentScreenEvent) -> (Unit)) {
+fun CommentInputView(
+    uiState: CommentScreenUiState,
+    userUiState: LoginOperationUiState,
+    onEvent: (CommentScreenEvent) -> (Unit),
+    onUserEvent: (LoginOperationEvent) -> (Unit),
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 8.dp, end = 8.dp)
     ) {
 
-        OutlinedTextField(
-            value = uiState.commentInput,
-            onValueChange = {
-                onEvent(CommentScreenEvent.OnCommentInputChanged(it))
-            },
-            label = { Text("Name") },
-            modifier = Modifier.weight(1f)
-        )
-        IconButton(enabled = uiState.commentInput.isBlank(), onClick = {
-            onEvent(CommentScreenEvent.OnCommentSubmit)
+        if (!userUiState.isLogin) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Button(onClick = {
+                    onUserEvent(LoginOperationEvent.LoginClicked)
+                }) {
+                    Text(LanguageKey.login)
+                }
+            }
+        } else {
 
-        }) {
-            Icon(
-                Icons.AutoMirrored.Filled.Send,
-                contentDescription = "Localized description",
-                tint = MaterialTheme.colorScheme.primary
+            OutlinedTextField(
+                value = uiState.commentInput,
+                onValueChange = {
+                    onEvent(CommentScreenEvent.OnCommentInputChanged(it))
+                },
+                label = { Text("Name") },
+                modifier = Modifier.weight(1f)
             )
+            IconButton(enabled = uiState.commentInput.isNotBlank(), onClick = {
+                onEvent(CommentScreenEvent.OnCommentSubmit)
+
+            }) {
+                Icon(
+                    Icons.AutoMirrored.Filled.Send,
+                    contentDescription = "Localized description",
+                )
+            }
         }
 
     }

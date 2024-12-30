@@ -23,10 +23,11 @@ fun <T : Any> BasePagingListScreen(
     onBindItem: @Composable (T) -> Unit,
     onItemVisible: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
+    reverseLayout: Boolean = false,
 ) {
     val state = rememberLazyListState()
 
-    LazyColumn(modifier = modifier, state = state) {
+    LazyColumn(modifier = modifier, state = state, reverseLayout = reverseLayout) {
         items(
             count = items.itemCount,
             key = { index ->

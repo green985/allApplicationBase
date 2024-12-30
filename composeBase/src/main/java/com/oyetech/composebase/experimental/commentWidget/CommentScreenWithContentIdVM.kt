@@ -20,9 +20,11 @@ import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
+import com.oyetech.models.newPackages.helpers.isSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 /**
 Created by Erdi Özbek
@@ -40,7 +42,7 @@ class CommentScreenWithContentIdVM(
 
     val uiState = MutableStateFlow(CommentScreenUiState(contentId = contentId))
 
-    val commentPageState =
+    var commentPageState =
         Pager(
             config = PagingConfig(
                 pageSize = 1,
@@ -61,6 +63,24 @@ class CommentScreenWithContentIdVM(
         return userRepository.userDataStateFlow
     }
 
+    fun refreshCommentSection() {
+        commentPageState = Pager(
+            config = PagingConfig(
+                pageSize = 1,
+                initialLoadSize = 1,
+                enablePlaceholders = false
+
+            ),
+            pagingSourceFactory = {
+                CommentPagingSource(
+                    commentOperationRepository = commentOperationRepository,
+                    userRepository = userRepository,
+                    commentScreenUiState = uiState
+                )
+            }
+        ).flow.cachedIn(viewModelScope)
+    }
+
     fun onEvent(event: CommentScreenEvent) {
         when (event) {
             is AddComment -> {
@@ -74,6 +94,10 @@ class CommentScreenWithContentIdVM(
                                 onSuccess = {
                                     uiState.updateState {
                                         copy(addCommentState = it)
+                                    }
+                                    if (it.isSuccess()) {
+                                        Timber.d("Comment added")
+                                        refreshCommentSection()
                                     }
                                 },
                                 onFailure = {
