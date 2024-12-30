@@ -15,7 +15,7 @@ fun PreviewErrorScreenFullSize() {
     ErrorScreenFullSize(
         errorMessage = "Something went wrong!",
         onDismiss = { /* Dismiss Action */ },
-        onRetry = { /* Retry Action */ }
+        onRetry = { /* Retry Action */ },
     )
 }
 

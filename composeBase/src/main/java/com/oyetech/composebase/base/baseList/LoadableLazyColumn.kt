@@ -110,7 +110,7 @@ fun LoadableLazyColumn(
         )
 
         if (isLoadingInitial) {
-            LoadingScreenFullSize()
+            LoadingScreenFullSize(modifier)
         } else {
             RadioErrorListView(
                 errorMessage = errorMessage,

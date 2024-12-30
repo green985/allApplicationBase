@@ -57,7 +57,7 @@ fun CompleteProfileScreenSetup(navigationRoute: (navigationRoute: String) -> Uni
         ErrorScreenFullSize(
             errorMessage = "Error",
             onDismiss = { vm.handleEvent(ErrorDismiss) },
-            onRetry = { vm.handleEvent(LoginClicked) }
+            onRetry = { vm.handleEvent(LoginClicked) },
         )
     }
 

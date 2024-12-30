@@ -39,7 +39,7 @@ fun LoginOperationScreenSetup(navigationRoute: (navigationRoute: String) -> Unit
         ErrorScreenFullSize(
             errorMessage = uiState.errorMessage,
             onDismiss = { vm.handleEvent(ErrorDismiss) },
-            onRetry = { vm.handleEvent(LoginClicked) }
+            onRetry = { vm.handleEvent(LoginClicked) },
         )
     }
 }

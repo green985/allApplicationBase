@@ -35,7 +35,7 @@ Created by Erdi Özbek
  **/
 
 @Composable
-fun LoadingScreenFullSize() {
+fun LoadingScreenFullSize(modifier: Modifier = Modifier) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -54,6 +54,7 @@ fun ErrorScreenFullSize(
     errorMessage: String = "",
     onDismiss: (() -> Unit)? = null,
     onRetry: (() -> Unit)? = null,
+    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = Modifier

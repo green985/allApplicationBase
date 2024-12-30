@@ -59,6 +59,7 @@ fun CommentScreenWithContentScreenSetup(
         )
     }
     val loginOperationVM = koinViewModel<LoginOperationVM>()
+    val uiState by vm.uiState.collectAsStateWithLifecycle()
 
     val loginOperationState by loginOperationVM.loginOperationState.collectAsStateWithLifecycle()
 
@@ -66,32 +67,9 @@ fun CommentScreenWithContentScreenSetup(
         Column(modifier = Modifier.padding(it)) {
             LoginOperationScreenSetup(navigationRoute = navigationRoute)
 
-            val uiState by vm.uiState.collectAsStateWithLifecycle()
-
             val lazyPagingItems = vm.commentPageState.collectAsLazyPagingItems()
 
-            when (uiState.addCommentState) {
-                is Error -> {
-                    val errorMessage = (uiState.addCommentState as Error).exception.message ?: ""
-                    ErrorScreenFullSize(errorMessage)
-                }
 
-                Loading -> {
-                    LoadingScreenFullSize()
-                }
-
-                is Success -> {
-                    // todo will be add snacbar but now refresh...
-                    LaunchedEffect(Unit) {
-                        Timber.d("Successsssss")
-
-                    }
-                }
-
-                else -> {
-
-                }
-            }
 
 
             BasePagingListScreen(
@@ -107,6 +85,7 @@ fun CommentScreenWithContentScreenSetup(
             )
 
             Spacer(modifier = Modifier.height(8.dp))
+
             CommentInputView(
                 uiState = uiState,
                 onEvent = { event ->
@@ -117,6 +96,30 @@ fun CommentScreenWithContentScreenSetup(
                     loginOperationVM.handleEvent(event)
                 }
             )
+
+        }
+    }
+
+    when (uiState.addCommentState) {
+        is Error -> {
+            val errorMessage = (uiState.addCommentState as Error).exception.message ?: ""
+            ErrorScreenFullSize(errorMessage)
+        }
+
+        Loading -> {
+            LoadingScreenFullSize()
+        }
+
+        is Success -> {
+            // todo will be add snacbar but now refresh...
+            LaunchedEffect(Unit) {
+                Timber.d("Successsssss")
+
+            }
+        }
+
+        else -> {
+
         }
     }
 

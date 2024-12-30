@@ -1,5 +1,6 @@
 package com.oyetech.composebase.baseViews.basePagingList
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
@@ -27,58 +28,72 @@ fun <T : Any> BasePagingListScreen(
 ) {
     val state = rememberLazyListState()
 
-    LazyColumn(modifier = modifier, state = state, reverseLayout = reverseLayout) {
-        items(
-            count = items.itemCount,
-            key = { index ->
-                items.itemKey { item -> itemKey(item) }.invoke(index)
-            },
-            itemContent = { index ->
-                val item = items[index]
-                if (item != null) {
-                    onBindItem(item)
-                }
+    Box(
+        modifier = modifier,
+        contentAlignment = androidx.compose.ui.Alignment.Center
+    )
+    {
+
+        when (items.loadState.refresh) {
+            is LoadState.Loading -> {
+                LoadingScreenFullSize(modifier)
+
             }
-        )
-        item {
-            if (items.loadState.append is LoadState.Loading) {
-                PagingMoreLoading()
-            }
-        }
-        item {
-            if (items.loadState.append is LoadState.Error) {
+
+            is LoadState.Error -> {
                 val errorMessage =
-                    (items.loadState.append as LoadState.Error).error.message
-                PagingMoreError(
-                    errorMessage = errorMessage ?: "",
-                    onRetry = { items.retry() },
-                )
-            }
-        }
-    }
-
-    when (items.loadState.refresh) {
-        is LoadState.Loading -> LoadingScreenFullSize()
-        is LoadState.Error -> {
-            val errorMessage =
-                (items.loadState.refresh as LoadState.Error).error.message
-            ErrorScreenFullSize(
-                errorMessage = errorMessage ?: "",
-                onRetry = { items.retry() }
-            )
-        }
-
-        is LoadState.NotLoading -> {
-            if (items.itemCount == 0) {
+                    (items.loadState.refresh as LoadState.Error).error.message
                 ErrorScreenFullSize(
-                    errorMessage = "No data found",
+                    modifier = modifier,
+                    errorMessage = errorMessage ?: "",
                     onRetry = { items.retry() }
                 )
             }
 
+            is LoadState.NotLoading -> {
+                if (items.itemCount == 0) {
+                    ErrorScreenFullSize(
+                        modifier = modifier,
+                        errorMessage = "No data found",
+                        onRetry = { items.retry() }
+                    )
+                }
+
+            }
+
+            else -> Unit
         }
 
-        else -> Unit
+        LazyColumn(modifier = modifier, state = state, reverseLayout = reverseLayout) {
+            items(
+                count = items.itemCount,
+                key = { index ->
+                    items.itemKey { item -> itemKey(item) }.invoke(index)
+                },
+                itemContent = { index ->
+                    val item = items[index]
+                    if (item != null) {
+                        onBindItem(item)
+                    }
+                }
+            )
+            item {
+                if (items.loadState.append is LoadState.Loading) {
+                    PagingMoreLoading()
+                }
+            }
+            item {
+                if (items.loadState.append is LoadState.Error) {
+                    val errorMessage =
+                        (items.loadState.append as LoadState.Error).error.message
+                    PagingMoreError(
+                        errorMessage = errorMessage ?: "",
+                        onRetry = { items.retry() },
+                    )
+                }
+            }
+        }
+
     }
 
     // Trigger event when last visible item index changes
