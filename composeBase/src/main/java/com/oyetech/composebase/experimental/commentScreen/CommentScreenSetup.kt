@@ -53,7 +53,7 @@ fun CommentScreenSetup() {
             OutlinedTextField(
                 value = commentScreenUiState.commentContent,
                 onValueChange = {
-                    viewModel.onEvent(CommentScreenEvent.OnCommentChanged(it))
+                    viewModel.onEvent(CommentScreenEvent.OnCommentInputChanged(it))
                 },
                 label = { Text("Name") },
                 modifier = Modifier.fillMaxWidth()
@@ -61,7 +61,7 @@ fun CommentScreenSetup() {
             Spacer(modifier = Modifier.height(32.dp))
 
             Button({
-                viewModel.onEvent(CommentScreenEvent.AddComment)
+                viewModel.onEvent(CommentScreenEvent.OnCommentSubmit)
             }) {
                 Text("Add Comment")
             }

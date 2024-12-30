@@ -9,7 +9,9 @@ Created by Erdi Özbek
  **/
 
 object LanguageKey {
+    var commentCannotBeEmpty set(value) {} get() = LocalLanguageHelper.getStringWithKey("commentCannotBeEmpty")
     var quotes set(value) {} get() = LocalLanguageHelper.getStringWithKey("quotes")
+    var usernameIsEmpty set(value) {} get() = LocalLanguageHelper.getStringWithKey("usernameIsEmpty")
     var createUserErrorMessage set(value) {} get() = LocalLanguageHelper.getStringWithKey("createUserErrorMessage")
     var accountDeleted set(value) {} get() = LocalLanguageHelper.getStringWithKey("accountDeleted")
     var deleteAccountButtonText set(value) {} get() = LocalLanguageHelper.getStringWithKey("deleteAccountButtonText")

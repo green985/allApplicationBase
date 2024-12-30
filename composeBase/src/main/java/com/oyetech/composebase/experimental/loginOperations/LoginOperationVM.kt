@@ -55,6 +55,10 @@ class LoginOperationVM(
                 )
             }.collect()
         }
+        observeUserState()
+    }
+
+    private fun observeUserState() {
         viewModelScope.launch(getDispatcherIo()) {
             profileRepository.userDataStateFlow.asResult().onEach {
                 delay(1000)

@@ -4,8 +4,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.baseList.BaseListViewModel
 import com.oyetech.composebase.base.baseList.ComplexItemListState
-import com.oyetech.composebase.experimental.commentScreen.CommentScreenEvent.AddComment
-import com.oyetech.composebase.experimental.commentScreen.CommentScreenEvent.OnCommentChanged
+import com.oyetech.composebase.experimental.commentScreen.CommentOptionsEvent.AddComment
+import com.oyetech.composebase.experimental.commentScreen.CommentOptionsEvent.DeleteComment
+import com.oyetech.composebase.experimental.commentScreen.CommentOptionsEvent.ReportComment
+import com.oyetech.composebase.experimental.commentScreen.CommentScreenEvent.OnCommentInputChanged
+import com.oyetech.composebase.experimental.commentScreen.CommentScreenEvent.OnCommentSubmit
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarState
 import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.core.coroutineHelper.asResult
@@ -50,10 +53,15 @@ class CommentScreenVM(
     fun onEvent(event: CommentScreenEvent) {
         when (event) {
             is AddComment -> addComment()
-            is OnCommentChanged -> {
+            is OnCommentInputChanged -> {
                 commentScreenUiState.value =
-                    commentScreenUiState.value.copy(commentContent = event.content)
+                    commentScreenUiState.value.copy(commentContent = event.commentInput)
             }
+
+            is AddComment -> TODO()
+            is DeleteComment -> TODO()
+            is ReportComment -> TODO()
+            OnCommentSubmit -> TODO()
         }
     }
 

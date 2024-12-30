@@ -12,4 +12,5 @@ object ScreenKey {
     const val languageName = "languageName"
     const val countryName = "countryName"
     const val toolbarTitle = "toolbarTitle"
+    const val commentId = "commentId"
 }

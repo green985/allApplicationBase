@@ -107,6 +107,16 @@ class FirebaseUserRepositoryImp(
                     FirebaseUserProfileModel(errorException = it)
             }
     }
+
+    override fun getUsername(): String {
+        return userDataStateFlow.value?.username ?: ""
+    }
+
+    override fun isMyContent(contentUsername: String): Boolean {
+        val username = getUsername()
+        return username == contentUsername
+    }
+
 //
 //    fun updateLastLogin(uid: String) {
 //        val userDocRef = firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(uid)

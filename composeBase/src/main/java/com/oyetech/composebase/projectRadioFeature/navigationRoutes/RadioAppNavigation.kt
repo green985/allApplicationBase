@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
 import com.oyetech.composebase.experimental.commentScreen.CommentScreenSetup
+import com.oyetech.composebase.experimental.commentWidget.CommentScreenWithContentScreenSetup
 import com.oyetech.composebase.experimental.loginOperations.CompleteProfileScreenSetup
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
@@ -93,6 +94,24 @@ fun NavGraphBuilder.radioAppNavigation(navController: NavController) {
     // TabHistory Route
     composable(RadioAppProjectRoutes.CompleteProfileScreen.route) {
         CompleteProfileScreenSetup(
+            navigationRoute = navigateRoute(navController)
+        )
+    }
+
+    // RadioList Route with Arguments
+    composable(
+        route = "${RadioAppProjectRoutes.CommentScreenWithContentId.route}?" +
+                "${ScreenKey.commentId}={commentId}",
+        arguments = listOf(
+            navArgument(ScreenKey.commentId) {
+                defaultValue = "firstComment"
+                nullable = false
+            },
+        )
+    ) {
+        val commentId = it.arguments?.getString(ScreenKey.commentId) ?: "firstComment"
+        CommentScreenWithContentScreenSetup(
+            commentId,
             navigationRoute = navigateRoute(navController)
         )
     }

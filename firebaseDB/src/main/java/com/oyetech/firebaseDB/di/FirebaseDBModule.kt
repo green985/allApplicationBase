@@ -42,7 +42,12 @@ object FirebaseDBModule {
             )
         }
 
-        single<FirebaseCommentOperationRepository> { FirebaseCommentOperationRepositoryImp(get()) }
+        single<FirebaseCommentOperationRepository> {
+            FirebaseCommentOperationRepositoryImp(
+                get(),
+                get()
+            )
+        }
         single<FirebaseUserRepository> { FirebaseUserRepositoryImp(get()) }
         single<FirebaseQuotesOperationRepository> { FirebaseQuotesOperationRepositoryImp(get()) }
 

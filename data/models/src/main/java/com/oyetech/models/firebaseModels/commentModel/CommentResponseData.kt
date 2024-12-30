@@ -11,7 +11,7 @@ data class CommentResponseData(
     val contentId: String = "contentId",
     val connectionId: String = "connectionId",
     val content: String = "",
-    val userId: String = "green985",
+    val username: String = "",
 
     @ServerTimestamp
     val createdAt: Date? = null,

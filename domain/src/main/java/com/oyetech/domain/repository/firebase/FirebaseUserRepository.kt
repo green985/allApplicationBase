@@ -20,4 +20,6 @@ interface FirebaseUserRepository {
     fun getUserProfileWithUid(firebaseProfileUserModel: FirebaseUserProfileModel)
 
     suspend fun updateUserName(username: String)
+    fun getUsername(): String
+    fun isMyContent(contentUsername: String): Boolean
 }

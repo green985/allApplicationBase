@@ -23,3 +23,16 @@ fun String.toErrorMessage(): String {
 
     return this
 }
+
+object ErrorHelper {
+
+    fun getErrorMessage(exception: Exception): String {
+        return exception.message?.toErrorMessage() ?: errorMessage
+    }
+
+    fun getErrorMessage(exception: Throwable): String {
+        return exception.message?.toErrorMessage() ?: errorMessage
+    }
+
+    val errorMessage: String = LanguageKey.generalErrorText
+}

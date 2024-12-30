@@ -21,12 +21,12 @@ fun <T : Any> BasePagingListScreen(
     items: LazyPagingItems<T>,
     itemKey: (T) -> Any,
     onBindItem: @Composable (T) -> Unit,
-    onItemVisible: (Int) -> Unit,
+    onItemVisible: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val state = rememberLazyListState()
 
-    LazyColumn(state = state) {
+    LazyColumn(modifier = modifier, state = state) {
         items(
             count = items.itemCount,
             key = { index ->
@@ -65,6 +65,16 @@ fun <T : Any> BasePagingListScreen(
                 errorMessage = errorMessage ?: "",
                 onRetry = { items.retry() }
             )
+        }
+
+        is LoadState.NotLoading -> {
+            if (items.itemCount == 0) {
+                ErrorScreenFullSize(
+                    errorMessage = "No data found",
+                    onRetry = { items.retry() }
+                )
+            }
+
         }
 
         else -> Unit
