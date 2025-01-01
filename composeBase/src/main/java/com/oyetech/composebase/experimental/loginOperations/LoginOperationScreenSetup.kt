@@ -6,8 +6,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
-import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
-import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
+import com.oyetech.composebase.baseViews.loadingErrors.ErrorDialogFullScreen
+import com.oyetech.composebase.baseViews.loadingErrors.LoadingDialogFullScreen
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.ErrorDismiss
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.LoginClicked
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
@@ -34,9 +34,9 @@ fun LoginOperationScreenSetup(navigationRoute: (navigationRoute: String) -> Unit
     }
 
     if (uiState.isLoading) {
-        LoadingScreenFullSize()
+        LoadingDialogFullScreen()
     } else if (uiState.isError) {
-        ErrorScreenFullSize(
+        ErrorDialogFullScreen(
             errorMessage = uiState.errorMessage,
             onDismiss = { vm.handleEvent(ErrorDismiss) },
             onRetry = { vm.handleEvent(LoginClicked) },

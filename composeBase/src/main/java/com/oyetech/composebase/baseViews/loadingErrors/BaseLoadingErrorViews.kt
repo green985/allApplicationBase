@@ -39,7 +39,7 @@ fun LoadingScreenFullSize(modifier: Modifier = Modifier) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = ProjectUtil.backgroudAlpha))
+            .background(MaterialTheme.colorScheme.background.copy(alpha = ProjectUtil.backgroudAlpha))
             .clickable(
                 enabled = false,
                 onClick = {}), // Kullanıcı aksiyonlarını bloklamak için
@@ -59,7 +59,7 @@ fun ErrorScreenFullSize(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = ProjectUtil.backgroudAlpha)),
+            .background(MaterialTheme.colorScheme.background.copy(alpha = ProjectUtil.backgroudAlpha)),
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -116,7 +116,7 @@ fun PagingMoreLoading() {
         modifier = Modifier
             .fillMaxWidth()
             .height(RadioDimensions.listLoadingItemHeight)
-            .background(Color.Black.copy(alpha = 0.7f))
+            .background(MaterialTheme.colorScheme.background.copy(alpha = ProjectUtil.backgroudAlpha))
             .clickable(
                 enabled = false,
                 onClick = {}), // Kullanıcı aksiyonlarını bloklamak için
@@ -135,7 +135,7 @@ fun LoadingDialogFullScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = ProjectUtil.backgroudAlpha)),
+                .background(MaterialTheme.colorScheme.background.copy(alpha = ProjectUtil.backgroudAlpha)),
             contentAlignment = Alignment.Center,
         ) {
             CircularProgressIndicator(color = MaterialTheme.colorScheme.onBackground)
@@ -156,7 +156,7 @@ fun ErrorDialogFullScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = ProjectUtil.backgroudAlpha)),
+                .background(MaterialTheme.colorScheme.background.copy(alpha = ProjectUtil.backgroudAlpha)),
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {

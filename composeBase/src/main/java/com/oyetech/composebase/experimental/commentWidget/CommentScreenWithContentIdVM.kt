@@ -19,7 +19,7 @@ import com.oyetech.core.coroutineHelper.asResult
 import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.languageModule.keyset.LanguageKey
-import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
+import com.oyetech.models.newPackages.helpers.OperationState.Idle
 import com.oyetech.models.newPackages.helpers.isSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -59,10 +59,6 @@ class CommentScreenWithContentIdVM(
             }
         ).flow.cachedIn(viewModelScope)
 
-    fun getProfileState(): MutableStateFlow<FirebaseUserProfileModel?> {
-        return userRepository.userDataStateFlow
-    }
-
     fun refreshCommentSection() {
         commentPageState = Pager(
             config = PagingConfig(
@@ -97,7 +93,7 @@ class CommentScreenWithContentIdVM(
                                     }
                                     if (it.isSuccess()) {
                                         Timber.d("Comment added")
-                                        refreshCommentSection()
+                                        successCommentAddFunctions()
                                     }
                                 },
                                 onFailure = {
@@ -125,15 +121,37 @@ class CommentScreenWithContentIdVM(
                     uiState.updateState {
                         copy(errorMessage = LanguageKey.commentCannotBeEmpty)
                     }
-                } else {
-                    uiState.updateState {
-                        copy(errorMessage = "")
-                    }
+                    return
                 }
+                if (commentContent.length < 5) {
+                    uiState.updateState {
+                        copy(errorMessage = LanguageKey.commentCannotBeTooShort)
+                    }
+                    return
+                } else if (commentContent.length > 500) {
+                    uiState.updateState {
+                        copy(errorMessage = LanguageKey.commentCannotBeTooLong)
+                    }
+                    return
+                }
+
+                uiState.updateState {
+                    copy(errorMessage = "")
+                }
+
+
+
 
                 onEvent(AddComment(commentContent))
             }
         }
+    }
+
+    private fun successCommentAddFunctions() {
+        uiState.value =
+            uiState.value.copy(commentInput = "", addCommentState = Idle, errorMessage = "")
+
+        refreshCommentSection()
     }
 
 

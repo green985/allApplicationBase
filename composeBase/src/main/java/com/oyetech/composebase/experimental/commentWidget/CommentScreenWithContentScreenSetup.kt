@@ -6,13 +6,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +19,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -34,10 +34,13 @@ import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationScreenSetup
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationUiState
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
+import com.oyetech.composebase.projectRadioFeature.RadioDimensions
 import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.models.newPackages.helpers.OperationState
 import com.oyetech.models.newPackages.helpers.OperationState.Error
 import com.oyetech.models.newPackages.helpers.OperationState.Loading
 import com.oyetech.models.newPackages.helpers.OperationState.Success
+import kotlinx.collections.immutable.persistentListOf
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import timber.log.Timber
@@ -68,9 +71,6 @@ fun CommentScreenWithContentScreenSetup(
             LoginOperationScreenSetup(navigationRoute = navigationRoute)
 
             val lazyPagingItems = vm.commentPageState.collectAsLazyPagingItems()
-
-
-
 
             BasePagingListScreen(
                 reverseLayout = true,
@@ -125,6 +125,32 @@ fun CommentScreenWithContentScreenSetup(
 
 }
 
+@Preview
+@Composable
+fun CommentInputViewPreview() {
+    CommentInputView(uiState = CommentScreenUiState(
+        contentId = "malesuada",
+        commentInput = "no",
+        addCommentState = OperationState.Idle,
+        isListEmpty = false,
+        commentList = persistentListOf<CommentItemUiState>(),
+        errorMessage = "vitae"
+    ), userUiState = LoginOperationUiState(
+        isLoading = false,
+        isError = false,
+        errorMessage = "has",
+        isUsernameEmpty = false,
+        isUserDeleted = false,
+        displayName = "Elva Parrish",
+        uid = "dicam",
+        displayNameRemote = "Lucy Evans",
+        photoUrl = "http://www.bing.com/search?q=sed",
+        isLogin = true,
+        isAnonymous = false,
+        lastSignInTimestamp = null
+    ), onEvent = {}, onUserEvent = {})
+}
+
 @Composable
 fun CommentInputView(
     uiState: CommentScreenUiState,
@@ -135,7 +161,8 @@ fun CommentInputView(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 8.dp, end = 8.dp)
+            .padding(start = 8.dp, end = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
 
         if (!userUiState.isLogin) {
@@ -157,47 +184,24 @@ fun CommentInputView(
                 onValueChange = {
                     onEvent(CommentScreenEvent.OnCommentInputChanged(it))
                 },
-                label = { Text("Name") },
-                modifier = Modifier.weight(1f)
-            )
-            IconButton(enabled = uiState.commentInput.isNotBlank(), onClick = {
-                onEvent(CommentScreenEvent.OnCommentSubmit)
+                shape = RoundedCornerShape(RadioDimensions.inputFieldRadius),
+                label = { Text(LanguageKey.commentInputAreaHint) },
+                modifier = Modifier.weight(1f),
+                trailingIcon = {
+                    IconButton(enabled = uiState.commentInput.isNotBlank(), onClick = {
+                        onEvent(CommentScreenEvent.OnCommentSubmit)
 
-            }) {
-                Icon(
-                    Icons.AutoMirrored.Filled.Send,
-                    contentDescription = "Localized description",
-                )
-            }
+                    }) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.Send,
+                            contentDescription = "Localized description",
+                        )
+                    }
+                }
+            )
+
         }
 
     }
 }
 
-@Composable
-fun CommentItemView(uiState: CommentItemUiState, onEvent: (CommentScreenEvent) -> (Unit)) {
-
-    Card(modifier = Modifier.padding(4.dp)) {
-        Column {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = uiState.commentContent,
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Row {
-                Text(
-                    text = uiState.username,
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = uiState.createdAtString,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
-        }
-
-    }
-
-}
