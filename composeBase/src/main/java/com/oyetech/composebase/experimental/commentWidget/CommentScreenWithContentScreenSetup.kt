@@ -13,10 +13,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,23 +27,21 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.basePagingList.BasePagingListScreen
-import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
-import com.oyetech.composebase.experimental.commentScreen.CommentItemUiState
-import com.oyetech.composebase.experimental.commentScreen.CommentScreenEvent
-import com.oyetech.composebase.experimental.commentScreen.CommentScreenUiState
+import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationScreenSetup
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationUiState
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
 import com.oyetech.composebase.projectRadioFeature.RadioDimensions
 import com.oyetech.languageModule.keyset.LanguageKey
-import com.oyetech.models.newPackages.helpers.OperationState
 import com.oyetech.models.newPackages.helpers.OperationState.Error
+import com.oyetech.models.newPackages.helpers.OperationState.Idle
 import com.oyetech.models.newPackages.helpers.OperationState.Loading
 import com.oyetech.models.newPackages.helpers.OperationState.Success
 import kotlinx.collections.immutable.persistentListOf
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
 import timber.log.Timber
 
@@ -61,12 +61,18 @@ fun CommentScreenWithContentScreenSetup(
             contentId
         )
     }
+    val snackbarDelegate = koinInject<SnackbarDelegate>()
     val loginOperationVM = koinViewModel<LoginOperationVM>()
     val uiState by vm.uiState.collectAsStateWithLifecycle()
-
     val loginOperationState by loginOperationVM.loginOperationState.collectAsStateWithLifecycle()
 
-    BaseScaffold {
+    val snackbarHostState = remember { SnackbarHostState() }
+
+
+    Timber.d("CommentScreenWithContentScreenSetup == " + snackbarHostState.currentSnackbarData.toString())
+
+
+    BaseScaffold() {
         Column(modifier = Modifier.padding(it)) {
             LoginOperationScreenSetup(navigationRoute = navigationRoute)
 
@@ -99,11 +105,13 @@ fun CommentScreenWithContentScreenSetup(
 
         }
     }
-
     when (uiState.addCommentState) {
         is Error -> {
             val errorMessage = (uiState.addCommentState as Error).exception.message ?: ""
-            ErrorScreenFullSize(errorMessage)
+//            ErrorScreenFullSize(errorMessage)
+            snackbarDelegate.triggerSnackbarState(
+                message = errorMessage,
+            )
         }
 
         Loading -> {
@@ -111,10 +119,12 @@ fun CommentScreenWithContentScreenSetup(
         }
 
         is Success -> {
-            // todo will be add snacbar but now refresh...
-            LaunchedEffect(Unit) {
-                Timber.d("Successsssss")
+            LaunchedEffect(uiState.addCommentState) {
 
+                snackbarDelegate.triggerSnackbarState(
+                    message = LanguageKey.commentAddedSuccessfully,
+                    actionLabel = "deneme action label",
+                )
             }
         }
 
@@ -131,7 +141,7 @@ fun CommentInputViewPreview() {
     CommentInputView(uiState = CommentScreenUiState(
         contentId = "malesuada",
         commentInput = "no",
-        addCommentState = OperationState.Idle,
+        addCommentState = Idle,
         isListEmpty = false,
         commentList = persistentListOf<CommentItemUiState>(),
         errorMessage = "vitae"

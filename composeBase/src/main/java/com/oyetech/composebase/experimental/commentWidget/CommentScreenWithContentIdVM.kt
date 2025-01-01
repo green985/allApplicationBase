@@ -6,20 +6,17 @@ import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
-import com.oyetech.composebase.experimental.commentScreen.CommentOptionsEvent.AddComment
-import com.oyetech.composebase.experimental.commentScreen.CommentOptionsEvent.DeleteComment
-import com.oyetech.composebase.experimental.commentScreen.CommentOptionsEvent.ReportComment
-import com.oyetech.composebase.experimental.commentScreen.CommentScreenEvent
-import com.oyetech.composebase.experimental.commentScreen.CommentScreenEvent.OnCommentInputChanged
-import com.oyetech.composebase.experimental.commentScreen.CommentScreenEvent.OnCommentSubmit
-import com.oyetech.composebase.experimental.commentScreen.CommentScreenUiState
+import com.oyetech.composebase.experimental.commentWidget.CommentOptionsEvent.AddComment
+import com.oyetech.composebase.experimental.commentWidget.CommentOptionsEvent.DeleteComment
+import com.oyetech.composebase.experimental.commentWidget.CommentOptionsEvent.ReportComment
+import com.oyetech.composebase.experimental.commentWidget.CommentScreenEvent.OnCommentInputChanged
+import com.oyetech.composebase.experimental.commentWidget.CommentScreenEvent.OnCommentSubmit
 import com.oyetech.composebase.helpers.errorHelper.ErrorHelper
 import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.core.coroutineHelper.asResult
 import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.languageModule.keyset.LanguageKey
-import com.oyetech.models.newPackages.helpers.OperationState.Idle
 import com.oyetech.models.newPackages.helpers.isSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -89,7 +86,15 @@ class CommentScreenWithContentIdVM(
                             it.fold(
                                 onSuccess = {
                                     uiState.updateState {
-                                        copy(addCommentState = it)
+                                        if (it.isSuccess()) {
+                                            copy(
+                                                addCommentState = it,
+                                                commentInput = "",
+                                                errorMessage = ""
+                                            )
+                                        } else {
+                                            copy(addCommentState = it)
+                                        }
                                     }
                                     if (it.isSuccess()) {
                                         Timber.d("Comment added")
@@ -148,9 +153,6 @@ class CommentScreenWithContentIdVM(
     }
 
     private fun successCommentAddFunctions() {
-        uiState.value =
-            uiState.value.copy(commentInput = "", addCommentState = Idle, errorMessage = "")
-
         refreshCommentSection()
     }
 

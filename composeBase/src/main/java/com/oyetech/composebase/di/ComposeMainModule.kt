@@ -1,6 +1,6 @@
 package com.oyetech.composebase.di
 
-import com.oyetech.composebase.experimental.commentScreen.CommentScreenVM
+import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenWithContentIdVM
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
 import com.oyetech.composebase.experimental.viewModelSlice.UserOperationViewModelSlice
@@ -54,14 +54,15 @@ object ComposeMainModule {
         viewModelOf(::TagListVM)
         viewModelOf(::GeneralOperationVM)
         viewModelOf(::GeneralPlaygroundVm)
-        viewModelOf(::CommentScreenVM)
 
         single<IRadioPlayerViewModelSlice> { RadioPlayerViewModelSliceImp(get(), get()) }
         single<IRadioFavViewModelSlice> { RadioFavViewModelSliceImp(get()) }
         single<RadioListSortRepository> { RadioListSortRepositoryImp() }
+        single<SnackbarDelegate> { SnackbarDelegate() }
 
 
 
+        viewModelOf(::LoginOperationVM)
         viewModelOf(::LoginOperationVM)
         viewModelOf(::QuotesVM)
         viewModelOf(::QuoteTagListVM)

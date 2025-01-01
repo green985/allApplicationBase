@@ -2,6 +2,8 @@ package com.oyetech.composebase.projectRadioFeature.screens.generalOperationScre
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.ScaffoldDefaults
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -10,6 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
+import com.oyetech.composebase.baseViews.snackbar.SnacbarScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.generalPlayground.GeneralPlaygroundVm
 import com.oyetech.composebase.projectRadioFeature.screens.views.dialogs.RateUsDialog
 import org.koin.androidx.compose.koinViewModel
@@ -70,13 +73,16 @@ fun GeneralOperationScreenSetup(content: @Composable () -> Unit) {
 
 @Composable
 fun GeneralOperationScreen(content: @Composable () -> Unit) {
-    BaseScaffold {
+    val snackbarHostState = remember { SnackbarHostState() }
+    BaseScaffold(snackbarHostContent = {
+        SnacbarScreenSetup(snackbarHostState)
+    }, contentWindowInsets = ScaffoldDefaults.contentWindowInsets) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
         ) {
             content()
         }
-    }
 
+    }
 }

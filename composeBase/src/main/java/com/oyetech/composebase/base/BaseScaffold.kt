@@ -28,17 +28,17 @@ fun BaseScaffold(
     onFabClick: (() -> Unit)? = null,
     onNavigateUp: (() -> Unit)? = null,
     topBarContent: @Composable (() -> Unit)? = null,
+    snackbarHostContent: @Composable (() -> Unit)? = null,
     bottomBarContent: @Composable (() -> Unit)? = null,
     contentWindowInsets: WindowInsets = ScaffoldDefaults.contentWindowInsets.exclude(
         NavigationBarDefaults.windowInsets
     ),
     content: @Composable (PaddingValues) -> Unit,
 ) {
+
     Scaffold(
         modifier = Modifier.background(Color.Transparent),
-        contentWindowInsets = ScaffoldDefaults.contentWindowInsets.exclude(
-            NavigationBarDefaults.windowInsets
-        ),
+        contentWindowInsets = contentWindowInsets,
         topBar = {
             if (showTopBar) {
                 topBarContent?.invoke()
@@ -47,6 +47,11 @@ fun BaseScaffold(
         bottomBar = {
             if (showBottomBar && bottomBarContent != null) {
                 bottomBarContent()
+            }
+        },
+        snackbarHost = {
+            if (snackbarHostContent != null) {
+                snackbarHostContent()
             }
         },
         floatingActionButton = {

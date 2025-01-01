@@ -1,4 +1,4 @@
-package com.oyetech.composebase.experimental.commentScreen
+package com.oyetech.composebase.experimental.commentWidget
 
 import com.oyetech.models.newPackages.helpers.OperationState
 import kotlinx.collections.immutable.ImmutableList

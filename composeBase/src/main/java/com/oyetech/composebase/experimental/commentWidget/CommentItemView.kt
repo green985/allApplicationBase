@@ -19,8 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.oyetech.composebase.experimental.commentScreen.CommentItemUiState
-import com.oyetech.composebase.experimental.commentScreen.CommentScreenEvent
 
 @Composable
 fun CommentItemView(uiState: CommentItemUiState, onEvent: (CommentScreenEvent) -> (Unit)) {

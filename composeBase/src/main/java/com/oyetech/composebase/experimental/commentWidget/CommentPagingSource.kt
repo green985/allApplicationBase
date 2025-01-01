@@ -3,8 +3,6 @@ package com.oyetech.composebase.experimental.commentWidget
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.oyetech.composebase.base.updateState
-import com.oyetech.composebase.experimental.commentScreen.CommentItemUiState
-import com.oyetech.composebase.experimental.commentScreen.CommentScreenUiState
 import com.oyetech.composebase.helpers.errorHelper.ErrorHelper
 import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
