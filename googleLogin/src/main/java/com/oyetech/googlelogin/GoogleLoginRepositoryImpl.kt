@@ -35,6 +35,8 @@ class GoogleLoginRepositoryImpl(
 
     override val googleUserStateFlow =
         MutableStateFlow(GoogleUserResponseData())
+    override val userAutoLoginStateFlow =
+        MutableStateFlow(false)
 
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -75,6 +77,30 @@ class GoogleLoginRepositoryImpl(
             }
         } catch (e: Exception) {
             googleUserStateFlow.value = getNewWithException(e.message)
+        }
+
+    }
+
+    override fun autoLoginOperation() {
+        activity = getActivityOrSetError("") ?: return
+        try {
+            googleUserStateFlow.value = GoogleUserResponseData()
+            val currentUser = firebaseAuth.currentUser
+            if (currentUser == null) {
+                // do nothing.
+                userAutoLoginStateFlow.value = true
+            } else {
+                val userGoogleData = getCurrentUserResponse()
+                if (userGoogleData == null || !userGoogleData.isUserLogin()) {
+                    // maybe exception but not neccesserry...
+                } else {
+                    userAutoLoginStateFlow.value = true
+                    googleUserStateFlow.value = userGoogleData.copy()
+                }
+            }
+        } catch (e: Exception) {
+            // do nothing...
+            userAutoLoginStateFlow.value = true
         }
 
     }

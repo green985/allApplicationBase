@@ -41,6 +41,7 @@ class LoginOperationVM(
     init {
         Timber.d("LoginOperationVM init")
         loginOperationState.value = LoginOperationUiState(isLoading = false)
+        googleLoginRepository.autoLoginOperation()
         observeProfileData()
         observeUserState()
     }

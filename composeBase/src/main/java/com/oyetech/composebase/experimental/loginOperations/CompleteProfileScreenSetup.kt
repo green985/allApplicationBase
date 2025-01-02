@@ -18,10 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
-import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
-import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.ErrorDismiss
-import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.LoginClicked
+import com.oyetech.composebase.helpers.viewProperties.DialogHelper
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarSetup
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarState
 import org.koin.androidx.compose.koinViewModel
@@ -50,16 +47,6 @@ fun CompleteProfileScreenSetup(navigationRoute: (navigationRoute: String) -> Uni
         }
     }
 
-    if (uiState.isLoading) {
-        LoadingScreenFullSize()
-    } else if (uiState.isError) {
-        // ErrorView
-        ErrorScreenFullSize(
-            errorMessage = "Error",
-            onDismiss = { vm.handleEvent(ErrorDismiss) },
-            onRetry = { vm.handleEvent(LoginClicked) },
-        )
-    }
 
     BackHandler {
         // your action
@@ -73,45 +60,48 @@ fun CompleteProfileScreen(
     onEvent: (LoginOperationEvent) -> Unit,
     navigationRoute: (navigationRoute: String) -> Unit = {},
 ) {
-
-    Scaffold(
-        topBar = {
-            RadioToolbarSetup(
-                RadioToolbarState(title = "Complete Register")
-            )
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Spacer(modifier = Modifier.height(32.dp))
-            Text(
-                "Complete your profile",
-                style = MaterialTheme.typography.displayLarge
-            )
-            Spacer(modifier = Modifier.height(32.dp))
-            OutlinedTextField(
-                value = uiState.displayName,
-                onValueChange = { onEvent(LoginOperationEvent.UsernameChanged(it)) },
-                label = { Text("Name") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            if (uiState.isUsernameEmpty) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Username cannot be empty.",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.labelMedium
+    androidx.compose.ui.window.Dialog(
+        properties = DialogHelper.fullScreenDialogProperties,
+        onDismissRequest = {}) {
+        Scaffold(
+            topBar = {
+                RadioToolbarSetup(
+                    RadioToolbarState(title = "Complete Register")
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            Button({ onEvent.invoke(LoginOperationEvent.UsernameSetClicked) }) {
-                Text(text = "Set Your UserName")
+        ) { padding ->
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Spacer(modifier = Modifier.height(32.dp))
+                Text(
+                    "Complete your profile",
+                    style = MaterialTheme.typography.displayLarge
+                )
+                Spacer(modifier = Modifier.height(32.dp))
+                OutlinedTextField(
+                    value = uiState.displayName,
+                    onValueChange = { onEvent(LoginOperationEvent.UsernameChanged(it)) },
+                    label = { Text("Name") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                if (uiState.isUsernameEmpty) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Username cannot be empty.",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Button({ onEvent.invoke(LoginOperationEvent.UsernameSetClicked) }) {
+                    Text(text = "Set Your UserName")
+                }
             }
         }
     }

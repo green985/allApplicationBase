@@ -1,6 +1,8 @@
 package com.oyetech.composebase.projectRadioFeature.main
 
 import android.os.Bundle
+import android.view.View
+import android.view.ViewTreeObserver
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -19,7 +21,9 @@ import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppNavi
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
 import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.GeneralOperationScreenSetup
 import com.oyetech.composebase.projectRadioFeature.theme.RadioAppTheme
+import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.radioservice.serviceUtils.PlayerServiceUtils
+import org.koin.java.KoinJavaComponent
 
 /**
 Created by Erdi Özbek
@@ -28,6 +32,11 @@ Created by Erdi Özbek
  **/
 
 class RadioMainActivity : ComponentActivity() {
+
+    val loginOperationRepository: GoogleLoginRepository by KoinJavaComponent.inject(
+        GoogleLoginRepository::class.java
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PlayerServiceUtils.startService()
@@ -57,6 +66,23 @@ class RadioMainActivity : ComponentActivity() {
             }
 
         }
+
+        val content: View = findViewById(android.R.id.content)
+        content.viewTreeObserver.addOnPreDrawListener(
+            object : ViewTreeObserver.OnPreDrawListener {
+                override fun onPreDraw(): Boolean {
+                    // Check whether the initial data is ready.
+                    return if (loginOperationRepository.userAutoLoginStateFlow.value) {
+                        // The content is ready. Start drawing.
+                        content.viewTreeObserver.removeOnPreDrawListener(this)
+                        true
+                    } else {
+                        // The content isn't ready. Suspend.
+                        false
+                    }
+                }
+            }
+        )
     }
 
     override fun onResume() {
