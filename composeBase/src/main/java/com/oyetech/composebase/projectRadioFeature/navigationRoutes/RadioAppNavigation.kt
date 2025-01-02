@@ -145,7 +145,7 @@ fun NavGraphBuilder.radioAppNavigation(navController: NavController) {
 }
 
 @Composable
-private fun navigateRoute(navController: NavController): (navigationRoute: String) -> Unit =
+fun navigateRoute(navController: NavController): (navigationRoute: String) -> Unit =
     {
         Timber.d(" radioAppNavigation it = $it")
         if (it == "back") {

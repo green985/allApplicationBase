@@ -62,8 +62,7 @@ object ComposeMainModule {
 
 
 
-        viewModelOf(::LoginOperationVM)
-        viewModelOf(::LoginOperationVM)
+        singleOf(::LoginOperationVM)
         viewModelOf(::QuotesVM)
         viewModelOf(::QuoteTagListVM)
         viewModelOf(::CommentScreenWithContentIdVM)

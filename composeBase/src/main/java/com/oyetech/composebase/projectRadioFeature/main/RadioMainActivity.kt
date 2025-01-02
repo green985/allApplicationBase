@@ -37,21 +37,23 @@ class RadioMainActivity : ComponentActivity() {
             RadioAppTheme {
                 val navController = rememberNavController()
 
-                GeneralOperationScreenSetup {
-                    Column(
-                        verticalArrangement = Arrangement.Bottom,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background)
-                    ) {
-                        RadioAppNavigationWrapperWithPlayerSetup(
-                            navController = navController,
-                            startDestination = RadioAppProjectRoutes.CommentScreenWithContentId.route
-                        )
+                GeneralOperationScreenSetup(
+                    content =
+                    {
+                        Column(
+                            verticalArrangement = Arrangement.Bottom,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.background)
+                        ) {
+                            RadioAppNavigationWrapperWithPlayerSetup(
+                                navController = navController,
+                                startDestination = RadioAppProjectRoutes.CommentScreenWithContentId.route
+                            )
 
-                    }
-                }
-
+                        }
+                    }, navController = navController
+                )
             }
 
         }

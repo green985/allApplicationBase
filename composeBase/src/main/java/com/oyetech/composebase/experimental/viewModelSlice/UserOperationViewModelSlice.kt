@@ -40,7 +40,6 @@ class UserOperationViewModelSlice(private val profileRepository: FirebaseUserRep
                 it.fold(
                     onSuccess = { userData ->
                         if (userData != null) {
-                            Timber.d(" Google User State Flow: $userData")
                             userPropertyState.value = userData
                         }
                     },

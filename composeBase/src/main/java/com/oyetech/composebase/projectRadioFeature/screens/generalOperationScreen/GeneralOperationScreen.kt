@@ -11,8 +11,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.snackbar.SnacbarScreenSetup
+import com.oyetech.composebase.experimental.loginOperations.LoginOperationScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.generalPlayground.GeneralPlaygroundVm
 import com.oyetech.composebase.projectRadioFeature.screens.views.dialogs.RateUsDialog
 import org.koin.androidx.compose.koinViewModel
@@ -25,7 +27,10 @@ Created by Erdi Özbek
  **/
 
 @Composable
-fun GeneralOperationScreenSetup(content: @Composable () -> Unit) {
+fun GeneralOperationScreenSetup(
+    content: @Composable () -> Unit,
+    navController: NavController,
+) {
     val viewModel = koinViewModel<GeneralOperationVM>()
     val generalPlaygroundVm = koinViewModel<GeneralPlaygroundVm>()
 
@@ -66,6 +71,7 @@ fun GeneralOperationScreenSetup(content: @Composable () -> Unit) {
 
 
 
+    LoginOperationScreenSetup(navigationRoute = { navController.navigate(it) })
     GeneralOperationScreen {
         content()
     }

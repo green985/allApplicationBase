@@ -1,6 +1,7 @@
 package com.oyetech.composebase.base
 
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 //
@@ -17,6 +18,12 @@ sealed class UIState {
 inline fun <T> MutableStateFlow<T>.updateState(update: T.() -> T) {
     value = value.update()
 }
+
+private fun <T> MutableSharedFlow<T>.updateState(update: T.() -> T) {
+
+}
+
+
 
 suspend inline fun <T> MutableStateFlow<T>.updateListStateWithDelay(
     delay: Long,

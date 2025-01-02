@@ -3,8 +3,8 @@ package com.oyetech.composebase.experimental.loginOperations
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorDialogFullScreen
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingDialogFullScreen
@@ -23,7 +23,7 @@ Created by Erdi Özbek
 fun LoginOperationScreenSetup(navigationRoute: (navigationRoute: String) -> Unit = {}) {
     val vm = koinViewModel<LoginOperationVM>()
 
-    val uiState by vm.loginOperationState.collectAsStateWithLifecycle()
+    val uiState by vm.loginOperationState.collectAsState()
 
     if (uiState.isLogin) {
         if (uiState.displayNameRemote.isBlank()) {

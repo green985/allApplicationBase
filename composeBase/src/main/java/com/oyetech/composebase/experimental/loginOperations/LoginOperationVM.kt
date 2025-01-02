@@ -15,6 +15,8 @@ import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -34,15 +36,23 @@ class LoginOperationVM(
 ) : BaseViewModel(appDispatchers) {
 
     val loginOperationState =
-        MutableStateFlow(LoginOperationUiState())
+        MutableStateFlow(LoginOperationUiState(isLoading = true))
 
     init {
+        Timber.d("LoginOperationVM init")
+        loginOperationState.value = LoginOperationUiState(isLoading = false)
         observeProfileData()
+        observeUserState()
+    }
+
+    fun getLoginOperationSharedState(): SharedFlow<LoginOperationUiState> {
+        return loginOperationState.asSharedFlow()
     }
 
     private fun observeProfileData() {
         viewModelScope.launch(getDispatcherIo()) {
             googleLoginRepository.googleUserStateFlow.asResult().onEach {
+                Timber.d("isLoading === " + loginOperationState.value.isLoading)
                 delay(1000)
                 Timber.d(" Google User State Flow: $it")
                 it.fold(
@@ -55,12 +65,12 @@ class LoginOperationVM(
                 )
             }.collect()
         }
-        observeUserState()
     }
 
     private fun observeUserState() {
         viewModelScope.launch(getDispatcherIo()) {
             profileRepository.userDataStateFlow.asResult().onEach {
+                Timber.d("isLoading === " + loginOperationState.value.isLoading)
                 delay(1000)
                 Timber.d(" Google User State Flow: $it")
                 it.fold(
@@ -79,6 +89,7 @@ class LoginOperationVM(
         when (event) {
             LoginClicked -> {
                 loginOperationState.value = LoginOperationUiState(isLoading = true)
+                Timber.d("isLoading === " + loginOperationState.value.isLoading)
                 googleLoginRepository.signInWithGoogleAnonymous()
             }
 

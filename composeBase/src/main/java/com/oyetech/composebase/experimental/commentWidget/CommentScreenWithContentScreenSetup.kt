@@ -30,7 +30,6 @@ import com.oyetech.composebase.baseViews.basePagingList.BasePagingListScreen
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent
-import com.oyetech.composebase.experimental.loginOperations.LoginOperationScreenSetup
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationUiState
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
 import com.oyetech.composebase.projectRadioFeature.RadioDimensions
@@ -64,7 +63,10 @@ fun CommentScreenWithContentScreenSetup(
     val snackbarDelegate = koinInject<SnackbarDelegate>()
     val loginOperationVM = koinViewModel<LoginOperationVM>()
     val uiState by vm.uiState.collectAsStateWithLifecycle()
-    val loginOperationState by loginOperationVM.loginOperationState.collectAsStateWithLifecycle()
+    val loginOperationState by loginOperationVM.getLoginOperationSharedState()
+        .collectAsStateWithLifecycle(
+            initialValue = LoginOperationUiState()
+        )
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -74,7 +76,6 @@ fun CommentScreenWithContentScreenSetup(
 
     BaseScaffold() {
         Column(modifier = Modifier.padding(it)) {
-            LoginOperationScreenSetup(navigationRoute = navigationRoute)
 
             val lazyPagingItems = vm.commentPageState.collectAsLazyPagingItems()
 
