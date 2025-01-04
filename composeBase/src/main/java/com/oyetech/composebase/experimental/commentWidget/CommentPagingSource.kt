@@ -31,7 +31,6 @@ class CommentPagingSource(
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, CommentItemUiState> {
-
         return try {
             val page = params.key ?: 1
             Timber.d("getRefreshKey load == " + page)
@@ -39,16 +38,22 @@ class CommentPagingSource(
             val list =
                 commentOperationRepository.getCommentsWithId(commentScreenUiState.value.contentId)
                     .firstOrNull()?.map {
-                        it.createdAt?.let { it1 ->
-                            CommentItemUiState(
-                                id = it.contentId,
-                                commentContent = it.content,
-                                createdAt = it1,
-                                createdAtString = TimeFunctions.getDateFromLongWithHour(it1.time),
-                                username = it.username,
-                                isMine = userRepository.isMyContent(it.username)
+                        if (it.contentId == commentScreenUiState.value.contentId) {
+                            it.createdAt?.let { it1 ->
+                                CommentItemUiState(
+                                    commentId = it.commentId,
+                                    commentContent = it.content,
+                                    createdAt = it1,
+                                    createdAtString = TimeFunctions.getDateFromLongWithHour(it1.time),
+                                    username = it.username,
+                                    isMine = userRepository.isMyContent(it.username)
 
-                            )
+                                )
+                            }
+                        } else {
+                            // todo will add analytics
+                            Timber.d("contentId not match")
+                            null
                         }
                     }?.filterNotNull() ?: emptyList()
 

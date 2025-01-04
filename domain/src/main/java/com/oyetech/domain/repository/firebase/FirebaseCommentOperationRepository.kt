@@ -8,4 +8,7 @@ interface FirebaseCommentOperationRepository {
 
     suspend fun getCommentsWithId(commentId: String): Flow<List<CommentResponseData>>
     fun addCommentFlow(contentId: String, content: String): Flow<OperationState<Boolean>>
+
+    fun reportComment(commentId: String): Flow<OperationState<Unit>>
+    fun deleteComment(contentId: String, commentId: String): Flow<OperationState<Unit>>
 }

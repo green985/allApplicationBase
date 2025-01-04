@@ -23,7 +23,7 @@ data class CommentScreenUiState(
 )
 
 data class CommentItemUiState(
-    val id: String = "",
+    val commentId: String = "",
     val commentContent: String = "",
     val createdAt: Date = Date(),
     val createdAtString: String = "",

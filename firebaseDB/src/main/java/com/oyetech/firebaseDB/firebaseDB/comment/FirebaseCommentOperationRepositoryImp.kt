@@ -35,17 +35,16 @@ class FirebaseCommentOperationRepositoryImp(
             .orderBy("createdAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
             .get().await()
 
-        val creationResultList = result.map {
-            it.getTimestamp("createdAt")
-        }
-        Timber.d("creationResultList: $creationResultList")
-
         if (result.size() == 0) {
             Timber.d("No comments found")
             return flowOf(emptyList())
         }
 
-        val wrapperResult = result.toObjects(CommentResponseData::class.java)
+        var wrapperResult = result.toObjects(CommentResponseData::class.java)
+        wrapperResult = result.mapIndexed { index, queryDocumentSnapshot ->
+            wrapperResult.get(index).copy(commentId = queryDocumentSnapshot.id)
+        }
+        Timber.d("Comments found: ${wrapperResult.get(1).commentId}")
         return flowOf(wrapperResult)
 
     }
@@ -83,5 +82,38 @@ class FirebaseCommentOperationRepositoryImp(
             Log.w("Firestore", "Error adding comment", e)
             emit(OperationState.Error(e))
         }
+    }
+
+    override fun deleteComment(contentId: String, commentId: String): Flow<OperationState<Unit>> =
+        flow {
+            emit(OperationState.Loading)
+            try {
+                val username = userRepository.getUsername() ?: ""
+
+                if (username.isBlank()) {
+                    throw Exception(LanguageKey.usernameIsEmpty)
+                }
+
+                val documentReference =
+                    firestore.runTransactionWithTimeout() { transaction ->
+                        val commentRef = firestore.collection(FirebaseDatabaseKeys.commentTable)
+                            .document(contentId)
+                            .collection("comments")
+                            .document(commentId)
+
+                        transaction.delete(commentRef)
+                        commentRef
+                    }
+
+                Timber.d("Comment added: ${documentReference.id}")
+                emit(OperationState.Success(Unit))
+            } catch (e: Exception) {
+                Log.w("Firestore", "Error adding comment", e)
+                emit(OperationState.Error(e))
+            }
+        }
+
+    override fun reportComment(commentId: String): Flow<OperationState<Unit>> {
+        return flow<OperationState<Unit>> { }
     }
 }

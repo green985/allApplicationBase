@@ -88,7 +88,7 @@ fun CommentItemViewPreview() {
 
     CommentItemView(
         uiState = CommentItemUiState(
-            id = "1",
+            commentId = "1",
             commentContent = "This is a comment",
             createdAtString = "31.12.2024 00:00",
             username = "Erdi",

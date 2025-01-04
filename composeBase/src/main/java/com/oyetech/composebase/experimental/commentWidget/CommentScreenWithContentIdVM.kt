@@ -156,5 +156,26 @@ class CommentScreenWithContentIdVM(
         refreshCommentSection()
     }
 
+    private fun deleteComment(commentId: String) {
+        viewModelScope.launch(getDispatcherIo()) {
+            commentOperationRepository.deleteComment(contentId, commentId).asResult()
+                .collectLatest {
+                    it.fold(
+                        onSuccess = {
+                            if (it.isSuccess()) {
+                                val deletedItem =
+                                    uiState.value.commentList.find { it.commentId == commentId }
+                            }
+                        },
+                        onFailure = {
+                            uiState.updateState {
+                                copy(errorMessage = ErrorHelper.getErrorMessage(it))
+                            }
+                        }
+                    )
+                }
+        }
+    }
+
 
 }
