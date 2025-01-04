@@ -85,9 +85,11 @@ fun CommentScreenWithContentScreenSetup(
                 items = lazyPagingItems, // This parameter is abstracted, not used here
                 itemKey = { item -> item.createdAt.time },
                 onBindItem = { item ->
-                    CommentItemView(uiState = item, onEvent = { event ->
-                        vm.onEvent(event)
-                    })
+                    if (!item.isDeleted) {
+                        CommentItemView(uiState = item, onEvent = { event ->
+                            vm.onEvent(event)
+                        })
+                    }
                 },
             )
 

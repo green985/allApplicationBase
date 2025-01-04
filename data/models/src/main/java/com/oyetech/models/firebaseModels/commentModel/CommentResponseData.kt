@@ -1,6 +1,7 @@
 package com.oyetech.models.firebaseModels.commentModel
 
 import androidx.annotation.Keep
+import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.ServerTimestamp
 import java.util.Date
 
@@ -11,7 +12,9 @@ data class CommentWrapper(
 
 @Keep
 data class CommentResponseData(
+    @get:Exclude
     val commentId: String = "",
+
     val contentId: String = "",
     val content: String = "",
     val username: String = "",

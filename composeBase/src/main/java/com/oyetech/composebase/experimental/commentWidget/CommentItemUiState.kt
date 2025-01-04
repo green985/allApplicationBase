@@ -29,6 +29,7 @@ data class CommentItemUiState(
     val createdAtString: String = "",
     val username: String = "",
     val isMine: Boolean = false,
+    val isDeleted: Boolean = false,
 )
 
 sealed class CommentScreenEvent {

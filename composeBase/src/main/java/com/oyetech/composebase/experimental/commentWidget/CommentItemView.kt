@@ -1,5 +1,6 @@
 package com.oyetech.composebase.experimental.commentWidget
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -47,11 +49,25 @@ fun CommentItemView(uiState: CommentItemUiState, onEvent: (CommentScreenEvent) -
             )
         ) {
             Column(Modifier.padding(8.dp)) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = uiState.commentContent,
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = uiState.commentContent,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+
+                    Icon( // todo will be changed
+                        modifier = Modifier.clickable {
+                            onEvent.invoke(CommentOptionsEvent.DeleteComment(uiState.commentId))
+
+                        },
+                        imageVector = Icons.Rounded.MoreVert,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+
+                }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
                     Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {

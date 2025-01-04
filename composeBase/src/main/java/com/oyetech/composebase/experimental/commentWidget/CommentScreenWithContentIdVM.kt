@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
+import androidx.paging.map
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.experimental.commentWidget.CommentOptionsEvent.AddComment
@@ -20,6 +21,7 @@ import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.newPackages.helpers.isSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -39,6 +41,9 @@ class CommentScreenWithContentIdVM(
 
     val uiState = MutableStateFlow(CommentScreenUiState(contentId = contentId))
 
+    val itemTrigger = MutableStateFlow(emptyList<CommentItemUiState>())
+    val itemTriggerSingle = MutableStateFlow<List<CommentOptionsEvent>>(emptyList())
+
     var commentPageState =
         Pager(
             config = PagingConfig(
@@ -54,7 +59,29 @@ class CommentScreenWithContentIdVM(
                     commentScreenUiState = uiState
                 )
             }
-        ).flow.cachedIn(viewModelScope)
+        ).flow.cachedIn(viewModelScope).combine(itemTriggerSingle) { pagingData, commentList ->
+            Timber.d("Paging data: =" + commentList)
+            pagingData.map {
+                val event = commentList.firstOrNull()
+                when (event) {
+                    is DeleteComment -> {
+                        if (it.commentId == event.commentId) {
+                            it.copy(isDeleted = true)
+                        } else {
+                            it
+                        }
+                    }
+
+                    is ReportComment -> {
+                        it
+                    }
+
+                    null -> {
+                        it
+                    }
+                }
+            }
+        }
 
     fun refreshCommentSection() {
         commentPageState = Pager(
@@ -111,7 +138,10 @@ class CommentScreenWithContentIdVM(
                 }
             }
 
-            is DeleteComment -> TODO()
+            is DeleteComment -> {
+                deleteComment(event.commentId)
+            }
+
             is ReportComment -> TODO()
 
             is OnCommentInputChanged -> {
@@ -157,15 +187,13 @@ class CommentScreenWithContentIdVM(
     }
 
     private fun deleteComment(commentId: String) {
+
         viewModelScope.launch(getDispatcherIo()) {
             commentOperationRepository.deleteComment(contentId, commentId).asResult()
                 .collectLatest {
                     it.fold(
                         onSuccess = {
-                            if (it.isSuccess()) {
-                                val deletedItem =
-                                    uiState.value.commentList.find { it.commentId == commentId }
-                            }
+                            itemTriggerSingle.value = listOf(DeleteComment(commentId))
                         },
                         onFailure = {
                             uiState.updateState {
