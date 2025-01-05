@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
@@ -28,9 +27,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.basePagingList.BasePagingListScreen
-import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
+import com.oyetech.composebase.baseViews.loadingErrors.LoadingDialogFullScreen
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationUiState
@@ -70,54 +68,51 @@ fun CommentScreenWithContentScreenSetup(
             initialValue = LoginOperationUiState()
         )
 
-    BaseScaffold() {
-        Column(
+
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+
+        val lazyPagingItems = vm.commentPageState.collectAsLazyPagingItems()
+
+        BasePagingListScreen(
+            reverseLayout = true,
             modifier = Modifier
-                .padding(it)
                 .fillMaxSize()
-        ) {
-
-            val lazyPagingItems = vm.commentPageState.collectAsLazyPagingItems()
-
-            BasePagingListScreen(
-                reverseLayout = true,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f),
-                items = lazyPagingItems, // This parameter is abstracted, not used here
-                itemKey = { item -> item.createdAt.time },
-                onBindItem = { item ->
-                    AnimatedVisibility(
-                        visible = !item.isDeleted,
-                        exit = fadeOut(
-                            animationSpec = tween(durationMillis = 300) // Silinme animasyon süresi
-                        ) + shrinkVertically(
-                            animationSpec = tween(durationMillis = 300),
-                            shrinkTowards = Alignment.Top
-                        )
-                    ) {
-                        CommentItemView(uiState = item, onEvent = { event ->
-                            vm.onEvent(event)
-                        })
-                    }
-
-                },
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            CommentInputView(
-                uiState = uiState,
-                onEvent = { event ->
-                    vm.onEvent(event)
-                },
-                userUiState = loginOperationState,
-                onUserEvent = { event ->
-                    loginOperationVM.handleEvent(event)
+                .weight(1f),
+            items = lazyPagingItems, // This parameter is abstracted, not used here
+            itemKey = { item -> item.createdAt.time },
+            onBindItem = { item ->
+                AnimatedVisibility(
+                    visible = !item.isDeleted,
+                    exit = fadeOut(
+                        animationSpec = tween(durationMillis = 300) // Silinme animasyon süresi
+                    ) + shrinkVertically(
+                        animationSpec = tween(durationMillis = 300),
+                        shrinkTowards = Alignment.Top
+                    )
+                ) {
+                    CommentItemView(uiState = item, onEvent = { event ->
+                        vm.onEvent(event)
+                    })
                 }
-            )
 
-        }
+            },
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        CommentInputView(
+            uiState = uiState,
+            onEvent = { event ->
+                vm.onEvent(event)
+            },
+            userUiState = loginOperationState,
+            onUserEvent = { event ->
+                loginOperationVM.handleEvent(event)
+            }
+        )
+
     }
     when (uiState.addCommentState) {
         is Error -> {
@@ -128,7 +123,7 @@ fun CommentScreenWithContentScreenSetup(
         }
 
         Loading -> {
-            LoadingScreenFullSize()
+            LoadingDialogFullScreen()
         }
 
         is Success -> {
@@ -181,8 +176,7 @@ fun CommentInputView(
 ) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 8.dp, end = 8.dp),
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
 

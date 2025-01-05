@@ -90,7 +90,7 @@ fun RadioPlayerSetup(
                                 .height(RadioDimensions.radioSmallPlayerSizeHeight)
                         )
                     }
-                    FullRadioPlayer(
+                    FullRadioPlayer2(
                         uiState = radioUiState,
                         navigationRoute = navigationRoute,
                         radioPlayerEvent = { radioPlayerVM.handleRadioEvent(it, null) }

@@ -38,7 +38,7 @@ fun <T : Any> BasePagingListScreen(
         when (items.loadState.refresh) {
             is LoadState.Loading -> {
                 Timber.d("Loading")
-                if (items.loadState.append !is LoadState.NotLoading) {
+                if (items.itemCount <= 0) {
                     LoadingScreenFullSize(modifier)
                 }
             }

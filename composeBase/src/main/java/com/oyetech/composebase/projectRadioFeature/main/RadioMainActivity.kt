@@ -57,7 +57,7 @@ class RadioMainActivity : ComponentActivity() {
                         ) {
                             RadioAppNavigationWrapperWithPlayerSetup(
                                 navController = navController,
-                                startDestination = RadioAppProjectRoutes.CommentScreenWithContentId.route
+                                startDestination = RadioAppProjectRoutes.TabRadioAllList.route
                             )
 
                         }
