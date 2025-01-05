@@ -40,6 +40,7 @@ sealed class CommentScreenEvent {
 
 sealed class CommentOptionsEvent : CommentScreenEvent() {
     data class AddComment(val commentInput: String) : CommentScreenEvent()
+    object AddCommentSuccess : CommentOptionsEvent()
     data class DeleteComment(val commentId: String) : CommentOptionsEvent()
     data class ReportComment(val commentId: String) : CommentOptionsEvent()
 }

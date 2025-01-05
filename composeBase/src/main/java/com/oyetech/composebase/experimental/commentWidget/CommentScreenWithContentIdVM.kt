@@ -8,6 +8,7 @@ import androidx.paging.cachedIn
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.experimental.commentWidget.CommentOptionsEvent.AddComment
+import com.oyetech.composebase.experimental.commentWidget.CommentOptionsEvent.AddCommentSuccess
 import com.oyetech.composebase.experimental.commentWidget.CommentOptionsEvent.DeleteComment
 import com.oyetech.composebase.experimental.commentWidget.CommentOptionsEvent.ReportComment
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenEvent.OnCommentInputChanged
@@ -19,6 +20,7 @@ import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.newPackages.helpers.isSuccess
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -63,9 +65,9 @@ class CommentScreenWithContentIdVM(
             }
         ).flow.cachedIn(viewModelScope).combineWithUiState(uiState, itemTriggerSingle)
 
-    fun <T : Any> Flow<PagingData<CommentItemUiState>>.combineWithUiState(
+    fun Flow<PagingData<CommentItemUiState>>.combineWithUiState(
         uiState: StateFlow<CommentScreenUiState>,
-        itemTrigger: Flow<List<T>>,
+        itemTrigger: Flow<List<CommentOptionsEvent>>,
     ): Flow<PagingData<CommentItemUiState>> {
         return this.combine(itemTrigger) { pagingData, commentList ->
             if (uiState.value.commentList.isEmpty()) {
@@ -77,6 +79,9 @@ class CommentScreenWithContentIdVM(
     }
 
     fun refreshCommentSection() {
+        uiState.updateState {
+            copy(commentList = persistentListOf())
+        }
         commentPageState = Pager(
             config = PagingConfig(
                 pageSize = 1,
@@ -118,6 +123,7 @@ class CommentScreenWithContentIdVM(
                                     }
                                     if (it.isSuccess()) {
                                         Timber.d("Comment added")
+//                                        itemTriggerSingle.value = listOf(AddCommentSuccess)
                                         successCommentAddFunctions()
                                     }
                                 },
@@ -145,6 +151,10 @@ class CommentScreenWithContentIdVM(
 
             is OnCommentSubmit -> {
                 onCommentSubmitOperation()
+            }
+
+            AddCommentSuccess -> {
+                Timber.d("AddCommentSuccess")
             }
         }
     }

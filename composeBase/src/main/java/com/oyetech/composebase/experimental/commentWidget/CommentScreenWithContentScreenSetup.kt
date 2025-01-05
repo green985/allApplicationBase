@@ -7,6 +7,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,12 +18,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,7 +45,6 @@ import kotlinx.collections.immutable.persistentListOf
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
-import timber.log.Timber
 
 /**
 Created by Erdi Özbek
@@ -72,20 +70,20 @@ fun CommentScreenWithContentScreenSetup(
             initialValue = LoginOperationUiState()
         )
 
-    val snackbarHostState = remember { SnackbarHostState() }
-
-
-    Timber.d("CommentScreenWithContentScreenSetup == " + snackbarHostState.currentSnackbarData.toString())
-
-
     BaseScaffold() {
-        Column(modifier = Modifier.padding(it)) {
+        Column(
+            modifier = Modifier
+                .padding(it)
+                .fillMaxSize()
+        ) {
 
             val lazyPagingItems = vm.commentPageState.collectAsLazyPagingItems()
 
             BasePagingListScreen(
                 reverseLayout = true,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f),
                 items = lazyPagingItems, // This parameter is abstracted, not used here
                 itemKey = { item -> item.createdAt.time },
                 onBindItem = { item ->
@@ -124,7 +122,6 @@ fun CommentScreenWithContentScreenSetup(
     when (uiState.addCommentState) {
         is Error -> {
             val errorMessage = (uiState.addCommentState as Error).exception.message ?: ""
-//            ErrorScreenFullSize(errorMessage)
             snackbarDelegate.triggerSnackbarState(
                 message = errorMessage,
             )
@@ -136,10 +133,8 @@ fun CommentScreenWithContentScreenSetup(
 
         is Success -> {
             LaunchedEffect(uiState.addCommentState) {
-
                 snackbarDelegate.triggerSnackbarState(
                     message = LanguageKey.commentAddedSuccessfully,
-                    actionLabel = "deneme action label",
                 )
             }
         }

@@ -21,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.helpers.ProjectUtil
 import com.oyetech.composebase.helpers.errorHelper.toErrorMessage
@@ -63,7 +62,7 @@ fun ErrorScreenFullSize(
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(text = errorMessage.toErrorMessage(), color = Color.White)
+            Text(text = errorMessage.toErrorMessage(), color = MaterialTheme.colorScheme.error)
             if (onDismiss != null) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(onClick = onDismiss) {
@@ -122,7 +121,7 @@ fun PagingMoreLoading() {
                 onClick = {}), // Kullanıcı aksiyonlarını bloklamak için
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator(color = Color.White)
+        CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
     }
 }
 
@@ -138,7 +137,7 @@ fun LoadingDialogFullScreen(
                 .background(MaterialTheme.colorScheme.background.copy(alpha = ProjectUtil.backgroudAlpha)),
             contentAlignment = Alignment.Center,
         ) {
-            CircularProgressIndicator(color = MaterialTheme.colorScheme.onBackground)
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
         }
     }
 
@@ -160,7 +159,7 @@ fun ErrorDialogFullScreen(
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text = errorMessage.toErrorMessage(), color = Color.White)
+                Text(text = errorMessage.toErrorMessage(), color = MaterialTheme.colorScheme.error)
                 if (onDismiss != null) {
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(onClick = onDismiss) {

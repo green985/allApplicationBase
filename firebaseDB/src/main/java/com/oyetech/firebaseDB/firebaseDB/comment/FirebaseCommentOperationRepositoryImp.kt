@@ -44,7 +44,6 @@ class FirebaseCommentOperationRepositoryImp(
         wrapperResult = result.mapIndexed { index, queryDocumentSnapshot ->
             wrapperResult.get(index).copy(commentId = queryDocumentSnapshot.id)
         }
-        Timber.d("Comments found: ${wrapperResult.get(1).commentId}")
         return flowOf(wrapperResult)
 
     }
