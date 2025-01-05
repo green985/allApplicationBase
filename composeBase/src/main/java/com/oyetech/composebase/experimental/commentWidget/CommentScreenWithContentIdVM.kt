@@ -20,7 +20,9 @@ import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.newPackages.helpers.isSuccess
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
@@ -59,13 +61,20 @@ class CommentScreenWithContentIdVM(
                     commentScreenUiState = uiState
                 )
             }
-        ).flow.cachedIn(viewModelScope).combine(itemTriggerSingle) { pagingData, commentList ->
+        ).flow.cachedIn(viewModelScope).combineWithUiState(uiState, itemTriggerSingle)
+
+    fun <T : Any> Flow<PagingData<CommentItemUiState>>.combineWithUiState(
+        uiState: StateFlow<CommentScreenUiState>,
+        itemTrigger: Flow<List<T>>,
+    ): Flow<PagingData<CommentItemUiState>> {
+        return this.combine(itemTrigger) { pagingData, commentList ->
             if (uiState.value.commentList.isEmpty()) {
                 pagingData
             } else {
                 PagingData.from(uiState.value.commentList.toList())
             }
-        }.cachedIn(viewModelScope)
+        }
+    }
 
     fun refreshCommentSection() {
         commentPageState = Pager(
@@ -82,7 +91,7 @@ class CommentScreenWithContentIdVM(
                     commentScreenUiState = uiState
                 )
             }
-        ).flow.cachedIn(viewModelScope)
+        ).flow.cachedIn(viewModelScope).combineWithUiState(uiState, itemTriggerSingle)
     }
 
     fun onEvent(event: CommentScreenEvent) {
@@ -135,35 +144,40 @@ class CommentScreenWithContentIdVM(
             }
 
             is OnCommentSubmit -> {
-                val commentContent = uiState.value.commentInput
-                if (commentContent.isBlank()) {
-                    uiState.updateState {
-                        copy(errorMessage = LanguageKey.commentCannotBeEmpty)
-                    }
-                    return
-                }
-                if (commentContent.length < 5) {
-                    uiState.updateState {
-                        copy(errorMessage = LanguageKey.commentCannotBeTooShort)
-                    }
-                    return
-                } else if (commentContent.length > 500) {
-                    uiState.updateState {
-                        copy(errorMessage = LanguageKey.commentCannotBeTooLong)
-                    }
-                    return
-                }
-
-                uiState.updateState {
-                    copy(errorMessage = "")
-                }
-
-
-
-
-                onEvent(AddComment(commentContent))
+                onCommentSubmitOperation()
             }
         }
+    }
+
+    @Suppress("ReturnCount")
+    private fun onCommentSubmitOperation() {
+        val commentContent = uiState.value.commentInput
+        if (commentContent.isBlank()) {
+            uiState.updateState {
+                copy(errorMessage = LanguageKey.commentCannotBeEmpty)
+            }
+            return
+        }
+        if (commentContent.length < 5) {
+            uiState.updateState {
+                copy(errorMessage = LanguageKey.commentCannotBeTooShort)
+            }
+            return
+        } else if (commentContent.length > 500) {
+            uiState.updateState {
+                copy(errorMessage = LanguageKey.commentCannotBeTooLong)
+            }
+            return
+        }
+
+        uiState.updateState {
+            copy(errorMessage = "")
+        }
+
+
+
+
+        onEvent(AddComment(commentContent))
     }
 
     private fun successCommentAddFunctions() {
