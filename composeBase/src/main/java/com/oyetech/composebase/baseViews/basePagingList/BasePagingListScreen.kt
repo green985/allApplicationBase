@@ -16,6 +16,7 @@ import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.PagingMoreError
 import com.oyetech.composebase.baseViews.loadingErrors.PagingMoreLoading
+import timber.log.Timber
 
 @Composable
 fun <T : Any> BasePagingListScreen(
@@ -36,8 +37,10 @@ fun <T : Any> BasePagingListScreen(
 
         when (items.loadState.refresh) {
             is LoadState.Loading -> {
-                LoadingScreenFullSize(modifier)
-
+                Timber.d("Loading")
+                if (items.loadState.append !is LoadState.NotLoading) {
+                    LoadingScreenFullSize(modifier)
+                }
             }
 
             is LoadState.Error -> {
@@ -51,6 +54,7 @@ fun <T : Any> BasePagingListScreen(
             }
 
             is LoadState.NotLoading -> {
+                Timber.d("Not Loading")
                 if (items.itemCount == 0) {
                     ErrorScreenFullSize(
                         modifier = modifier,
@@ -61,7 +65,11 @@ fun <T : Any> BasePagingListScreen(
 
             }
 
-            else -> Unit
+            else -> {
+                Timber.d("Else")
+                Unit
+            }
+
         }
 
         LazyColumn(modifier = modifier, state = state, reverseLayout = reverseLayout) {

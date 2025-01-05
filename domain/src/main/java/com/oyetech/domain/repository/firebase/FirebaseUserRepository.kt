@@ -22,4 +22,8 @@ interface FirebaseUserRepository {
     suspend fun updateUserName(username: String)
     fun getUsername(): String
     fun isMyContent(contentUsername: String): Boolean
+    fun getUserProfileForAutoLogin(
+        firebaseProfileUserModel: FirebaseUserProfileModel,
+        afterAction: (Boolean) -> Unit,
+    )
 }

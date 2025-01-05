@@ -108,6 +108,32 @@ class FirebaseUserRepositoryImp(
             }
     }
 
+    override fun getUserProfileForAutoLogin(
+        firebaseProfileUserModel: FirebaseUserProfileModel,
+        afterAction: ((Boolean) -> Unit),
+    ) {
+        val uid = firebaseProfileUserModel.uid
+        firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(uid).get()
+            .addOnSuccessListener {
+                var userData = it.toObject(FirebaseUserProfileModel::class.java)
+
+                userData = userData?.copy(
+                    lastSignInTimestamp = firebaseProfileUserModel.lastSignInTimestamp,
+                    isAnonymous = firebaseProfileUserModel.isAnonymous
+                )
+
+                if (userData != null && userData.uid == uid) {
+                    userDataStateFlow.value = (userData)
+                    afterAction.invoke(true)
+                }
+
+            }.addOnFailureListener {
+                userDataStateFlow.value =
+                    FirebaseUserProfileModel(errorException = it)
+                afterAction.invoke(true)
+            }
+    }
+
     override fun getUsername(): String {
         return userDataStateFlow.value?.username ?: ""
     }

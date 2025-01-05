@@ -14,6 +14,8 @@ interface GoogleLoginRepository {
     //    val googleAuthStateFlow: MutableStateFlow<GoogleAuthResponseData>
     fun controlUserAlreadySignIn()
     fun signInWithGoogle()
+
+    // for google sign in
     val googleAuthStateFlow: MutableStateFlow<GoogleAuthResponseData>
 
     val googleUserStateFlow: MutableStateFlow<GoogleUserResponseData>

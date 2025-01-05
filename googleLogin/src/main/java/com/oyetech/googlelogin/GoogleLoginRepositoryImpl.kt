@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.oyetech.domain.helper.ActivityProviderUseCase
+import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.models.firebaseModels.googleAuth.GoogleAuthResponseData
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData
@@ -29,6 +30,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 class GoogleLoginRepositoryImpl(
     private val activityProviderUseCase: ActivityProviderUseCase,
+    private val firebaseUserRepository: FirebaseUserRepository,
 ) : GoogleLoginRepository {
     override val googleAuthStateFlow =
         MutableStateFlow(GoogleAuthResponseData())
@@ -84,7 +86,6 @@ class GoogleLoginRepositoryImpl(
     override fun autoLoginOperation() {
         activity = getActivityOrSetError("") ?: return
         try {
-            googleUserStateFlow.value = GoogleUserResponseData()
             val currentUser = firebaseAuth.currentUser
             if (currentUser == null) {
                 // do nothing.
@@ -93,9 +94,12 @@ class GoogleLoginRepositoryImpl(
                 val userGoogleData = getCurrentUserResponse()
                 if (userGoogleData == null || !userGoogleData.isUserLogin()) {
                     // maybe exception but not neccesserry...
-                } else {
                     userAutoLoginStateFlow.value = true
-                    googleUserStateFlow.value = userGoogleData.copy()
+                } else {
+                    val firebaseProfileUserModel = userGoogleData.toFirebaseUserProfileModel()
+                    firebaseUserRepository.getUserProfileForAutoLogin(firebaseProfileUserModel) {
+                        userAutoLoginStateFlow.value = true
+                    }
                 }
             }
         } catch (e: Exception) {
