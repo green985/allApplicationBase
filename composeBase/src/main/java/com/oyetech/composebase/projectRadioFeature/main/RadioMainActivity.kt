@@ -100,7 +100,7 @@ fun GreetingVibrationPreview() {
         Scaffold(
             bottomBar = {
                 BottomNavigationBar(
-                    navigator,
+                    navController = navigator,
                     navItems = RadioAppProjectRoutes.radioApplicationBottomTabNavList
                 )
             },

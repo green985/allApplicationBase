@@ -23,6 +23,8 @@ import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.base.baseList.ListUIEvent
 import com.oyetech.composebase.base.baseList.LoadableLazyColumn
 import com.oyetech.composebase.base.baseList.rememberLoadableLazyColumnState
+import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
+import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.subs.ItemRadioView
 import com.oyetech.composebase.projectRadioFeature.screens.views.dialogs.DeleteListOperationDialog
 import com.oyetech.composebase.projectRadioFeature.screens.views.dialogs.DeleteListOperationDialogSetup
@@ -180,6 +182,24 @@ fun RadioListScreenSetup(
             )
         }
     }
+}
+
+fun navigationToTagList(
+    navigationRoute: (navigationRoute: String) -> Unit,
+    tag: String,
+    toolbarTitle: String? = null,
+) {
+    navigationRoute.invoke(
+        RadioAppProjectRoutes.RadioList.withArgs(
+            ScreenKey.listType to Tag.name,
+            ScreenKey.tagName to tag,
+            ScreenKey.toolbarTitle to if (toolbarTitle.isNullOrBlank()) {
+                tag
+            } else {
+                toolbarTitle
+            }
+        )
+    )
 }
 
 

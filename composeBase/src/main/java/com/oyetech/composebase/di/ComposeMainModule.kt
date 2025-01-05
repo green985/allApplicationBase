@@ -1,5 +1,6 @@
 package com.oyetech.composebase.di
 
+import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationDelegate
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenWithContentIdVM
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
@@ -59,6 +60,7 @@ object ComposeMainModule {
         single<IRadioFavViewModelSlice> { RadioFavViewModelSliceImp(get()) }
         single<RadioListSortRepository> { RadioListSortRepositoryImp() }
         single<SnackbarDelegate> { SnackbarDelegate() }
+        single<BottomNavigationDelegate> { BottomNavigationDelegate() }
 
 
 

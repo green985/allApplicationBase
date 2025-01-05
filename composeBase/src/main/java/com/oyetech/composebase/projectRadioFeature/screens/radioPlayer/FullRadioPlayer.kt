@@ -31,6 +31,7 @@ import com.oyetech.composebase.projectRadioFeature.RadioDimensions
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.RadioPlayerEvent
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.RadioUIEvent
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.RadioUIState
+import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.navigationToTagList
 import com.oyetech.composebase.projectRadioFeature.screens.views.RadioLogoView
 import com.oyetech.composebase.projectRadioFeature.screens.views.RadioTagChipView
 import com.oyetech.models.radioProject.radioModels.PlayState.Playing
@@ -47,7 +48,7 @@ fun FullRadioPlayer2(
 
     BoxWithConstraints(
         modifier = modifier
-            .background(color = MaterialTheme.colorScheme.surface)
+            .background(color = MaterialTheme.colorScheme.background)
             .fillMaxSize()
     ) {
         Column(
@@ -84,7 +85,11 @@ fun FullRadioPlayer2(
             RadioTagChipView(
                 uiState.tags,
                 navigationRoute,
-                { tag -> radioPlayerEvent.invoke(RadioUIEvent.TagSelected(tag)) }
+                { tag ->
+                    radioPlayerEvent.invoke(RadioUIEvent.TagSelected(tag))
+                    navigationToTagList(navigationRoute, tag)
+
+                }
             )
 
             Spacer(modifier = Modifier.height(16.dp))

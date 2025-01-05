@@ -14,12 +14,10 @@ import com.oyetech.composebase.base.baseList.ListUIEvent
 import com.oyetech.composebase.base.baseList.LoadableLazyColumn
 import com.oyetech.composebase.base.baseList.rememberLoadableLazyColumnState
 import com.oyetech.composebase.helpers.viewProperties.gridItems
-import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
-import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
+import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.navigationToTagList
 import com.oyetech.composebase.projectRadioFeature.screens.views.ItemTagView
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarSetup
 import com.oyetech.models.radioProject.enums.RadioListEnums.Country
-import com.oyetech.models.radioProject.enums.RadioListEnums.Tag
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
@@ -84,13 +82,9 @@ fun TagListScreenSetup(
                             tagName = model.tagName,
                             count = model.radioCount,
                             onClick = {
-                                navigationRoute.invoke(
-                                    RadioAppProjectRoutes.RadioList.withArgs(
-                                        ScreenKey.listType to Tag.name,
-                                        ScreenKey.tagName to model.tagName,
-                                        ScreenKey.toolbarTitle to model.tagName.plus(" (") + model.radioCount + ")"
-                                    )
-                                )
+                                val tag = model.tagName
+                                val toolbarTitle = model.tagName.plus(" (") + model.radioCount + ")"
+                                navigationToTagList(navigationRoute, tag, toolbarTitle)
                             })
                     })
 
