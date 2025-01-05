@@ -3,8 +3,8 @@ package com.oyetech.composebase.experimental.commentWidget;
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.paging.map
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.experimental.commentWidget.CommentOptionsEvent.AddComment
@@ -19,6 +19,7 @@ import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.newPackages.helpers.isSuccess
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
@@ -41,7 +42,6 @@ class CommentScreenWithContentIdVM(
 
     val uiState = MutableStateFlow(CommentScreenUiState(contentId = contentId))
 
-    val itemTrigger = MutableStateFlow(emptyList<CommentItemUiState>())
     val itemTriggerSingle = MutableStateFlow<List<CommentOptionsEvent>>(emptyList())
 
     var commentPageState =
@@ -60,28 +60,12 @@ class CommentScreenWithContentIdVM(
                 )
             }
         ).flow.cachedIn(viewModelScope).combine(itemTriggerSingle) { pagingData, commentList ->
-            Timber.d("Paging data: =" + commentList)
-            pagingData.map {
-                val event = commentList.firstOrNull()
-                when (event) {
-                    is DeleteComment -> {
-                        if (it.commentId == event.commentId) {
-                            it.copy(isDeleted = true)
-                        } else {
-                            it
-                        }
-                    }
-
-                    is ReportComment -> {
-                        it
-                    }
-
-                    null -> {
-                        it
-                    }
-                }
+            if (uiState.value.commentList.isEmpty()) {
+                pagingData
+            } else {
+                PagingData.from(uiState.value.commentList.toList())
             }
-        }
+        }.cachedIn(viewModelScope)
 
     fun refreshCommentSection() {
         commentPageState = Pager(
@@ -193,6 +177,15 @@ class CommentScreenWithContentIdVM(
                 .collectLatest {
                     it.fold(
                         onSuccess = {
+                            uiState.updateState {
+                                copy(commentList = commentList.map {
+                                    if (it.commentId != commentId) {
+                                        it
+                                    } else {
+                                        it.copy(isDeleted = true)
+                                    }
+                                }.toImmutableList())
+                            }
                             itemTriggerSingle.value = listOf(DeleteComment(commentId))
                         },
                         onFailure = {

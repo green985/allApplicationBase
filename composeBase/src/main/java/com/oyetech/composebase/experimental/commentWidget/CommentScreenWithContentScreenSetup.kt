@@ -1,5 +1,9 @@
 package com.oyetech.composebase.experimental.commentWidget
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -85,11 +89,20 @@ fun CommentScreenWithContentScreenSetup(
                 items = lazyPagingItems, // This parameter is abstracted, not used here
                 itemKey = { item -> item.createdAt.time },
                 onBindItem = { item ->
-                    if (!item.isDeleted) {
+                    AnimatedVisibility(
+                        visible = !item.isDeleted,
+                        exit = fadeOut(
+                            animationSpec = tween(durationMillis = 300) // Silinme animasyon süresi
+                        ) + shrinkVertically(
+                            animationSpec = tween(durationMillis = 300),
+                            shrinkTowards = Alignment.Top
+                        )
+                    ) {
                         CommentItemView(uiState = item, onEvent = { event ->
                             vm.onEvent(event)
                         })
                     }
+
                 },
             )
 
