@@ -18,6 +18,7 @@ data class CommentScreenUiState(
     val isListEmpty: Boolean = false,
 
     val commentList: ImmutableList<CommentItemUiState> = persistentListOf(),
+    val isOptionsPopupShow: Boolean = false,
 
     val errorMessage: String = "",
 )
@@ -34,6 +35,8 @@ data class CommentItemUiState(
 
 sealed class CommentScreenEvent {
     data class OnCommentInputChanged(val commentInput: String) : CommentScreenEvent()
+    data class CommentOperationClicked(val commentId: String) : CommentScreenEvent()
+
     object OnCommentSubmit : CommentScreenEvent()
 
 }

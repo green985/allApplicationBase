@@ -68,7 +68,6 @@ fun CommentScreenWithContentScreenSetup(
             initialValue = LoginOperationUiState()
         )
 
-
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -114,6 +113,8 @@ fun CommentScreenWithContentScreenSetup(
         )
 
     }
+
+
     when (uiState.addCommentState) {
         is Error -> {
             val errorMessage = (uiState.addCommentState as Error).exception.message ?: ""

@@ -9,6 +9,8 @@ Created by Erdi Özbek
  **/
 
 object LanguageKey {
+    var report set(value) {} get() = LocalLanguageHelper.getStringWithKey("report")
+    var delete set(value) {} get() = LocalLanguageHelper.getStringWithKey("delete")
     var emptyCommentError set(value) {} get() = LocalLanguageHelper.getStringWithKey("emptyCommentError")
     var commentAddedSuccessfully set(value) {} get() = LocalLanguageHelper.getStringWithKey("commentAddedSuccessfully")
     var commentInputAreaHint set(value) {} get() = LocalLanguageHelper.getStringWithKey("commentInputAreaHint")

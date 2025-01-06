@@ -11,6 +11,7 @@ import com.oyetech.composebase.experimental.commentWidget.CommentOptionsEvent.Ad
 import com.oyetech.composebase.experimental.commentWidget.CommentOptionsEvent.AddCommentSuccess
 import com.oyetech.composebase.experimental.commentWidget.CommentOptionsEvent.DeleteComment
 import com.oyetech.composebase.experimental.commentWidget.CommentOptionsEvent.ReportComment
+import com.oyetech.composebase.experimental.commentWidget.CommentScreenEvent.CommentOperationClicked
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenEvent.OnCommentInputChanged
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenEvent.OnCommentSubmit
 import com.oyetech.composebase.helpers.errorHelper.ErrorHelper
@@ -156,6 +157,8 @@ class CommentScreenWithContentIdVM(
             AddCommentSuccess -> {
                 Timber.d("AddCommentSuccess")
             }
+
+            is CommentOperationClicked -> TODO()
         }
     }
 

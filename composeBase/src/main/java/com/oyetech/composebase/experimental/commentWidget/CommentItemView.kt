@@ -21,6 +21,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oyetech.composebase.baseViews.helper.GenericPopupMenu
+import com.oyetech.composebase.experimental.commentWidget.CommentOptionsEvent.DeleteComment
+import com.oyetech.composebase.experimental.commentWidget.CommentOptionsEvent.ReportComment
+import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey.commentId
+import com.oyetech.languageModule.keyset.LanguageKey
 
 @Composable
 fun CommentItemView(uiState: CommentItemUiState, onEvent: (CommentScreenEvent) -> (Unit)) {
@@ -30,7 +35,6 @@ fun CommentItemView(uiState: CommentItemUiState, onEvent: (CommentScreenEvent) -
     } else {
         MaterialTheme.colorScheme.surfaceVariant
     }
-
 
     Row(
         Modifier.fillMaxWidth(), horizontalArrangement = if (uiState.isMine) {
@@ -56,16 +60,49 @@ fun CommentItemView(uiState: CommentItemUiState, onEvent: (CommentScreenEvent) -
                         text = uiState.commentContent,
                         style = MaterialTheme.typography.bodyMedium
                     )
+                    GenericPopupMenu(
+                        menuItems = listOf(LanguageKey.delete),
+                        itemLabel = { it },
+                        onItemClick = {
+                            when (it) {
+                                "Delete" -> {
+                                    onEvent(DeleteComment(commentId))
+                                }
 
-                    Icon( // todo will be changed
-                        modifier = Modifier.clickable {
-                            onEvent.invoke(CommentOptionsEvent.DeleteComment(uiState.commentId))
-
+                                "Report" -> {
+                                    onEvent(ReportComment(commentId))
+                                }
+                            }
                         },
-                        imageVector = Icons.Rounded.MoreVert,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
+                        content = {
+
+                        }
                     )
+
+                    GenericPopupMenu(
+                        menuItems = listOf(LanguageKey.delete),
+                        itemLabel = { it },
+                        onItemClick = {
+                            when (it) {
+                                LanguageKey.delete -> {
+                                    onEvent(DeleteComment(commentId))
+                                }
+
+                                "Report" -> {
+                                    onEvent(ReportComment(commentId))
+                                }
+                            }
+                        },
+                    ) {
+                        Icon( // todo will be changed
+                            modifier = Modifier.clickable {
+                                it.invoke()
+                            },
+                            imageVector = Icons.Rounded.MoreVert,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
 
                 }
                 Spacer(modifier = Modifier.height(8.dp))
@@ -95,6 +132,7 @@ fun CommentItemView(uiState: CommentItemUiState, onEvent: (CommentScreenEvent) -
 
         }
     }
+
 
 }
 
