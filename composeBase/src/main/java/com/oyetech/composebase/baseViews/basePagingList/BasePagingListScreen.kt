@@ -16,6 +16,7 @@ import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.PagingMoreError
 import com.oyetech.composebase.baseViews.loadingErrors.PagingMoreLoading
+import com.oyetech.languageModule.keyset.LanguageKey
 import timber.log.Timber
 
 @Composable
@@ -58,7 +59,7 @@ fun <T : Any> BasePagingListScreen(
                 if (items.itemCount == 0) {
                     ErrorScreenFullSize(
                         modifier = modifier,
-                        errorMessage = "No data found",
+                        errorMessage = LanguageKey.emptyCommentError,
                         onRetry = { items.retry() }
                     )
                 }
