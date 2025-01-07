@@ -35,7 +35,7 @@ class GeneralPlaygroundVm(
 
     fun fetchRandomQuotes() {
         viewModelScope.launch(getDispatcherIo()) {
-            quotesRepository.fetchQuotes().asResult().collectLatest {
+            quotesRepository.getQuotes().asResult().collectLatest {
                 it.fold(
                     onSuccess = {
                         it.toString()

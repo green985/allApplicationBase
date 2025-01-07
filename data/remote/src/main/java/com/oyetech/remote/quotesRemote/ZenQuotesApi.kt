@@ -1,5 +1,6 @@
 package com.oyetech.remote.quotesRemote
 
+import com.oyetech.models.quotes.responseModel.QuoteAuthorResponseData
 import com.oyetech.models.quotes.responseModel.QuoteResponseData
 import retrofit2.Response
 import retrofit2.http.GET
@@ -16,13 +17,16 @@ interface ZenQuotesApi {
     @GET("today")
     suspend fun getQuoteOfTheDay(): Response<List<QuoteResponseData>>
 
+    // Günün alıntısı
+    @GET("authors")
+    suspend fun getAuthors(): Response<List<QuoteAuthorResponseData>>
+
     // Yazarın alıntıları
     @GET("quotes/author/{author}")
     suspend fun getQuotesByAuthor(
         @Path("author") author: String,
     ): Response<List<QuoteResponseData>>
 
-    // Anahtar kelimeye göre alıntılar
     @GET("quotes")
     suspend fun getQuotes(
     ): Response<List<QuoteResponseData>>
@@ -30,10 +34,6 @@ interface ZenQuotesApi {
     // Anahtar kelimeye göre alıntılar
     @GET("quotes")
     suspend fun getQuotesByKeyword(
-        @Query("author") author: String,
+        @Query("keyword") keyword: String,
     ): Response<List<QuoteResponseData>>
-
-    // Toplu alıntılar
-    @GET("quotes")
-    suspend fun getBatchQuotes(): Response<List<QuoteResponseData>>
 }

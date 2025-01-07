@@ -28,7 +28,7 @@ class QuoteDataOperationRepositoryImp(
     private val errorQuotesString = "Too many requests. Obtain an auth key for unlimited access."
     var isError = false
     override fun getRandomRemoteQuote(): Flow<List<QuoteResponseData>> {
-        return quotesRepository.fetchQuotes().map {
+        return quotesRepository.getQuotes().map {
             var quoteResponseList = it
             quoteResponseList = it.map {
                 if (it.text != errorQuotesString) {
