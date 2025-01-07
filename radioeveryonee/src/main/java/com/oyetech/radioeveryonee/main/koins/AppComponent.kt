@@ -2,6 +2,7 @@ package com.oyetech.radioeveryonee.main.koins
 
 import com.oyetech.adshelper.di.AdsHelperModule
 import com.oyetech.composebase.di.ComposeMainModule
+import com.oyetech.composebase.projectQuotesFeature.QuotesProjectModule
 import com.oyetech.core.di.CommonsModule
 import com.oyetech.cripto.privateKeys.WallpaperAppFragmentArgs
 import com.oyetech.domain.di.DomainModule
@@ -60,6 +61,7 @@ object AppComponent {
         GlideModuleDi.glideModule,
         GoogleAppReviewerModule.googlePlayReviewerModule,
 
+        QuotesProjectModule.module,
         QuotesImpModule.quoteImpModule,
         QuotesRemoteModule.createZenQuotesRemoteModule(),
         QuotesLocalModuleDi.localModule,

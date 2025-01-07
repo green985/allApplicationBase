@@ -48,7 +48,7 @@ fun RadioAppNavigationWrapperWithPlayerSetup(
                         startDestination = startDestination,
                     ) {
                         radioAppNavigation(navController)
-
+                        quotesAppNavigation(navController)
                     }
 
                 }

@@ -9,6 +9,8 @@ import androidx.navigation.navArgument
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenWithContentScreenSetup
 import com.oyetech.composebase.experimental.loginOperations.CompleteProfileScreenSetup
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationScreenSetup
+import com.oyetech.composebase.projectQuotesFeature.QuoteAppProjectRoutes
+import com.oyetech.composebase.projectQuotesFeature.homeScreen.QuotesHomeScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.RadioListScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.radioSearchList.RadioSearchListScreenSetup
@@ -20,6 +22,13 @@ import com.oyetech.composebase.projectRadioFeature.screens.views.dialogs.timerDi
 import com.oyetech.composebase.sharedScreens.quotes.listScreen.QuoteListScreenSetup
 import com.oyetech.models.radioProject.enums.RadioListEnums
 import timber.log.Timber
+
+@Suppress("LongMethod")
+fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
+    composable(QuoteAppProjectRoutes.QuoteHomeRoute.route) {
+        QuotesHomeScreenSetup()
+    }
+}
 
 @Suppress("LongMethod")
 fun NavGraphBuilder.radioAppNavigation(navController: NavController) {
