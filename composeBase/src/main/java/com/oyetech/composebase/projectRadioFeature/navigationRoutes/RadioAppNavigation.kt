@@ -20,6 +20,7 @@ import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.TabSettin
 import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactWithMe.ContactScreen
 import com.oyetech.composebase.projectRadioFeature.screens.tagList.TagListScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.views.dialogs.timerDialog.RadioCountTimerDialogSetup
+import com.oyetech.composebase.sharedScreens.quotes.detail.QuoteDetailScreenSetup
 import com.oyetech.composebase.sharedScreens.quotes.listScreen.QuoteListScreenSetup
 import com.oyetech.models.radioProject.enums.RadioListEnums
 import timber.log.Timber
@@ -28,6 +29,20 @@ import timber.log.Timber
 fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
     composable(QuoteAppProjectRoutes.QuoteHomeRoute.route) {
         QuotesHomeScreenSetup()
+    }
+    composable(
+        QuoteAppProjectRoutes.QuoteDetailRoute.route, arguments = listOf(
+            navArgument(ScreenKey.quoteId) {
+                defaultValue = "randomSingle"
+                nullable = false
+            },
+        )
+    ) {
+        val quoteId = it.arguments?.getString(ScreenKey.quoteId) ?: "randomSingle"
+        QuoteDetailScreenSetup(
+            quoteId = quoteId,
+            navigationRoute = navigateRoute(navController)
+        )
     }
     composable(QuoteAppProjectRoutes.QuoteAuthorList.route) {
         AuthorListScreen(navigationRoute = navigateRoute(navController))

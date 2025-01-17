@@ -8,6 +8,7 @@ import com.oyetech.models.quotes.responseModel.QuoteResponseData
 import com.oyetech.models.utils.const.HelperConstant
 import com.oyetech.quotes.dao.QuotesAllListDao
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -65,7 +66,12 @@ class QuoteDataOperationRepositoryImp(
 
     override suspend fun getSingleQuote(quoteId: String): Flow<QuoteResponseData> {
         return flow {
-            quotesAllListDao.findQuoteWithQuotesIdList(listOf(quoteId)).first()
+            if (quoteId == "randomSingle") {
+                val list = getQuoteUnseenFlow(emptyArray()).first()
+                emit(list.first())
+            } else {
+                emit(quotesAllListDao.findQuoteWithQuotesIdList(listOf(quoteId)).first())
+            }
         }
     }
 

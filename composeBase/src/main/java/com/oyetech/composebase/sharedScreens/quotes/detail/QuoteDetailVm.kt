@@ -5,6 +5,10 @@ import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.helpers.errorHelper.ErrorHelper
 import com.oyetech.composebase.mappers.mapToUi.QuotesMappers
+import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarEvent
+import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarEvent.BackButtonClick
+import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarEvent.OnActionButtonClick
+import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarState
 import com.oyetech.composebase.sharedScreens.quotes.uiState.QuoteUiState
 import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.core.coroutineHelper.asResult
@@ -19,13 +23,20 @@ Created by Erdi Özbek
 -20:38-
  **/
 
-class QuoteDetailVM(
+class QuoteDetailVm(
     appDispatchers: AppDispatchers,
     private val quoteId: String,
     private val quoteDataOperationRepository: QuoteDataOperationRepository,
 ) : BaseViewModel(appDispatchers) {
 
     val uiState = MutableStateFlow(QuoteUiState())
+
+    val toolbarState = MutableStateFlow(
+        QuoteToolbarState(
+            title = "Quote Detail",
+            showBackButton = true
+        )
+    )
 
     init {
         getQuoteDetail(quoteId)
@@ -62,10 +73,20 @@ class QuoteDetailVM(
         }
     }
 
-    fun onEvent(event: Any) {
+    fun onEvent(event: QuoteDetailEvent) {
         when (event) {
 
             else -> {}
+        }
+    }
+
+    fun onToolbarEvent(it: QuoteToolbarEvent) {
+        when (it) {
+            is BackButtonClick -> {
+
+            }
+
+            is OnActionButtonClick -> TODO()
         }
     }
 }

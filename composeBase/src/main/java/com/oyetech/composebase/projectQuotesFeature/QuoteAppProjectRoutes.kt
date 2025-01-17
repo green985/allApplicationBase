@@ -11,5 +11,6 @@ Created by Erdi Özbek
 object QuoteAppProjectRoutes {
 
     val QuoteHomeRoute = Route("homepage")
+    val QuoteDetailRoute = Route("quoteDetail")
     val QuoteAuthorList = Route("quoteAuthorList")
 }

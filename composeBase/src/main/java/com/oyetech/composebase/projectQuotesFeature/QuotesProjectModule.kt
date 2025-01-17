@@ -2,7 +2,7 @@ package com.oyetech.composebase.projectQuotesFeature
 
 import com.oyetech.composebase.projectQuotesFeature.authorListScreen.AuthorListVM
 import com.oyetech.composebase.projectQuotesFeature.homeScreen.QuotesHomeScreenVm
-import com.oyetech.composebase.sharedScreens.quotes.detail.QuoteDetailVM
+import com.oyetech.composebase.sharedScreens.quotes.detail.QuoteDetailVm
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -16,6 +16,6 @@ object QuotesProjectModule {
     val module = module {
         viewModelOf(::QuotesHomeScreenVm)
         viewModelOf(::AuthorListVM)
-        viewModelOf(::QuoteDetailVM)
+        viewModelOf(::QuoteDetailVm)
     }
 }
