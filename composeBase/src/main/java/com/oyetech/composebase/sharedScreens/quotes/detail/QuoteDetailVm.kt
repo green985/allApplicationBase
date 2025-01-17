@@ -9,6 +9,8 @@ import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarEv
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarEvent.BackButtonClick
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarEvent.OnActionButtonClick
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarState
+import com.oyetech.composebase.sharedScreens.quotes.detail.QuoteDetailEvent.ClickNextButton
+import com.oyetech.composebase.sharedScreens.quotes.detail.QuoteDetailEvent.ClickPreviousButton
 import com.oyetech.composebase.sharedScreens.quotes.uiState.QuoteUiState
 import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.core.coroutineHelper.asResult
@@ -53,12 +55,16 @@ class QuoteDetailVm(
         }
     }
 
-    private fun getQuoteDetail(quoteId: String) {
+    private fun getQuoteDetail(quoteId: String = "", isRandom: Boolean = false) {
         uiState.updateState {
             copy(isLoading = true)
         }
         viewModelScope.launch(getDispatcherIo()) {
-            quoteDataOperationRepository.getSingleQuote(quoteId).asResult().collectLatest {
+            quoteDataOperationRepository.getSingleQuote(
+                if (isRandom) {
+                    "randomSingle"
+                } else quoteId
+            ).asResult().collectLatest {
                 it.fold(
                     onSuccess = { quote ->
                         uiState.value = QuotesMappers.mapToQuoteUiState(quote)
@@ -75,6 +81,14 @@ class QuoteDetailVm(
 
     fun onEvent(event: QuoteDetailEvent) {
         when (event) {
+
+            ClickNextButton -> {
+                getQuoteDetail(isRandom = true)
+            }
+
+            ClickPreviousButton -> {
+                getQuoteDetail(isRandom = true)
+            }
 
             else -> {}
         }

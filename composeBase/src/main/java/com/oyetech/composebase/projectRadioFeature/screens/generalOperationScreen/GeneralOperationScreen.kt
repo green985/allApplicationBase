@@ -14,6 +14,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.snackbar.SnacbarScreenSetup
+import com.oyetech.composebase.experimental.loginOperations.LoginOperationScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.generalPlayground.GeneralPlaygroundVm
 import com.oyetech.composebase.projectRadioFeature.screens.views.dialogs.RateUsDialog
 import org.koin.androidx.compose.koinViewModel
@@ -68,7 +69,9 @@ fun GeneralOperationScreenSetup(
             })
     }
 
-    // LoginOperationScreenSetup(navigationRoute = { navController.navigate(it) })
+
+
+    LoginOperationScreenSetup(navigationRoute = { navController.navigate(it) })
     GeneralOperationScreen {
         content()
     }

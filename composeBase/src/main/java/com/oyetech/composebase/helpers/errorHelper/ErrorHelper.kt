@@ -10,6 +10,10 @@ Created by Erdi Özbek
 
 // todo TimeoutCancellationException operasyonunu yonet.
 
+/**
+ * Missing or insufficient permissions.
+ */
+
 @Suppress("ReturnCount")
 fun String.toErrorMessage(): String {
     if (this.contains("unable to resolve host", true)) {

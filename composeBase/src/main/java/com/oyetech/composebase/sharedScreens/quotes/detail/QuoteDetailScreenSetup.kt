@@ -11,8 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.R
 import com.oyetech.composebase.base.BaseScaffold
@@ -22,6 +22,7 @@ import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarEv
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarEvent.OnActionButtonClick
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarSetup
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarState
+import com.oyetech.composebase.projectRadioFeature.RadioDimensions
 import com.oyetech.composebase.sharedScreens.quotes.detail.QuoteDetailEvent.ClickNextButton
 import com.oyetech.composebase.sharedScreens.quotes.detail.QuoteDetailEvent.ClickPreviousButton
 import com.oyetech.composebase.sharedScreens.quotes.randomQuotesViewer.RandomQuotesSmallView
@@ -80,35 +81,45 @@ fun QuoteDetailScreen(
 ) {
 
     BaseScaffold {
-        Column(modifier = Modifier.padding()) {
-            QuoteToolbarSetup(uiState = toolbarState, onEvent = {
-                onToolbarEvent(it)
-            }
-            )
-            RandomQuotesSmallView(uiState = uiState)
-            CommentScreenWithContentScreenSetup(uiState.quoteId)
-            Row(verticalAlignment = Alignment.CenterVertically) {
+        Column {
 
-                IconButton(
-                    modifier = Modifier.size(100.dp),
-                    onClick = { onEvent(ClickPreviousButton) }) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_skip_previous_circle),
-                        contentDescription = "Previous"
-                    )
+            Column(
+                modifier = Modifier
+                    .padding()
+                    .weight(1f)
+            ) {
+                QuoteToolbarSetup(uiState = toolbarState, onEvent = {
+                    onToolbarEvent(it)
                 }
+                )
+                RandomQuotesSmallView(uiState = uiState)
+                CommentScreenWithContentScreenSetup(uiState.quoteId)
 
-                Spacer(Modifier.weight(1f))
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
 
                 IconButton(onClick = { onEvent(ClickNextButton) }) {
                     Icon(
+                        modifier = Modifier
+                            .rotate(180f)
+                            .size(RadioDimensions.radioLogoSmallWidthHeight),
                         painter = painterResource(R.drawable.ic_skip_next_circle),
                         contentDescription = "Next"
+                    )
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                IconButton(
+                    onClick = { onEvent(ClickPreviousButton) }) {
+                    Icon(
+                        modifier = Modifier.size(RadioDimensions.radioLogoSmallWidthHeight),
+                        painter = painterResource(R.drawable.ic_skip_next_circle),
+                        contentDescription = "Previous"
                     )
                 }
 
             }
         }
+
     }
 
 
