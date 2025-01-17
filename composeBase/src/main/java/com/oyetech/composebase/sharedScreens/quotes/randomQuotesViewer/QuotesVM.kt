@@ -1,21 +1,19 @@
 package com.oyetech.composebase.sharedScreens.quotes.randomQuotesViewer
 
-import androidx.core.text.parseAsHtml
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.baseList.ComplexItemListState
-import com.oyetech.composebase.helpers.viewProperties.toAnnotatedString
+import com.oyetech.composebase.mappers.mapToUi.QuotesMappers.mapToQuoteUiState
 import com.oyetech.composebase.sharedScreens.quotes.listScreen.QuotePagingSource
 import com.oyetech.composebase.sharedScreens.quotes.uiState.QuoteListUiEvent
 import com.oyetech.composebase.sharedScreens.quotes.uiState.QuoteListUiEvent.QuoteSeen
-import com.oyetech.composebase.sharedScreens.quotes.uiState.QuotesUiState
+import com.oyetech.composebase.sharedScreens.quotes.uiState.QuoteUiState
 import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
 import com.oyetech.models.quotes.responseModel.QuoteResponseData
-import com.oyetech.models.utils.helper.TimeFunctions
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
@@ -47,7 +45,7 @@ class QuotesVM(
             }
         ).flow.cachedIn(viewModelScope)
 
-    val complexItemViewState: MutableStateFlow<ComplexItemListState<QuotesUiState>> =
+    val complexItemViewState: MutableStateFlow<ComplexItemListState<QuoteUiState>> =
         MutableStateFlow(ComplexItemListState())
 
     val currentPage = MutableStateFlow(0)
@@ -89,18 +87,11 @@ class QuotesVM(
     }
 }
 
-fun Flow<List<QuoteResponseData>>.mapToUiState(): Flow<List<QuotesUiState>> {
+fun Flow<List<QuoteResponseData>>.mapToUiState(): Flow<List<QuoteUiState>> {
     return this.map {
         it.map {
-            QuotesUiState(
-                quoteId = it.quoteId,
-                text = it.text,
-                author = it.author,
-                createdAtString = TimeFunctions.getDateFromLongWithoutHour(it.createdAt),
-                authorImage = it.authorImage,
-                htmlFormatted = it.htmlFormatted,
-                annotatedStringText = it.htmlFormatted.parseAsHtml().toAnnotatedString()
-            )
+            mapToQuoteUiState(it)
         }
     }
 }
+

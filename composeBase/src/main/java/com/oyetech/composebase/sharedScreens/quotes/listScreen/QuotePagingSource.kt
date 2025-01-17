@@ -4,7 +4,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.oyetech.composebase.base.baseList.ComplexItemListState
 import com.oyetech.composebase.sharedScreens.quotes.randomQuotesViewer.mapToUiState
-import com.oyetech.composebase.sharedScreens.quotes.uiState.QuotesUiState
+import com.oyetech.composebase.sharedScreens.quotes.uiState.QuoteUiState
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
@@ -17,9 +17,9 @@ import timber.log.Timber
 
 class QuotePagingSource(
     private val quoteDataOperationRepository: QuoteDataOperationRepository,
-    private val complexItemViewState: MutableStateFlow<ComplexItemListState<QuotesUiState>>,
-) : PagingSource<Int, QuotesUiState>() {
-    override fun getRefreshKey(state: PagingState<Int, QuotesUiState>): Int? {
+    private val complexItemViewState: MutableStateFlow<ComplexItemListState<QuoteUiState>>,
+) : PagingSource<Int, QuoteUiState>() {
+    override fun getRefreshKey(state: PagingState<Int, QuoteUiState>): Int? {
         val keyy = state.anchorPosition?.let { position ->
             state.closestPageToPosition(position)?.prevKey?.plus(1)
                 ?: state.closestPageToPosition(position)?.nextKey?.minus(1)
@@ -28,7 +28,7 @@ class QuotePagingSource(
         return keyy
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, QuotesUiState> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, QuoteUiState> {
 
         return try {
             withContext(Dispatchers.IO) {

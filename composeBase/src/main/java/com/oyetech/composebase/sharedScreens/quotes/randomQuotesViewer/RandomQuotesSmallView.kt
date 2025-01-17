@@ -19,7 +19,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.oyetech.composebase.sharedScreens.quotes.uiState.QuotesUiState
+import com.oyetech.composebase.sharedScreens.quotes.uiState.QuoteUiState
 
 /**
 Created by Erdi Özbek
@@ -29,7 +29,7 @@ Created by Erdi Özbek
 
 // Main QuotesCard Composable
 @Composable
-fun RandomQuotesSmallView(uiState: QuotesUiState = QuotesUiState()) {
+fun RandomQuotesSmallView(uiState: QuoteUiState = QuoteUiState()) {
 
     Card(
         modifier = Modifier
@@ -85,7 +85,7 @@ fun RandomQuotesSmallView(uiState: QuotesUiState = QuotesUiState()) {
 @Composable
 fun QuotesScreenPreview() {
     RandomQuotesSmallView(
-        uiState = QuotesUiState(
+        uiState = QuoteUiState(
             text = "Success is not final, failure is not fatal: It is the courage to continue that counts.",
             author = "Winston Churchill",
             htmlFormatted = "<i>Success is not final, failure is not fatal:</i> <b>It is the courage to continue that counts.</b>"

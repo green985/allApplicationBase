@@ -10,7 +10,7 @@ import com.oyetech.composebase.baseViews.basePagingList.BasePagingListScreen
 import com.oyetech.composebase.sharedScreens.quotes.randomQuotesViewer.QuotesVM
 import com.oyetech.composebase.sharedScreens.quotes.randomQuotesViewer.RandomQuotesSmallView
 import com.oyetech.composebase.sharedScreens.quotes.uiState.QuoteListUiEvent.QuoteSeen
-import com.oyetech.composebase.sharedScreens.quotes.uiState.QuotesUiState
+import com.oyetech.composebase.sharedScreens.quotes.uiState.QuoteUiState
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 
@@ -32,7 +32,7 @@ fun QuoteListScreenSetup() {
                 itemKey = { quote -> quote.quoteId },
                 onBindItem = { quote ->
                     RandomQuotesSmallView(
-                        uiState = QuotesUiState(
+                        uiState = QuoteUiState(
                             text = quote.text,
                             author = quote.author
                         )

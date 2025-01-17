@@ -15,4 +15,5 @@ interface QuoteDataOperationRepository {
     fun setSeenQuote(quoteId: String): Flow<Unit>
     suspend fun getQuoteUnseenFlow(oldList: Array<String>): Flow<List<QuoteResponseData>>
     suspend fun getAuthorList(): Flow<List<QuoteAuthorResponseData>>
+    suspend fun getSingleQuote(quoteId: String): Flow<QuoteResponseData>
 }

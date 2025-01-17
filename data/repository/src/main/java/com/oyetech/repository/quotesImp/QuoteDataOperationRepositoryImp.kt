@@ -63,6 +63,12 @@ class QuoteDataOperationRepositoryImp(
         return quotesRepository.getAuthors()
     }
 
+    override suspend fun getSingleQuote(quoteId: String): Flow<QuoteResponseData> {
+        return flow {
+            quotesAllListDao.findQuoteWithQuotesIdList(listOf(quoteId)).first()
+        }
+    }
+
     override suspend fun getQuoteUnseenFlow(oldList: Array<String>): Flow<List<QuoteResponseData>> {
         return quotesAllListDao.getQuoteUnseenFlow(oldList)
             .let {
