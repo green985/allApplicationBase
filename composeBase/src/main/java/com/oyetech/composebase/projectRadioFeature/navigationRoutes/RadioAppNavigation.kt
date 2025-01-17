@@ -10,6 +10,7 @@ import com.oyetech.composebase.experimental.commentWidget.CommentScreenWithConte
 import com.oyetech.composebase.experimental.loginOperations.CompleteProfileScreenSetup
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationScreenSetup
 import com.oyetech.composebase.projectQuotesFeature.QuoteAppProjectRoutes
+import com.oyetech.composebase.projectQuotesFeature.authorListScreen.AuthorListScreen
 import com.oyetech.composebase.projectQuotesFeature.homeScreen.QuotesHomeScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.RadioListScreenSetup
@@ -27,6 +28,9 @@ import timber.log.Timber
 fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
     composable(QuoteAppProjectRoutes.QuoteHomeRoute.route) {
         QuotesHomeScreenSetup()
+    }
+    composable(QuoteAppProjectRoutes.QuoteAuthorList.route) {
+        AuthorListScreen(navigationRoute = navigateRoute(navController))
     }
 }
 

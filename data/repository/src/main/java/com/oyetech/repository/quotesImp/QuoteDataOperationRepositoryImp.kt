@@ -3,6 +3,7 @@ package com.oyetech.repository.quotesImp
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
 import com.oyetech.domain.quotesDomain.quotesData.QuotesRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuotesOperationRepository
+import com.oyetech.models.quotes.responseModel.QuoteAuthorResponseData
 import com.oyetech.models.quotes.responseModel.QuoteResponseData
 import com.oyetech.models.utils.const.HelperConstant
 import com.oyetech.quotes.dao.QuotesAllListDao
@@ -56,6 +57,10 @@ class QuoteDataOperationRepositoryImp(
             }
 
         }
+    }
+
+    override suspend fun getAuthorList(): Flow<List<QuoteAuthorResponseData>> {
+        return quotesRepository.getAuthors()
     }
 
     override suspend fun getQuoteUnseenFlow(oldList: Array<String>): Flow<List<QuoteResponseData>> {

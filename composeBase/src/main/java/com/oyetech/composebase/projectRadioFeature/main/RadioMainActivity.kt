@@ -59,7 +59,7 @@ class RadioMainActivity : ComponentActivity() {
                             RadioAppNavigationWrapperWithPlayerSetup(
                                 navController = navController,
 //                                startDestination = RadioAppProjectRoutes.TabRadioAllList.route
-                                startDestination = QuoteAppProjectRoutes.QuoteHomeRoute.route
+                                startDestination = QuoteAppProjectRoutes.QuoteAuthorList.route
                             )
 
                         }
