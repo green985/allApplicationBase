@@ -5,6 +5,7 @@ import android.content.res.Resources
 import android.os.Build
 import androidx.core.os.ConfigurationCompat
 import com.oyetech.models.utils.moshi.deserializeHashMap
+import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
 import java.util.Locale
 import kotlin.system.measureTimeMillis
@@ -26,9 +27,10 @@ class LocalLanguageHelper(private val context: Context) {
     }
 
     companion object {
-        private var languageHashMap = HashMap<String, String>()
+        var languageHashMap = HashMap<String, String>()
+        var startWithVM = false
 
-        //var languageErrorSingleLiveEvent = SingleLiveEvent<Boolean>()
+        var languageErrorSingleLiveEvent = MutableStateFlow<Boolean>(false)
 
         internal fun getStringWithKey(languageKey: String, defaultString: String = ""): String {
             if (languageHashMap.isEmpty()) {
@@ -38,8 +40,8 @@ class LocalLanguageHelper(private val context: Context) {
 //                return defaultString
             }
 
-            val languageValue = languageHashMap[languageKey] ?: languageKey
-            return languageValue.plus("~~")
+            val languageValue = languageHashMap[languageKey] ?: languageKey.plus("~~")
+            return languageValue
         }
 
     }

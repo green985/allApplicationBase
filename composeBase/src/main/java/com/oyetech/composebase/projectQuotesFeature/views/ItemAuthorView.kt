@@ -1,5 +1,6 @@
 package com.oyetech.composebase.projectQuotesFeature.views
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -21,6 +23,7 @@ import com.bumptech.glide.integration.compose.placeholder
 import com.oyetech.composebase.projectQuotesFeature.QuotesDimensions
 import com.oyetech.composebase.projectRadioFeature.RadioDimensions
 import com.oyetech.core.contextHelper.getApplicationLogo
+import com.oyetech.languageModule.keyset.LanguageKey
 
 /**
 Created by Erdi Özbek
@@ -45,13 +48,29 @@ fun ItemAuthorView(
                     .padding(start = 6.dp)
                     .clip(RoundedCornerShape(RadioDimensions.radioTagCornerRadius))
             ) {
-                GlideImage(
-                    model = authorImage,
-                    contentDescription = "RadioImage",
-                    failure = placeholder(context.getApplicationLogo()),
-                    modifier = Modifier
-                        .size(QuotesDimensions.authorImageSize),
-                )
+                Box(Modifier.padding(4.dp)) {
+
+                    if (LocalInspectionMode.current) {
+                        Box(
+                            Modifier
+                                .size(QuotesDimensions.authorImageSize)
+                                .background(
+                                    MaterialTheme.colorScheme.primary
+                                )
+                                .clip(RoundedCornerShape(RadioDimensions.radioTagCornerRadius)),
+                        )
+                    } else {
+
+                        GlideImage(
+                            model = authorImage,
+                            contentDescription = "RadioImage",
+                            failure = placeholder(context.getApplicationLogo()),
+                            modifier = Modifier
+                                .size(QuotesDimensions.authorImageSize)
+                                .clip(RoundedCornerShape(RadioDimensions.radioTagCornerRadius)),
+                        )
+                    }
+                }
             }
 
             Text(
@@ -68,7 +87,7 @@ fun ItemAuthorView(
 @Composable
 private fun PreviewItemAuthor() {
     ItemAuthorView(
-        authorDisplayName = "Erdi Özbek",
+        authorDisplayName = LanguageKey.errorText,
         authorImage = "",
         onClick = {},
     )

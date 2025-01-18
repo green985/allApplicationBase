@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_PARAMETER")
+
 package com.oyetech.languageModule.keyset
 
 import com.oyetech.languageModule.localLanguageHelper.LocalLanguageHelper
@@ -9,6 +11,7 @@ Created by Erdi Özbek
  **/
 
 object LanguageKey {
+    var errorText set(value) {} get() = LocalLanguageHelper.getStringWithKey("errorText")
     var report set(value) {} get() = LocalLanguageHelper.getStringWithKey("report")
     var delete set(value) {} get() = LocalLanguageHelper.getStringWithKey("delete")
     var emptyCommentError set(value) {} get() = LocalLanguageHelper.getStringWithKey("emptyCommentError")

@@ -1,13 +1,14 @@
 package com.oyetech.languageimp
 
-import android.content.res.Resources
-import android.os.Build
-import androidx.core.os.ConfigurationCompat
 import com.oyetech.core.coroutineHelper.retryWhenWithExpDelay
 import com.oyetech.cripto.stringKeys.SharedPrefKey
 import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseLanguageOperationRepository
 import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.languageModule.localLanguageHelper.LocalLanguageHelper
+import com.oyetech.languageModule.localLanguageHelper.LocalLanguageHelper.Companion.languageErrorSingleLiveEvent
+import com.oyetech.languageModule.localLanguageHelper.LocalLanguageHelper.Companion.languageHashMap
+import com.oyetech.languageModule.localLanguageHelper.LocalLanguageHelper.Companion.startWithVM
 import com.oyetech.models.errors.ErrorMessage
 import com.oyetech.models.firebaseModels.language.FirebaseLanguageResponseData
 import com.oyetech.models.firebaseModels.language.FirebaseLanguageResponseDataWrapper
@@ -18,14 +19,12 @@ import com.oyetech.models.utils.helper.TimeFunctions
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.Locale
 
 /**
 Created by Erdi Özbek
@@ -49,7 +48,7 @@ class LanguageOperationHelper(
     }
 
     fun initLanguageHelper(startWithVM: Boolean) {
-        LanguageOperationHelper.startWithVM = startWithVM
+        LocalLanguageHelper.startWithVM = startWithVM
 
         var textResourcesDataResponse = sharedOperationUseCase.getFirebaseLanguageValue()
         if (textResourcesDataResponse == null) {
@@ -65,85 +64,6 @@ class LanguageOperationHelper(
         isInit = true
         initLanguageData()
         initSomeText()
-    }
-
-    companion object {
-        private var languageHashMap = HashMap<String, String>()
-
-        var languageErrorSingleLiveEvent = MutableStateFlow<Boolean>(false)
-
-        var startWithVM = false
-
-        internal fun getStringWithKey(languageKey: String): String {
-            return languageHashMap[languageKey] ?: languageKey
-        }
-
-        fun getStringWithKeyNull(languageKey: String?): String? {
-            return languageHashMap[languageKey]
-        }
-
-        fun getStringWithFormat(languageKey: String?, args: String?): String {
-            var formattedString = languageHashMap[languageKey]
-            if (formattedString.isNullOrBlank()) return ""
-
-            try {
-                return formattedString.languageValueOf(args) ?: ""
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            return languageKey ?: ""
-        }
-
-        fun getStringWithFormatWithLanguageKey(formattedString: String?, args: String?): String {
-            if (formattedString.isNullOrBlank()) return ""
-
-            try {
-                return formattedString.languageValueOf(args) ?: ""
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            return formattedString + "" + args ?: ""
-        }
-
-        fun getStringWithFormatWithLanguageKeyWithInt(
-            formattedString: String?,
-            args: Int?,
-        ): String {
-            if (formattedString.isNullOrBlank()) return ""
-
-            try {
-                return formattedString.languageValueOf(args) ?: ""
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            return formattedString + "" + args ?: ""
-        }
-
-        fun getLocalLanguageCode(): String {
-            var localCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                val currentLocale =
-                    ConfigurationCompat.getLocales(Resources.getSystem().configuration).get(0)
-                currentLocale?.language
-            } else {
-                Locale.getDefault().language
-            }
-            if (localCode.isNullOrBlank()) {
-                Timber.d("getLocalLanguageCode ==== " + null)
-                localCode = "en"
-            }
-            return localCode
-        }
-
-        fun String.languageValueOf(args: String?): String {
-            if (args.isNullOrBlank()) return ""
-            return String.format(this, args)
-        }
-
-        fun String.languageValueOf(args: Int?): String {
-            return String.format(this, args)
-        }
-
-
     }
 
     private fun getLanguagePackage() {
@@ -266,7 +186,7 @@ class LanguageOperationHelper(
     }
 
     private fun generateLanguageHashMap(translations: List<FirebaseLanguageResponseData>) {
-        languageHashMap.clear()
+        LocalLanguageHelper.languageHashMap.clear()
         translations.forEach {
             languageHashMap[it.key] = it.value
         }
