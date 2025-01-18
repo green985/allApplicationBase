@@ -42,7 +42,7 @@ class BaseApplication : Application() {
         }
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         configureDi()
-        languageOperationHelper.initLanguageData()
+        languageOperationHelper.initLanguageHelper(true)
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         setAppContext(this)

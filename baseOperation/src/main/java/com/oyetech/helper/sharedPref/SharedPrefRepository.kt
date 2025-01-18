@@ -4,9 +4,11 @@ import com.google.gson.reflect.TypeToken
 import com.oyetech.base.BaseViewModel
 import com.oyetech.cripto.stringKeys.SharedPrefKey
 import com.oyetech.domain.repository.SharedOperationRepository
+import com.oyetech.helper.language.LanguageHelper
 import com.oyetech.models.entity.auth.AuthRequestResponse
 import com.oyetech.models.entity.auth.TokenDataResponse
 import com.oyetech.models.entity.language.TextResourcesDataResponse
+import com.oyetech.models.firebaseModels.language.FirebaseLanguageResponseDataWrapper
 import com.oyetech.models.radioProject.entity.radioEntity.station.RadioStationResponseData
 import com.oyetech.models.radioProject.helperModels.alarm.DataAlarmModel
 import com.oyetech.models.radioProject.helperModels.weekDay.WeekDaysModel
@@ -102,7 +104,7 @@ class SharedPrefRepository(
 
     override fun getLanguageValueOrNull(): TextResourcesDataResponse? {
         var textResourcesDataResponse = sharedHelper.retrieveData(
-            SharedPrefKey.TextResourcesDataResponse,
+            SharedPrefKey.FirebaseTextResourcesDataResponse,
             TextResourcesDataResponse::class.java
         )
         return textResourcesDataResponse
@@ -132,7 +134,7 @@ class SharedPrefRepository(
     }
 
     override fun saveLanguageData(it: TextResourcesDataResponse, withTimeMilis: Long?) {
-        sharedHelper.addData(SharedPrefKey.TextResourcesDataResponse, it)
+        sharedHelper.addData(SharedPrefKey.FirebaseTextResourcesDataResponse, it)
         if (withTimeMilis != null) {
             sharedHelper.putLongData(
                 SharedPrefKey.TextResourcesDataResponseTimeMilis,
@@ -144,6 +146,25 @@ class SharedPrefRepository(
                 TimeFunctions.getTimeMilis()
             )
         }
+    }
+
+    override fun saveFirebaseLanguageData(
+        it: FirebaseLanguageResponseDataWrapper,
+        withTimeMilis: Long?,
+    ) {
+        sharedHelper.addData(SharedPrefKey.FirebaseTextResourcesDataResponse, it)
+        if (withTimeMilis != null) {
+            sharedHelper.putLongData(
+                SharedPrefKey.TextResourcesDataResponseTimeMilis,
+                withTimeMilis
+            )
+        } else {
+            sharedHelper.putLongData(
+                SharedPrefKey.TextResourcesDataResponseTimeMilis,
+                TimeFunctions.getTimeMilis()
+            )
+        }
+
     }
 
     override fun getConversationListExpireFlag(): Boolean {
@@ -290,4 +311,42 @@ class SharedPrefRepository(
     fun getSharedHelperBase(): SharedHelper {
         return sharedHelper
     }
+
+    override fun getBaseLanguageCode(): String {
+        var authData = getUserAuthModel()
+        var languageCode = authData?.languageCode
+        if (languageCode.isNullOrBlank()) {
+            var downloadedResourcesDataResponse = sharedHelper.retrieveData(
+                SharedPrefKey.FirebaseTextResourcesDataResponse,
+                TextResourcesDataResponse::class.java
+            )
+            if (downloadedResourcesDataResponse != null) {
+                if (downloadedResourcesDataResponse.languageCode.isNotBlank()) {
+                    languageCode = downloadedResourcesDataResponse.languageCode
+                        ?: LanguageHelper.getLocalLanguageCode()
+                } else {
+                    languageCode = LanguageHelper.getLocalLanguageCode()
+                }
+            } else {
+                // first init language code
+                languageCode = LanguageHelper.getLocalLanguageCode()
+            }
+        }
+        if (languageCode.isNullOrBlank()) {
+            languageCode = "en"
+        }
+
+        return languageCode
+    }
+
+    override fun getFirebaseLanguageValue(): FirebaseLanguageResponseDataWrapper? {
+        val firebaseLanguageResponseDataWrapper = sharedHelper.retrieveData(
+            SharedPrefKey.FirebaseTextResourcesDataResponse,
+            FirebaseLanguageResponseDataWrapper::class.java
+        )
+        return firebaseLanguageResponseDataWrapper
+
+    }
+
+
 }

@@ -91,7 +91,7 @@ class RefreshTokenHelper(
 
         var builder = Retrofit.Builder().apply {
             baseUrl(BaseUrlConfigHelper.getBaseUrl())
-            addConverterFactory(MoshiConverterFactory.create(moshi))
+            addConverterFactory(MoshiConverterFactory.create(moshi).asLenient())
             client(httpClient)
         }.build()
 

@@ -233,7 +233,7 @@ class LanguageHelper(
 
     private fun controlLanguageModelExpired(): Boolean {
         var isLanguageDataSaved =
-            sharedOperationUseCase.controlIsKeyNotNull(SharedPrefKey.TextResourcesDataResponse)
+            sharedOperationUseCase.controlIsKeyNotNull(SharedPrefKey.FirebaseTextResourcesDataResponse)
         var isLanguageTimeSaved =
             sharedOperationUseCase.controlIsKeyNotNull(SharedPrefKey.TextResourcesDataResponseTimeMilis)
         if (!isLanguageDataSaved && !isLanguageTimeSaved) {

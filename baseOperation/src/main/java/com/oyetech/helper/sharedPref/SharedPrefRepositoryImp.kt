@@ -154,7 +154,7 @@ class SharedPrefRepositoryImp(var sharedHelper: SharedHelper) : SharedHelperRepo
 
     override fun getLanguageValueOrNull(): TextResourcesDataResponse? {
         var textResourcesDataResponse = sharedHelper.retrieveData(
-            SharedPrefKey.TextResourcesDataResponse,
+            SharedPrefKey.FirebaseTextResourcesDataResponse,
             TextResourcesDataResponse::class.java
         )
         return textResourcesDataResponse
@@ -210,7 +210,7 @@ class SharedPrefRepositoryImp(var sharedHelper: SharedHelper) : SharedHelperRepo
         var languageCode = authData?.languageCode
         if (languageCode.isNullOrBlank()) {
             var downloadedResourcesDataResponse = sharedHelper.retrieveData(
-                SharedPrefKey.TextResourcesDataResponse,
+                SharedPrefKey.FirebaseTextResourcesDataResponse,
                 TextResourcesDataResponse::class.java
             )
             if (downloadedResourcesDataResponse != null) {
@@ -233,7 +233,7 @@ class SharedPrefRepositoryImp(var sharedHelper: SharedHelper) : SharedHelperRepo
     }
 
     override fun saveLanguageData(it: TextResourcesDataResponse, withTimeMilis: Long?) {
-        sharedHelper.addData(SharedPrefKey.TextResourcesDataResponse, it)
+        sharedHelper.addData(SharedPrefKey.FirebaseTextResourcesDataResponse, it)
         if (withTimeMilis != null) {
             sharedHelper.putLongData(
                 SharedPrefKey.TextResourcesDataResponseTimeMilis,

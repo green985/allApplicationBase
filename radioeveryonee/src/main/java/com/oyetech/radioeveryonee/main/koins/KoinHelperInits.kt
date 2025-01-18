@@ -45,7 +45,7 @@ object KoinHelperInits {
         }
         single {
 
-            var s =
+            val s =
                 Moshi.Builder()
                     .add(DefaultIfNullFactory())
                     .addLast(KotlinJsonAdapterFactory())
