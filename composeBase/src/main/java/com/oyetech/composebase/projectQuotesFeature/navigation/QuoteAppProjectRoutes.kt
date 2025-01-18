@@ -1,4 +1,4 @@
-package com.oyetech.composebase.projectQuotesFeature
+package com.oyetech.composebase.projectQuotesFeature.navigation
 
 import com.oyetech.composebase.navigator.Route
 
@@ -14,3 +14,6 @@ object QuoteAppProjectRoutes {
     val QuoteDetailRoute = Route("quoteDetail")
     val QuoteAuthorList = Route("quoteAuthorList")
 }
+
+
+

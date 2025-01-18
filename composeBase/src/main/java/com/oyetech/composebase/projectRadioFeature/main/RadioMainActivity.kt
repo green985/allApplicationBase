@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationBar
-import com.oyetech.composebase.projectQuotesFeature.QuoteAppProjectRoutes
+import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppNavigationWrapperWithPlayerSetup
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
 import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.GeneralOperationScreenSetup

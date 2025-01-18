@@ -9,9 +9,6 @@ import androidx.navigation.navArgument
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenWithContentScreenSetup
 import com.oyetech.composebase.experimental.loginOperations.CompleteProfileScreenSetup
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationScreenSetup
-import com.oyetech.composebase.projectQuotesFeature.QuoteAppProjectRoutes
-import com.oyetech.composebase.projectQuotesFeature.authorListScreen.AuthorListScreen
-import com.oyetech.composebase.projectQuotesFeature.homeScreen.QuotesHomeScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.RadioListScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.radioSearchList.RadioSearchListScreenSetup
@@ -20,34 +17,10 @@ import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.TabSettin
 import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactWithMe.ContactScreen
 import com.oyetech.composebase.projectRadioFeature.screens.tagList.TagListScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.views.dialogs.timerDialog.RadioCountTimerDialogSetup
-import com.oyetech.composebase.sharedScreens.quotes.detail.QuoteDetailScreenSetup
 import com.oyetech.composebase.sharedScreens.quotes.listScreen.QuoteListScreenSetup
 import com.oyetech.models.radioProject.enums.RadioListEnums
 import timber.log.Timber
 
-@Suppress("LongMethod")
-fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
-    composable(QuoteAppProjectRoutes.QuoteHomeRoute.route) {
-        QuotesHomeScreenSetup()
-    }
-    composable(
-        QuoteAppProjectRoutes.QuoteDetailRoute.route, arguments = listOf(
-            navArgument(ScreenKey.quoteId) {
-                defaultValue = "randomSingle"
-                nullable = false
-            },
-        )
-    ) {
-        val quoteId = it.arguments?.getString(ScreenKey.quoteId) ?: "randomSingle"
-        QuoteDetailScreenSetup(
-            quoteId = quoteId,
-            navigationRoute = navigateRoute(navController)
-        )
-    }
-    composable(QuoteAppProjectRoutes.QuoteAuthorList.route) {
-        AuthorListScreen(navigationRoute = navigateRoute(navController))
-    }
-}
 
 @Suppress("LongMethod")
 fun NavGraphBuilder.radioAppNavigation(navController: NavController) {
