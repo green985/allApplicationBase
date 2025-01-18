@@ -38,13 +38,12 @@ object AllScreenNavigator {
         RadioAppProjectRoutes.TabSettings.route,
         RadioAppProjectRoutes.ContactScreen.route,
         RadioAppProjectRoutes.QuotesListScreen.route,
-        RadioAppProjectRoutes.CommentScreen.route,
         RadioAppProjectRoutes.CommentScreenWithContentId.route,
         RadioAppProjectRoutes.LoginOperationScreen.route,
         RadioAppProjectRoutes.CompleteProfileScreen.route,
 
         // Quote App Routes
-        QuoteAppProjectRoutes.QuoteHomeRoute.route,
+        QuoteAppProjectRoutes.QuoteAppHomepage.route,
         QuoteAppProjectRoutes.QuoteDetailRoute.route,
         QuoteAppProjectRoutes.QuoteAuthorList.route
     )

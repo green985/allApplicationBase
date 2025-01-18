@@ -25,7 +25,6 @@ object RadioAppProjectRoutes {
     val ContactScreen = Route("radioList/ContactScreen")
 
     val QuotesListScreen = Route("radioList/QuotesListScreen")
-    val CommentScreen = Route("CommentScreen")
     val CommentScreenWithContentId = Route("CommentScreenWithContentId")
     val LoginOperationScreen = Route("LoginOperationScreen")
     val CompleteProfileScreen = Route("LoginOperationScreen/CompleteProfileScreen")

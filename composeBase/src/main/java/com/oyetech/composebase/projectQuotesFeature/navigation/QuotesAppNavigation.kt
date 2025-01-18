@@ -12,7 +12,7 @@ import com.oyetech.composebase.sharedScreens.quotes.detail.QuoteDetailScreenSetu
 
 @Suppress("LongMethod")
 fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
-    composable(QuoteAppProjectRoutes.QuoteHomeRoute.route) {
+    composable(QuoteAppProjectRoutes.QuoteAppHomepage.route) {
         QuotesHomeScreenSetup()
     }
     composable(

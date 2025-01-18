@@ -10,7 +10,7 @@ Created by Erdi Özbek
 
 object QuoteAppProjectRoutes {
 
-    val QuoteHomeRoute = Route("homepage")
+    val QuoteAppHomepage = Route("quoteAppHomepage")
     val QuoteDetailRoute = Route("quoteDetail")
     val QuoteAuthorList = Route("quoteAuthorList")
 }

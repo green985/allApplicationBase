@@ -119,7 +119,7 @@ fun NavGraphBuilder.radioAppNavigation(navController: NavController) {
                 "&${ScreenKey.toolbarTitle}={toolbarTitle}",
         arguments = listOf(
             navArgument(ScreenKey.listType) {
-                defaultValue = RadioListEnums.Languages.name
+                defaultValue = RadioListEnums.Top_Click
                 nullable = false
             },
             navArgument(ScreenKey.tagName) { nullable = true },
