@@ -13,6 +13,7 @@ import com.oyetech.glidemodule.GlideModuleDi
 import com.oyetech.googlelogin.di.GoogleSignInModule
 import com.oyetech.helper.BaseUrlConfigHelper
 import com.oyetech.languageModule.di.LanguageModuleDi
+import com.oyetech.languageimp.LanguageImplModule
 import com.oyetech.local.di.RadioLocalModuleDi
 import com.oyetech.quotes.QuotesLocalModuleDi
 import com.oyetech.radiooperationmodule.di.RadioOperationModuleDi
@@ -65,7 +66,8 @@ object AppComponent {
         QuotesImpModule.quoteImpModule,
         QuotesRemoteModule.createZenQuotesRemoteModule(),
         QuotesLocalModuleDi.localModule,
-        GoogleSignInModule.googleSignInModulee
+        GoogleSignInModule.googleSignInModulee,
+        LanguageImplModule.languageImplModule,
 //        RevenueCatModuleDi.revenueCatOperationModule
     )
 }

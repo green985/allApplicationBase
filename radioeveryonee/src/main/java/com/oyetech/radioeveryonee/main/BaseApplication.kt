@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.oyetech.domain.helper.ActivityProviderUseCase
 import com.oyetech.domain.helper.isDebug
 import com.oyetech.languageModule.localLanguageHelper.LocalLanguageHelper
+import com.oyetech.languageimp.LanguageOperationHelper
 import com.oyetech.radioeveryonee.main.koins.AppComponent
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -25,6 +26,10 @@ class BaseApplication : Application() {
         LocalLanguageHelper::class.java
     )
 
+    val languageOperationHelper: LanguageOperationHelper by KoinJavaComponent.inject(
+        LanguageOperationHelper::class.java
+    )
+
     override fun attachBaseContext(context: Context?) {
         super.attachBaseContext(context)
     }
@@ -37,6 +42,7 @@ class BaseApplication : Application() {
         }
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         configureDi()
+        languageOperationHelper.initLanguageData()
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         setAppContext(this)

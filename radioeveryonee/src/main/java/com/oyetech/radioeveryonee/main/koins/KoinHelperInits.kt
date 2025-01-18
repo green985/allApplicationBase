@@ -17,6 +17,7 @@ import com.oyetech.helper.sharedPref.SharedPrefRepository
 import com.oyetech.helper.sharedPref.SharedPrefRepositoryImp
 import com.oyetech.helper.unreadMessageHelper.UnreadMessageCalculatorHelper
 import com.oyetech.helper.updateHelper.ForceUpdateHelper
+import com.oyetech.languageimp.LanguageOperationHelper
 import com.oyetech.models.utils.const.HelperConstant.DEFAULT_TIMEOUT
 import com.oyetech.models.utils.moshi.DefaultIfNullFactory
 import com.oyetech.radioeveryonee.main.BaseApplication
@@ -103,7 +104,7 @@ object KoinHelperInits {
         singleOf(::UnreadMessageCalculatorHelper)
         singleOf(::OnlineOfflineStatusHelper)
         singleOf(::LanguageHelper)
-
+        singleOf(::LanguageOperationHelper)
         /*
         single<AnalyticsRepository> { AnalyticsRepositoryImp(get()) }
         single<GoogleSubscriptionOperationRepository> { GoogleSubscriptionOperationImp(get(), get(), get()) }

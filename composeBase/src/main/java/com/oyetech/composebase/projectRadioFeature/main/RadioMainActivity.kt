@@ -34,7 +34,6 @@ class RadioMainActivity : ComponentActivity() {
     val loginOperationRepository: GoogleLoginRepository by KoinJavaComponent.inject(
         GoogleLoginRepository::class.java
     )
-
     override fun onResume() {
         super.onResume()
         PlayerServiceUtils.startService()

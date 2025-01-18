@@ -118,6 +118,7 @@ dependencies {
     implementation project(Modules.glideModule)
     implementation project(Modules.reviewer)
     implementation project(Modules.googleLogin)
+    implementation project(Modules.languageimp)
 
 
     implementation platform(FirebaseLibrary.firebaseBom)

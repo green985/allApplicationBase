@@ -63,6 +63,7 @@ object Modules {
     const val firebaseDB = ":firebaseDB"
     const val googleLogin = ":googleLogin"
     const val glideModule = ":glideModule"
+    const val languageimp = ":subImpl:languageImp"
 
 
 }
