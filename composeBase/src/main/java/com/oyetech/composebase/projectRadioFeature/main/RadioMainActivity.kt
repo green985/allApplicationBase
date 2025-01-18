@@ -6,22 +6,19 @@ import android.view.ViewTreeObserver
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationBar
-import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
-import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppNavigationWrapperWithPlayerSetup
+import com.oyetech.composebase.helpers.general.GeneralSettings
+import com.oyetech.composebase.projectQuotesFeature.navigation.quotesAppNavigation
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
-import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.GeneralOperationScreenSetup
+import com.oyetech.composebase.projectRadioFeature.navigationRoutes.radioAppNavigation
 import com.oyetech.composebase.projectRadioFeature.theme.RadioAppTheme
+import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator
+import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator.navHostScreenSetup
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.radioservice.serviceUtils.PlayerServiceUtils
 import org.koin.java.KoinJavaComponent
@@ -38,6 +35,11 @@ class RadioMainActivity : ComponentActivity() {
         GoogleLoginRepository::class.java
     )
 
+    override fun onResume() {
+        super.onResume()
+        PlayerServiceUtils.startService()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PlayerServiceUtils.startService()
@@ -46,70 +48,58 @@ class RadioMainActivity : ComponentActivity() {
 
             RadioAppTheme {
                 val navController = rememberNavController()
+                NavHost(
+                    navController = navController,
+                    startDestination = AllScreenNavigator.startApp,
+                ) {
+                    navHostScreenSetup(navController)
+                    radioAppNavigation(navController)
+                    quotesAppNavigation(navController)
+                }
+            }
 
-                GeneralOperationScreenSetup(
-                    content =
-                    {
-                        Column(
-                            verticalArrangement = Arrangement.Bottom,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.background)
-                        ) {
-                            RadioAppNavigationWrapperWithPlayerSetup(
-                                navController = navController,
-//                                startDestination = RadioAppProjectRoutes.TabRadioAllList.route
-                                startDestination = QuoteAppProjectRoutes.QuoteDetailRoute.route
-                            )
-
+            // todo will be check later for auto login things looks like a block general navigator screen
+            if (!GeneralSettings.isDebug()) {
+                val content: View = findViewById(android.R.id.content)
+                content.viewTreeObserver.addOnPreDrawListener(
+                    object : ViewTreeObserver.OnPreDrawListener {
+                        override fun onPreDraw(): Boolean {
+                            // Check whether the initial data is ready.
+                            return if (loginOperationRepository.userAutoLoginStateFlow.value) {
+                                // The content is ready. Start drawing.
+                                content.viewTreeObserver.removeOnPreDrawListener(this)
+                                true
+                            } else {
+                                // The content isn't ready. Suspend.
+                                false
+                            }
                         }
-                    }, navController = navController
+                    }
                 )
             }
 
         }
 
-        val content: View = findViewById(android.R.id.content)
-        content.viewTreeObserver.addOnPreDrawListener(
-            object : ViewTreeObserver.OnPreDrawListener {
-                override fun onPreDraw(): Boolean {
-                    // Check whether the initial data is ready.
-                    return if (loginOperationRepository.userAutoLoginStateFlow.value) {
-                        // The content is ready. Start drawing.
-                        content.viewTreeObserver.removeOnPreDrawListener(this)
-                        true
-                    } else {
-                        // The content isn't ready. Suspend.
-                        false
-                    }
-                }
-            }
-        )
     }
 
-    override fun onResume() {
-        super.onResume()
-        PlayerServiceUtils.startService()
-    }
-}
+    @Composable
+    @Preview
+    fun GreetingVibrationPreview() {
+        RadioAppTheme {
+            val navigator = rememberNavController()
 
-@Composable
-@Preview
-fun GreetingVibrationPreview() {
-    RadioAppTheme {
-        val navigator = rememberNavController()
+            Scaffold(
+                bottomBar = {
+                    BottomNavigationBar(
+                        navController = navigator,
+                        navItems = RadioAppProjectRoutes.radioApplicationBottomTabNavList
+                    )
+                },
 
-        Scaffold(
-            bottomBar = {
-                BottomNavigationBar(
-                    navController = navigator,
-                    navItems = RadioAppProjectRoutes.radioApplicationBottomTabNavList
-                )
-            },
+                content = {
+                    //AppNavigation(navigator = navigator)
+                })
 
-            content = {
-                //AppNavigation(navigator = navigator)
-            })
-
+        }
     }
 }

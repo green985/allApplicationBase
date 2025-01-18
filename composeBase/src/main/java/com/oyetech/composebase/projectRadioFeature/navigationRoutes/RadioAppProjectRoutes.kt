@@ -11,6 +11,9 @@ Created by Erdi Özbek
  **/
 
 object RadioAppProjectRoutes {
+    val appStart: Route = Route("appStart")
+
+
     val TimerDialog: Route = Route("timerDialog")
     val TabRadioAllList = Route("tab/radioAllList")
     val RadioList = Route("radioList")

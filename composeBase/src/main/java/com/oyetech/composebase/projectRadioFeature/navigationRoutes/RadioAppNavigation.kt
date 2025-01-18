@@ -21,7 +21,6 @@ import com.oyetech.composebase.sharedScreens.quotes.listScreen.QuoteListScreenSe
 import com.oyetech.models.radioProject.enums.RadioListEnums
 import timber.log.Timber
 
-
 @Suppress("LongMethod")
 fun NavGraphBuilder.radioAppNavigation(navController: NavController) {
 

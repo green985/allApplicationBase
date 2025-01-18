@@ -1,13 +1,19 @@
 package com.oyetech.composebase.sharedScreens.allScreenNavigator
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.base.BaseScaffold
-import org.koin.androidx.compose.koinViewModel
 
 /**
 Created by Erdi Özbek
@@ -20,12 +26,34 @@ fun AllScreenNavigatorScreenSetup(
     modifier: Modifier = Modifier,
     navigationRoute: (navigationRoute: String) -> Unit = {},
 ) {
-    val vm = koinViewModel<AllScreenNavigatorVM>()
+//    val vm = koinViewModel<AllScreenNavigatorVM>()
 
-    val uiState by vm.uiState.collectAsStateWithLifecycle()
+//    val uiState by vm.uiState.collectAsStateWithLifecycle()
+
+    val isNavigate = remember { false }
+
+    LaunchedEffect(isNavigate) {
+
+    }
 
     BaseScaffold {
-        Column(modifier = Modifier.padding()) {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(it)
+        ) {
+            Spacer(modifier = Modifier.padding(16.dp))
+            Row(
+                modifier = Modifier.padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Button(onClick = {
+                    navigationRoute.invoke(AllScreenNavigator.radioStart)
+                }) {
+                    Text(text = "Radio Startttt")
+                }
+            }
 
         }
     }
