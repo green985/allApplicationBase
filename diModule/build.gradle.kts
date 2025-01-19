@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("com.google.devtools.ksp") version "2.0.20-1.0.25"
 }
 
 android {
@@ -30,6 +31,7 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
+
 }
 
 
@@ -90,7 +92,9 @@ dependencies {
     implementation(Libraries.retrofitGsonConverter)
     implementation(Libraries.retrofitMoshiConverter)
 
-//    ksp(Libraries.retrofitMoshiConverterKapt)
+
+
+    ksp(Libraries.retrofitMoshiConverterKapt)
     implementation(Libraries.httpLoggingInterceptor)
 
     // Gson and Moshi

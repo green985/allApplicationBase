@@ -33,14 +33,6 @@ google-services.json
 # Android Profiling
 *.hprof
 /buildSrc.zip
-/radioeveryonee/release/nac_1_0_0_1_14-12-2024-release.aab
-/radioeveryonee/release/radioEveryone_1_0_0_1_14-12-2024-release.aab
+/radioeveryonee/release
 /composeBase/src/main/java/com/oyetech/composebase/projectvibration.zip
-/radioeveryonee/release/baselineProfiles/0/radioEveryone_1_0_0_1_17-12-2024-release.dm
-/radioeveryonee/release/baselineProfiles/1/radioEveryone_1_0_0_1_17-12-2024-release.dm
-/radioeveryonee/release/output-metadata.json
-/radioeveryonee/release/radioEveryone_1_0_0_1_17-12-2024-release.aab
-/radioeveryonee/release/radioEveryone_1_0_0_2_17-12-2024-release.aab
-/radioeveryonee/release/radioEveryone_1_0_0_3_17-12-2024-release.aab
-/radioeveryonee/release/radioEveryone_1_0_0_4_17-12-2024-release.aab
-/radioeveryonee/benchmarkRelease/radioEveryone_1_0_0_4_24-12-2024-benchmarkRelease.aab
+/radioeveryonee/benchmarkRelease

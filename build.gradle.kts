@@ -23,8 +23,6 @@ ksp {
     arg("moshi.generateProguardRules", "false")
 }
 plugins {
-
-    id("com.google.devtools.ksp") version "1.8.0-1.0.8"
     id("com.android.application") version "8.7.0" apply false
     id("com.android.library") version "8.7.0" apply false
     id("org.jetbrains.kotlin.plugin.compose") version "2.0.20" apply false
@@ -36,6 +34,8 @@ plugins {
     id("io.gitlab.arturbosch.detekt").version("1.20.0-RC2")
     id("com.android.test") version "8.7.0" apply false
     id("androidx.baselineprofile") version "1.2.4" apply false
+    id("com.google.devtools.ksp") version "2.0.20-1.0.25"
+
 }
 apply(plugin = "kover")
 
