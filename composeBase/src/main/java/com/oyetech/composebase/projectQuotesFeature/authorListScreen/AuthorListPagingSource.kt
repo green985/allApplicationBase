@@ -5,10 +5,8 @@ import androidx.paging.PagingState
 import com.oyetech.composebase.base.baseList.ComplexItemListState
 import com.oyetech.composebase.base.updateState
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
-import com.oyetech.models.quotes.responseModel.QuoteAuthorResponseData
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -61,16 +59,4 @@ class AuthorListPagingSource(
     }
 
 
-}
-
-fun Flow<List<QuoteAuthorResponseData>>.mapToUiState(): Flow<List<QuoteAuthorUiState>> {
-    return this.map {
-        it.map {
-            QuoteAuthorUiState(
-                authorName = it.authorDisplayName,
-                authorImage = it.authorImage,
-                authorId = it.authorId,
-            )
-        }
-    }
 }
