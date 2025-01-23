@@ -3,20 +3,12 @@ package com.oyetech.radioeveryonee.main.koins
 import android.content.Context
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
+import com.oyetech.dimodule.sharedPref.SharedHelper
+import com.oyetech.dimodule.sharedPref.SharedPrefRepository
+import com.oyetech.dimodule.sharedPref.SharedPrefRepositoryImp
 import com.oyetech.domain.helper.isDebug
 import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.domain.repository.helpers.SharedHelperRepository
-import com.oyetech.helper.authOperationHelper.AuthOperationBodyHelper
-import com.oyetech.helper.interceptors.HeaderInterceptor
-import com.oyetech.helper.interceptors.TokenAuthenticator
-import com.oyetech.helper.language.LanguageHelper
-import com.oyetech.helper.onlineOfflineHelper.OnlineOfflineStatusHelper
-import com.oyetech.helper.refreshTokenHelper.RefreshTokenHelper
-import com.oyetech.helper.sharedPref.SharedHelper
-import com.oyetech.helper.sharedPref.SharedPrefRepository
-import com.oyetech.helper.sharedPref.SharedPrefRepositoryImp
-import com.oyetech.helper.unreadMessageHelper.UnreadMessageCalculatorHelper
-import com.oyetech.helper.updateHelper.ForceUpdateHelper
 import com.oyetech.languageimp.LanguageOperationHelper
 import com.oyetech.models.utils.const.HelperConstant.DEFAULT_TIMEOUT
 import com.oyetech.models.utils.moshi.DefaultIfNullFactory
@@ -73,7 +65,7 @@ object KoinHelperInits {
 
                 connectionPool(ConnectionPool(0, 1, TimeUnit.NANOSECONDS))
                 retryOnConnectionFailure(true)
-                interceptors().add(get<HeaderInterceptor>())
+//                interceptors().add(get<HeaderInterceptor>())
                 // interceptors().add(get<ChuckInterceptor>())
                 // authenticator(get<TokenAuthenticator>())
 
@@ -91,20 +83,19 @@ object KoinHelperInits {
         singleOf(::SharedPrefRepositoryImp)
         single<SharedHelperRepository> { SharedPrefRepositoryImp(get()) }
 //        singleOf(::ClipboardOperationHelper)
-        singleOf(::TokenAuthenticator)
-        singleOf(::RefreshTokenHelper)
-        singleOf(::ForceUpdateHelper)
+//        singleOf(::TokenAuthenticator)
+//        singleOf(::RefreshTokenHelper)
+//        singleOf(::ForceUpdateHelper)
         // singleOf(::ChuckInterceptor)
         // singleOf(::SignalRHelper)
 
         single<SharedOperationRepository> { SharedPrefRepository(get()) }
 
-        single { HeaderInterceptor(get(), get()) }
-        singleOf(::AuthOperationBodyHelper)
-        singleOf(::UnreadMessageCalculatorHelper)
-        singleOf(::OnlineOfflineStatusHelper)
-        singleOf(::LanguageHelper)
-        singleOf(::LanguageOperationHelper)
+//        single { HeaderInterceptor(get(), get()) }
+//        singleOf(::AuthOperationBodyHelper)
+//        singleOf(::UnreadMessageCalculatorHelper)
+//        singleOf(::OnlineOfflineStatusHelper)
+//        singleOf(::LanguageHelper)
         /*
         single<AnalyticsRepository> { AnalyticsRepositoryImp(get()) }
         single<GoogleSubscriptionOperationRepository> { GoogleSubscriptionOperationImp(get(), get(), get()) }
@@ -112,6 +103,7 @@ object KoinHelperInits {
 
 
          */
+        singleOf(::LanguageOperationHelper)
     }
 
 }

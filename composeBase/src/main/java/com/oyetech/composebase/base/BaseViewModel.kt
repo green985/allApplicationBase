@@ -3,7 +3,7 @@ package com.oyetech.composebase.base
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.oyetech.composebase.navigator.Route
-import com.oyetech.core.coroutineHelper.AppDispatchers
+import com.oyetech.tools.coroutineHelper.AppDispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.java.KoinJavaComponent
 

@@ -15,12 +15,11 @@ import com.oyetech.composebase.experimental.commentWidget.CommentScreenEvent.Com
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenEvent.OnCommentInputChanged
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenEvent.OnCommentSubmit
 import com.oyetech.composebase.helpers.errorHelper.ErrorHelper
-import com.oyetech.core.coroutineHelper.AppDispatchers
-import com.oyetech.core.coroutineHelper.asResult
 import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.newPackages.helpers.isSuccess
+import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
@@ -38,7 +37,7 @@ Created by Erdi Özbek
  **/
 
 class CommentScreenWithContentIdVM(
-    appDispatchers: AppDispatchers,
+    appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     private val contentId: String,
     private val userRepository: FirebaseUserRepository,
     private val commentOperationRepository: FirebaseCommentOperationRepository,

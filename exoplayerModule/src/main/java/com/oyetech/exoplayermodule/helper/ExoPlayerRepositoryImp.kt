@@ -4,7 +4,6 @@ import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.audio.AudioAttributes.Builder
-import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.models.radioProject.entity.radioEntity.station.RadioStationResponseData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -18,7 +17,7 @@ Created by Erdi Özbek
 
 class ExoPlayerRepositoryImp(
     private var exoPlayer: ExoPlayer,
-    private var dispatchers: AppDispatchers,
+    private var dispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
 ) : ExoPlayerBaseHelper(dispatchers, exoPlayer) {
 
     override fun startPlayer(radioModel: RadioStationResponseData?) {

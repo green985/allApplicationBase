@@ -11,7 +11,6 @@ import com.oyetech.composebase.sharedScreens.quotes.listScreen.QuotePagingSource
 import com.oyetech.composebase.sharedScreens.quotes.uiState.QuoteListUiEvent
 import com.oyetech.composebase.sharedScreens.quotes.uiState.QuoteListUiEvent.QuoteSeen
 import com.oyetech.composebase.sharedScreens.quotes.uiState.QuoteUiState
-import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
 import com.oyetech.models.quotes.responseModel.QuoteResponseData
 import kotlinx.coroutines.flow.Flow
@@ -28,7 +27,7 @@ Created by Erdi Özbek
  **/
 
 class QuotesVM(
-    private val appDispatchers: AppDispatchers,
+    private val appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     private val quoteDataOperationRepository: QuoteDataOperationRepository,
 ) : BaseViewModel(appDispatchers) {
 

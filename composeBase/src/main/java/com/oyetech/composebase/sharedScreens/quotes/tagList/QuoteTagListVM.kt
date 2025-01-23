@@ -5,7 +5,6 @@ import com.oyetech.composebase.R
 import com.oyetech.composebase.base.baseList.BaseListViewModel
 import com.oyetech.composebase.base.baseList.ComplexItemListState
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarState
-import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.models.quotes.responseModel.QuotesTagResponseData
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +15,7 @@ Created by Erdi Özbek
 -22:35-
  **/
 
-class QuoteTagListVM(appDispatchers: AppDispatchers) :
+class QuoteTagListVM(appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers) :
     BaseListViewModel<QuoteTagUiState>(appDispatchers) {
 
     val toolbarState = mutableStateOf(

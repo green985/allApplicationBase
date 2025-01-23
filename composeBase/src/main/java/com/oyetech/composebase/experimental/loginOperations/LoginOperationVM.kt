@@ -9,10 +9,9 @@ import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.UsernameChanged
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.UsernameSetClicked
 import com.oyetech.composebase.experimental.viewModelSlice.UserOperationViewModelSlice
-import com.oyetech.core.coroutineHelper.AppDispatchers
-import com.oyetech.core.coroutineHelper.asResult
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
+import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -28,7 +27,7 @@ Created by Erdi Özbek
  **/
 
 class LoginOperationVM(
-    appDispatchers: AppDispatchers,
+    appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     val googleLoginRepository: GoogleLoginRepository,
     val profileRepository: FirebaseUserRepository,
     val userOperationViewModelSlice: UserOperationViewModelSlice,

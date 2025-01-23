@@ -14,7 +14,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.oyetech.composebase.projectRadioFeature.RadioDimensions
-import com.oyetech.core.contextHelper.getApplicationLogo
+import com.oyetech.tools.contextHelper.getApplicationLogo
 
 /**
 Created by Erdi Özbek

@@ -22,8 +22,8 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.oyetech.composebase.projectQuotesFeature.QuotesDimensions
 import com.oyetech.composebase.projectRadioFeature.RadioDimensions
-import com.oyetech.core.contextHelper.getApplicationLogo
 import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.tools.contextHelper.getApplicationLogo
 
 /**
 Created by Erdi Özbek

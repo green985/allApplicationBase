@@ -2,7 +2,6 @@ package com.oyetech.domain.useCases
 
 import android.app.Activity
 import android.view.View
-import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.domain.helper.ActivityProviderUseCase
 import com.oyetech.domain.repository.AdsHelperRepository
 import kotlinx.coroutines.GlobalScope
@@ -17,7 +16,7 @@ import timber.log.Timber
 class AdsHelperUseCase(
     private var repository: AdsHelperRepository,
     private var activityProviderUseCase: ActivityProviderUseCase,
-    private var dispatcher: AppDispatchers,
+    private var dispatcher: com.oyetech.tools.coroutineHelper.AppDispatchers,
 ) {
 
     init {

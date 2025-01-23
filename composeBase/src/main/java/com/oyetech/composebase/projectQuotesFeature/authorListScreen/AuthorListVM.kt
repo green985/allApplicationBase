@@ -6,7 +6,6 @@ import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.baseList.ComplexItemListState
-import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -17,7 +16,7 @@ Created by Erdi Özbek
  **/
 
 class AuthorListVM(
-    appDispatchers: AppDispatchers,
+    appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     private val quoteDataOperationRepository: QuoteDataOperationRepository,
 ) : BaseViewModel(appDispatchers) {
 

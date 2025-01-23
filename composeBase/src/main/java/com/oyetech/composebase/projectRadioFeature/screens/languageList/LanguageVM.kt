@@ -5,13 +5,12 @@ import com.oyetech.composebase.base.baseList.BaseListViewModel
 import com.oyetech.composebase.base.baseList.ComplexItemListState
 import com.oyetech.composebase.base.baseList.changeSortType
 import com.oyetech.composebase.base.updateState
-import com.oyetech.core.coroutineHelper.AppDispatchers
-import com.oyetech.core.coroutineHelper.asResult
 import com.oyetech.domain.radioOperationUseCases.remoteUseCase.RadioStationListOperationUseCase
 import com.oyetech.domain.repository.helpers.logicRepositories.RadioListSortRepository
 import com.oyetech.domain.useCases.remoteUseCase.RadioCountryTagOperationUseCase
 import com.oyetech.models.radioProject.entity.radioEntity.language.LanguageResponseData
 import com.oyetech.models.radioProject.enums.RadioListEnums.Languages
+import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -28,7 +27,7 @@ Created by Erdi Özbek
 -20:54-
  **/
 class LanguageVM(
-    val appDispatchers: AppDispatchers,
+    val appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     val radioCountryTagOperationUseCase: RadioCountryTagOperationUseCase,
     val radioStationListOperationUseCase: RadioStationListOperationUseCase,
     val radioListSortRepository: RadioListSortRepository,

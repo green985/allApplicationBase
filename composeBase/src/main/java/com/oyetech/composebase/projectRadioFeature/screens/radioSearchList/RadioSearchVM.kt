@@ -8,12 +8,11 @@ import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.Radio
 import com.oyetech.composebase.projectRadioFeature.screens.radioPlayer.vm.mapToResponse
 import com.oyetech.composebase.projectRadioFeature.screens.radioSearchList.RadioSearchListEvent.ExpandedChange
 import com.oyetech.composebase.projectRadioFeature.screens.radioSearchList.RadioSearchListEvent.SearchQueryChanged
-import com.oyetech.core.coroutineHelper.AppDispatchers
-import com.oyetech.core.coroutineHelper.asResult
 import com.oyetech.domain.radioOperationUseCases.remoteUseCase.RadioDataOperationUseCase
 import com.oyetech.domain.radioOperationUseCases.remoteUseCase.RadioStationListOperationUseCase
 import com.oyetech.domain.useCases.contentOperations.RadioOperationUseCase
 import com.oyetech.models.utils.const.HelperConstant
+import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -28,7 +27,7 @@ Created by Erdi Özbek
  **/
 
 class RadioSearchVM(
-    appDispatchers: AppDispatchers,
+    appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     private val radioDataOperationUseCase: RadioDataOperationUseCase,
     private val radioOperationUseCase: RadioOperationUseCase,
     private val radioStationListOperationUseCase: RadioStationListOperationUseCase,

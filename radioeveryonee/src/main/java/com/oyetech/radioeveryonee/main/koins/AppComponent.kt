@@ -3,7 +3,6 @@ package com.oyetech.radioeveryonee.main.koins
 import com.oyetech.adshelper.di.AdsHelperModule
 import com.oyetech.composebase.di.ComposeMainModule
 import com.oyetech.composebase.projectQuotesFeature.QuotesProjectModule
-import com.oyetech.core.di.CommonsModule
 import com.oyetech.cripto.privateKeys.WallpaperAppFragmentArgs
 import com.oyetech.domain.di.DomainModule
 import com.oyetech.domain.di.RadioDomainModule
@@ -11,7 +10,6 @@ import com.oyetech.exoplayermodule.di.ExoPlayerModuleDi
 import com.oyetech.firebaseDB.di.FirebaseDBModule
 import com.oyetech.glidemodule.GlideModuleDi
 import com.oyetech.googlelogin.di.GoogleSignInModule
-import com.oyetech.helper.BaseUrlConfigHelper
 import com.oyetech.languageModule.di.LanguageModuleDi
 import com.oyetech.languageimp.LanguageImplModule
 import com.oyetech.local.di.RadioLocalModuleDi
@@ -26,6 +24,7 @@ import com.oyetech.repository.di.RadioRepositoryDI
 import com.oyetech.repository.di.WallpaperRepositoryModule
 import com.oyetech.repository.quotesImp.QuotesImpModule
 import com.oyetech.reviewer.di.GoogleAppReviewerModule
+import com.oyetech.tools.di.CommonsModule
 import org.koin.dsl.module
 
 /**
@@ -53,7 +52,8 @@ object AppComponent {
         ComposeMainModule.composeMainModule1,
 
         RadioDomainModule.radioDomainModule,
-        RadioModuleDI.createRemoteModule(BaseUrlConfigHelper.BASE_DOMAIN_RADIO),
+//        RadioModuleDI.createRemoteModule(BaseUrlConfigHelper.BASE_DOMAIN_RADIO),
+        RadioModuleDI.createRemoteModule("https://at1.api.radio-browser.info/json/"),
         RadioRepositoryDI.repositoryModule,
         RadioLocalModuleDi.localModule,
         RadioOperationModuleDi.radioModule,

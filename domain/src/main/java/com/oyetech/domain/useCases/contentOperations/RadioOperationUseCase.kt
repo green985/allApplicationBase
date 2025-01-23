@@ -1,6 +1,5 @@
 package com.oyetech.domain.useCases.contentOperations
 
-import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.domain.radioOperationUseCases.remoteUseCase.RadioDataOperationUseCase
 import com.oyetech.domain.repository.contentOperation.RadioOperationRepository
 import com.oyetech.models.radioProject.entity.radioEntity.station.RadioStationResponseData
@@ -28,7 +27,7 @@ Created by Erdi Özbek
  **/
 
 class RadioOperationUseCase(
-    private var appDispatchers: AppDispatchers,
+    private var appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     private var radioOperationRepository: RadioOperationRepository,
     private var radioDataOperationUseCase: RadioDataOperationUseCase,
 ) {

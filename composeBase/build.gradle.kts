@@ -54,12 +54,12 @@ dependencies {
     implementation("androidx.paging:paging-compose:3.3.5")
     implementation(Libraries.composeUiGraphics)
     implementation(Libraries.composeUiToolingPreview)
+    implementation(project(":subImpl:tools"))
     debugImplementation(Libraries.composeUiTooling)
     debugImplementation(Libraries.composeUiTestManifest)
     implementation(Libraries.material3)
 
 
-    implementation(project(":core"))
 
     // Test dependencies
     testImplementation("junit:junit:4.13.2")

@@ -12,9 +12,8 @@ import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarSt
 import com.oyetech.composebase.sharedScreens.quotes.detail.QuoteDetailEvent.ClickNextButton
 import com.oyetech.composebase.sharedScreens.quotes.detail.QuoteDetailEvent.ClickPreviousButton
 import com.oyetech.composebase.sharedScreens.quotes.uiState.QuoteUiState
-import com.oyetech.core.coroutineHelper.AppDispatchers
-import com.oyetech.core.coroutineHelper.asResult
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
+import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -26,7 +25,7 @@ Created by Erdi Özbek
  **/
 
 class QuoteDetailVm(
-    appDispatchers: AppDispatchers,
+    appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     private val quoteId: String,
     private val quoteDataOperationRepository: QuoteDataOperationRepository,
 ) : BaseViewModel(appDispatchers) {

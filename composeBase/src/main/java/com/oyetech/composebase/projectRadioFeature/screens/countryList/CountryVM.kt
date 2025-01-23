@@ -7,13 +7,12 @@ import com.oyetech.composebase.base.baseList.changeSortType
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.projectRadioFeature.screens.countryList.helper.CountryCodeDictionary
 import com.oyetech.composebase.projectRadioFeature.screens.countryList.helper.CountryFlagsLoader
-import com.oyetech.core.coroutineHelper.AppDispatchers
-import com.oyetech.core.coroutineHelper.asResult
 import com.oyetech.domain.radioOperationUseCases.remoteUseCase.RadioStationListOperationUseCase
 import com.oyetech.domain.repository.helpers.logicRepositories.RadioListSortRepository
 import com.oyetech.domain.useCases.remoteUseCase.RadioCountryTagOperationUseCase
 import com.oyetech.models.radioProject.entity.radioEntity.country.CountryResponseData
 import com.oyetech.models.radioProject.enums.RadioListEnums.Country
+import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -30,7 +29,7 @@ Created by Erdi Özbek
 -20:54-
  **/
 class CountryVM(
-    val appDispatchers: AppDispatchers,
+    val appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     val radioCountryTagOperationUseCase: RadioCountryTagOperationUseCase,
     val radioStationListOperationUseCase: RadioStationListOperationUseCase,
     val radioListSortRepository: RadioListSortRepository,

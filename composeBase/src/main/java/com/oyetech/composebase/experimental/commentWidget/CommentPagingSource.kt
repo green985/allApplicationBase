@@ -4,7 +4,6 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.helpers.errorHelper.ErrorHelper
-import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.models.utils.helper.TimeFunctions
@@ -19,7 +18,7 @@ class CommentPagingSource(
     private val commentScreenUiState: MutableStateFlow<CommentScreenUiState>,
 ) : PagingSource<Int, CommentItemUiState>() {
 
-    lateinit var dispatchers: AppDispatchers
+    lateinit var dispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers
 
     override fun getRefreshKey(state: PagingState<Int, CommentItemUiState>): Int? {
         val keyy = state.anchorPosition?.let { position ->

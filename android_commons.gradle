@@ -38,7 +38,7 @@ dependencies {
 
     implementation project(Modules.model)
     implementation project(Modules.languageModule)
-    implementation project(Modules.core)
+    implementation project(Modules.tools)
 
 
     implementation KotlinLibraries.kotlin

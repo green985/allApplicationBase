@@ -36,11 +36,9 @@ android {
 
 
 dependencies {
-    // Project Modules
-    implementation(project(Modules.base))
+
     implementation(project(Modules.domain))
     // implementation(project(Modules.navigation))
-    implementation(project(Modules.core))
     implementation(project(Modules.remote))
     implementation(project(Modules.local))
     implementation(project(Modules.repository))
@@ -91,6 +89,9 @@ dependencies {
     implementation(Libraries.retrofit)
     implementation(Libraries.retrofitGsonConverter)
     implementation(Libraries.retrofitMoshiConverter)
+    implementation(project(":data:models"))
+    implementation("com.jakewharton.timber:timber:4.7.1")
+    implementation(project(":subImpl:tools"))
 
 
 

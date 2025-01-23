@@ -6,7 +6,6 @@ import com.oyetech.composebase.base.baseList.ListUIEvent.ItemVisible
 import com.oyetech.composebase.base.baseList.ListUIEvent.LoadMore
 import com.oyetech.composebase.base.baseList.ListUIEvent.Refresh
 import com.oyetech.composebase.base.baseList.ListUIEvent.Retry
-import com.oyetech.core.coroutineHelper.AppDispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
@@ -15,7 +14,8 @@ Created by Erdi Özbek
 -18:43-
  **/
 
-abstract class BaseListViewModel<T>(dispatchers: AppDispatchers) : BaseViewModel(dispatchers) {
+abstract class BaseListViewModel<T>(dispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers) :
+    BaseViewModel(dispatchers) {
     abstract val complexItemViewState: MutableStateFlow<ComplexItemListState<T>>
     val errorMessage = context.getString(R.string.searchpreference_no_results)
 

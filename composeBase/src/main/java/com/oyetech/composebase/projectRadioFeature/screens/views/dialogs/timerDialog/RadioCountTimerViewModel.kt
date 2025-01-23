@@ -8,7 +8,6 @@ import com.oyetech.composebase.projectRadioFeature.screens.views.dialogs.timerDi
 import com.oyetech.composebase.projectRadioFeature.screens.views.dialogs.timerDialog.RadioCountTimerUIEvent.TimerClear
 import com.oyetech.composebase.projectRadioFeature.screens.views.dialogs.timerDialog.RadioCountTimerUIEvent.UpdateSliderPosition
 import com.oyetech.composebase.projectRadioFeature.screens.views.dialogs.timerDialog.RadioCountTimerUIEvent.UserInteract
-import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.domain.useCases.TimerOperationUseCase
 import com.oyetech.models.utils.helper.TimeFunctions
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +18,7 @@ import timber.log.Timber
 
 class RadioCountTimerViewModel(
     var timerOperationUseCase: TimerOperationUseCase,
-    private val dispatchers: AppDispatchers,
+    private val dispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
 ) : ViewModel(
 ) {
     private val _uiState = MutableStateFlow(RadioCountTimerUIState(isDialogVisible = true))

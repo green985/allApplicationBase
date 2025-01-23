@@ -2,7 +2,6 @@ package com.oyetech.composebase.projectRadioFeature.screens.generalOperationScre
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
-import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.domain.repository.helpers.SharedHelperRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.domain.useCases.helpers.AppReviewOperationUseCase
@@ -16,7 +15,7 @@ Created by Erdi Özbek
  **/
 
 class GeneralOperationVM(
-    appDispatchers: AppDispatchers,
+    appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     private val appReviewOperationUseCase: AppReviewOperationUseCase,
     private val sharedHelperRepository: SharedHelperRepository,
     private val googleLoginRepository: GoogleLoginRepository,

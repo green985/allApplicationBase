@@ -6,7 +6,6 @@ import android.bluetooth.BluetoothHeadset
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
-import com.oyetech.core.ext.doInTryCatchWithoutStack
 import com.oyetech.radioservice.broadcasts.BecomingNoisyReceiver
 import com.oyetech.radioservice.broadcasts.HeadsetConnectionReceiver
 
@@ -21,10 +20,10 @@ open class PlayerBroadcastHelper(private var service: Service) {
     }
 
     fun unRegisterAllBroadcast() {
-        doInTryCatchWithoutStack {
+        com.oyetech.tools.ext.doInTryCatchWithoutStack {
             unRegisterHeadsetConnectionBroadCast()
         }
-        doInTryCatchWithoutStack {
+        com.oyetech.tools.ext.doInTryCatchWithoutStack {
             unRegisterBecomingNoisyBroadCastReceiver()
         }
     }

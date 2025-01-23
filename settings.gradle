@@ -34,10 +34,7 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "AllApplicationBase"
-//include ':app'
 include ':secureKeys'
-include ':baseOperation'
-include ':core'
 include ':domain'
 include ':data:models'
 include ':data:remote'
@@ -55,8 +52,11 @@ include ':googleLogin'
 //include ':features:googleSignUp'
 include ':composeBase'
 include ':glideModule'
-include ':radioeveryonee'
 //include ':revenuecatOperationModule'
 include ':baselineprofile'
 include ':subImpl:languageImp'
 include ':diModule'
+include ':subImpl:tools'
+
+
+include ':radioeveryonee'

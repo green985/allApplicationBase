@@ -42,6 +42,7 @@ object Modules {
     const val exoplayerModule = ":exoplayerModule"
     const val radioOperationModule = ":radioOperationModule"
     const val audioPlayerHelper = ":audioPlayerHelper"
+    const val diModule = ":diModule"
 
     const val contentPlayer = ":features:contentPlayer"
 
@@ -64,6 +65,7 @@ object Modules {
     const val googleLogin = ":googleLogin"
     const val glideModule = ":glideModule"
     const val languageimp = ":subImpl:languageImp"
+    const val tools = ":subImpl:tools"
 
 
 }

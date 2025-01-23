@@ -15,8 +15,6 @@ import android.support.v4.media.session.MediaSessionCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.Builder
 import androidx.media.app.NotificationCompat.MediaStyle
-import com.oyetech.core.contextHelper.getMainActivityStartIntent
-import com.oyetech.core.ext.doInTryCatch
 import com.oyetech.domain.useCases.GlideOperationUseCase
 import com.oyetech.domain.useCases.contentOperations.RadioOperationUseCase
 import com.oyetech.models.radioProject.radioModels.PauseReason
@@ -31,6 +29,7 @@ import com.oyetech.radioservice.serviceUtils.PlayerServiceUtils.getIntentFlagUpd
 import com.oyetech.radioservice.serviceUtils.ServiceConst
 import com.oyetech.radioservice.serviceUtils.ServiceConst.ACTION_RESUME
 import com.oyetech.radioservice.services.PlayerService
+import com.oyetech.tools.contextHelper.getMainActivityStartIntent
 import org.koin.java.KoinJavaComponent
 import timber.log.Timber
 
@@ -242,7 +241,7 @@ class RadioNotificationHelper(
             )
 
         val notification = notificationBuilder.build()
-        doInTryCatch {
+        com.oyetech.tools.ext.doInTryCatch {
             service.startForeground(
                 NotificationConst.NOTIFY_ID,
                 notification

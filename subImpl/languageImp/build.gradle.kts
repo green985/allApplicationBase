@@ -36,6 +36,7 @@ dependencies {
     implementation(project(Modules.domain))
     implementation(project(Modules.model))
     implementation(project(Modules.languageModule))
+    implementation(project(Modules.tools))
 
     implementation(Libraries.timber)
     api(Libraries.koin)
@@ -44,5 +45,4 @@ dependencies {
     implementation("io.insert-koin:koin-core")
     implementation("io.insert-koin:koin-androidx-compose")
     implementation("io.insert-koin:koin-androidx-compose-navigation")
-    implementation(project(":core"))
 }

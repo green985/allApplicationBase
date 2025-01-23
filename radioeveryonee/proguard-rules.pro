@@ -754,14 +754,14 @@ public static *** e(...);
 -dontwarn com.oyetech.core.appUtil.AppUtil
 -dontwarn com.oyetech.core.buildHelper.BuildHelperClassKt
 -dontwarn com.oyetech.core.contextHelper.ContextHelperKt
--dontwarn com.oyetech.core.coroutineHelper.AppDispatchers
+-dontwarn com.oyetech.tools.coroutineHelper.AppDispatchers
 -dontwarn com.oyetech.core.coroutineHelper.CorutinesExtKt
 -dontwarn com.oyetech.core.coroutineHelper.ResultHelperKt
--dontwarn com.oyetech.core.deviceExt.DeviceHelperExt
+-dontwarn com.oyetech.tools.deviceExt.DeviceHelperExt
 -dontwarn com.oyetech.core.di.CommonsModuleKt
 #-dontwarn com.oyetech.core.shareOperations.ClipboardOperationHelper
 -dontwarn com.oyetech.core.stringOperation.StringHelper
--dontwarn com.oyetech.core.utils.SingleLiveEvent
+-dontwarn com.oyetech.tools.SingleLiveEvent
 -dontwarn org.bouncycastle.jsse.BCSSLParameters
 -dontwarn org.bouncycastle.jsse.BCSSLSocket
 -dontwarn org.bouncycastle.jsse.provider.BouncyCastleJsseProvider

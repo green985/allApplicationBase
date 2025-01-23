@@ -7,9 +7,8 @@ import androidx.core.graphics.drawable.toBitmap
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
-import com.oyetech.core.contextHelper.getApplicationLogo
-import com.oyetech.core.ext.doInTryCatch
 import com.oyetech.domain.repository.GlideOperationRepository
+import com.oyetech.tools.contextHelper.getApplicationLogo
 import timber.log.Timber
 
 class GlideOperationRepositoryImp(private val context: Context) : GlideOperationRepository {
@@ -18,7 +17,7 @@ class GlideOperationRepositoryImp(private val context: Context) : GlideOperation
 
     override fun getBitmapWithUrl(url: String?, bitmapLoadAction: ((Bitmap?) -> Unit)) {
         if (url.isNullOrBlank()) {
-            doInTryCatch {
+            com.oyetech.tools.ext.doInTryCatch {
                 bitmapLoadAction.invoke(getAppIconUrl())
             }
         }
@@ -29,7 +28,7 @@ class GlideOperationRepositoryImp(private val context: Context) : GlideOperation
             .into(object : CustomTarget<Bitmap?>() {
                 override fun onLoadFailed(errorDrawable: Drawable?) {
                     super.onLoadFailed(errorDrawable)
-                    doInTryCatch {
+                    com.oyetech.tools.ext.doInTryCatch {
                         bitmapLoadAction.invoke(getAppIconUrl())
                     }
                 }

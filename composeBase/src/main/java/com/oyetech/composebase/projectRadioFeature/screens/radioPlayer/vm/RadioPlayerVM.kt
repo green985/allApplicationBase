@@ -8,7 +8,6 @@ import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.Radio
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.RadioUIState
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.mapToUiModel
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.IRadioPlayerViewModelSlice
-import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.domain.radioOperationUseCases.remoteUseCase.RadioDataOperationUseCase
 import com.oyetech.domain.useCases.contentOperations.RadioOperationUseCase
 import com.oyetech.models.radioProject.radioModels.RadioViewStateNew
@@ -26,7 +25,7 @@ Created by Erdi Özbek
  **/
 
 class RadioPlayerVM(
-    private val dispatchers: AppDispatchers,
+    private val dispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     private val radioOperationUseCase: RadioOperationUseCase,
     private val radioDataOperationUseCase: RadioDataOperationUseCase,
     private val radioPlayerViewModelSlice: IRadioPlayerViewModelSlice,

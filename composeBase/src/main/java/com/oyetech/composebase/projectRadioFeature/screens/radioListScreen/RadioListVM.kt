@@ -12,8 +12,6 @@ import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioTo
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarState
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.IRadioFavViewModelSlice
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.IRadioPlayerViewModelSlice
-import com.oyetech.core.coroutineHelper.AppDispatchers
-import com.oyetech.core.coroutineHelper.asResult
 import com.oyetech.domain.radioOperationUseCases.remoteUseCase.RadioDataOperationUseCase
 import com.oyetech.domain.radioOperationUseCases.remoteUseCase.RadioStationListOperationUseCase
 import com.oyetech.domain.repository.helpers.logicRepositories.RadioListSortRepository
@@ -24,6 +22,7 @@ import com.oyetech.models.radioProject.enums.RadioListEnums.Favorites
 import com.oyetech.models.radioProject.enums.RadioListEnums.History
 import com.oyetech.models.radioProject.enums.RadioListEnums.Languages
 import com.oyetech.models.radioProject.enums.RadioListEnums.Tag
+import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -49,7 +48,7 @@ class RadioListVM(
     val languageName: String,
     val countryName: String,
     val toolbarTitle: String,
-    private val dispatchers: AppDispatchers,
+    private val dispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     val radioDataOperationUseCase: RadioDataOperationUseCase,
     val radioOperationUseCase: RadioOperationUseCase,
     val radioPlayerViewModelSlice: IRadioPlayerViewModelSlice,

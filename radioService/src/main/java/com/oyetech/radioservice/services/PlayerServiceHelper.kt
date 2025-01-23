@@ -9,7 +9,6 @@ import android.os.Parcelable
 import android.os.PowerManager
 import android.util.Log
 import android.view.KeyEvent
-import com.oyetech.core.ext.doInTryCatch
 import com.oyetech.domain.helper.isDebug
 import com.oyetech.domain.useCases.contentOperations.RadioOperationUseCase
 import com.oyetech.models.radioProject.radioModels.PauseReason
@@ -269,7 +268,7 @@ abstract class PlayerServiceHelper : ScopeService() {
                     wm.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "PlayerService")
             }
             if (!wifiLock!!.isHeld()) {
-                doInTryCatch {
+                com.oyetech.tools.ext.doInTryCatch {
                     wifiLock.acquire()
                 }
             } else {

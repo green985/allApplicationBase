@@ -3,7 +3,6 @@ package com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactW
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
-import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.domain.repository.helpers.FirebaseContactWithMeOperationRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +11,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class ContactViewModel(
-    appDispatchers: AppDispatchers,
+    appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     private val firebaseDBOperationRepository: FirebaseContactWithMeOperationRepository,
 ) : BaseViewModel(appDispatchers) {
     private val _uiState = MutableStateFlow(ContactUIState())

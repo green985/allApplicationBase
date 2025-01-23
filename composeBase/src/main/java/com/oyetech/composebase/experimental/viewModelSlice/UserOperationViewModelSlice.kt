@@ -1,9 +1,9 @@
 package com.oyetech.composebase.experimental.viewModelSlice
 
 import com.oyetech.composebase.base.BaseViewModel
-import com.oyetech.core.coroutineHelper.asResult
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
+import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay

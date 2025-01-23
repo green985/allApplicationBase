@@ -1,7 +1,6 @@
 package com.oyetech.composebase.sharedScreens.allScreenNavigator;
 
 import com.oyetech.composebase.base.BaseViewModel
-import com.oyetech.core.coroutineHelper.AppDispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
@@ -10,7 +9,8 @@ Created by Erdi Özbek
 -11:07-
  **/
 
-class AllScreenNavigatorVM(appDispatchers: AppDispatchers) : BaseViewModel(appDispatchers) {
+class AllScreenNavigatorVM(appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers) :
+    BaseViewModel(appDispatchers) {
     val uiState = MutableStateFlow(AllScreenNavigatorUiState())
 
     init {
