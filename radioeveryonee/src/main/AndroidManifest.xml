@@ -25,8 +25,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.App.Starting"
         android:usesCleartextTraffic="true"
-        tools:replace="android:theme"
-        tools:targetApi="31">
+        tools:replace="android:theme">
 
         <activity
             android:name="com.oyetech.composebase.projectRadioFeature.main.RadioMainActivity"
@@ -41,28 +40,6 @@
 
 
         </activity>
-
-
-        <service
-            android:name="com.oyetech.radioservice.services.PlayerService"
-            android:enabled="true"
-            android:exported="true"
-            android:foregroundServiceType="mediaPlayback"
-            android:permission="android.permission.BIND_JOB_SERVICE">
-            <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-            </intent-filter>
-        </service>
-
-
-        <receiver
-            android:name="com.oyetech.radioservice.alarm.AlarmReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.oyetech.radioservice.alarm.AlarmReceiver" />
-            </intent-filter>
-        </receiver>
 
 
         <!--        <receiver-->

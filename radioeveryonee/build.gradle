@@ -12,7 +12,6 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.compose'
     id 'androidx.baselineprofile'
 }
-apply from: '../android_commons.gradle'
 ext.getArtifactNameRadio = {
     defaultConfig ->
         def project = "radioEveryone"
@@ -35,7 +34,8 @@ android {
 
     compileSdkVersion Versions.compileSdk
     defaultConfig {
-        vectorDrawables.useSupportLibrary = true
+        minSdkVersion Versions.minSdk
+        targetSdkVersion Versions.targetSdk
         versionCode RadioReleaseProperty.versionCode
         versionName RadioReleaseProperty.versionName
     }
@@ -106,80 +106,10 @@ android {
 
 dependencies {
     implementation project(Modules.diModule)
-
-
-//
-//
-//    implementation project(Modules.domain)
-//
-////    implementation project(Modules.navigation)
-////    implementation project(Modules.core)
-//    implementation project(Modules.remote)
-//    implementation project(Modules.local)
-//    implementation project(Modules.repository)
-//    implementation project(Modules.composeBase)
-//    implementation project(Modules.radioService)
-//    implementation project(Modules.glideModule)
-//    implementation project(Modules.reviewer)
-//    implementation project(Modules.googleLogin)
-//    implementation project(Modules.languageimp)
-//
-//
-//    implementation platform(FirebaseLibrary.firebaseBom)
-//    implementation FirebaseLibrary.performance
-//    //implementation FirebaseLibrary.messaging
-//    implementation FirebaseLibrary.crashlytics
-//    implementation FirebaseLibrary.analytics
-//    //implementation project(Modules.reviewer)
-//
-//    implementation project(Modules.adsModule)
-//    implementation project(Modules.firebaseDB)
-//    implementation project(Modules.exoplayerModule)
-//
-//
-//    implementation project(Modules.radioOperationModule)
-//
-//
-//    //Retrofit
-//    implementation Libraries.retrofitCoroutineAdapter
-//    implementation Libraries.gson
-//    implementation Libraries.moshi
-//    implementation Libraries.moshiKotlin
-//    implementation Libraries.retrofit
-//    implementation Libraries.retrofitGsonConverter
-//    implementation Libraries.retrofitMoshiConverter
-//    implementation 'androidx.profileinstaller:profileinstaller:1.3.1'
-//    implementation project(':subImpl:tools')
-//    baselineProfile project(':baselineprofile')
-//
-////    kapt Libraries.retrofitMoshiConverterKapt
-//    implementation Libraries.httpLoggingInterceptor
-//
-//
-//    implementation Libraries.gson
-//    implementation Libraries.moshi
-//    implementation Libraries.moshiKotlin
-//
-//
-//    // ANDROID
-//    implementation AndroidLibraries.appCompat
-//    implementation AndroidLibraries.navigation
-//    implementation AndroidLibraries.navigationFrag
-//    implementation Libraries.splashscreen
-//
-//
-//    implementation("androidx.compose.runtime:runtime:1.7.6")
-//    /*
-//    //Features
-//    implementation project(Modules.featureFeedList)
-//    implementation project(Modules.messages)
-//    implementation project(Modules.imageViewer)
-//    implementation project(Modules.userNotification)
-//
-//     */
-
-
+    implementation project(Modules.composeBase)
 }
+
+
 ktlint {
     android.set(true)
 
