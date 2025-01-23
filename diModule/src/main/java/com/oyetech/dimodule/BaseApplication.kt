@@ -1,13 +1,12 @@
-package com.oyetech.radioeveryonee.main
+package com.oyetech.dimodule
 
 import android.app.Application
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
+import com.oyetech.dimodule.koins.AppComponent
 import com.oyetech.domain.helper.ActivityProviderUseCase
 import com.oyetech.domain.helper.isDebug
-import com.oyetech.languageModule.localLanguageHelper.LocalLanguageHelper
 import com.oyetech.languageimp.LanguageOperationHelper
-import com.oyetech.radioeveryonee.main.koins.AppComponent
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.java.KoinJavaComponent
@@ -20,10 +19,6 @@ class BaseApplication : Application() {
 
     val activityProviderUseCase: ActivityProviderUseCase by KoinJavaComponent.inject(
         ActivityProviderUseCase::class.java
-    )
-
-    val languageHelper: LocalLanguageHelper by KoinJavaComponent.inject(
-        LocalLanguageHelper::class.java
     )
 
     val languageOperationHelper: LanguageOperationHelper by KoinJavaComponent.inject(

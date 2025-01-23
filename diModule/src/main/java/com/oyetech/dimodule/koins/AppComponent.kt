@@ -1,4 +1,4 @@
-package com.oyetech.radioeveryonee.main.koins
+package com.oyetech.dimodule.koins
 
 import com.oyetech.adshelper.di.AdsHelperModule
 import com.oyetech.composebase.di.ComposeMainModule
@@ -10,7 +10,6 @@ import com.oyetech.exoplayermodule.di.ExoPlayerModuleDi
 import com.oyetech.firebaseDB.di.FirebaseDBModule
 import com.oyetech.glidemodule.GlideModuleDi
 import com.oyetech.googlelogin.di.GoogleSignInModule
-import com.oyetech.languageModule.di.LanguageModuleDi
 import com.oyetech.languageimp.LanguageImplModule
 import com.oyetech.local.di.RadioLocalModuleDi
 import com.oyetech.quotes.QuotesLocalModuleDi
@@ -36,7 +35,7 @@ Created by Erdi Özbek
 object AppComponent {
 
     val appComponentt = listOf(
-        LanguageModuleDi.wallpaperLanguageModule,
+//        LanguageModuleDi.wallpaperLanguageModule,
         Modules.MainModule,
         KoinHelperInits.HelperModule,
         CommonsModule.module,

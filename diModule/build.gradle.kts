@@ -55,27 +55,7 @@ dependencies {
     // implementation(FirebaseLibrary.messaging)
     implementation(FirebaseLibrary.crashlytics)
     implementation(FirebaseLibrary.analytics)
-    // implementation(project(Modules.reviewer))
 
-    // Additional Modules
-    // implementation(project(Modules.remote))
-    // implementation(project(Modules.notifications))
-    // implementation(project(Modules.loginRegister))
-    // implementation(project(Modules.repository))
-    // implementation(project(Modules.profile))
-    // implementation(project(Modules.editProfileInfo))
-    // implementation(project(Modules.connectList))
-    // implementation(project(Modules.languageSelect))
-    // implementation(project(Modules.splash))
-    // implementation(project(Modules.appBrowser))
-    // implementation(project(Modules.filter))
-    // implementation(project(Modules.settings))
-
-    // Google Specific Libraries
-    // implementation(project(Modules.analyticsModule))
-    // implementation(project(Modules.reviewer))
-    // implementation(project(Modules.paymentModule))
-    // implementation(FirebaseLibrary.googleBilling)
     implementation(project(Modules.adsModule))
     implementation(project(Modules.firebaseDB))
     implementation(project(Modules.exoplayerModule))

@@ -1,8 +1,9 @@
-package com.oyetech.radioeveryonee.main.koins
+package com.oyetech.dimodule.koins
 
 import android.content.Context
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
+import com.oyetech.dimodule.BaseApplication
 import com.oyetech.dimodule.sharedPref.SharedHelper
 import com.oyetech.dimodule.sharedPref.SharedPrefRepository
 import com.oyetech.dimodule.sharedPref.SharedPrefRepositoryImp
@@ -12,7 +13,6 @@ import com.oyetech.domain.repository.helpers.SharedHelperRepository
 import com.oyetech.languageimp.LanguageOperationHelper
 import com.oyetech.models.utils.const.HelperConstant.DEFAULT_TIMEOUT
 import com.oyetech.models.utils.moshi.DefaultIfNullFactory
-import com.oyetech.radioeveryonee.main.BaseApplication
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.ConnectionPool

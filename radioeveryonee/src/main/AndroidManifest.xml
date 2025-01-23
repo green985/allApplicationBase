@@ -16,7 +16,7 @@
         tools:ignore="ProtectedPermissions" />
 
     <application
-        android:name=".main.BaseApplication"
+        android:name="com.oyetech.dimodule.BaseApplication"
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
