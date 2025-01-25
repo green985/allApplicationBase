@@ -8,11 +8,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
+import com.oyetech.composebase.projectQuotesFeature.navigation.quotesAppNavigation
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppNavigationWrapperWithPlayerSetup
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
+import com.oyetech.composebase.projectRadioFeature.navigationRoutes.radioAppNavigation
 import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.GeneralOperationScreenSetup
 
 /**
@@ -23,8 +26,9 @@ Created by Erdi Özbek
 
 object AllScreenNavigator {
 
-    val startApp = "appFullApp"
-    val radioStart = "radioStart"
+    const val startApp = "appFullApp"
+    const val radioStart = "radioStart"
+    const val quoteStart = "quoteStart"
 
     val generalListOfScreen = listOf(
         // Radio App Routes
@@ -49,7 +53,7 @@ object AllScreenNavigator {
     )
 
     fun NavGraphBuilder.navHostScreenSetup(navHostController: NavHostController) {
-        composable(AllScreenNavigator.startApp) {
+        composable(startApp) {
             AllScreenNavigatorScreenSetup(
                 navigationRoute = { route ->
                     navHostController.navigate(route)
@@ -58,7 +62,7 @@ object AllScreenNavigator {
         }
 
         // TabRadioAllList Route
-        composable(AllScreenNavigator.radioStart) {
+        composable(radioStart) {
             val navHostControllerRadio = rememberNavController()
             GeneralOperationScreenSetup(
                 content =
@@ -76,6 +80,22 @@ object AllScreenNavigator {
 
                     }
                 }, navController = navHostControllerRadio
+            )
+        }
+        // TabRadioAllList Route
+        composable(quoteStart) {
+            val navHostControllerQuote = rememberNavController()
+            GeneralOperationScreenSetup(
+                content =
+                {
+                    NavHost(
+                        navController = navHostControllerQuote,
+                        startDestination = QuoteAppProjectRoutes.QuoteAppHomepage.route,
+                    ) {
+                        radioAppNavigation(navHostControllerQuote)
+                        quotesAppNavigation(navHostControllerQuote)
+                    }
+                }, navController = navHostControllerQuote
             )
         }
     }

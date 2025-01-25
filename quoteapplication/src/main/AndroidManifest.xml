@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.oyetech.radioeveryonee">
+    package="com.oyetech.quoteapplication">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -24,11 +24,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.App.Starting"
-        android:usesCleartextTraffic="true"
-        tools:replace="android:theme">
+        android:usesCleartextTraffic="true">
 
         <activity
-            android:name="com.oyetech.composebase.projectRadioFeature.main.RadioMainActivity"
+            android:name="com.oyetech.composebase.projectQuotesFeature.main.QuoteMainActivity"
             android:exported="true"
             android:launchMode="standard"
             android:theme="@style/Theme.DefaultAppTheme">
@@ -40,17 +39,6 @@
 
 
         </activity>
-
-
-        <!--        <receiver-->
-        <!--            android:name="com.oyetech.localnotifications.alarmm.LocalNotificationAlarmReceiver"-->
-        <!--            android:enabled="true"-->
-        <!--            android:exported="true">-->
-        <!--            <intent-filter>-->
-        <!--                <action android:name="com.oyetech.localnotifications.alarmm.LocalNotificationAlarmReceiver" />-->
-        <!--            </intent-filter>-->
-        <!--        </receiver>-->
-
 
         <property
             android:name="android.adservices.AD_SERVICES_CONFIG"

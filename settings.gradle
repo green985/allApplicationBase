@@ -60,3 +60,4 @@ include ':subImpl:tools'
 
 
 include ':radioeveryonee'
+include ':quoteapplication'

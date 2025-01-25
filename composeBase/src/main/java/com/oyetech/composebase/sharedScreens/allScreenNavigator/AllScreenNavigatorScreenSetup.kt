@@ -65,6 +65,24 @@ fun AllScreenNavigatorScreenSetup(
                 }
             }
 
+            Spacer(modifier = Modifier.padding(16.dp))
+            Row(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Button(onClick = {
+                    navigationRoute.invoke(AllScreenNavigator.quoteStart)
+                }) {
+                    Text(
+                        text = "Quote Application Start",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+            }
+
             LazyColumn(
                 state = rememberLazyListState(),
             ) {
