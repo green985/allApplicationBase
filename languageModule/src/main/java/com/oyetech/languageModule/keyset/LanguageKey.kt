@@ -11,6 +11,7 @@ Created by Erdi Özbek
  **/
 
 object LanguageKey {
+    var home set(value) {} get() = LocalLanguageHelper.getStringWithKey("home")
     var errorText set(value) {} get() = LocalLanguageHelper.getStringWithKey("errorText")
     var report set(value) {} get() = LocalLanguageHelper.getStringWithKey("report")
     var delete set(value) {} get() = LocalLanguageHelper.getStringWithKey("delete")

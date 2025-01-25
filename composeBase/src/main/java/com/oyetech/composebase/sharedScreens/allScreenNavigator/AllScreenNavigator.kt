@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
+import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteBottomNavigationView
 import com.oyetech.composebase.projectQuotesFeature.navigation.quotesAppNavigation
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppNavigationWrapperWithPlayerSetup
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
@@ -88,12 +89,29 @@ object AllScreenNavigator {
             GeneralOperationScreenSetup(
                 content =
                 {
-                    NavHost(
-                        navController = navHostControllerQuote,
-                        startDestination = QuoteAppProjectRoutes.QuoteAppHomepage.route,
+                    Column(
+                        verticalArrangement = Arrangement.Bottom,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background)
                     ) {
-                        radioAppNavigation(navHostControllerQuote)
-                        quotesAppNavigation(navHostControllerQuote)
+                        Column(
+                            verticalArrangement = Arrangement.Bottom,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .weight(1f)
+                        ) {
+                            NavHost(
+                                navController = navHostControllerQuote,
+                                startDestination = QuoteAppProjectRoutes.QuoteAppHomepage.route,
+                            ) {
+                                radioAppNavigation(navHostControllerQuote)
+                                quotesAppNavigation(navHostControllerQuote)
+                            }
+                        }
+                        QuoteBottomNavigationView(
+                            navController = navHostControllerQuote
+                        )
                     }
                 }, navController = navHostControllerQuote
             )

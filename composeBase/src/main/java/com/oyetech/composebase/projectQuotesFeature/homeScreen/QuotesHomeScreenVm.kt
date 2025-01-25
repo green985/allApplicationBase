@@ -16,7 +16,7 @@ class QuotesHomeScreenVm(appDispatchers: com.oyetech.tools.coroutineHelper.AppDi
     BaseViewModel(appDispatchers) {
 
     val radioToolbarState: MutableStateFlow<QuoteToolbarState> =
-        MutableStateFlow(QuoteToolbarState())
+        MutableStateFlow(QuoteToolbarState("Quotes"))
     val uiState: MutableStateFlow<QuotesHomeState> = MutableStateFlow(QuotesHomeState())
 
     fun onEvent(event: QuotesHomeEvent) {

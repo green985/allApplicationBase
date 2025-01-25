@@ -32,7 +32,10 @@ fun BottomNavigationBar(
 
     NavigationBar(modifier = modifier, windowInsets = WindowInsets.navigationBars) {
         navItems.forEachIndexed { index, item ->
-            val title = stringResource(item.title)
+
+            val title = item.titleText.ifBlank {
+                stringResource(item.title)
+            }
 
             NavigationBarItem(
                 alwaysShowLabel = true,
