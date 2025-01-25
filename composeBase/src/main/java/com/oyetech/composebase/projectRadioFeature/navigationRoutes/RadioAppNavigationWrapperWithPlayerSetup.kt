@@ -19,7 +19,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationBar
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationDelegate
-import com.oyetech.composebase.projectQuotesFeature.navigation.quotesAppNavigation
 import com.oyetech.composebase.projectRadioFeature.screens.radioPlayer.RadioPlayerSetup
 import org.koin.compose.koinInject
 
@@ -49,7 +48,6 @@ fun RadioAppNavigationWrapperWithPlayerSetup(
                         startDestination = startDestination,
                     ) {
                         radioAppNavigation(navController)
-                        quotesAppNavigation(navController)
                     }
 
                 }

@@ -31,7 +31,7 @@ class FirebaseLanguageOperationRepositoryImp(
         val wrapper = result.get("wrapper") as? HashMap<*, *>
 
         if (wrapper == null) {
-            Timber.d("No comments found")
+            Timber.d("No language found")
             return flowOf(emptyList())
         }
 

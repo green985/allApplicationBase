@@ -67,7 +67,7 @@ fun QuoteDetailScreenSetup(
             vm.onToolbarEvent(it)
         }, onEvent = {
             vm.onEvent(it)
-        }
+        }, navigationRoute
     )
 }
 
@@ -78,6 +78,7 @@ fun QuoteDetailScreen(
     toolbarState: QuoteToolbarState,
     onToolbarEvent: (QuoteToolbarEvent) -> Unit,
     onEvent: (QuoteDetailEvent) -> Unit,
+    navigationRoute: (navigationRoute: String) -> Unit,
 ) {
 
     BaseScaffold {
@@ -92,7 +93,7 @@ fun QuoteDetailScreen(
                     onToolbarEvent(it)
                 }
                 )
-                RandomQuotesSmallView(uiState = uiState)
+                RandomQuotesSmallView(uiState = uiState, navigationRoute = navigationRoute)
                 CommentScreenWithContentScreenSetup(uiState.quoteId)
 
             }

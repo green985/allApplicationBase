@@ -149,7 +149,7 @@ private fun TabAllScreenView(
             key(tabEnums[page]) {
                 when (tabEnums[page]) {
                     Quotes -> {
-                        QuoteListScreenSetup()
+                        QuoteListScreenSetup(navigationRoute)
                         Timber.d("Quotes")
                     }
 

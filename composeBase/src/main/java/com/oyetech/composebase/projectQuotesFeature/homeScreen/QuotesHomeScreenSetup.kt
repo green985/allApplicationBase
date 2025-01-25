@@ -57,7 +57,7 @@ fun QuotesHomeScreenSetup(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val radioToolbarState by viewModel.radioToolbarState.collectAsState()
 
-    val pagerState = rememberPagerState(initialPage = 1,
+    val pagerState = rememberPagerState(
         pageCount = { uiState.tabEnumList.size })
     BaseScaffold(
         showTopBar = true,
@@ -92,7 +92,8 @@ fun QuotesHomeScreenSetup(
             QuotesHomeView(
                 pagerState = pagerState,
                 tabEnums = uiState.tabEnumList.toImmutableList(),
-                tabNameList = uiState.tabEnumList.map { it.name }.toImmutableList()
+                tabNameList = uiState.tabEnumList.map { it.name }.toImmutableList(),
+                navigationRoute = navigationRoute
             )
         }
     }
@@ -153,7 +154,7 @@ private fun QuotesHomeView(
             key(tabEnums[page]) {
                 when (tabEnums[page]) {
                     All -> {
-                        QuoteListScreenSetup()
+                        QuoteListScreenSetup(navigationRoute)
                         Timber.d("Quotes")
                     }
 

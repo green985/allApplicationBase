@@ -42,7 +42,10 @@ Created by Erdi Özbek
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun QuotesWithPagerViewSetup(vm: QuotesVM = koinViewModel()) {
+fun QuotesWithPagerViewSetup(
+    vm: QuotesVM = koinViewModel(),
+    navigationRoute: (navigationRoute: String) -> Unit,
+) {
     val complexItemListState by vm.complexItemViewState.collectAsStateWithLifecycle()
 
     val quotesList = complexItemListState.items
@@ -85,7 +88,7 @@ fun QuotesWithPagerViewSetup(vm: QuotesVM = koinViewModel()) {
             }
 
             key(quotesList[page]) {
-                RandomQuotesSmallView(uiState = quotesList[page])
+                RandomQuotesSmallView(uiState = quotesList[page], navigationRoute = navigationRoute)
             }
         }
 

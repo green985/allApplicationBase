@@ -26,14 +26,14 @@ fun NavGraphBuilder.radioAppNavigation(navController: NavController) {
 
     // TabRadioAllList Route
     composable(RadioAppProjectRoutes.TabRadioAllList.route) {
-        TabAllListScreenSetup(navigateRoute(navController))
+        TabAllListScreenSetup(navigateRouteOperation(navController))
     }
     // TabRadioAllList Route
     composable(RadioAppProjectRoutes.ContactScreen.route) {
-        ContactScreen(navigationRoute = navigateRoute(navController))
+        ContactScreen(navigationRoute = navigateRouteOperation(navController))
     }
     composable(RadioAppProjectRoutes.RadioSearchList.route) {
-        RadioSearchListScreenSetup(navigationRoute = navigateRoute(navController))
+        RadioSearchListScreenSetup(navigationRoute = navigateRouteOperation(navController))
     }
 
     // TimerDialog Route
@@ -45,19 +45,19 @@ fun NavGraphBuilder.radioAppNavigation(navController: NavController) {
     composable(RadioAppProjectRoutes.TabFav.route) {
         RadioListScreenSetup(
             listType = RadioListEnums.Favorites.name,
-            navigationRoute = navigateRoute(navController)
+            navigationRoute = navigateRouteOperation(navController)
         )
     }
     // TabFav Route
     composable(RadioAppProjectRoutes.TabCategories.route) {
-        TagListScreenSetup(navigationRoute = navigateRoute(navController))
+        TagListScreenSetup(navigationRoute = navigateRouteOperation(navController))
     }
 
     // TabHistory Route
     composable(RadioAppProjectRoutes.TabHistory.route) {
         RadioListScreenSetup(
             listType = RadioListEnums.History.name,
-            navigationRoute = navigateRoute(navController)
+            navigationRoute = navigateRouteOperation(navController)
         )
     }
 
@@ -67,27 +67,25 @@ fun NavGraphBuilder.radioAppNavigation(navController: NavController) {
 //            navigationRoute = navigateRoute(navController)
 //        )
         TabSettingsScreenSetup(
-            navigationRoute = navigateRoute(navController)
+            navigationRoute = navigateRouteOperation(navController)
         )
     }
 
     // TabHistory Route
     composable(RadioAppProjectRoutes.QuotesListScreen.route) {
-        QuoteListScreenSetup(
-//            navigationRoute = navigateRoute(navController)
-        )
+        QuoteListScreenSetup(navigateRouteOperation(navController))
     }
 
     // TabHistory Route
     composable(RadioAppProjectRoutes.LoginOperationScreen.route) {
         LoginOperationScreenSetup(
-            navigationRoute = navigateRoute(navController)
+            navigationRoute = navigateRouteOperation(navController)
         )
     }
     // TabHistory Route
     composable(RadioAppProjectRoutes.CompleteProfileScreen.route) {
         CompleteProfileScreenSetup(
-            navigationRoute = navigateRoute(navController)
+            navigationRoute = navigateRouteOperation(navController)
         )
     }
 
@@ -105,7 +103,7 @@ fun NavGraphBuilder.radioAppNavigation(navController: NavController) {
         val commentId = it.arguments?.getString(ScreenKey.commentId) ?: "firstComment"
         CommentScreenWithContentScreenSetup(
             commentId,
-            navigationRoute = navigateRoute(navController)
+            navigationRoute = navigateRouteOperation(navController)
         )
     }
 
@@ -139,13 +137,13 @@ fun NavGraphBuilder.radioAppNavigation(navController: NavController) {
             languageName = languageName ?: "",
             countryName = countryName ?: "",
             toolbarTitle = toolbarTitle ?: "",
-            navigationRoute = navigateRoute(navController)
+            navigationRoute = navigateRouteOperation(navController)
         )
     }
 }
 
 @Composable
-fun navigateRoute(navController: NavController): (navigationRoute: String) -> Unit =
+fun navigateRouteOperation(navController: NavController): (navigationRoute: String) -> Unit =
     {
         Timber.d(" radioAppNavigation it = $it")
         if (it == "back") {

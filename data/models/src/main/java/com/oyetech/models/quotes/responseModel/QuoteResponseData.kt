@@ -58,7 +58,7 @@ fun String.toMd5WithFixedLength(): String {
     return if (md5Hash.length >= 40) {
         md5Hash.substring(0, 40)
     } else {
-        md5Hash.padEnd(40, ' ')
+        md5Hash.padEnd(40, '-')
     }
 }
 

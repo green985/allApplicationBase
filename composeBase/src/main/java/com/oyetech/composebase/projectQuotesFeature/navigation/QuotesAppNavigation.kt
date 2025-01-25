@@ -6,17 +6,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.oyetech.composebase.projectQuotesFeature.authorListScreen.AuthorListScreen
 import com.oyetech.composebase.projectQuotesFeature.homeScreen.QuotesHomeScreenSetup
-import com.oyetech.composebase.projectRadioFeature.navigationRoutes.navigateRoute
+import com.oyetech.composebase.projectRadioFeature.navigationRoutes.navigateRouteOperation
 import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import com.oyetech.composebase.sharedScreens.quotes.detail.QuoteDetailScreenSetup
 
 @Suppress("LongMethod")
 fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
     composable(QuoteAppProjectRoutes.QuoteAppHomepage.route) {
-        QuotesHomeScreenSetup()
+        QuotesHomeScreenSetup(navigationRoute = navigateRouteOperation(navController))
     }
     composable(
-        QuoteAppProjectRoutes.QuoteDetailRoute.route, arguments = listOf(
+        route = "${QuoteAppProjectRoutes.QuoteDetailRoute.route}?" +
+                "${ScreenKey.quoteId}={quoteId}", arguments = listOf(
             navArgument(ScreenKey.quoteId) {
                 defaultValue = "randomSingle"
                 nullable = false
@@ -26,10 +27,10 @@ fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
         val quoteId = it.arguments?.getString(ScreenKey.quoteId) ?: "randomSingle"
         QuoteDetailScreenSetup(
             quoteId = quoteId,
-            navigationRoute = navigateRoute(navController)
+            navigationRoute = navigateRouteOperation(navController)
         )
     }
     composable(QuoteAppProjectRoutes.QuoteAuthorList.route) {
-        AuthorListScreen(navigationRoute = navigateRoute(navController))
+        AuthorListScreen(navigationRoute = navigateRouteOperation(navController))
     }
 }

@@ -30,7 +30,7 @@ class FirebaseCommentOperationRepositoryImp(
     override suspend fun getCommentsWithId(commentId: String): Flow<List<CommentResponseData>> {
 
         val result = firestore.collection(FirebaseDatabaseKeys.commentTable)
-            .document("firstComment")
+            .document(commentId)
             .collection("comments")
             .orderBy("createdAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
             .get().await()

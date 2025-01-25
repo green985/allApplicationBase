@@ -10,7 +10,6 @@ import com.oyetech.composebase.baseViews.basePagingList.BasePagingListScreen
 import com.oyetech.composebase.sharedScreens.quotes.randomQuotesViewer.QuotesVM
 import com.oyetech.composebase.sharedScreens.quotes.randomQuotesViewer.RandomQuotesSmallView
 import com.oyetech.composebase.sharedScreens.quotes.uiState.QuoteListUiEvent.QuoteSeen
-import com.oyetech.composebase.sharedScreens.quotes.uiState.QuoteUiState
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 
@@ -21,7 +20,7 @@ Created by Erdi Özbek
  **/
 
 @Composable
-fun QuoteListScreenSetup() {
+fun QuoteListScreenSetup(navigationRoute: (navigationRoute: String) -> Unit) {
     val vm = koinViewModel<QuotesVM>()
     val lazyPagingItems = vm.quotesPage.collectAsLazyPagingItems()
 
@@ -32,10 +31,7 @@ fun QuoteListScreenSetup() {
                 itemKey = { quote -> quote.quoteId },
                 onBindItem = { quote ->
                     RandomQuotesSmallView(
-                        uiState = QuoteUiState(
-                            text = quote.text,
-                            author = quote.author
-                        )
+                        uiState = quote, navigationRoute
                     )
                 },
                 onItemVisible = { currentLastVisibleIndex ->
