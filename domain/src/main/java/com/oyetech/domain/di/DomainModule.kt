@@ -9,7 +9,6 @@ import com.oyetech.domain.useCases.AdsHelperUseCase
 import com.oyetech.domain.useCases.AlarmOperationUseCase
 import com.oyetech.domain.useCases.AnalyticsOperationUseCase
 import com.oyetech.domain.useCases.GlideOperationUseCase
-import com.oyetech.domain.useCases.SharedOperationUseCase
 import com.oyetech.domain.useCases.TimerOperationUseCase
 import com.oyetech.domain.useCases.VolumeOperationUseCase
 import com.oyetech.domain.useCases.contentOperations.RadioOperationUseCase
@@ -32,11 +31,9 @@ object DomainModule {
         single { GlideOperationUseCase(get()) }
         singleOf(::AdsHelperUseCase)
         factory { WallpaperSearchOperationUseCase(get()) }
-        // singleOf(::LocationOperationUseCase)
-        // singleOf(::ExoPlayerOperationUseCase)
         // singleOf(::ContentOperationUseCase)
 
-        single { SharedOperationUseCase(get()) }
+//        single { SharedOperationUseCase(get()) }
 //
 //        single { AlarmOperationUseCase(get()) }
         single { TimerOperationUseCase(get()) }
@@ -57,7 +54,7 @@ object RadioDomainModule {
         single { RadioStationListOperationUseCase(get(), get()) }
         single { RadioCountryTagOperationUseCase(get()) }
         // single { ExoPlayerOperationUseCase(get()) }
-        single { SharedOperationUseCase(get()) }
+//        single { SharedOperationUseCase(get()) }
         single { VolumeOperationUseCase(get()) }
         single { AlarmOperationUseCase(get()) }
     }

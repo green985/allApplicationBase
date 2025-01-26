@@ -21,8 +21,8 @@ Created by Erdi Özbek
 -6.03.2022-
 -00:03-
  **/
-
-class SharedPrefRepository(
+@Suppress("TooManyFunctions")
+class SharedOperationRepositoryImp(
     private var sharedHelper: SharedHelper,
 ) : SharedOperationRepository {
 
@@ -165,6 +165,30 @@ class SharedPrefRepository(
 
     }
 
+    override fun getTotalAppOpenCount(): Int {
+        var openCount = sharedHelper.getIntData(SharedPrefKey.APP_FIRST_OPEN_COUNT, 0)
+
+        return openCount
+    }
+
+    override fun increaseAppOpenCount() {
+        var openCount = sharedHelper.getIntData(SharedPrefKey.APP_FIRST_OPEN_COUNT, 0)
+
+        openCount += 1
+
+        sharedHelper.putIntData(SharedPrefKey.APP_FIRST_OPEN_COUNT, openCount)
+    }
+
+    override fun isReviewAlreadyShown(): Boolean {
+        var isReviewAlreadyShown =
+            sharedHelper.getBooleanData(SharedPrefKey.IS_REVIEW_ALREADY_SHOWN, false)
+        return isReviewAlreadyShown
+    }
+
+    override fun setReviewAlreadyShown(status: Boolean) {
+        sharedHelper.putBooleanData(SharedPrefKey.IS_REVIEW_ALREADY_SHOWN, status)
+    }
+
     override fun getConversationListExpireFlag(): Boolean {
         var timeMilis = sharedHelper.getLongData(SharedPrefKey.CONVERSATION_LIST_TIME_FLAG, 0L)
         var isTimeExpired = TimeFunctions.isTimeExpiredFromParamHourWithMilis(
@@ -295,8 +319,52 @@ class SharedPrefRepository(
 
     }
 
-    fun setReviewAlreadyShown(status: Boolean) {
-        sharedHelper.putBooleanData(SharedPrefKey.IS_REVIEW_ALREADY_SHOWN, status)
+    override fun getUserDontWantSeeFlagTimeExpired(): Boolean {
+        var time = sharedHelper.getLongData(SharedPrefKey.IS_REVIEW_USER_DONT_WANT_SEE_TIME, -1)
+        if (time == -1L) {
+            Timber.d("first init, can show")
+            return true
+        }
+        var isTimeExpired = TimeFunctions.isTimeExpiredFromParamHourWithMilis(
+            time,
+            HelperConstant.REVIEW_ASK_EXPIRED_TIME
+        )
+
+        if (isTimeExpired) {
+            sharedHelper.removeData(SharedPrefKey.IS_REVIEW_USER_DONT_WANT_SEE_TIME)
+            Timber.d("time expried, can showwww")
+            return true
+        }
+
+        Timber.d("time not expiredddd")
+        return false
+    }
+
+    override fun getReviewUserDontWantSee(): Boolean {
+        var userDontWantSeeFlag =
+            sharedHelper.getBooleanData(SharedPrefKey.IS_REVIEW_USER_DONT_WANT_SEE, false)
+
+        if (!userDontWantSeeFlag) {
+            Timber.d("user not select dont want see flag")
+            return false
+        }
+
+        if (userDontWantSeeFlag) {
+            var userDontWantSeeFlagTimeExpired = getUserDontWantSeeFlagTimeExpired()
+            if (userDontWantSeeFlagTimeExpired) {
+                Timber.d("time expriredd show dialog again")
+                return false
+            }
+        }
+
+        Timber.d("user dont see dialog for review")
+        return true
+    }
+
+    override fun setReviewUserDontWantSee(status: Boolean) {
+        var timeMilis = Calendar.getInstance().timeInMillis
+        sharedHelper.putLongData(SharedPrefKey.IS_REVIEW_USER_DONT_WANT_SEE_TIME, timeMilis)
+        sharedHelper.putBooleanData(SharedPrefKey.IS_REVIEW_USER_DONT_WANT_SEE, status)
     }
 
     fun setReviewDontWantSee(status: Boolean) {
@@ -345,6 +413,48 @@ class SharedPrefRepository(
         )
         return firebaseLanguageResponseDataWrapper
 
+    }
+
+    override fun isSubsDialogCanShow(): Boolean {
+        var timeMilis = sharedHelper.getLongData(SharedPrefKey.SUBS_DIALOG_SHOWN_TIME_MILIS, 0L)
+        if (timeMilis == 0L) {
+            Timber.d("totalAppCopunt first init")
+            return false
+        }
+
+        var isTimeExpired =
+            TimeFunctions.isTimeExpiredFromParamHourWithMilis(
+                timeMilis,
+                HelperConstant.SUBS_DIALOG_RESOW_USER_EXPIRED_TIME
+            )
+
+        if (isTimeExpired) {
+            putDateWhenSubsDialogShow()
+            Timber.d("totalAppCopunt expried, can showwww")
+            return true
+        }
+
+        Timber.d("totalAppCopunt not expiredddd")
+        return false
+    }
+
+    override fun getIsDateWhenSubsDialogShow(): Boolean {
+        var timeMilis = sharedHelper.getLongData(SharedPrefKey.SUBS_DIALOG_SHOWN_TIME_MILIS, 0L)
+        if (timeMilis == 0L) {
+            Timber.d("totalAppCopunt first init")
+            return false
+        } else {
+            return true
+        }
+    }
+
+    override fun getAlarmm(): DataAlarmModel? {
+        return null
+    }
+
+    override fun putDateWhenSubsDialogShow() {
+        var timeMilis = Calendar.getInstance().timeInMillis
+        sharedHelper.putLongData(SharedPrefKey.SUBS_DIALOG_SHOWN_TIME_MILIS, timeMilis)
     }
 
 

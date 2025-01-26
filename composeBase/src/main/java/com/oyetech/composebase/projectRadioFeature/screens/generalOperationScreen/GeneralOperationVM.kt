@@ -2,7 +2,7 @@ package com.oyetech.composebase.projectRadioFeature.screens.generalOperationScre
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
-import com.oyetech.domain.repository.helpers.SharedHelperRepository
+import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.domain.useCases.helpers.AppReviewOperationUseCase
 import kotlinx.coroutines.delay
@@ -17,7 +17,7 @@ Created by Erdi Özbek
 class GeneralOperationVM(
     appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     private val appReviewOperationUseCase: AppReviewOperationUseCase,
-    private val sharedHelperRepository: SharedHelperRepository,
+    private val sharedHelperRepository: SharedOperationRepository,
     private val googleLoginRepository: GoogleLoginRepository,
 ) : BaseViewModel(appDispatchers) {
 

@@ -5,11 +5,9 @@ import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import com.oyetech.dimodule.BaseApplication
 import com.oyetech.dimodule.sharedPref.SharedHelper
-import com.oyetech.dimodule.sharedPref.SharedPrefRepository
-import com.oyetech.dimodule.sharedPref.SharedPrefRepositoryImp
+import com.oyetech.dimodule.sharedPref.SharedOperationRepositoryImp
 import com.oyetech.domain.helper.isDebug
 import com.oyetech.domain.repository.SharedOperationRepository
-import com.oyetech.domain.repository.helpers.SharedHelperRepository
 import com.oyetech.languageimp.LanguageOperationHelper
 import com.oyetech.models.utils.const.HelperConstant.DEFAULT_TIMEOUT
 import com.oyetech.models.utils.moshi.DefaultIfNullFactory
@@ -80,8 +78,7 @@ object KoinHelperInits {
 
         single { SharedHelper(get(), get()) }
 //        single { VerseNoteSpanHelper(com.oyetech.materialViews.R.drawable.ic_verse_note_img) }
-        singleOf(::SharedPrefRepositoryImp)
-        single<SharedHelperRepository> { SharedPrefRepositoryImp(get()) }
+//        single<SharedHelperRepository> { SharedPrefRepositoryImp(get()) }
 //        singleOf(::ClipboardOperationHelper)
 //        singleOf(::TokenAuthenticator)
 //        singleOf(::RefreshTokenHelper)
@@ -89,7 +86,7 @@ object KoinHelperInits {
         // singleOf(::ChuckInterceptor)
         // singleOf(::SignalRHelper)
 
-        single<SharedOperationRepository> { SharedPrefRepository(get()) }
+        single<SharedOperationRepository> { SharedOperationRepositoryImp(get()) }
 
 //        single { HeaderInterceptor(get(), get()) }
 //        singleOf(::AuthOperationBodyHelper)

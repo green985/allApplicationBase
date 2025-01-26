@@ -64,5 +64,16 @@ interface SharedOperationRepository {
         withTimeMilis: Long? = null,
     )
 
+    fun getTotalAppOpenCount(): Int
+    fun increaseAppOpenCount()
+    fun isReviewAlreadyShown(): Boolean
+    fun setReviewAlreadyShown(status: Boolean)
+    fun getUserDontWantSeeFlagTimeExpired(): Boolean
+    fun getReviewUserDontWantSee(): Boolean
+    fun setReviewUserDontWantSee(status: Boolean)
+    fun isSubsDialogCanShow(): Boolean
+    fun putDateWhenSubsDialogShow()
+    fun getIsDateWhenSubsDialogShow(): Boolean
+    fun getAlarmm(): DataAlarmModel?
 
 }
