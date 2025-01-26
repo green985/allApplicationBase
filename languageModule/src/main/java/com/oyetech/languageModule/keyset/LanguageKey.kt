@@ -11,6 +11,9 @@ Created by Erdi Özbek
  **/
 
 object LanguageKey {
+    var usernameInfoText set(value) {} get() = LocalLanguageHelper.getStringWithKey("usernameInfoText")
+    var deleteAccountSuccess set(value) {} get() = LocalLanguageHelper.getStringWithKey("deleteAccountSuccess")
+    var deleteDialogInfo set(value) {} get() = LocalLanguageHelper.getStringWithKey("deleteDialogInfo")
     var settings set(value) {} get() = LocalLanguageHelper.getStringWithKey("settings")
     var home set(value) {} get() = LocalLanguageHelper.getStringWithKey("home")
     var errorText set(value) {} get() = LocalLanguageHelper.getStringWithKey("errorText")

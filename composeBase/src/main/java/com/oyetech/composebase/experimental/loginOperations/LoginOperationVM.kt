@@ -95,6 +95,9 @@ class LoginOperationVM(
             }
 
             DeleteAccountClick -> {
+                loginOperationState.updateState {
+                    copy(isLoading = true)
+                }
                 viewModelScope.launch(getDispatcherIo()) {
                     userOperationViewModelSlice.deleteUser(loginOperationState.value.uid)
                 }

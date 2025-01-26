@@ -32,6 +32,16 @@ object AllScreenNavigator {
     const val quoteStart = "quoteStart"
 
     val generalListOfScreen = listOf(
+
+        // Quote App Routes
+        QuoteAppProjectRoutes.QuoteSettings.route,
+        QuoteAppProjectRoutes.QuoteAppHomepage.route,
+        QuoteAppProjectRoutes.QuoteDetailRoute.route,
+        QuoteAppProjectRoutes.QuoteAuthorList.route,
+
+
+
+
         // Radio App Routes
         RadioAppProjectRoutes.TimerDialog.route,
         RadioAppProjectRoutes.TabRadioAllList.route,
@@ -47,10 +57,6 @@ object AllScreenNavigator {
         RadioAppProjectRoutes.LoginOperationScreen.route,
         RadioAppProjectRoutes.CompleteProfileScreen.route,
 
-        // Quote App Routes
-        QuoteAppProjectRoutes.QuoteAppHomepage.route,
-        QuoteAppProjectRoutes.QuoteDetailRoute.route,
-        QuoteAppProjectRoutes.QuoteAuthorList.route
     )
 
     fun NavGraphBuilder.navHostScreenSetup(navHostController: NavHostController) {

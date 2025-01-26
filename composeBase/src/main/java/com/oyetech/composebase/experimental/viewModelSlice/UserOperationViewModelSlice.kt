@@ -1,7 +1,9 @@
 package com.oyetech.composebase.experimental.viewModelSlice
 
 import com.oyetech.composebase.base.BaseViewModel
+import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
+import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +21,10 @@ Created by Erdi Özbek
 -19:39-
  **/
 
-class UserOperationViewModelSlice(private val profileRepository: FirebaseUserRepository) {
+class UserOperationViewModelSlice(
+    private val profileRepository: FirebaseUserRepository,
+    private val snackbarDelegate: SnackbarDelegate,
+) {
 
     val userPropertyState = MutableStateFlow(FirebaseUserProfileModel())
 
@@ -28,8 +33,9 @@ class UserOperationViewModelSlice(private val profileRepository: FirebaseUserRep
     }
 
     context(BaseViewModel)
-    fun deleteUser(uid: String) {
-        profileRepository.deleteUser(uid)
+    fun deleteUser(uid: String = "") {
+        val userId = userPropertyState.value.uid
+        profileRepository.deleteUser(userId)
     }
 
     private fun observeUserState() {
@@ -41,6 +47,10 @@ class UserOperationViewModelSlice(private val profileRepository: FirebaseUserRep
                     onSuccess = { userData ->
                         if (userData != null) {
                             userPropertyState.value = userData
+                        }
+
+                        if (userData?.isUserDeleted == true) {
+                            snackbarDelegate.triggerSnackbarState(LanguageKey.deleteAccountSuccess)
                         }
                     },
                     onFailure = {

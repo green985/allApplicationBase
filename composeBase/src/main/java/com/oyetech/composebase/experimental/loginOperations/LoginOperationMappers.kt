@@ -31,13 +31,8 @@ fun LoginOperationVM.mapToProfileValue(userData: FirebaseUserProfileModel?) {
     }
 
     if (userData.isUserDeleted) {
-        loginOperationState.updateState {
-            copy(
-                isLoading = false,
-                errorMessage = "",
-                isUserDeleted = userData.isUserDeleted
-            )
-        }
+        loginOperationState.value =
+            LoginOperationUiState(isUserDeleted = userData.isUserDeleted)
         return
     }
 
