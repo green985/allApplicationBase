@@ -36,7 +36,6 @@ class LanguageOperationHelper(
     private val sharedOperationUseCase: SharedOperationRepository,
     private val firebaseLanguageOperationRepository: FirebaseLanguageOperationRepository,
 ) {
-
     var isInit = false
 
     init {
