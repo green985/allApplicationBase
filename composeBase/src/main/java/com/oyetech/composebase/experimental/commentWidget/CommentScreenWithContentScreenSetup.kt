@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
@@ -162,7 +163,7 @@ fun CommentInputViewPreview() {
         uid = "dicam",
         displayNameRemote = "Lucy Evans",
         photoUrl = "http://www.bing.com/search?q=sed",
-        isLogin = true,
+        isLogin = false,
         isAnonymous = false,
         lastSignInTimestamp = null
     ), onEvent = {}, onUserEvent = {})
@@ -183,18 +184,19 @@ fun CommentInputView(
 
         if (!userUiState.isLogin) {
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp),
                 verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Button(onClick = {
                     onUserEvent(LoginOperationEvent.LoginClicked)
                 }) {
-                    Text(LanguageKey.login)
+                    Text(LanguageKey.commentLoginButtonText)
                 }
             }
         } else {
-
             OutlinedTextField(
                 value = uiState.commentInput,
                 onValueChange = {
