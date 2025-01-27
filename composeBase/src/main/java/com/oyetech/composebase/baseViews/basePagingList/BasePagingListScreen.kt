@@ -27,6 +27,7 @@ fun <T : Any> BasePagingListScreen(
     onItemVisible: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
     reverseLayout: Boolean = false,
+    emptyListAgainButtonVisibilty: Boolean = false,
 ) {
     val state = rememberLazyListState()
 
@@ -60,7 +61,11 @@ fun <T : Any> BasePagingListScreen(
                     ErrorScreenFullSize(
                         modifier = modifier,
                         errorMessage = LanguageKey.emptyCommentError,
-                        onRetry = { items.retry() }
+                        onRetry = if (emptyListAgainButtonVisibilty) {
+                            { items.retry() }
+                        } else {
+                            null
+                        }
                     )
                 }
 
