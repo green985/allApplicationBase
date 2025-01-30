@@ -17,6 +17,7 @@ Created by Erdi Özbek
 
 object QuoteAppProjectRoutes {
 
+    val QuoteAdviceScreen = Route("quoteAdviceScreen")
     val QuoteAppHomepage = Route("quoteAppHomepage")
     val QuoteDetailRoute = Route("quoteDetail")
     val QuoteAuthorList = Route("quoteAuthorList")

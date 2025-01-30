@@ -16,4 +16,11 @@ interface QuoteDataOperationRepository {
     suspend fun getQuoteUnseenFlow(oldList: Array<String>): Flow<List<QuoteResponseData>>
     suspend fun getAuthorList(): Flow<List<QuoteAuthorResponseData>>
     suspend fun getSingleQuote(quoteId: String): Flow<QuoteResponseData>
+    fun submitQuote(
+        quoteText: String,
+        authorText: String,
+        tags: List<String>,
+        noteToInspector: String,
+        isCheckedTruthForm: Boolean,
+    ): Flow<Boolean>
 }

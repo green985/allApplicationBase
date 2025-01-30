@@ -75,6 +75,30 @@ class QuoteDataOperationRepositoryImp(
         }
     }
 
+    override fun submitQuote(
+        quoteText: String,
+        authorText: String,
+        tags: List<String>,
+        noteToInspector: String,
+        isCheckedTruthForm: Boolean,
+    ): Flow<Boolean> {
+
+        return flow {
+//            val quoteResponseData = QuoteResponseData(
+//                id = "",
+//                text = quoteText,
+//                author = authorText,
+//                tags = tags,
+//                unseen = true,
+//                noteToInspector = noteToInspector,
+//                isCheckedTruthForm = isCheckedTruthForm
+//            )
+//            quotesAllListDao.insert(quoteResponseData)
+//            firebaseQuotesOperationRepository.saveListWithNoTag(listOf(quoteResponseData))
+            emit(true)
+        }
+    }
+
     override suspend fun getQuoteUnseenFlow(oldList: Array<String>): Flow<List<QuoteResponseData>> {
         return quotesAllListDao.getQuoteUnseenFlow(oldList)
             .let {

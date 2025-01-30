@@ -70,11 +70,10 @@ class QuotesVM(
             }
             if (isVisibleControl) {
                 isVisibleControl = false
-                val quoteIdMap =
-                    complexItemViewState.value.items.subList(0, index).map {
-                        quoteDataOperationRepository.setSeenQuote(it.quoteId)
-                            .collect()
-                    }
+                complexItemViewState.value.items.subList(0, index).map {
+                    quoteDataOperationRepository.setSeenQuote(it.quoteId)
+                        .collect()
+                }
                 return@launch
             }
             val quoteId = complexItemViewState.value.items.getOrNull(index)?.quoteId

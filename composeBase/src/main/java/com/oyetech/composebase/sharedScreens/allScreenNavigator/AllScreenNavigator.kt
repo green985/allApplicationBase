@@ -34,13 +34,11 @@ object AllScreenNavigator {
     val generalListOfScreen = listOf(
 
         // Quote App Routes
+        QuoteAppProjectRoutes.QuoteAdviceScreen.route,
         QuoteAppProjectRoutes.QuoteSettings.route,
         QuoteAppProjectRoutes.QuoteAppHomepage.route,
         QuoteAppProjectRoutes.QuoteDetailRoute.route,
         QuoteAppProjectRoutes.QuoteAuthorList.route,
-
-
-
 
         // Radio App Routes
         RadioAppProjectRoutes.TimerDialog.route,
@@ -57,7 +55,7 @@ object AllScreenNavigator {
         RadioAppProjectRoutes.LoginOperationScreen.route,
         RadioAppProjectRoutes.CompleteProfileScreen.route,
 
-    )
+        )
 
     fun NavGraphBuilder.navHostScreenSetup(navHostController: NavHostController) {
         composable(startApp) {
