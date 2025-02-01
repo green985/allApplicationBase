@@ -22,5 +22,5 @@ interface QuoteDataOperationRepository {
         tags: List<String>,
         noteToInspector: String,
         isCheckedTruthForm: Boolean,
-    ): Flow<Boolean>
+    ): Flow<Unit>
 }

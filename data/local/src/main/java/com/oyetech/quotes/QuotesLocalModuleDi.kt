@@ -1,5 +1,6 @@
 package com.oyetech.quotes
 
+import com.oyetech.quotes.database.AdviceQuoteListDatabase
 import com.oyetech.quotes.database.QuoteAllListDatabase
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
@@ -17,7 +18,14 @@ object QuotesLocalModuleDi {
 
     val localModule = module {
         single(named(QUOTE_ALL_LIST_DATABASE)) { QuoteAllListDatabase.buildDatabase(androidContext()) }
-        factory { (get(named(QUOTE_ALL_LIST_DATABASE)) as QuoteAllListDatabase).quotesAllListDao() }
+        single(named(QUOTE_ALL_LIST_DATABASE)) {
+            AdviceQuoteListDatabase.buildDatabase(
+                androidContext()
+            )
+        }
 
+        
+        factory { (get(named(QUOTE_ALL_LIST_DATABASE)) as QuoteAllListDatabase).quotesAllListDao() }
+        factory { (get(named(QUOTE_ALL_LIST_DATABASE)) as AdviceQuoteListDatabase).listDao() }
     }
 }

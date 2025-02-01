@@ -1,7 +1,8 @@
-package com.oyetech.composebase.projectQuotesFeature.adviceQuote;
+package com.oyetech.composebase.projectQuotesFeature.adviceQuote
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
+import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteEvent.RemoveTag
 import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteEvent.SelectAuthor
 import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteEvent.SelectTag
@@ -25,6 +26,7 @@ import com.oyetech.models.quotes.responseModel.QuotesTagResponseData
 import com.oyetech.models.utils.helper.updateState
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
+import com.oyetech.tools.randomHelper.RandomHelper
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
@@ -40,7 +42,8 @@ Created by Erdi Özbek
 
 class AdviceQuoteVM(
     private val repository: QuoteDataOperationRepository,
-    private val dispatcher: AppDispatchers,
+    dispatcher: AppDispatchers,
+    private val snackbarDelegate: SnackbarDelegate,
 ) : BaseViewModel(dispatcher) {
 
     val uiState: MutableStateFlow<AdviceQuoteUiState> = MutableStateFlow(AdviceQuoteUiState())
@@ -48,13 +51,13 @@ class AdviceQuoteVM(
     val toolbarUiState =
         MutableStateFlow(QuoteToolbarState(title = LanguageKey.adviceQuote, showBackButton = true))
 
-    val tmpSelectedTagList: List<QuoteTagUiState> = persistentListOf()
-
     init {
         populateFirstState()
     }
 
-    fun populateFirstState() {
+    @Suppress("MagicNumber")
+    private fun populateFirstState() {
+
         val tagListSmall = QuotesTagResponseData.getTopicsList().subList(0, 4).map {
             QuoteTagUiState(it)
         }.toImmutableList()
@@ -62,13 +65,10 @@ class AdviceQuoteVM(
             .subList(4, QuotesTagResponseData.getTopicsList().size).map {
                 QuoteTagUiState(it)
             }.toImmutableList()
-
-        uiState.updateState {
-            copy(
-                tagListSmall = tagListSmall,
-                tagListLarge = tagListLarge
-            )
-        }
+        uiState.value = AdviceQuoteUiState(
+            tagListSmall = tagListSmall,
+            tagListLarge = tagListLarge
+        )
     }
 
     @Suppress("CyclomaticComplexMethod")
@@ -127,7 +127,15 @@ class AdviceQuoteVM(
 
             is SelectAuthor -> TODO()
             is SetLoading -> TODO()
-            is ShowError -> TODO()
+            is ShowError -> {
+                uiState.updateState {
+                    copy(
+                        isLoading = false,
+                        errorText = event.errorText
+                    )
+                }
+            }
+
             is UpdateAuthorList -> TODO()
             SetDummyData -> {
                 setDummyDatas()
@@ -148,10 +156,10 @@ class AdviceQuoteVM(
         }
     }
 
-    fun setDummyDatas() {
+    private fun setDummyDatas() {
         uiState.updateState {
             copy(
-                quoteText = "quoteText",
+                quoteText = RandomHelper.generateGuid(),
                 authorText = "authorText",
                 selectedTagList = persistentListOf(
                     QuoteTagUiState("Anxiety"),
@@ -166,33 +174,20 @@ class AdviceQuoteVM(
     private fun submitQuote() {
         viewModelScope.launch(getDispatcherIo()) {
             uiState.updateState { copy(isLoading = true) }
-            val result = repository.submitQuote(
+            repository.submitQuote(
                 quoteText = uiState.value.quoteText,
                 authorText = uiState.value.authorText,
                 tags = uiState.value.selectedTagList.map { it.tagName },
                 noteToInspector = uiState.value.noteToInspector,
                 isCheckedTruthForm = uiState.value.isCheckedTruthForm
-            ).asResult().collectLatest {
-                it.fold(
+            ).asResult().collectLatest { result ->
+                result.fold(
                     onSuccess = {
-                        uiState.updateState {
-                            copy(
-                                isLoading = false,
-                                quoteText = "",
-                                authorText = "",
-                                selectedTagList = persistentListOf(),
-                                noteToInspector = "",
-                                isCheckedTruthForm = false
-                            )
-                        }
+                        populateFirstState()
+                        snackbarDelegate.triggerSnackbarState(LanguageKey.quoteSentSuccessfully)
                     },
                     onFailure = {
-                        uiState.updateState {
-                            copy(
-                                isLoading = false
-                            )
-
-                        }
+                        onEvent(ShowError(it.message ?: LanguageKey.errorText))
                     })
             }
         }

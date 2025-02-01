@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
+import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarSetup
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarState
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
@@ -27,9 +28,9 @@ import com.oyetech.composebase.sharedScreens.quotes.views.AppInfoViewProperty
 import com.oyetech.languageModule.keyset.LanguageKey
 import org.koin.androidx.compose.koinViewModel
 
+@Suppress("FunctionName")
 @Composable
 fun QuoteSettingsScreenSetup(
-    modifier: Modifier = Modifier,
     navigationRoute: (navigationRoute: String) -> Unit = {},
     generalViewModel: GeneralOperationVM = koinViewModel(),
 ) {
@@ -59,7 +60,7 @@ fun QuoteSettingsScreenSetup(
 
 }
 
-@Suppress("FunctionName", "LongParameterList")
+@Suppress("FunctionName", "LongParameterList", "LongMethod")
 @Composable
 fun QuoteSettingsScreen(
 //    modifier: Modifier = Modifier,
@@ -90,6 +91,17 @@ fun QuoteSettingsScreen(
                 onClick = { startReviewOperation.invoke() },
                 text = "Rate us"
             )
+            if (uiState.isUserLoggedIn) {
+                HorizontalDivider(
+                    modifier = Modifier.height(1.dp)
+                )
+                SimpleSettingsInfoViewSetup(
+                    onClick = {
+                        navigationRoute.invoke(QuoteAppProjectRoutes.QuoteAdviceScreen.route)
+                    },
+                    text = "Advice Quote"
+                )
+            }
 
             HorizontalDivider(
                 modifier = Modifier.height(1.dp)

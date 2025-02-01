@@ -51,7 +51,12 @@ object FirebaseDBModule {
             )
         }
         single<FirebaseUserRepository> { FirebaseUserRepositoryImp(get()) }
-        single<FirebaseQuotesOperationRepository> { FirebaseQuotesOperationRepositoryImp(get()) }
+        single<FirebaseQuotesOperationRepository> {
+            FirebaseQuotesOperationRepositoryImp(
+                get(),
+                get(),
+            )
+        }
         single<FirebaseLanguageOperationRepository> { FirebaseLanguageOperationRepositoryImp(get()) }
 
 

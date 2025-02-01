@@ -13,7 +13,7 @@ Created by Erdi Özbek
 
 data class AdviceQuoteUiState(
     val isLoading: Boolean = false,
-    val isErrorText: String = "",
+    val errorText: String = "",
     val quoteText: String = "",
 
     val authorList: ImmutableList<QuoteAuthorUiState> = persistentListOf(),

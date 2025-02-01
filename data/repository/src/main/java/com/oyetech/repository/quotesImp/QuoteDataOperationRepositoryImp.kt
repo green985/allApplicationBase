@@ -3,9 +3,11 @@ package com.oyetech.repository.quotesImp
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
 import com.oyetech.domain.quotesDomain.quotesData.QuotesRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuotesOperationRepository
+import com.oyetech.models.quotes.responseModel.AdviceQuoteResponseData
 import com.oyetech.models.quotes.responseModel.QuoteAuthorResponseData
 import com.oyetech.models.quotes.responseModel.QuoteResponseData
 import com.oyetech.models.utils.const.HelperConstant
+import com.oyetech.quotes.dao.AdviceQuoteListDao
 import com.oyetech.quotes.dao.QuotesAllListDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -24,6 +26,7 @@ Created by Erdi Özbek
 class QuoteDataOperationRepositoryImp(
     private val quotesRepository: QuotesRepository,
     private val quotesAllListDao: QuotesAllListDao,
+    private val adviceQuotesListDao: AdviceQuoteListDao,
     private val firebaseQuotesOperationRepository: FirebaseQuotesOperationRepository,
 ) : QuoteDataOperationRepository {
 
@@ -81,21 +84,23 @@ class QuoteDataOperationRepositoryImp(
         tags: List<String>,
         noteToInspector: String,
         isCheckedTruthForm: Boolean,
-    ): Flow<Boolean> {
-
+    ): Flow<Unit> {
         return flow {
-//            val quoteResponseData = QuoteResponseData(
-//                id = "",
-//                text = quoteText,
-//                author = authorText,
-//                tags = tags,
-//                unseen = true,
-//                noteToInspector = noteToInspector,
-//                isCheckedTruthForm = isCheckedTruthForm
-//            )
-//            quotesAllListDao.insert(quoteResponseData)
-//            firebaseQuotesOperationRepository.saveListWithNoTag(listOf(quoteResponseData))
-            emit(true)
+            val adviceQuoteResponseData = AdviceQuoteResponseData(
+                quoteText = quoteText,
+                author = authorText,
+                tags = tags,
+                noteToInspector = if (noteToInspector.isBlank()) {
+                    null
+                } else {
+                    noteToInspector
+                }
+
+            )
+            adviceQuotesListDao.insert(adviceQuoteResponseData)
+            val result =
+                firebaseQuotesOperationRepository.submitAdviceQuote(adviceQuoteResponseData).first()
+            emit(result)
         }
     }
 

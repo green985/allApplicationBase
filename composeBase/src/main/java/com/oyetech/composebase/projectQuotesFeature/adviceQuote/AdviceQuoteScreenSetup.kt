@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.BuildConfig
 import com.oyetech.composebase.base.BaseScaffold
-import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
+import com.oyetech.composebase.baseViews.loadingErrors.ErrorDialogFullScreen
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.projectQuotesFeature.QuotesDimensions
 import com.oyetech.composebase.projectQuotesFeature.views.dialogs.GenericPopupMenuWithContentDialog
@@ -47,16 +47,16 @@ Created by Erdi Özbek
 -29.01.2025-
 -20:24-
  **/
-
+@Suppress("FunctionName")
 @Composable
 fun AdviceQuoteScreenSetup(
-    modifier: Modifier = Modifier,
     navigationRoute: (navigationRoute: String) -> Unit = {},
 ) {
     val vm = koinViewModel<AdviceQuoteVM>()
 
     val uiState by vm.uiState.collectAsStateWithLifecycle()
     val toolbarState by vm.toolbarUiState.collectAsStateWithLifecycle()
+    val onEvent = { event: AdviceQuoteEvent -> vm.onEvent(event) }
 
     BaseScaffold(topBarContent = {
         QuoteToolbarSetup(toolbarState) {
@@ -82,7 +82,22 @@ fun AdviceQuoteScreenSetup(
             selectedTagList = uiState.selectedTagList
         )
     }
+
+
+    if (uiState.isLoading) {
+        LoadingScreenFullSize()
+    }
+
+    if (uiState.errorText.isNotEmpty()) {
+        ErrorDialogFullScreen(
+            errorMessage = uiState.errorText,
+            onRetry = { onEvent(AdviceQuoteEvent.SubmitQuote) },
+            onDismiss = { onEvent(AdviceQuoteEvent.ShowError("")) }
+        )
+    }
 }
+
+@Suppress("FunctionName", "LongMethod", "MagicNumber")
 
 @Composable
 fun AdviceQuoteScreen(uiState: AdviceQuoteUiState, onEvent: ((AdviceQuoteEvent) -> Unit)) {
@@ -216,25 +231,16 @@ fun AdviceQuoteScreen(uiState: AdviceQuoteUiState, onEvent: ((AdviceQuoteEvent) 
     }
 
 
-    if (uiState.isLoading) {
-        LoadingScreenFullSize()
-    }
-
-    if (uiState.isErrorText.isNotEmpty()) {
-        ErrorScreenFullSize(
-            errorMessage = uiState.isErrorText,
-            onRetry = { onEvent(AdviceQuoteEvent.SubmitQuote) }
-        )
-    }
 }
 
+@Suppress("FunctionName", "UnusedPrivateMember", "MagicNumber")
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 private fun AdviceQuotePreview() {
     AdviceQuoteScreen(
         AdviceQuoteUiState(
             isLoading = false,
-            isErrorText = "",
+            errorText = "",
             quoteText = "",
             authorList = persistentListOf(),
             selectedAuthor = null,

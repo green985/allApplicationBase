@@ -19,6 +19,7 @@ object QuotesImpModule {
             QuoteDataOperationRepositoryImp(
                 get(),
                 get(),
+                get(),
                 get()
             )
         }

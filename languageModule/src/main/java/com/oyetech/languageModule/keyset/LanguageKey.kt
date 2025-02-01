@@ -11,6 +11,7 @@ Created by Erdi Özbek
  **/
 
 object LanguageKey {
+    var quoteSentSuccessfully set(value) {} get() = LocalLanguageHelper.getStringWithKey("Quote sent successfully")
     var adviceQuote set(value) {} get() = LocalLanguageHelper.getStringWithKey("adviceQuote")
     var commentLoginButtonText set(value) {} get() = LocalLanguageHelper.getStringWithKey("commentLoginButtonText")
     var usernameInfoText set(value) {} get() = LocalLanguageHelper.getStringWithKey("usernameInfoText")

@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
 import com.oyetech.dao.BaseDao
+import com.oyetech.models.quotes.responseModel.AdviceQuoteResponseData
 import com.oyetech.models.quotes.responseModel.QuoteResponseData
 
 /**
@@ -50,5 +51,24 @@ interface QuotesAllListDao : BaseDao<QuoteResponseData> {
 
     @Query("UPDATE quoteDataModel SET isSeen = 1 WHERE quoteId = :quoteId")
     fun setSeenQuote(quoteId: String)
+
+}
+
+@Dao
+interface AdviceQuoteListDao : BaseDao<AdviceQuoteResponseData> {
+
+    @Query("SELECT * FROM adviceQuoteList " + " ")
+    fun getQuoteLastList(): List<AdviceQuoteResponseData>?
+
+    @Query("delete FROM quoteDataModel " + "WHERE quoteId in (:idList)")
+    fun deleteLastList(idList: List<String>): Int
+
+    @Query("delete FROM quoteDataModel ")
+    fun deleteAllList()
+
+    @Transaction
+    fun insertLastList(list: List<AdviceQuoteResponseData>) {
+        insert(list)
+    }
 
 }
