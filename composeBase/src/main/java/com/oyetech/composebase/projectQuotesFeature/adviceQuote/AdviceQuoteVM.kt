@@ -5,6 +5,7 @@ import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteEvent.RemoveTag
 import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteEvent.SelectAuthor
 import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteEvent.SelectTag
+import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteEvent.SetDummyData
 import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteEvent.SetLoading
 import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteEvent.ShowError
 import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteEvent.SubmitQuote
@@ -25,6 +26,8 @@ import com.oyetech.models.utils.helper.updateState
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -54,11 +57,11 @@ class AdviceQuoteVM(
     fun populateFirstState() {
         val tagListSmall = QuotesTagResponseData.getTopicsList().subList(0, 4).map {
             QuoteTagUiState(it)
-        }
+        }.toImmutableList()
         val tagListLarge = QuotesTagResponseData.getTopicsList()
             .subList(4, QuotesTagResponseData.getTopicsList().size).map {
                 QuoteTagUiState(it)
-            }
+            }.toImmutableList()
 
         uiState.updateState {
             copy(
@@ -68,7 +71,9 @@ class AdviceQuoteVM(
         }
     }
 
+    @Suppress("CyclomaticComplexMethod")
     fun onEvent(event: AdviceQuoteEvent) {
+
         when (event) {
             is UpdateQuoteText -> {
                 uiState.updateState { copy(quoteText = event.quoteText) }
@@ -87,22 +92,26 @@ class AdviceQuoteVM(
             }
 
             is UpdateTagListSmall -> {
-                uiState.updateState { copy(tagListSmall = event.tagList) }
+                uiState.updateState { copy(tagListSmall = event.tagList.toImmutableList()) }
             }
 
             is UpdateTagListLarge -> {
-                uiState.updateState { copy(tagListLarge = event.tagList) }
+                uiState.updateState { copy(tagListLarge = event.tagList.toImmutableList()) }
             }
 
             is SelectTag -> {
+                var selectedTaggList = uiState.value.selectedTagList.toPersistentList()
+                selectedTaggList = selectedTaggList.add(event.tag)
                 uiState.updateState {
-                    copy(selectedTagList = tmpSelectedTagList + event.tag)
+                    copy(selectedTagList = selectedTaggList.toImmutableList())
                 }
             }
 
             is RemoveTag -> {
+                var selectedTaggList = uiState.value.selectedTagList.toPersistentList()
+                selectedTaggList = selectedTaggList.remove(event.tag)
                 uiState.updateState {
-                    copy(selectedTagList = selectedTagList - event.tag)
+                    copy(selectedTagList = selectedTaggList.toImmutableList())
                 }
             }
 
@@ -120,6 +129,37 @@ class AdviceQuoteVM(
             is SetLoading -> TODO()
             is ShowError -> TODO()
             is UpdateAuthorList -> TODO()
+            SetDummyData -> {
+                setDummyDatas()
+            }
+        }
+        validateAndSetSendButtonState()
+    }
+
+    private fun validateAndSetSendButtonState() {
+        uiState.updateState {
+            copy(
+                isSendButtonEnabled =
+                isCheckedTruthForm &&
+                        uiState.value.quoteText.isNotEmpty() &&
+                        uiState.value.authorText.isNotEmpty() &&
+                        uiState.value.selectedTagList.isNotEmpty()
+            )
+        }
+    }
+
+    fun setDummyDatas() {
+        uiState.updateState {
+            copy(
+                quoteText = "quoteText",
+                authorText = "authorText",
+                selectedTagList = persistentListOf(
+                    QuoteTagUiState("Anxiety"),
+                    QuoteTagUiState("Death")
+                ),
+                noteToInspector = "noteToInspector",
+                isCheckedTruthForm = true
+            )
         }
     }
 

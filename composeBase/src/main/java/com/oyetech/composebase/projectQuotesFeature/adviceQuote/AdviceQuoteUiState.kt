@@ -2,6 +2,7 @@ package com.oyetech.composebase.projectQuotesFeature.adviceQuote
 
 import com.oyetech.composebase.projectQuotesFeature.authorListScreen.QuoteAuthorUiState
 import com.oyetech.composebase.sharedScreens.quotes.tagList.QuoteTagUiState
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 /**
@@ -15,16 +16,16 @@ data class AdviceQuoteUiState(
     val isErrorText: String = "",
     val quoteText: String = "",
 
-    val authorList: List<QuoteAuthorUiState> = persistentListOf(),
+    val authorList: ImmutableList<QuoteAuthorUiState> = persistentListOf(),
     val selectedAuthor: QuoteAuthorUiState? = null,
     val authorText: String = "",
 
     val noteToInspector: String = "",
 
     val isExpandTagList: Boolean = false,
-    val tagListSmall: List<QuoteTagUiState> = persistentListOf(),
-    val tagListLarge: List<QuoteTagUiState> = persistentListOf(),
-    val selectedTagList: List<QuoteTagUiState> = persistentListOf(),
+    val tagListSmall: ImmutableList<QuoteTagUiState> = persistentListOf(),
+    val tagListLarge: ImmutableList<QuoteTagUiState> = persistentListOf(),
+    val selectedTagList: ImmutableList<QuoteTagUiState> = persistentListOf(),
 
     val inspectorOperationInfoText: String = "", // info text for the user about what for this field
 
@@ -52,4 +53,5 @@ sealed class AdviceQuoteEvent {
     data class ToggleTruthForm(val isChecked: Boolean) : AdviceQuoteEvent()
 
     object SubmitQuote : AdviceQuoteEvent()
+    object SetDummyData : AdviceQuoteEvent()
 }

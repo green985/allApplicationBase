@@ -14,4 +14,10 @@ object DialogHelper {
         usePlatformDefaultWidth = false,
         decorFitsSystemWindows = true
     )
+    val fullScreenDialogPropertiesCanDismiss = DialogProperties(
+        dismissOnBackPress = true,
+        dismissOnClickOutside = true,
+        usePlatformDefaultWidth = false,
+        decorFitsSystemWindows = true
+    )
 }

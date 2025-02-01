@@ -10,8 +10,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -23,13 +28,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.oyetech.composebase.BuildConfig
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
+import com.oyetech.composebase.projectQuotesFeature.QuotesDimensions
+import com.oyetech.composebase.projectQuotesFeature.views.dialogs.GenericPopupMenuWithContentDialog
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarEvent
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarSetup
 import com.oyetech.composebase.sharedScreens.quotes.tagList.QuoteTagUiState
 import com.oyetech.models.quotes.responseModel.QuotesTagResponseData
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -64,14 +74,24 @@ fun AdviceQuoteScreenSetup(
         }
     }
 
+    if (uiState.isExpandTagList) {
+        GenericPopupMenuWithContentDialog(
+            onEvent = { vm.onEvent(it) },
+            onDismiss = { vm.onEvent(AdviceQuoteEvent.ToggleExpandTagList(false)) },
+            tagList = uiState.tagListLarge,
+            selectedTagList = uiState.selectedTagList
+        )
+    }
 }
 
 @Composable
 fun AdviceQuoteScreen(uiState: AdviceQuoteUiState, onEvent: ((AdviceQuoteEvent) -> Unit)) {
 
+    val scrollState = androidx.compose.foundation.rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(scrollState)
             .padding(16.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -94,43 +114,69 @@ fun AdviceQuoteScreen(uiState: AdviceQuoteUiState, onEvent: ((AdviceQuoteEvent) 
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text("Tags", style = MaterialTheme.typography.bodyLarge)
-
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(4.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(
-                    items = uiState.tagListSmall,
-                    key = { it.tagName },
-                    itemContent = { tag ->
-                        InputChip(
-                            modifier = Modifier.weight(1f),
-                            selected = uiState.selectedTagList.contains(tag),
-                            onClick = {
-                                if (uiState.selectedTagList.contains(tag)) {
-                                    onEvent(AdviceQuoteEvent.RemoveTag(tag))
-                                } else {
-                                    onEvent(AdviceQuoteEvent.SelectTag(tag))
-                                }
-                            },
-                            label = { Text(tag.tagName) }
-                        )
-                    }
-                )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Tags", style = MaterialTheme.typography.bodyLarge)
+                if (uiState.selectedTagList.size > 0) {
+                    Text(
+                        modifier = Modifier.padding(start = 8.dp),
+                        text = uiState.selectedTagList.size.toString(),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
 
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                LazyRow(
+                    modifier = Modifier
+                        .padding(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(
+                        items = uiState.tagListSmall,
+                        key = { it.tagName },
+                        itemContent = { tag ->
+                            InputChip(
+                                modifier = Modifier.weight(1f),
+                                selected = uiState.selectedTagList.contains(tag),
+                                onClick = {
+                                    if (uiState.selectedTagList.contains(tag)) {
+                                        onEvent(AdviceQuoteEvent.RemoveTag(tag))
+                                    } else {
+                                        onEvent(AdviceQuoteEvent.SelectTag(tag))
+                                    }
+                                },
+                                label = { Text(tag.tagName) }
+                            )
+                        }
+                    )
 
+                }
+                IconButton(modifier = Modifier.weight(1f), onClick = {
+                    onEvent(AdviceQuoteEvent.ToggleExpandTagList(!uiState.isExpandTagList))
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = "Expand More"
+                    )
+                }
+            }
+
+
+
+            Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
                 value = uiState.noteToInspector,
                 onValueChange = { onEvent(AdviceQuoteEvent.UpdateNoteToInspector(it)) },
-                label = { Text("Note to Inspector") },
+                label = {
+                    Column {
+                        Text("Note to Inspector", style = MaterialTheme.typography.bodyMedium)
+                        Text("Optional*", style = MaterialTheme.typography.bodySmall)
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             )
+
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -146,15 +192,29 @@ fun AdviceQuoteScreen(uiState: AdviceQuoteUiState, onEvent: ((AdviceQuoteEvent) 
             }
         }
 
-        Button(
+        if (BuildConfig.DEBUG) {
+            FilledTonalButton(
+                onClick = { onEvent(AdviceQuoteEvent.SetDummyData) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 32.dp)
+            ) {
+                Text("Set dummy data")
+            }
+        }
+
+        FilledTonalButton(
             onClick = { onEvent(AdviceQuoteEvent.SubmitQuote) },
             enabled = uiState.isSendButtonEnabled,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(QuotesDimensions.buttonHeight)
+                .padding(bottom = 32.dp)
         ) {
             Text("Send Quote")
         }
-        Spacer(modifier = Modifier.height(32.dp))
     }
+
 
     if (uiState.isLoading) {
         LoadingScreenFullSize()
@@ -176,16 +236,18 @@ private fun AdviceQuotePreview() {
             isLoading = false,
             isErrorText = "",
             quoteText = "",
-            authorList = listOf(),
+            authorList = persistentListOf(),
             selectedAuthor = null,
             authorText = "",
             noteToInspector = "",
-            isExpandTagList = false,
+            isExpandTagList = true,
             tagListSmall = QuotesTagResponseData.getTopicsList().subList(0, 4).map {
                 QuoteTagUiState(it)
-            },
-            tagListLarge = listOf(),
-            selectedTagList = listOf(),
+            }.toImmutableList(),
+            tagListLarge = QuotesTagResponseData.getTopicsList().subList(4, 15).map {
+                QuoteTagUiState(it)
+            }.toImmutableList(),
+            selectedTagList = persistentListOf(),
             inspectorOperationInfoText = "",
             isCheckedTruthForm = false,
             isSendButtonEnabled = false
