@@ -1,10 +1,10 @@
-package com.oyetech.composebase.sharedScreens.quotes.listScreen
+package com.oyetech.composebase.projectQuotesFeature.quotes.listScreen
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.oyetech.composebase.base.baseList.ComplexItemListState
-import com.oyetech.composebase.sharedScreens.quotes.randomQuotesViewer.mapToUiState
-import com.oyetech.composebase.sharedScreens.quotes.uiState.QuoteUiState
+import com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer.mapToUiState
+import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteUiState
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers

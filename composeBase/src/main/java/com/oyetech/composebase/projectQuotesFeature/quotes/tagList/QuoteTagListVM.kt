@@ -1,4 +1,4 @@
-package com.oyetech.composebase.sharedScreens.quotes.tagList
+package com.oyetech.composebase.projectQuotesFeature.quotes.tagList
 
 import androidx.compose.runtime.mutableStateOf
 import com.oyetech.composebase.R

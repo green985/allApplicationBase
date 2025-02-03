@@ -1,7 +1,7 @@
 package com.oyetech.composebase.projectQuotesFeature.adviceQuote
 
 import com.oyetech.composebase.projectQuotesFeature.authorListScreen.QuoteAuthorUiState
-import com.oyetech.composebase.sharedScreens.quotes.tagList.QuoteTagUiState
+import com.oyetech.composebase.projectQuotesFeature.quotes.tagList.QuoteTagUiState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 

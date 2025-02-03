@@ -8,9 +8,9 @@ import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteScree
 import com.oyetech.composebase.projectQuotesFeature.authorListScreen.AuthorListScreen
 import com.oyetech.composebase.projectQuotesFeature.homeScreen.QuotesHomeScreenSetup
 import com.oyetech.composebase.projectQuotesFeature.quoteSettingsScreen.QuoteSettingsScreenSetup
+import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailScreenSetup
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.navigateRouteOperation
 import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
-import com.oyetech.composebase.sharedScreens.quotes.detail.QuoteDetailScreenSetup
 
 @Suppress("LongMethod")
 fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {

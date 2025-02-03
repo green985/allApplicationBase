@@ -2,7 +2,7 @@ package com.oyetech.composebase.mappers.mapToUi
 
 import androidx.core.text.parseAsHtml
 import com.oyetech.composebase.helpers.viewProperties.toAnnotatedString
-import com.oyetech.composebase.sharedScreens.quotes.uiState.QuoteUiState
+import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteUiState
 import com.oyetech.models.quotes.responseModel.QuoteResponseData
 
 /**

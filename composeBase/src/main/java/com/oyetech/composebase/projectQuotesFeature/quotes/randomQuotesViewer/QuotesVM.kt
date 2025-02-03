@@ -1,4 +1,4 @@
-package com.oyetech.composebase.sharedScreens.quotes.randomQuotesViewer
+package com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -7,10 +7,10 @@ import androidx.paging.cachedIn
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.baseList.ComplexItemListState
 import com.oyetech.composebase.mappers.mapToUi.QuotesMappers.mapToQuoteUiState
-import com.oyetech.composebase.sharedScreens.quotes.listScreen.QuotePagingSource
-import com.oyetech.composebase.sharedScreens.quotes.uiState.QuoteListUiEvent
-import com.oyetech.composebase.sharedScreens.quotes.uiState.QuoteListUiEvent.QuoteSeen
-import com.oyetech.composebase.sharedScreens.quotes.uiState.QuoteUiState
+import com.oyetech.composebase.projectQuotesFeature.quotes.listScreen.QuotePagingSource
+import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteListUiEvent
+import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteListUiEvent.QuoteSeen
+import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteUiState
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
 import com.oyetech.models.quotes.responseModel.QuoteResponseData
 import kotlinx.coroutines.flow.Flow

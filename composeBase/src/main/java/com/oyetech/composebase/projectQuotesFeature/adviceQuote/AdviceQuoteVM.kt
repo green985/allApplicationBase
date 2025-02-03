@@ -18,8 +18,8 @@ import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteEvent
 import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteEvent.UpdateQuoteText
 import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteEvent.UpdateTagListLarge
 import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteEvent.UpdateTagListSmall
+import com.oyetech.composebase.projectQuotesFeature.quotes.tagList.QuoteTagUiState
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarState
-import com.oyetech.composebase.sharedScreens.quotes.tagList.QuoteTagUiState
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.quotes.responseModel.QuotesTagResponseData

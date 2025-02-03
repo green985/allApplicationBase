@@ -1,4 +1,4 @@
-package com.oyetech.composebase.sharedScreens.quotes.randomQuotesViewer
+package com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.oyetech.composebase.sharedScreens.quotes.uiState.QuoteListUiEvent
+import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteListUiEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

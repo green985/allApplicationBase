@@ -1,4 +1,4 @@
-package com.oyetech.composebase.sharedScreens.quotes.detail
+package com.oyetech.composebase.projectQuotesFeature.quotes.detail
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,16 +17,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.R
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenWithContentScreenSetup
+import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.ClickNextButton
+import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.ClickPreviousButton
+import com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer.RandomQuotesSmallView
+import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteUiState
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarEvent
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarEvent.BackButtonClick
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarEvent.OnActionButtonClick
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarSetup
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarState
 import com.oyetech.composebase.projectRadioFeature.RadioDimensions
-import com.oyetech.composebase.sharedScreens.quotes.detail.QuoteDetailEvent.ClickNextButton
-import com.oyetech.composebase.sharedScreens.quotes.detail.QuoteDetailEvent.ClickPreviousButton
-import com.oyetech.composebase.sharedScreens.quotes.randomQuotesViewer.RandomQuotesSmallView
-import com.oyetech.composebase.sharedScreens.quotes.uiState.QuoteUiState
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 

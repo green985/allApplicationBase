@@ -1,4 +1,4 @@
-package com.oyetech.composebase.sharedScreens.quotes.listScreen
+package com.oyetech.composebase.projectQuotesFeature.quotes.listScreen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -7,9 +7,9 @@ import androidx.compose.ui.Modifier
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.basePagingList.BasePagingListScreen
-import com.oyetech.composebase.sharedScreens.quotes.randomQuotesViewer.QuotesVM
-import com.oyetech.composebase.sharedScreens.quotes.randomQuotesViewer.RandomQuotesSmallView
-import com.oyetech.composebase.sharedScreens.quotes.uiState.QuoteListUiEvent.QuoteSeen
+import com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer.QuotesVM
+import com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer.RandomQuotesSmallView
+import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteListUiEvent.QuoteSeen
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 

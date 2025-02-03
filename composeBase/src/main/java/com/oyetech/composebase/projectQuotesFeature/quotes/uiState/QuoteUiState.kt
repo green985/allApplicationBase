@@ -1,4 +1,4 @@
-package com.oyetech.composebase.sharedScreens.quotes.uiState
+package com.oyetech.composebase.projectQuotesFeature.quotes.uiState
 
 import androidx.compose.ui.text.AnnotatedString
 

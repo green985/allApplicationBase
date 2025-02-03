@@ -33,10 +33,10 @@ import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorDialogFullScreen
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.projectQuotesFeature.QuotesDimensions
+import com.oyetech.composebase.projectQuotesFeature.quotes.tagList.QuoteTagUiState
 import com.oyetech.composebase.projectQuotesFeature.views.dialogs.GenericPopupMenuWithContentDialog
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarEvent
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarSetup
-import com.oyetech.composebase.sharedScreens.quotes.tagList.QuoteTagUiState
 import com.oyetech.models.quotes.responseModel.QuotesTagResponseData
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList

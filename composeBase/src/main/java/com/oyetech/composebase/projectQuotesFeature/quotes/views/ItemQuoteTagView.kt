@@ -1,4 +1,4 @@
-package com.oyetech.composebase.sharedScreens.quotes.views
+package com.oyetech.composebase.projectQuotesFeature.quotes.views
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background

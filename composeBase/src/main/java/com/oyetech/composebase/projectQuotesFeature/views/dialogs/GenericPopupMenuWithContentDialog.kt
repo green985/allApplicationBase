@@ -21,7 +21,7 @@ import com.oyetech.composebase.helpers.viewProperties.DialogHelper
 import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteEvent
 import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteEvent.RemoveTag
 import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteEvent.SelectTag
-import com.oyetech.composebase.sharedScreens.quotes.tagList.QuoteTagUiState
+import com.oyetech.composebase.projectQuotesFeature.quotes.tagList.QuoteTagUiState
 
 @Composable
 fun GenericPopupMenuWithContentDialog(

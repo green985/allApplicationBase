@@ -4,7 +4,7 @@ import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteVM
 import com.oyetech.composebase.projectQuotesFeature.authorListScreen.AuthorListVM
 import com.oyetech.composebase.projectQuotesFeature.homeScreen.QuotesHomeScreenVm
 import com.oyetech.composebase.projectQuotesFeature.quoteSettingsScreen.QuoteSettingsVm
-import com.oyetech.composebase.sharedScreens.quotes.detail.QuoteDetailVm
+import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailVm
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 

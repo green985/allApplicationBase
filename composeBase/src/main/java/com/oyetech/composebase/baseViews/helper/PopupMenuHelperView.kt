@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteEvent
-import com.oyetech.composebase.sharedScreens.quotes.tagList.QuoteTagUiState
+import com.oyetech.composebase.projectQuotesFeature.quotes.tagList.QuoteTagUiState
 
 /**
 Created by Erdi Özbek

@@ -1,4 +1,4 @@
-package com.oyetech.composebase.sharedScreens.quotes.tagList
+package com.oyetech.composebase.projectQuotesFeature.quotes.tagList
 
 /**
 Created by Erdi Özbek

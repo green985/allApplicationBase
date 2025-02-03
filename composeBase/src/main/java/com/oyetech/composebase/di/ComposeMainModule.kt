@@ -9,6 +9,8 @@ import com.oyetech.composebase.helpers.adViewDelegate.AdViewOperationDelegate
 import com.oyetech.composebase.helpers.adViewDelegate.AdViewOperationDelegateImpl
 import com.oyetech.composebase.helpers.vibrationHelper.IVibrationHelper
 import com.oyetech.composebase.helpers.vibrationHelper.VibrationHelperImpl
+import com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer.QuotesVM
+import com.oyetech.composebase.projectQuotesFeature.quotes.tagList.QuoteTagListVM
 import com.oyetech.composebase.projectRadioFeature.helper.RadioListSortRepositoryImp
 import com.oyetech.composebase.projectRadioFeature.screens.countryList.CountryVM
 import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.GeneralOperationVM
@@ -26,8 +28,6 @@ import com.oyetech.composebase.projectRadioFeature.viewModelSlice.IRadioFavViewM
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.IRadioPlayerViewModelSlice
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.RadioFavViewModelSliceImp
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.RadioPlayerViewModelSliceImp
-import com.oyetech.composebase.sharedScreens.quotes.randomQuotesViewer.QuotesVM
-import com.oyetech.composebase.sharedScreens.quotes.tagList.QuoteTagListVM
 import com.oyetech.domain.repository.helpers.logicRepositories.RadioListSortRepository
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.singleOf

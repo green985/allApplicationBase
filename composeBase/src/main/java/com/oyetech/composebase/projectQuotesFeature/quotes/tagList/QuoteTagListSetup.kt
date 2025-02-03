@@ -1,4 +1,4 @@
-package com.oyetech.composebase.sharedScreens.quotes.tagList
+package com.oyetech.composebase.projectQuotesFeature.quotes.tagList
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,8 +12,8 @@ import com.oyetech.composebase.base.baseList.ListUIEvent
 import com.oyetech.composebase.base.baseList.LoadableLazyColumn
 import com.oyetech.composebase.base.baseList.rememberLoadableLazyColumnState
 import com.oyetech.composebase.helpers.viewProperties.gridItems
+import com.oyetech.composebase.projectQuotesFeature.quotes.views.ItemQuoteTagView
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarSetup
-import com.oyetech.composebase.sharedScreens.quotes.views.ItemQuoteTagView
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 

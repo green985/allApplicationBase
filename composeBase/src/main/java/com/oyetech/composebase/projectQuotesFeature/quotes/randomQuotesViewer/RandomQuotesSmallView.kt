@@ -1,4 +1,4 @@
-package com.oyetech.composebase.sharedScreens.quotes.randomQuotesViewer
+package com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,8 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
+import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteUiState
 import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
-import com.oyetech.composebase.sharedScreens.quotes.uiState.QuoteUiState
 
 /**
 Created by Erdi Özbek

@@ -1,4 +1,4 @@
-package com.oyetech.composebase.sharedScreens.quotes.views
+package com.oyetech.composebase.projectQuotesFeature.quotes.views
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
