@@ -16,3 +16,10 @@ interface FirebaseQuotesOperationRepository {
     fun saveListWithNoTag(list: List<QuoteResponseData>)
     suspend fun submitAdviceQuote(quote: AdviceQuoteResponseData): Flow<Unit>
 }
+
+interface FirebaseQuotesDebugOperationRepository {
+    //    fun getNotApprovedAdviceQuoteList(): Flow<List<AdviceQuoteResponseData>>
+//    fun getApprovedAdviceQuoteList(): Flow<List<AdviceQuoteResponseData>>
+    fun getAllAdviceQuoteList(): Flow<List<AdviceQuoteResponseData>>
+    fun approveAdviceQuote(documentId: String): Flow<Unit>
+}

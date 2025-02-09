@@ -31,6 +31,10 @@ object StringHelper {
         }
     }
 
+    fun String.toUniqString(): String {
+        return this + generateRandomGuid()
+    }
+
     fun generateRandomGuid(): String {
         return UUID.randomUUID().toString()
     }

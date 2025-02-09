@@ -22,13 +22,14 @@ Created by Erdi Özbek
 @JsonClass(generateAdapter = true)
 @Parcelize
 data class AdviceQuoteResponseData(
-    val quoteText: String,
+    var quoteText: String = "",
+    var documentId: String = "",
     @PrimaryKey
     var quoteId: String = quoteText.toMd5WithFixedLength(),
-    val author: String,
-    val tags: List<String>,
-    val noteToInspector: String? = null,
+    var author: String = "",
+    var tags: List<String> = emptyList(),
+    var noteToInspector: String? = null,
     @Json(name = "createdAt")
     var createdAt: Long = Date().time,
-    val status: String = "Idle",
+    var status: String = "Idle",
 ) : Parcelable

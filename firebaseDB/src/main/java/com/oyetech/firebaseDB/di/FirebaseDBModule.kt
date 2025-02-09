@@ -3,6 +3,7 @@ package com.oyetech.firebaseDB.di
 import com.google.firebase.firestore.FirebaseFirestore
 import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseLanguageOperationRepository
+import com.oyetech.domain.repository.firebase.FirebaseQuotesDebugOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuotesOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.firebase.RadioAnalyticsOperationRepository
@@ -51,7 +52,15 @@ object FirebaseDBModule {
             )
         }
         single<FirebaseUserRepository> { FirebaseUserRepositoryImp(get()) }
+
         single<FirebaseQuotesOperationRepository> {
+            FirebaseQuotesOperationRepositoryImp(
+                get(),
+                get(),
+            )
+        }
+
+        single<FirebaseQuotesDebugOperationRepository> {
             FirebaseQuotesOperationRepositoryImp(
                 get(),
                 get(),

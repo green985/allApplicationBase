@@ -63,6 +63,8 @@ class QuoteMainActivity : ComponentActivity() {
                 content.viewTreeObserver.addOnPreDrawListener(
                     object : ViewTreeObserver.OnPreDrawListener {
                         override fun onPreDraw(): Boolean {
+                            true
+
                             // Check whether the initial data is ready.
                             return if (loginOperationRepository.userAutoLoginStateFlow.value) {
                                 // The content is ready. Start drawing.

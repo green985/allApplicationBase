@@ -6,7 +6,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.oyetech.composebase.base.BaseScaffold
+import com.oyetech.composebase.baseViews.basePagingList.BasePagingListScreen
+import com.oyetech.tools.stringHelper.StringHelper.toUniqString
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -24,7 +28,15 @@ fun AdviceQuoteDebugScreenSetup(
 
     val uiState by vm.uiState.collectAsStateWithLifecycle()
 
-    AdviceQuoteDebugScreen(modifier = modifier, uiState = uiState, onEvent = { vm.onEvent(it) })
+    val lazyPagingItems = vm.adviceQuotesPage.collectAsLazyPagingItems()
+
+
+    AdviceQuoteDebugScreen(
+        modifier = modifier,
+        uiState = uiState,
+        onEvent = { vm.onEvent(it) },
+        lazyPagingItems
+    )
 
 }
 
@@ -32,11 +44,22 @@ fun AdviceQuoteDebugScreenSetup(
 fun AdviceQuoteDebugScreen(
     modifier: Modifier = Modifier,
     uiState: AdviceQuoteDebugUiState,
-    onEvent: (AdviceQuoteDebugEvent) -> (Unit),
+    onEvent: (AdviceQuoteDebugEvent) -> Unit,
+    lazyPagingItems: LazyPagingItems<ItemAdviceQuoteDebugUiState>,
 ) {
+
     BaseScaffold {
         Column(modifier = Modifier.padding()) {
-
+            BasePagingListScreen(
+                items = lazyPagingItems, // This parameter is abstracted, not used here
+                itemKey = { quote -> quote.quoteId.toUniqString() },
+                onBindItem = { quote ->
+                    AdviceQuoteOperationView(
+                        uiState = quote,
+                        onEvent = { onEvent.invoke(it) }
+                    )
+                },
+            )
         }
     }
 

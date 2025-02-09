@@ -2,6 +2,7 @@ package com.oyetech.composebase.projectQuotesFeature
 
 import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteVM
 import com.oyetech.composebase.projectQuotesFeature.authorListScreen.AuthorListVM
+import com.oyetech.composebase.projectQuotesFeature.debug.adviceQuote.AdviceQuoteDebugVm
 import com.oyetech.composebase.projectQuotesFeature.homeScreen.QuotesHomeScreenVm
 import com.oyetech.composebase.projectQuotesFeature.quoteSettingsScreen.QuoteSettingsVm
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailVm
@@ -21,5 +22,6 @@ object QuotesProjectModule {
         viewModelOf(::QuoteDetailVm)
         viewModelOf(::AdviceQuoteVM)
         viewModelOf(::QuoteSettingsVm)
+        viewModelOf(::AdviceQuoteDebugVm)
     }
 }

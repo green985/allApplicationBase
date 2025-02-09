@@ -11,3 +11,13 @@ enum class AdviceQuoteStatusEnum {
     Approved,
     Idle
 }
+
+// write string to enum translator
+fun String.toAdviceQuoteStatusEnum(): AdviceQuoteStatusEnum {
+    return when (this) {
+        "Rejected" -> AdviceQuoteStatusEnum.Rejected
+        "Approved" -> AdviceQuoteStatusEnum.Approved
+        "Idle" -> AdviceQuoteStatusEnum.Idle
+        else -> AdviceQuoteStatusEnum.Idle
+    }
+}

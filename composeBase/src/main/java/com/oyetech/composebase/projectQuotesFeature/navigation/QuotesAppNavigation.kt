@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteScreenSetup
 import com.oyetech.composebase.projectQuotesFeature.authorListScreen.AuthorListScreen
+import com.oyetech.composebase.projectQuotesFeature.debug.adviceQuote.AdviceQuoteDebugScreenSetup
 import com.oyetech.composebase.projectQuotesFeature.homeScreen.QuotesHomeScreenSetup
 import com.oyetech.composebase.projectQuotesFeature.quoteSettingsScreen.QuoteSettingsScreenSetup
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailScreenSetup
@@ -42,5 +43,9 @@ fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
 
     composable(QuoteAppProjectRoutes.QuoteSettings.route) {
         QuoteSettingsScreenSetup(navigationRoute = navigateRouteOperation(navController))
+    }
+
+    composable(QuoteAppProjectRoutes.AdviceQuoteDebug.route) {
+        AdviceQuoteDebugScreenSetup(navigationRoute = navigateRouteOperation(navController))
     }
 }
