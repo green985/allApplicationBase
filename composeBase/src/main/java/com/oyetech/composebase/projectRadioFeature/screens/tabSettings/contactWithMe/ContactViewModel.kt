@@ -3,7 +3,9 @@ package com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactW
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
+import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.domain.repository.helpers.FirebaseContactWithMeOperationRepository
+import com.oyetech.languageModule.keyset.LanguageKey
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -13,6 +15,7 @@ import timber.log.Timber
 class ContactViewModel(
     appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     private val firebaseDBOperationRepository: FirebaseContactWithMeOperationRepository,
+    private val snackbarDelegate: SnackbarDelegate,
 ) : BaseViewModel(appDispatchers) {
     private val _uiState = MutableStateFlow(ContactUIState())
     val uiState: StateFlow<ContactUIState> = _uiState
@@ -56,6 +59,7 @@ class ContactViewModel(
             firebaseDBOperationRepository.sendFeedbackOperationStateFlow.collectLatest {
                 _uiState.updateState {
                     Timber.d(" ContactViewModel sendContactWithMeData: $it")
+                    snackbarDelegate.triggerSnackbarState(LanguageKey.contactWithUsSentSuccessfully)
                     ContactUIState(isContactWasSent = true)
                 }
             }

@@ -2,6 +2,8 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
+    id("kotlinx-serialization")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -59,13 +61,12 @@ dependencies {
     debugImplementation(Libraries.composeUiTestManifest)
     implementation(Libraries.material3)
 
-
-
-    // Test dependencies
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(Libraries.composeUiTestJunit4)
+//
+//    // Test dependencies
+//    testImplementation("junit:junit:4.13.2")
+//    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+//    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+//    androidTestImplementation(Libraries.composeUiTestJunit4)
     // Debug dependencies
 
     implementation(project(Modules.domain))
@@ -79,11 +80,11 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.8")
 
-    implementation("androidx.compose.runtime:runtime:1.7.6")
+    implementation("androidx.compose.runtime:runtime:1.7.7")
 
-    implementation("androidx.navigation:navigation-compose:2.8.1")
-    implementation("androidx.compose.foundation:foundation:1.7.5")
-    implementation("androidx.navigation:navigation-runtime-ktx:2.8.1")
+    implementation("androidx.navigation:navigation-compose:2.8.6")
+    implementation("androidx.compose.foundation:foundation:1.7.7")
+    implementation("androidx.navigation:navigation-runtime-ktx:2.8.6")
     implementation(Libraries.koinCompose)
     implementation(project.dependencies.platform("io.insert-koin:koin-bom:${Versions.koin}"))
     implementation("io.insert-koin:koin-core")
@@ -91,5 +92,6 @@ dependencies {
     implementation("io.insert-koin:koin-androidx-compose-navigation")
 
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3") // En güncel sürümü kullanabilirsin
 
 }

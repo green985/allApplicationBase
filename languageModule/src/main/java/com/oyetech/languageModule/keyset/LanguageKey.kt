@@ -11,6 +11,12 @@ Created by Erdi Özbek
  **/
 
 object LanguageKey {
+    var rateUs set(value) {} get() = LocalLanguageHelper.getStringWithKey("rateUs")
+    var contactWithUs set(value) {} get() = LocalLanguageHelper.getStringWithKey("contactWithUs")
+    var contactWithUsSentSuccessfully
+        set(value) {}
+        get() =
+            LocalLanguageHelper.getStringWithKey("contactWithUsSentSuccessfully")
     var quoteSentSuccessfully set(value) {} get() = LocalLanguageHelper.getStringWithKey("Quote sent successfully")
     var adviceQuote set(value) {} get() = LocalLanguageHelper.getStringWithKey("adviceQuote")
     var commentLoginButtonText set(value) {} get() = LocalLanguageHelper.getStringWithKey("commentLoginButtonText")
@@ -36,7 +42,11 @@ object LanguageKey {
     var deleteUserErrorMessage set(value) {} get() = LocalLanguageHelper.getStringWithKey("deleteAccountButtonText")
 
     var generalErrorText set(value) {} get() = LocalLanguageHelper.getStringWithKey("Error")
-    var internetConnectionErrorText set(value) {} get() = LocalLanguageHelper.getStringWithKey("internetConnectionErrorText")
+    var appName set(value) {} get() = LocalLanguageHelper.getStringWithKey("Thought Nest")
+    var internetConnectionErrorText
+        set(value) {}
+        get() =
+            LocalLanguageHelper.getStringWithKey("internetConnectionErrorText")
     var login set(value) {} get() = LocalLanguageHelper.getStringWithKey("Login")
     var denemeKey set(value) {} get() = LocalLanguageHelper.getStringWithKey("denemeKey")
 

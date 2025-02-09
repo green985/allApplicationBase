@@ -1,5 +1,6 @@
 package com.oyetech.models.firebaseModels.userModel
 
+import androidx.annotation.Keep
 import com.google.firebase.firestore.Exclude
 
 /**
@@ -8,6 +9,7 @@ Created by Erdi Özbek
 -23:22-
  **/
 
+@Keep
 data class FirebaseUserProfileModel(
     @get:Exclude
     val errorException: Exception? = null, // Added field

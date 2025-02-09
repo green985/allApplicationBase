@@ -83,15 +83,18 @@ fun QuoteSettingsScreen(
 
             SimpleSettingsInfoViewSetup(
                 onClick = { navigationRoute.invoke(RadioAppProjectRoutes.ContactScreen.route) },
-                text = "Contact with us"
+                text = LanguageKey.contactWithUs
             )
-            HorizontalDivider(
-                modifier = Modifier.height(1.dp)
-            )
-            SimpleSettingsInfoViewSetup(
-                onClick = { startReviewOperation.invoke() },
-                text = "Rate us"
-            )
+            if (GeneralSettings.isRatingEnable()) {
+                HorizontalDivider(
+                    modifier = Modifier.height(1.dp)
+                )
+                SimpleSettingsInfoViewSetup(
+                    onClick = { startReviewOperation.invoke() },
+                    text = LanguageKey.rateUs
+                )
+            }
+
             if (GeneralSettings.isLoginOperationEnable()) {
                 if (uiState.isUserLoggedIn) {
                     HorizontalDivider(
@@ -101,7 +104,7 @@ fun QuoteSettingsScreen(
                         onClick = {
                             navigationRoute.invoke(QuoteAppProjectRoutes.QuoteAdviceScreen.route)
                         },
-                        text = "Advice Quote"
+                        text = LanguageKey.adviceQuote
                     )
                 }
             }

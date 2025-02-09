@@ -11,6 +11,7 @@ plugins {
     id 'com.google.firebase.crashlytics'
     id 'org.jetbrains.kotlin.plugin.compose'
     id 'androidx.baselineprofile'
+    id 'kotlinx-serialization'
 }
 ext.getArtifactNameRadio = {
     defaultConfig ->
@@ -70,12 +71,12 @@ android {
 
 
     signingConfigs {
-//        release {
-//            storeFile file('/Users/balbazar/Desktop/releaseKeys/nac/oyetechReleaseKey')
-//            storePassword '7SPd@WF0Lx!RGb2S'
-//            keyPassword '7SPd@WF0Lx!RGb2S'
-//            keyAlias 'oyetech'
-//        }
+        release {
+            storeFile file('/Users/balbazar/Desktop/releaseKeys/nac/oyetechReleaseKey')
+            storePassword '7SPd@WF0Lx!RGb2S'
+            keyPassword '7SPd@WF0Lx!RGb2S'
+            keyAlias 'oyetech'
+        }
     }
     buildTypes {
         debug {
@@ -89,16 +90,16 @@ android {
             splits.density.enable = false
             aaptOptions.cruncherEnabled = false
         }
-//        release {
-//            ndk {
-//                debugSymbolLevel 'FULL'
-//            }
-//            shrinkResources true
-//            minifyEnabled true
-//            debuggable false
-//            signingConfig signingConfigs.release
-//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-//        }
+        release {
+            ndk {
+                debugSymbolLevel 'FULL'
+            }
+            shrinkResources true
+            minifyEnabled true
+            debuggable true
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
     }
 }
 

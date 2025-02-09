@@ -6,9 +6,7 @@ import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -16,7 +14,6 @@ import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.snackbar.SnacbarScreenSetup
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.generalPlayground.GeneralPlaygroundVm
-import com.oyetech.composebase.projectRadioFeature.screens.views.dialogs.RateUsDialog
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 
@@ -40,34 +37,34 @@ fun GeneralOperationScreenSetup(
     val reviewOperationStatus by viewModel.getReviewOperationStatus().collectAsStateWithLifecycle()
 
     Timber.d("Review State: $reviewOperationStatus")
-
-    if (reviewState) {
-        RateUsDialog(
-            onDismiss = {
-                viewModel.dismissDialog()
-            }, onRefuse = {
-                viewModel.dismissReviewState()
-            }, onSuccess = {
-                viewModel.startReviewOperation()
-            })
-    }
-
-    var dialogState by remember { mutableStateOf(false) }
-
-    if (dialogState) {
-        RateUsDialog(
-            onDismiss = {
-                dialogState = false
-                viewModel.dismissDialog()
-            }, onRefuse = {
-                viewModel.dismissReviewState()
-            }, onSuccess = {
-                viewModel.signInWithGoogleAnonymous()
-//                viewModel.updateUserName("green985")
-                //viewModel.startReviewOperation()
-
-            })
-    }
+//
+//    if (reviewState) {
+//        RateUsDialog(
+//            onDismiss = {
+//                viewModel.dismissDialog()
+//            }, onRefuse = {
+//                viewModel.dismissReviewState()
+//            }, onSuccess = {
+//                viewModel.startReviewOperation()
+//            })
+//    }
+//
+//    var dialogState by remember { mutableStateOf(false) }
+//
+//    if (dialogState) {
+//        RateUsDialog(
+//            onDismiss = {
+//                dialogState = false
+//                viewModel.dismissDialog()
+//            }, onRefuse = {
+//                viewModel.dismissReviewState()
+//            }, onSuccess = {
+//                viewModel.signInWithGoogleAnonymous()
+////                viewModel.updateUserName("green985")
+//                //viewModel.startReviewOperation()
+//
+//            })
+//    }
 
 
 

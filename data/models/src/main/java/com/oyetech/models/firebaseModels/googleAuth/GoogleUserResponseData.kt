@@ -1,7 +1,9 @@
 package com.oyetech.models.firebaseModels.googleAuth
 
+import androidx.annotation.Keep
 import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
 
+@Keep
 data class GoogleUserResponseData(
     val uid: String = "",
     val email: String? = null,

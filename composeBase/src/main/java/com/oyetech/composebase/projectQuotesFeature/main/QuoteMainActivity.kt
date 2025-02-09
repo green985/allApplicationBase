@@ -43,42 +43,53 @@ class QuoteMainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            if (GeneralSettings.isDebug()) {
 
-            RadioAppTheme {
-                val navController = rememberNavController()
-                NavHost(
-                    navController = navController,
-                    startDestination = AllScreenNavigator.startApp,
-                ) {
-                    navHostScreenSetup(navController)
-                    quotesAppNavigation(navController)
+                RadioAppTheme {
+                    val navController = rememberNavController()
+                    NavHost(
+                        navController = navController,
+                        startDestination = AllScreenNavigator.startApp,
+                    ) {
+                        navHostScreenSetup(navController)
+                        quotesAppNavigation(navController)
+                    }
+                }
+            } else {
+                RadioAppTheme {
+                    val navController = rememberNavController()
+                    NavHost(
+                        navController = navController,
+                        startDestination = AllScreenNavigator.quoteStart,
+                    ) {
+                        navHostScreenSetup(navController)
+                        quotesAppNavigation(navController)
+                    }
                 }
             }
 
             Timber.d("onCreate Error texttttt: $errorText")
 
             // todo will be check later for auto login things looks like a block general navigator screen
-            if (!GeneralSettings.isDebug()) {
-                val content: View = findViewById(android.R.id.content)
-                content.viewTreeObserver.addOnPreDrawListener(
-                    object : ViewTreeObserver.OnPreDrawListener {
-                        override fun onPreDraw(): Boolean {
-                            true
+            val content: View = findViewById(android.R.id.content)
+            content.viewTreeObserver.addOnPreDrawListener(
+                object : ViewTreeObserver.OnPreDrawListener {
+                    override fun onPreDraw(): Boolean {
+                        content.viewTreeObserver.removeOnPreDrawListener(this)
+                        true
 
-                            // Check whether the initial data is ready.
-                            return if (loginOperationRepository.userAutoLoginStateFlow.value) {
-                                // The content is ready. Start drawing.
-                                content.viewTreeObserver.removeOnPreDrawListener(this)
-                                true
-                            } else {
-                                // The content isn't ready. Suspend.
-                                false
-                            }
+                        // Check whether the initial data is ready.
+                        return if (loginOperationRepository.userAutoLoginStateFlow.value) {
+                            // The content is ready. Start drawing.
+                            content.viewTreeObserver.removeOnPreDrawListener(this)
+                            true
+                        } else {
+                            // The content isn't ready. Suspend.
+                            false
                         }
                     }
-                )
-            }
-
+                }
+            )
         }
 
     }

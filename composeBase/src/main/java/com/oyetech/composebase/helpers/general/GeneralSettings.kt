@@ -30,4 +30,9 @@ object GeneralSettings {
         return false
     }
 
+    fun isRatingEnable(): Boolean {
+
+        return false
+    }
+
 }
