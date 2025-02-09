@@ -17,6 +17,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.R
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenWithContentScreenSetup
+import com.oyetech.composebase.helpers.general.GeneralSettings
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.ClickNextButton
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.ClickPreviousButton
 import com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer.RandomQuotesSmallView
@@ -94,7 +95,10 @@ fun QuoteDetailScreen(
                 }
                 )
                 RandomQuotesSmallView(uiState = uiState, navigationRoute = navigationRoute)
-                CommentScreenWithContentScreenSetup(uiState.quoteId)
+
+                if (GeneralSettings.isCommentSectionEnable()) {
+                    CommentScreenWithContentScreenSetup(uiState.quoteId)
+                }
 
             }
             Row(verticalAlignment = Alignment.CenterVertically) {

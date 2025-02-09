@@ -14,5 +14,20 @@ object GeneralSettings {
         return BuildConfig.DEBUG
     }
 
+    fun isCommentSectionEnable(): Boolean {
+        return false
+    }
+
+    fun isAddQuoteSectionEnable(): Boolean {
+        return false
+    }
+
+    fun isLoginOperationEnable(): Boolean {
+        return false
+    }
+
+    fun isAutoOperationEnable(): Boolean {
+        return false
+    }
 
 }

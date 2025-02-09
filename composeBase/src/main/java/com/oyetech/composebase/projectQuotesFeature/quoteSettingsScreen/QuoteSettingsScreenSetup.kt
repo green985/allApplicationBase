@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
+import com.oyetech.composebase.helpers.general.GeneralSettings
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectQuotesFeature.quotes.views.AppInfoViewProperty
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarSetup
@@ -91,16 +92,18 @@ fun QuoteSettingsScreen(
                 onClick = { startReviewOperation.invoke() },
                 text = "Rate us"
             )
-            if (uiState.isUserLoggedIn) {
-                HorizontalDivider(
-                    modifier = Modifier.height(1.dp)
-                )
-                SimpleSettingsInfoViewSetup(
-                    onClick = {
-                        navigationRoute.invoke(QuoteAppProjectRoutes.QuoteAdviceScreen.route)
-                    },
-                    text = "Advice Quote"
-                )
+            if (GeneralSettings.isLoginOperationEnable()) {
+                if (uiState.isUserLoggedIn) {
+                    HorizontalDivider(
+                        modifier = Modifier.height(1.dp)
+                    )
+                    SimpleSettingsInfoViewSetup(
+                        onClick = {
+                            navigationRoute.invoke(QuoteAppProjectRoutes.QuoteAdviceScreen.route)
+                        },
+                        text = "Advice Quote"
+                    )
+                }
             }
 
             HorizontalDivider(
