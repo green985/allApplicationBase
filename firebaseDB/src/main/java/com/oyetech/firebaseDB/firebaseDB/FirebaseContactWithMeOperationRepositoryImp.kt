@@ -24,7 +24,7 @@ class FirebaseContactWithMeOperationRepositoryImp(private val firestore: Firebas
             message = message.take(500)
         )
 
-        firestore.collection(FirebaseDatabaseKeys.RADIO_FEEDBACK_COLLECTION)
+        firestore.collection(FirebaseDatabaseKeys.feedbackCollection)
             .add(feedbackOperationResponseBody)
             .addOnSuccessListener {
                 sendFeedbackOperationStateFlow.tryEmit(true)

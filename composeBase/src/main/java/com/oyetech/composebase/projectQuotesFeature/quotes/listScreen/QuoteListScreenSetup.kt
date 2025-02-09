@@ -1,5 +1,6 @@
 package com.oyetech.composebase.projectQuotesFeature.quotes.listScreen
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -7,9 +8,11 @@ import androidx.compose.ui.Modifier
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.basePagingList.BasePagingListScreen
+import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer.QuotesVM
 import com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer.RandomQuotesSmallView
 import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteListUiEvent.QuoteSeen
+import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 
@@ -31,7 +34,14 @@ fun QuoteListScreenSetup(navigationRoute: (navigationRoute: String) -> Unit) {
                 itemKey = { quote -> quote.quoteId },
                 onBindItem = { quote ->
                     RandomQuotesSmallView(
-                        uiState = quote, navigationRoute
+                        modifier = Modifier.clickable {
+                            navigationRoute(
+                                QuoteAppProjectRoutes.QuoteDetailRoute.withArgs(
+                                    ScreenKey.quoteId to quote.quoteId,
+                                )
+                            )
+                        },
+                        uiState = quote, navigationRoute = navigationRoute
                     )
                 },
                 onItemVisible = { currentLastVisibleIndex ->

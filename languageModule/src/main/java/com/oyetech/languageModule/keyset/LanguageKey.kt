@@ -11,6 +11,7 @@ Created by Erdi Özbek
  **/
 
 object LanguageKey {
+    var copyToClipboardSuccess set(value) {} get() = LocalLanguageHelper.getStringWithKey("copyToClipboardSuccess")
     var rateUs set(value) {} get() = LocalLanguageHelper.getStringWithKey("rateUs")
     var contactWithUs set(value) {} get() = LocalLanguageHelper.getStringWithKey("contactWithUs")
     var contactWithUsSentSuccessfully

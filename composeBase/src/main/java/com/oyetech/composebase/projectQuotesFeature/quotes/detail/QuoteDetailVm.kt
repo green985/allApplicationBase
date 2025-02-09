@@ -3,16 +3,20 @@ package com.oyetech.composebase.projectQuotesFeature.quotes.detail;
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
+import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.helpers.errorHelper.ErrorHelper
 import com.oyetech.composebase.mappers.mapToUi.QuotesMappers
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.ClickNextButton
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.ClickPreviousButton
+import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.LongClickForCopy
 import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteUiState
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarEvent
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarEvent.BackButtonClick
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarEvent.OnActionButtonClick
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarState
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
+import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.tools.contextHelper.copyToClipboard
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -28,6 +32,7 @@ class QuoteDetailVm(
     appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     private val quoteId: String,
     private val quoteDataOperationRepository: QuoteDataOperationRepository,
+    private val snackbarDelegate: SnackbarDelegate,
 ) : BaseViewModel(appDispatchers) {
 
     val uiState = MutableStateFlow(QuoteUiState())
@@ -89,8 +94,18 @@ class QuoteDetailVm(
                 getQuoteDetail(isRandom = true)
             }
 
+            LongClickForCopy -> {
+                copyToClipboardQuoteText()
+            }
+
             else -> {}
         }
+    }
+
+    private fun copyToClipboardQuoteText() {
+        val quoteText = uiState.value.text
+        context.copyToClipboard(quoteText)
+        snackbarDelegate.triggerSnackbarState(LanguageKey.copyToClipboardSuccess)
     }
 
     fun onToolbarEvent(it: QuoteToolbarEvent) {

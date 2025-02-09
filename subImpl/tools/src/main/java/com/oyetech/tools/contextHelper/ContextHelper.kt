@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.PendingIntent
 import android.content.ActivityNotFoundException
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.VIBRATOR_SERVICE
 import android.content.Intent
@@ -151,4 +153,10 @@ fun Context.getPackageInfo(): PackageInfo {
     val pInfo: PackageInfo =
         this.getPackageManager().getPackageInfo(this.getPackageName(), 0)
     return pInfo
+}
+
+fun Context.copyToClipboard(text: String) {
+    val clipboardManager = this.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val clip = ClipData.newPlainText("Copied Text", text)
+    clipboardManager.setPrimaryClip(clip)
 }

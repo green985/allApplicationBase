@@ -19,9 +19,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteUiState
-import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 
 /**
 Created by Erdi Özbek
@@ -32,23 +30,17 @@ Created by Erdi Özbek
 // Main QuotesCard Composable
 @Composable
 fun RandomQuotesSmallView(
+    modifier: Modifier = Modifier,
     uiState: QuoteUiState = QuoteUiState(),
     navigationRoute: (navigationRoute: String) -> Unit = {},
 ) {
 
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(8.dp),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(8.dp),
-        onClick = {
-            navigationRoute(
-                QuoteAppProjectRoutes.QuoteDetailRoute.withArgs(
-                    ScreenKey.quoteId to uiState.quoteId,
-                )
-            )
-        }
     ) {
         Column(
             modifier = Modifier

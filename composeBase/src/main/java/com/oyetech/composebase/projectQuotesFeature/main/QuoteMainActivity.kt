@@ -35,10 +35,6 @@ class QuoteMainActivity : ComponentActivity() {
         GoogleLoginRepository::class.java
     )
 
-    override fun onResume() {
-        super.onResume()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

@@ -51,7 +51,8 @@ fun AdviceQuoteOperationView(
             uiState = QuoteUiState(
                 text = uiState.text,
                 author = uiState.author,
-            ), {}
+            ),
+            navigationRoute = {}
         )
 
         Row(

@@ -1,8 +1,11 @@
 package com.oyetech.composebase.projectQuotesFeature.quotes.detail
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -13,11 +16,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.R
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenWithContentScreenSetup
 import com.oyetech.composebase.helpers.general.GeneralSettings
+import com.oyetech.composebase.projectQuotesFeature.QuotesDimensions
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.ClickNextButton
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.ClickPreviousButton
 import com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer.RandomQuotesSmallView
@@ -72,6 +77,7 @@ fun QuoteDetailScreenSetup(
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun QuoteDetailScreen(
     modifier: Modifier = Modifier,
@@ -94,16 +100,32 @@ fun QuoteDetailScreen(
                     onToolbarEvent(it)
                 }
                 )
-                RandomQuotesSmallView(uiState = uiState, navigationRoute = navigationRoute)
+                RandomQuotesSmallView(
+                    modifier = Modifier.combinedClickable(
+                        onClick = {
+
+                        },
+                        // Normal tıklama olayını boş bırakabilirsin
+                        onLongClick = {
+                            onEvent(QuoteDetailEvent.LongClickForCopy)
+                        }
+                    ), uiState = uiState, navigationRoute = navigationRoute)
 
                 if (GeneralSettings.isCommentSectionEnable()) {
                     CommentScreenWithContentScreenSetup(uiState.quoteId)
                 }
 
             }
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
-                IconButton(onClick = { onEvent(ClickNextButton) }) {
+                IconButton(
+                    modifier = Modifier.size(QuotesDimensions.buttonHeight),
+                    onClick = { onEvent(ClickNextButton) }) {
                     Icon(
                         modifier = Modifier
                             .rotate(180f)
@@ -114,6 +136,7 @@ fun QuoteDetailScreen(
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(
+                    modifier = Modifier.size(QuotesDimensions.buttonHeight),
                     onClick = { onEvent(ClickPreviousButton) }) {
                     Icon(
                         modifier = Modifier.size(RadioDimensions.radioLogoSmallWidthHeight),
@@ -133,4 +156,5 @@ fun QuoteDetailScreen(
 sealed class QuoteDetailEvent {
     object ClickNextButton : QuoteDetailEvent()
     object ClickPreviousButton : QuoteDetailEvent()
+    object LongClickForCopy : QuoteDetailEvent()
 }

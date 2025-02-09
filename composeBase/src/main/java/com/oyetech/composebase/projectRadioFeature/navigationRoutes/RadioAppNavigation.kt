@@ -19,7 +19,6 @@ import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactWi
 import com.oyetech.composebase.projectRadioFeature.screens.tagList.TagListScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.views.dialogs.timerDialog.RadioCountTimerDialogSetup
 import com.oyetech.models.radioProject.enums.RadioListEnums
-import timber.log.Timber
 
 @Suppress("LongMethod")
 fun NavGraphBuilder.radioAppNavigation(navController: NavController) {
@@ -145,7 +144,6 @@ fun NavGraphBuilder.radioAppNavigation(navController: NavController) {
 @Composable
 fun navigateRouteOperation(navController: NavController): (navigationRoute: String) -> Unit =
     {
-        Timber.d(" radioAppNavigation it = $it")
         if (it == "back") {
             navController.popBackStack()
         } else {
