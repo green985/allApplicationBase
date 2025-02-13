@@ -11,6 +11,8 @@ Created by Erdi Özbek
  **/
 
 object LanguageKey {
+
+    // added to firebase 12.02.2025 for general language keys
     var copyToClipboardSuccess set(value) {} get() = LocalLanguageHelper.getStringWithKey("copyToClipboardSuccess")
     var rateUs set(value) {} get() = LocalLanguageHelper.getStringWithKey("rateUs")
     var contactWithUs set(value) {} get() = LocalLanguageHelper.getStringWithKey("contactWithUs")
@@ -49,6 +51,5 @@ object LanguageKey {
         get() =
             LocalLanguageHelper.getStringWithKey("internetConnectionErrorText")
     var login set(value) {} get() = LocalLanguageHelper.getStringWithKey("Login")
-    var denemeKey set(value) {} get() = LocalLanguageHelper.getStringWithKey("denemeKey")
 
 }

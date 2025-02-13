@@ -3,8 +3,8 @@ package com.oyetech.composebase.projectQuotesFeature.homeScreen
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarEvent
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarState
-import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.quotes.enums.QuoteListEnum
+import com.oyetech.tools.contextHelper.getAppName
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
@@ -17,7 +17,7 @@ class QuotesHomeScreenVm(appDispatchers: com.oyetech.tools.coroutineHelper.AppDi
     BaseViewModel(appDispatchers) {
 
     val radioToolbarState: MutableStateFlow<QuoteToolbarState> =
-        MutableStateFlow(QuoteToolbarState(LanguageKey.adviceQuote))
+        MutableStateFlow(QuoteToolbarState(context.getAppName()))
     val uiState: MutableStateFlow<QuotesHomeState> = MutableStateFlow(QuotesHomeState())
 
     fun onEvent(event: QuotesHomeEvent) {

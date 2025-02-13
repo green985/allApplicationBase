@@ -12,6 +12,7 @@ import com.oyetech.composebase.projectQuotesFeature.quoteSettingsScreen.QuoteSet
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailScreenSetup
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.navigateRouteOperation
 import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
+import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactWithMe.ContactScreen
 
 @Suppress("LongMethod")
 fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
@@ -47,5 +48,9 @@ fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
 
     composable(QuoteAppProjectRoutes.AdviceQuoteDebug.route) {
         AdviceQuoteDebugScreenSetup(navigationRoute = navigateRouteOperation(navController))
+    }
+
+    composable(QuoteAppProjectRoutes.ContactScreen.route) {
+        ContactScreen(navigationRoute = navigateRouteOperation(navController))
     }
 }

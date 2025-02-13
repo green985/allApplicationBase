@@ -2,7 +2,6 @@ package com.oyetech.composebase.projectRadioFeature.screens.generalOperationScre
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -66,8 +65,6 @@ fun GeneralOperationScreenSetup(
 //            })
 //    }
 
-
-
     LoginOperationScreenSetup(navigationRoute = { navController.navigate(it) })
     GeneralOperationScreen {
         content()
@@ -77,9 +74,11 @@ fun GeneralOperationScreenSetup(
 @Composable
 fun GeneralOperationScreen(content: @Composable () -> Unit) {
     val snackbarHostState = remember { SnackbarHostState() }
-    BaseScaffold(snackbarHostContent = {
-        SnacbarScreenSetup(snackbarHostState)
-    }, contentWindowInsets = ScaffoldDefaults.contentWindowInsets) {
+    BaseScaffold(
+        snackbarHostContent = {
+            SnacbarScreenSetup(snackbarHostState)
+        },
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()

@@ -56,7 +56,7 @@ class QuoteDataOperationRepositoryImp(
             } else {
                 Timber.d(" getRandomRemoteQuote  " + it.size)
                 quotesAllListDao.insert(quoteResponseList)
-                firebaseQuotesOperationRepository.saveListWithNoTag(quoteResponseList)
+//                firebaseQuotesOperationRepository.saveListWithNoTag(quoteResponseList)
                 quoteResponseList
             }
 

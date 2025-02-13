@@ -23,6 +23,7 @@ object QuoteAppProjectRoutes {
     val QuoteAuthorList = Route("quoteAuthorList")
     val QuoteSettings = Route("quoteSettings")
     val AdviceQuoteDebug = Route("adviceQuoteDebug")
+    val ContactScreen = Route("quote/ContactScreen")
 
     val quoteApplicationBottomTabNavList = listOf(
         TabQuoteAppHomepage, QuoteSettingsTab

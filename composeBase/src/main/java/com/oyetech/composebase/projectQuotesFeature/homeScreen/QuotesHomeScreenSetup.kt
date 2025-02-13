@@ -67,7 +67,9 @@ fun QuotesHomeScreenSetup(
                         }
                     }
                 })
-        }) { padding ->
+        }
+    )
+    { padding ->
         Column(modifier = Modifier.padding(padding)) {
 //            Spacer(modifier = Modifier.height(8.dp))
 

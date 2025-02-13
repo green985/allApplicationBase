@@ -49,7 +49,7 @@ class LanguageOperationHelper(
     fun initLanguageHelper(startWithVM: Boolean) {
         LocalLanguageHelper.startWithVM = startWithVM
 
-        var textResourcesDataResponse = sharedOperationUseCase.getFirebaseLanguageValue()
+        val textResourcesDataResponse = sharedOperationUseCase.getFirebaseLanguageValue()
         if (textResourcesDataResponse == null) {
             Timber.d("textResourcesDataResponse null")
             isInit = false

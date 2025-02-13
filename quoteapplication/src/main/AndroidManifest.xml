@@ -24,6 +24,7 @@
         <activity
             android:name="com.oyetech.composebase.projectQuotesFeature.main.QuoteMainActivity"
             android:exported="true"
+            android:windowSoftInputMode="adjustResize"
             android:launchMode="standard"
             android:theme="@style/Theme.DefaultAppTheme">
             <intent-filter>

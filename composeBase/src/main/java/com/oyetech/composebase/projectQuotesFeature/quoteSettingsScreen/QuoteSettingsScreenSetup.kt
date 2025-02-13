@@ -22,7 +22,6 @@ import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRo
 import com.oyetech.composebase.projectQuotesFeature.quotes.views.AppInfoViewProperty
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarSetup
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarState
-import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
 import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.GeneralOperationVM
 import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.views.SimpleSettingsInfoViewSetup
 import com.oyetech.composebase.projectRadioFeature.screens.views.dialogs.DeleteAccountInfoDialog
@@ -82,7 +81,7 @@ fun QuoteSettingsScreen(
         Column(modifier = Modifier.padding(it)) {
 
             SimpleSettingsInfoViewSetup(
-                onClick = { navigationRoute.invoke(RadioAppProjectRoutes.ContactScreen.route) },
+                onClick = { navigationRoute.invoke(QuoteAppProjectRoutes.ContactScreen.route) },
                 text = LanguageKey.contactWithUs
             )
             if (GeneralSettings.isRatingEnable()) {
