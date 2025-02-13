@@ -2,6 +2,7 @@ package com.oyetech.firebaseDB.di
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
+import com.oyetech.domain.repository.firebase.FirebaseContentLikeOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseLanguageOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuotesDebugOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuotesOperationRepository
@@ -10,6 +11,7 @@ import com.oyetech.domain.repository.firebase.RadioAnalyticsOperationRepository
 import com.oyetech.domain.repository.helpers.FirebaseContactWithMeOperationRepository
 import com.oyetech.firebaseDB.firebaseDB.FirebaseContactWithMeOperationRepositoryImp
 import com.oyetech.firebaseDB.firebaseDB.comment.FirebaseCommentOperationRepositoryImp
+import com.oyetech.firebaseDB.firebaseDB.contentOperation.FirebaseContentLikeOperationRepositoryImpl
 import com.oyetech.firebaseDB.firebaseDB.helper.FirebaseOnlineHelper
 import com.oyetech.firebaseDB.firebaseDB.language.FirebaseLanguageOperationRepositoryImp
 import com.oyetech.firebaseDB.firebaseDB.quotes.FirebaseQuotesOperationRepositoryImp
@@ -70,5 +72,11 @@ object FirebaseDBModule {
 
 
         single { FirebaseOnlineHelper() }
+        single<FirebaseContentLikeOperationRepository> {
+            FirebaseContentLikeOperationRepositoryImpl(
+                get(), get()
+            )
+        }
+
     }
 }

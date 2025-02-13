@@ -4,6 +4,8 @@ import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationDelega
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenWithContentIdVM
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
+import com.oyetech.composebase.experimental.viewModelSlice.ContentOperationViewModelSlice
+import com.oyetech.composebase.experimental.viewModelSlice.ContentOperationViewModelSliceImp
 import com.oyetech.composebase.experimental.viewModelSlice.UserOperationViewModelSlice
 import com.oyetech.composebase.helpers.adViewDelegate.AdViewOperationDelegate
 import com.oyetech.composebase.helpers.adViewDelegate.AdViewOperationDelegateImpl
@@ -69,5 +71,6 @@ object ComposeMainModule {
         viewModelOf(::QuoteTagListVM)
         viewModelOf(::CommentScreenWithContentIdVM)
         singleOf(::UserOperationViewModelSlice)
+        single<ContentOperationViewModelSlice> { ContentOperationViewModelSliceImp(get()) }
     }
 }

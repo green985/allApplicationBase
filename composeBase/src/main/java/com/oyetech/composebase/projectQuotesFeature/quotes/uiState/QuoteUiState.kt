@@ -17,6 +17,7 @@ data class QuoteUiState(
     val htmlFormatted: String = "",
     val authorImage: String = "",
     val quoteId: String = "",
+    val isLiked: Boolean = false,
     val annotatedStringText: AnnotatedString = AnnotatedString(""),
 //    var charCount: Int = 0,
 //    val tag : String = ""

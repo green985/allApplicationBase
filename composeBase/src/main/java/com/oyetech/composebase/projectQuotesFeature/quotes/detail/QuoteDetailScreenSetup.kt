@@ -23,8 +23,11 @@ import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenWithContentScreenSetup
 import com.oyetech.composebase.helpers.general.GeneralSettings
 import com.oyetech.composebase.projectQuotesFeature.QuotesDimensions
+import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationEvent
+import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationUiState
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.ClickNextButton
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.ClickPreviousButton
+import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.LongClickForCopy
 import com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer.RandomQuotesSmallView
 import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteUiState
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarEvent
@@ -57,7 +60,10 @@ fun QuoteDetailScreenSetup(
 
     val uiState by vm.uiState.collectAsStateWithLifecycle()
     val toolbarState by vm.toolbarState.collectAsStateWithLifecycle()
-
+    val contentOperationState by vm.contentOperationUiState.collectAsStateWithLifecycle()
+    val contentOperationEvent = { event: ContentOperationEvent ->
+        vm.onContentEventWr(event)
+    }
     QuoteDetailScreen(
         modifier = modifier,
         uiState = uiState,
@@ -71,12 +77,18 @@ fun QuoteDetailScreenSetup(
                 is OnActionButtonClick -> TODO()
             }
             vm.onToolbarEvent(it)
-        }, onEvent = {
+        },
+        onEvent = {
             vm.onEvent(it)
-        }, navigationRoute
+        },
+        navigationRoute,
+        contentOperationUiState = contentOperationState,
+        contentOperationEvent = contentOperationEvent,
+        contentOperationActive = true,
     )
 }
 
+@Suppress("FunctionNaming", "LongParameterList")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun QuoteDetailScreen(
@@ -86,6 +98,9 @@ fun QuoteDetailScreen(
     onToolbarEvent: (QuoteToolbarEvent) -> Unit,
     onEvent: (QuoteDetailEvent) -> Unit,
     navigationRoute: (navigationRoute: String) -> Unit,
+    contentOperationUiState: ContentOperationUiState,
+    contentOperationEvent: (ContentOperationEvent) -> Unit,
+    contentOperationActive: Boolean,
 ) {
 
     BaseScaffold {
@@ -107,9 +122,14 @@ fun QuoteDetailScreen(
                         },
                         // Normal tıklama olayını boş bırakabilirsin
                         onLongClick = {
-                            onEvent(QuoteDetailEvent.LongClickForCopy)
+                            onEvent(LongClickForCopy)
                         }
-                    ), uiState = uiState, navigationRoute = navigationRoute)
+                    ), uiState = uiState, navigationRoute = navigationRoute,
+                    contentOperationUiState = contentOperationUiState,
+                    contentOperationEvent = contentOperationEvent,
+                    contentOperationActive = contentOperationActive
+
+                )
 
                 if (GeneralSettings.isCommentSectionEnable()) {
                     CommentScreenWithContentScreenSetup(uiState.quoteId)

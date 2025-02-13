@@ -4,8 +4,10 @@ import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
+import com.oyetech.composebase.experimental.viewModelSlice.ContentOperationViewModelSlice
 import com.oyetech.composebase.helpers.errorHelper.ErrorHelper
 import com.oyetech.composebase.mappers.mapToUi.QuotesMappers
+import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationEvent
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.ClickNextButton
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.ClickPreviousButton
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.LongClickForCopy
@@ -33,9 +35,13 @@ class QuoteDetailVm(
     private val quoteId: String,
     private val quoteDataOperationRepository: QuoteDataOperationRepository,
     private val snackbarDelegate: SnackbarDelegate,
-) : BaseViewModel(appDispatchers) {
+    private val contentOperationViewModelSlice: ContentOperationViewModelSlice,
+) : BaseViewModel(appDispatchers),
+    ContentOperationViewModelSlice by contentOperationViewModelSlice {
 
     val uiState = MutableStateFlow(QuoteUiState())
+
+    val contentOperationUiState = contentOperationViewModelSlice.getContentOperationUiState(quoteId)
 
     val toolbarState = MutableStateFlow(
         QuoteToolbarState(
@@ -116,5 +122,9 @@ class QuoteDetailVm(
 
             is OnActionButtonClick -> TODO()
         }
+    }
+
+    fun onContentEventWr(event: ContentOperationEvent) {
+        return onContentEvent(event)
     }
 }

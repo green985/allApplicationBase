@@ -13,4 +13,5 @@ object QuotesDimensions {
 
     val buttonHeight: Dp = 80.dp
     val authorImageSize: Dp = 40.dp
+    val contentIconHeightWidth: Dp = 24.dp
 }

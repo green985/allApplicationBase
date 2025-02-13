@@ -14,6 +14,6 @@ object FirebaseDatabaseKeys {
     const val Radio_Playing_Time_Collection = "Radio_Playing_Time_Collection"
 
     const val commentTable = "commentTable"
-
+    const val likeOperationTable = "likeOperationTable"
 
 }
