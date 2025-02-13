@@ -1,6 +1,5 @@
 package com.oyetech.firebaseDB.firebaseDB.contentOperation
 
-import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.oyetech.domain.repository.firebase.FirebaseContentLikeOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
@@ -53,46 +52,41 @@ class FirebaseContentLikeOperationRepositoryImpl(
     override fun likeOperation(
         contentId: String,
     ): Flow<OperationState<LikeOperationModel>> = flow {
-        try {
-            val username = userRepository.getUsername() ?: ""
+        val username = userRepository.getUsername() ?: ""
 
-            if (username.isBlank()) {
-                throw Exception(LanguageKey.usernameIsEmpty)
-            }
-
-            val userOldInput = firestore.collection(FirebaseDatabaseKeys.likeOperationTable)
-                .document(contentId)
-                .collection("likes")
-                .document(username).get().await()
-
-            var userOldInputResult = userOldInput.toObject(LikeOperationModel::class.java)
-
-            if (userOldInputResult == null) {
-                Timber.d("User not found")
-                userOldInputResult =
-                    LikeOperationModel(contentId = contentId, username = username, isLiked = false)
-            }
-
-            userOldInputResult = userOldInputResult.copy(isLiked = userOldInputResult.isLiked)
-
-            val documentReference =
-                firestore.runTransactionWithTimeout() { transaction ->
-                    val commentRef = firestore.collection(FirebaseDatabaseKeys.likeOperationTable)
-                        .document(contentId)
-                        .collection("likes")
-                        .document()
-
-
-                    transaction.update(commentRef, username, userOldInputResult)
-                    commentRef
-                }
-
-            Timber.d("Like added: ${documentReference.id}")
-            emit(OperationState.Success(userOldInputResult))
-        } catch (e: Exception) {
-            Log.w("Firestore", "Error adding comment", e)
-            emit(OperationState.Error(e))
+        if (username.isBlank()) {
+            throw Exception(LanguageKey.usernameIsEmpty)
         }
+
+        val userOldInput = firestore.collection(FirebaseDatabaseKeys.likeOperationTable)
+            .document(contentId)
+            .collection("likes")
+            .document(username).get().await()
+
+        var userOldInputResult = userOldInput.toObject(LikeOperationModel::class.java)
+
+        if (userOldInputResult == null) {
+            Timber.d("User not found")
+            userOldInputResult =
+                LikeOperationModel(contentId = contentId, username = username, isLiked = false)
+        }
+
+        userOldInputResult = userOldInputResult.copy(isLiked = userOldInputResult.isLiked)
+
+        val documentReference =
+            firestore.runTransactionWithTimeout() { transaction ->
+                val commentRef = firestore.collection(FirebaseDatabaseKeys.likeOperationTable)
+                    .document(contentId)
+                    .collection("likes")
+                    .document()
+
+
+                transaction.update(commentRef, username, userOldInputResult)
+                commentRef
+            }
+
+        Timber.d("Like added: ${documentReference.id}")
+        emit(OperationState.Success(userOldInputResult))
     }
 
     override fun getLikeCount(contentId: String): Flow<Int> {

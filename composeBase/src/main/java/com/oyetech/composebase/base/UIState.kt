@@ -23,8 +23,6 @@ private fun <T> MutableSharedFlow<T>.updateState(update: T.() -> T) {
 
 }
 
-
-
 suspend inline fun <T> MutableStateFlow<T>.updateListStateWithDelay(
     delay: Long,
     update: T.() -> T,

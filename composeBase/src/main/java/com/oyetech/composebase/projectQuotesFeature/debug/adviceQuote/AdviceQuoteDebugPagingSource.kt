@@ -2,8 +2,8 @@ package com.oyetech.composebase.projectQuotesFeature.debug.adviceQuote
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.oyetech.composebase.base.updateState
 import com.oyetech.domain.repository.firebase.FirebaseQuotesDebugOperationRepository
-import com.oyetech.models.utils.helper.updateState
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

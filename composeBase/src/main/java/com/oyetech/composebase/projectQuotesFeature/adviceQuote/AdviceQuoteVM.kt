@@ -2,6 +2,7 @@ package com.oyetech.composebase.projectQuotesFeature.adviceQuote
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
+import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteEvent.RemoveTag
 import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteEvent.SelectAuthor
@@ -23,7 +24,6 @@ import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarSt
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.quotes.responseModel.QuotesTagResponseData
-import com.oyetech.models.utils.helper.updateState
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import com.oyetech.tools.randomHelper.RandomHelper

@@ -41,7 +41,17 @@ class QuoteDetailVm(
 
     val uiState = MutableStateFlow(QuoteUiState())
 
-    val contentOperationUiState = contentOperationViewModelSlice.getContentOperationUiState(quoteId)
+    val contentOperationUiState = contentOperationViewModelSlice.getContentOperationUiState(quoteId,
+        updateLoading = {
+            uiState.updateState {
+                copy(isLoading = it)
+            }
+        },
+        updateErrorText = {
+            uiState.updateState {
+                copy(errorMessage = it)
+            }
+        })
 
     val toolbarState = MutableStateFlow(
         QuoteToolbarState(

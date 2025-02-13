@@ -71,6 +71,6 @@ object ComposeMainModule {
         viewModelOf(::QuoteTagListVM)
         viewModelOf(::CommentScreenWithContentIdVM)
         singleOf(::UserOperationViewModelSlice)
-        single<ContentOperationViewModelSlice> { ContentOperationViewModelSliceImp(get()) }
+        factory<ContentOperationViewModelSlice> { ContentOperationViewModelSliceImp(get(), get()) }
     }
 }

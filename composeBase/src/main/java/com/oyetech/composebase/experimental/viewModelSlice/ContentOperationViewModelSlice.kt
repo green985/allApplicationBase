@@ -6,8 +6,13 @@ import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOper
 import kotlinx.coroutines.flow.MutableStateFlow
 
 interface ContentOperationViewModelSlice {
-    fun getContentOperationUiState(contentId: String): MutableStateFlow<ContentOperationUiState>
 
     context(BaseViewModel)
     fun onContentEvent(event: ContentOperationEvent)
+
+    fun getContentOperationUiState(
+        contentId: String,
+        updateLoading: (Boolean) -> Unit,
+        updateErrorText: (String) -> Unit,
+    ): MutableStateFlow<ContentOperationUiState>
 }
