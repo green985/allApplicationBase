@@ -37,8 +37,8 @@ android {
     defaultConfig {
         minSdkVersion Versions.minSdk
         targetSdkVersion Versions.targetSdk
-        versionCode RadioReleaseProperty.versionCode
-        versionName RadioReleaseProperty.versionName
+        versionCode QuoteReleaseProperty.versionCode
+        versionName QuoteReleaseProperty.versionName
     }
     setProperty("archivesBaseName", getArtifactNameRadio(defaultConfig))
 
@@ -106,6 +106,8 @@ android {
 dependencies {
     implementation project(Modules.diModule)
     implementation project(Modules.composeBase)
+    implementation 'androidx.profileinstaller:profileinstaller:1.4.1'
+    baselineProfile project(':quoteBaseline')
 }
 
 
