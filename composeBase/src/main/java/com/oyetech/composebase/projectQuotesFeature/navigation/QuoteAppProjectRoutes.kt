@@ -24,6 +24,8 @@ object QuoteAppProjectRoutes {
     val QuoteSettings = Route("quoteSettings")
     val AdviceQuoteDebug = Route("adviceQuoteDebug")
     val ContactScreen = Route("quote/ContactScreen")
+    val CompleteProfileScreen = Route("LoginOperationScreen/CompleteProfileScreen")
+    val LoginOperationScreen = Route("LoginOperationScreen")
 
     val quoteApplicationBottomTabNavList = listOf(
         TabQuoteAppHomepage, QuoteSettingsTab

@@ -15,7 +15,7 @@ object GeneralSettings {
     }
 
     fun isCommentSectionEnable(): Boolean {
-        return false
+        return true
     }
 
     fun isAddQuoteSectionEnable(): Boolean {
@@ -23,7 +23,7 @@ object GeneralSettings {
     }
 
     fun isLoginOperationEnable(): Boolean {
-        return false
+        return true
     }
 
     fun isAutoOperationEnable(): Boolean {

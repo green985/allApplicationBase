@@ -9,7 +9,7 @@ data class LikeOperationModel(
     val contentId: String = "",
     val username: String = "",
     val likeId: String = "",
-    val isLiked: Boolean = false,
+    val like: Boolean = false,
 
     @ServerTimestamp
     val createdAt: Date? = null,

@@ -59,7 +59,7 @@ class ContentOperationViewModelSliceImp(
                                 onSuccess = {
                                     contentOperationUiState.value =
                                         contentOperationUiState.value.copy(
-                                            isLiked = it.dataOrNull()?.isLiked ?: false
+                                            isLiked = it.dataOrNull()?.like ?: false
                                         )
                                 },
                                 onFailure = {

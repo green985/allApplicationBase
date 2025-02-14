@@ -68,25 +68,38 @@ class FirebaseContentLikeOperationRepositoryImpl(
         if (userOldInputResult == null) {
             Timber.d("User not found")
             userOldInputResult =
-                LikeOperationModel(contentId = contentId, username = username, isLiked = false)
+                LikeOperationModel(contentId = contentId, username = username, like = true)
+            val documentReference =
+                firestore.runTransactionWithTimeout() { transaction ->
+                    val commentRef = firestore.collection(FirebaseDatabaseKeys.likeOperationTable)
+                        .document(contentId)
+                        .collection("likes")
+                        .document(username)
+
+                    transaction.set(commentRef, userOldInputResult!!)
+                    commentRef
+                }
+
+            Timber.d("Like added: ${documentReference.id}")
+            emit(OperationState.Success(userOldInputResult))
+        } else {
+            userOldInputResult = userOldInputResult.copy(like = !userOldInputResult.like)
+
+            val documentReference =
+                firestore.runTransactionWithTimeout() { transaction ->
+                    val commentRef = firestore.collection(FirebaseDatabaseKeys.likeOperationTable)
+                        .document(contentId)
+                        .collection("likes")
+                        .document(username)
+
+                    transaction.update(commentRef, "isLiked", userOldInputResult.like)
+                    commentRef
+                }
+
+            Timber.d("Like added: ${documentReference.id}")
+            emit(OperationState.Success(userOldInputResult))
         }
 
-        userOldInputResult = userOldInputResult.copy(isLiked = userOldInputResult.isLiked)
-
-        val documentReference =
-            firestore.runTransactionWithTimeout() { transaction ->
-                val commentRef = firestore.collection(FirebaseDatabaseKeys.likeOperationTable)
-                    .document(contentId)
-                    .collection("likes")
-                    .document()
-
-
-                transaction.update(commentRef, username, userOldInputResult)
-                commentRef
-            }
-
-        Timber.d("Like added: ${documentReference.id}")
-        emit(OperationState.Success(userOldInputResult))
     }
 
     override fun getLikeCount(contentId: String): Flow<Int> {
