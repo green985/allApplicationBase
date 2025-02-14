@@ -17,6 +17,7 @@ import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarEv
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarEvent.OnActionButtonClick
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarState
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
+import com.oyetech.domain.repository.firebase.FirebaseContentLikeOperationRepository
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.tools.contextHelper.copyToClipboard
 import com.oyetech.tools.coroutineHelper.asResult
@@ -36,6 +37,7 @@ class QuoteDetailVm(
     private val quoteDataOperationRepository: QuoteDataOperationRepository,
     private val snackbarDelegate: SnackbarDelegate,
     private val contentOperationViewModelSlice: ContentOperationViewModelSlice,
+    private val firebaseContentLikeOperationRepository: FirebaseContentLikeOperationRepository,
 ) : BaseViewModel(appDispatchers),
     ContentOperationViewModelSlice by contentOperationViewModelSlice {
 
@@ -62,7 +64,7 @@ class QuoteDetailVm(
 
     init {
         getQuoteDetail(quoteId)
-        viewModelScope.launch {
+        viewModelScope.launch(getDispatcherIo()) {
             quoteDataOperationRepository.setSeenQuote(quoteId).asResult().collectLatest {
                 it.fold(
                     onSuccess = {
@@ -134,7 +136,7 @@ class QuoteDetailVm(
         }
     }
 
-    fun onContentEventWr(event: ContentOperationEvent) {
-        return onContentEvent(event)
+    fun asjdbnajdbfnajbfa(event: ContentOperationEvent) {
+        onContentEvent(event)
     }
 }

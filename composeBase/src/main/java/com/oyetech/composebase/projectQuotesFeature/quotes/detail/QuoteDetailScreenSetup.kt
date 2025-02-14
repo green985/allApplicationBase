@@ -63,7 +63,7 @@ fun QuoteDetailScreenSetup(
     val toolbarState by vm.toolbarState.collectAsStateWithLifecycle()
     val contentOperationState by vm.contentOperationUiState.collectAsStateWithLifecycle()
     val contentOperationEvent = { event: ContentOperationEvent ->
-        vm.onContentEventWr(event)
+
     }
     QuoteDetailScreen(
         modifier = modifier,
@@ -84,7 +84,7 @@ fun QuoteDetailScreenSetup(
         },
         navigationRoute,
         contentOperationUiState = contentOperationState,
-        contentOperationEvent = contentOperationEvent,
+        contentOperationEvent = { vm.asjdbnajdbfnajbfa(it) },
         contentOperationActive = true,
     )
 

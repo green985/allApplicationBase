@@ -8,6 +8,6 @@ interface FirebaseContentLikeOperationRepository {
     fun getLikeListWithContentId(contentId: String): Flow<List<LikeOperationModel>>
 
     @Suppress("TooGenericExceptionThrown")
-    fun likeOperation(contentId: String): Flow<OperationState<LikeOperationModel>>
+    suspend fun likeOperation(contentId: String): Flow<OperationState<LikeOperationModel>>
     fun getLikeCount(contentId: String): Flow<Int>
 }

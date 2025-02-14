@@ -49,7 +49,7 @@ class FirebaseContentLikeOperationRepositoryImpl(
     }
 
     @Suppress("TooGenericExceptionThrown")
-    override fun likeOperation(
+    override suspend fun likeOperation(
         contentId: String,
     ): Flow<OperationState<LikeOperationModel>> = flow {
         val username = userRepository.getUsername() ?: ""
@@ -92,7 +92,7 @@ class FirebaseContentLikeOperationRepositoryImpl(
                         .collection("likes")
                         .document(username)
 
-                    transaction.update(commentRef, "isLiked", userOldInputResult.like)
+                    transaction.update(commentRef, "like", userOldInputResult.like)
                     commentRef
                 }
 
