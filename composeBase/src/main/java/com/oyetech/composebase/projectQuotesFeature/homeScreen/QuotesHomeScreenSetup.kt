@@ -13,11 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
+import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectQuotesFeature.quotes.listScreen.QuoteListScreenSetup
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarActionItems
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarEvent
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarSetup
-import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
 import com.oyetech.models.quotes.enums.QuoteListEnum
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -53,12 +53,9 @@ fun QuotesHomeScreenSetup(
                     )
                     if (it is QuoteToolbarEvent.OnActionButtonClick) {
                         when (it.actionItem) {
-                            is QuoteToolbarActionItems.Timer -> {
-                                navigationRoute.invoke(RadioAppProjectRoutes.TimerDialog.route)
-                            }
 
                             is QuoteToolbarActionItems.Search -> {
-                                navigationRoute.invoke(RadioAppProjectRoutes.RadioSearchList.route)
+                                navigationRoute.invoke(QuoteAppProjectRoutes.SearchScreen.route)
                             }
 
                             else -> {
