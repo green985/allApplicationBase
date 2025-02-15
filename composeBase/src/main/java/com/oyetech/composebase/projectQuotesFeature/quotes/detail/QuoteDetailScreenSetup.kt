@@ -52,19 +52,17 @@ fun QuoteDetailScreenSetup(
     modifier: Modifier = Modifier,
     quoteId: String,
     navigationRoute: (navigationRoute: String) -> Unit = {},
-) {
-    val vm = koinViewModel<QuoteDetailVm>(key = quoteId) {
+    vm: QuoteDetailVm = koinViewModel<QuoteDetailVm> {
         parametersOf(
             quoteId
         )
-    }
+    },
+) {
 
     val uiState by vm.uiState.collectAsStateWithLifecycle()
     val toolbarState by vm.toolbarState.collectAsStateWithLifecycle()
     val contentOperationState by vm.contentOperationUiState.collectAsStateWithLifecycle()
-    val contentOperationEvent = { event: ContentOperationEvent ->
 
-    }
     QuoteDetailScreen(
         modifier = modifier,
         uiState = uiState,
@@ -84,7 +82,7 @@ fun QuoteDetailScreenSetup(
         },
         navigationRoute,
         contentOperationUiState = contentOperationState,
-        contentOperationEvent = { vm.asjdbnajdbfnajbfa(it) },
+        contentOperationEvent = { vm.onContentEventf(it) },
         contentOperationActive = true,
     )
 

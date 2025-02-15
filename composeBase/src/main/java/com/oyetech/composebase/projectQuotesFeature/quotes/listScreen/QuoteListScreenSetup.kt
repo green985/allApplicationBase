@@ -14,7 +14,6 @@ import com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer.Ra
 import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteListUiEvent.QuoteSeen
 import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import org.koin.androidx.compose.koinViewModel
-import timber.log.Timber
 
 /**
 Created by Erdi Özbek
@@ -45,7 +44,7 @@ fun QuoteListScreenSetup(navigationRoute: (navigationRoute: String) -> Unit) {
                     )
                 },
                 onItemVisible = { currentLastVisibleIndex ->
-                    Timber.d("currentLastVisibleIndex == $currentLastVisibleIndex")
+//                    Timber.d("currentLastVisibleIndex == $currentLastVisibleIndex")
                     vm.onEvent(QuoteSeen(currentLastVisibleIndex))
                 },
             )

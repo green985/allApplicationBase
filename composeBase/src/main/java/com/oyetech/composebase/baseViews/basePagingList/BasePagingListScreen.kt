@@ -56,7 +56,7 @@ fun <T : Any> BasePagingListScreen(
             }
 
             is LoadState.NotLoading -> {
-                Timber.d("Not Loading")
+//                Timber.d("Not Loading")
                 if (items.itemCount == 0) {
                     ErrorScreenFullSize(
                         modifier = modifier,

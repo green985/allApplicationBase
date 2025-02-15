@@ -10,7 +10,7 @@ data class ContentOperationUiState(
     val isLoading: Boolean = false,
     val errorText: String = "",
     val isLiked: Boolean = false,
-    val contentId: String,
+    val contentId: String = "",
 )
 
 sealed class ContentOperationEvent {

@@ -1,15 +1,18 @@
 package com.oyetech.composebase.experimental.viewModelSlice
 
+import androidx.lifecycle.viewModelScope
+import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.helpers.errorHelper.ErrorHelper
 import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationEvent
 import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationEvent.LikeContent
 import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationUiState
+import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteUiState
 import com.oyetech.domain.repository.firebase.FirebaseContentLikeOperationRepository
 import com.oyetech.models.newPackages.helpers.dataOrNull
 import com.oyetech.tools.coroutineHelper.asResult
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -31,26 +34,34 @@ class ContentOperationViewModelSliceImp(
     private lateinit var updateLoading: (Boolean) -> Unit
     private lateinit var contentOperationUiState: MutableStateFlow<ContentOperationUiState>
 
-    override fun getContentOperationUiState(
-        contentId: String,
-        updateLoading: ((Boolean) -> Unit),
-        updateErrorText: (String) -> Unit,
-    ): MutableStateFlow<ContentOperationUiState> {
-        this.updateLoading = updateLoading
-        this.updateErrorText = updateErrorText
-        if (!::contentOperationUiState.isInitialized) {
-            contentOperationUiState =
-                MutableStateFlow(ContentOperationUiState(contentId = contentId))
+    override fun initContentOperationState(
+        quoteId: String,
+        contentOperationUiState: MutableStateFlow<ContentOperationUiState>,
+        uiState: MutableStateFlow<QuoteUiState>,
+    ) {
+        this.contentOperationUiState = contentOperationUiState
+        this.contentOperationUiState.updateState {
+            ContentOperationUiState(contentId = quoteId)
         }
-        return contentOperationUiState
+        updateLoading = { isLoading ->
+            uiState.updateState {
+                copy(isLoading = isLoading)
+            }
+        }
+        updateErrorText = { errorText ->
+            uiState.updateState {
+                copy(errorMessage = errorText)
+            }
+        }
     }
 
+    context(BaseViewModel)
     override fun onContentEvent(event: ContentOperationEvent) {
         Timber.d("onContentEvent: $event")
         when (event) {
             is LikeContent -> {
                 updateLoading(true)
-                GlobalScope.launch() {
+                viewModelScope.launch(Dispatchers.IO) {
                     firebaseContentLikeOperationRepository.likeOperation(event.contentId)
                         .asResult()
                         .collectLatest { result ->
