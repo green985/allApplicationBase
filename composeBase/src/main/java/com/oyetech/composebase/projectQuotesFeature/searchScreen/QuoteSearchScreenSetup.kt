@@ -3,7 +3,6 @@ package com.oyetech.composebase.projectQuotesFeature.searchScreen
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
@@ -14,13 +13,22 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.tooling.preview.Preview
-import com.oyetech.composebase.base.BaseScaffold
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.oyetech.composebase.baseViews.basePagingList.BasePagingListScreen
+import com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer.RandomQuotesSmallView
+import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteUiState
 import kotlinx.coroutines.android.awaitFrame
+import kotlinx.coroutines.flow.flowOf
+import org.koin.androidx.compose.koinViewModel
 
 /**
 Created by Erdi Özbek
@@ -33,15 +41,17 @@ fun QuoteSearchScreenSetup(
     modifier: Modifier = Modifier,
     navigationRoute: (navigationRoute: String) -> Unit = {},
 ) {
-//    val vm = koinViewModel<QuoteSearchVm>()
-//
-//    val uiState by vm.uiState.collectAsStateWithLifecycle()
+    val vm = koinViewModel<QuoteSearchVM>()
 
-    BaseScaffold {
-        Column(modifier = Modifier.padding()) {
-
-        }
-    }
+    val uiState by vm.uiState.collectAsStateWithLifecycle()
+    val lazyPagingItems = vm.quoteSearchPage.collectAsLazyPagingItems()
+    QuoteSearchScreen(
+        searchQuery = uiState.searchQuery,
+        onSearchQueryChange = { vm.onEvent(QuoteSearchEvent.SearchQueryChanged(it)) },
+        expanded = uiState.expanded,
+        navigationRoute = navigationRoute,
+        items = lazyPagingItems,
+    )
 
 }
 
@@ -49,10 +59,10 @@ fun QuoteSearchScreenSetup(
 @Composable
 fun QuoteSearchScreen(
     searchQuery: String,
-//    items: ImmutableList<RadioUIState>,
     onSearchQueryChange: (String) -> Unit,
     expanded: Boolean = false,
     navigationRoute: (navigationRoute: String) -> Unit,
+    items: LazyPagingItems<QuoteUiState>,
 ) {
 
     val focusRequester = remember { FocusRequester() }
@@ -89,23 +99,14 @@ fun QuoteSearchScreen(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-// todo search result will add
-//                LoadableLazyColumn(
-//                    modifier = Modifier.fillMaxSize(),
-//                    state = lazyListState,
-//                    isRefreshing = complexItemViewState.isRefreshing,
-//                    isErrorInitial = complexItemViewState.isErrorInitial,
-//                    isEmptyList = complexItemViewState.isEmptyList,
-//                    isLoadingInitial = complexItemViewState.isLoadingInitial,
-//                    onRetry = { onSearchQueryChange.invoke(searchQuery) },
-//                )
-//                {
-//                    items(items = items, key = { it.stationuuid }, itemContent = { station ->
-//                        ItemRadioView(station, {
-////                    viewModel.handleRadioEvent(it, viewModel.complexItemViewState)
-//                        }, navigationRoute = navigationRoute)
-//                    })
-//                }
+
+                BasePagingListScreen(
+                    items = items,
+                    itemKey = { it.quoteId },
+                    onBindItem = {
+                        RandomQuotesSmallView(uiState = it)
+                    },
+                )
             }
         }
     }
@@ -127,7 +128,8 @@ private fun QuoteSearchScreenPreview(
         searchQuery = "",
         onSearchQueryChange = {},
         expanded = true,
-        navigationRoute = {}
+        navigationRoute = {},
+        items = flowOf(PagingData.from(listOf(QuoteUiState()))).collectAsLazyPagingItems()
     )
 
 }

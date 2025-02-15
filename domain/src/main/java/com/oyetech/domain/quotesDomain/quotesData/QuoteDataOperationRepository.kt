@@ -23,4 +23,6 @@ interface QuoteDataOperationRepository {
         noteToInspector: String,
         isCheckedTruthForm: Boolean,
     ): Flow<Unit>
+
+    suspend fun searchQuote(searchQuery: String): Flow<List<QuoteResponseData>>
 }
