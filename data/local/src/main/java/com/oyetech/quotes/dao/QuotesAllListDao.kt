@@ -52,6 +52,9 @@ interface QuotesAllListDao : BaseDao<QuoteResponseData> {
     @Query("UPDATE quoteDataModel SET isSeen = 1 WHERE quoteId = :quoteId")
     fun setSeenQuote(quoteId: String)
 
+    @Query("SELECT * FROM quoteDataModel WHERE LOWER(text) LIKE '%' || LOWER(:searchQuery) || '%' ")
+    fun searchQuoteWithString(searchQuery: String): List<QuoteResponseData>
+
 }
 
 @Dao

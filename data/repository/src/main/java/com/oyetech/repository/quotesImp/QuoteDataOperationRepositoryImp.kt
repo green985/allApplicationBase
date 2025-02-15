@@ -105,7 +105,9 @@ class QuoteDataOperationRepositoryImp(
     }
 
     override suspend fun searchQuote(searchQuery: String): Flow<List<QuoteResponseData>> {
-        return getQuoteUnseenFlow(emptyArray())
+        return flow {
+            emit(quotesAllListDao.searchQuoteWithString(searchQuery))
+        }
     }
 
     override suspend fun getQuoteUnseenFlow(oldList: Array<String>): Flow<List<QuoteResponseData>> {
