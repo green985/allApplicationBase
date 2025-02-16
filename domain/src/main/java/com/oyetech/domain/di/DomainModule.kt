@@ -47,6 +47,7 @@ object DomainModule {
     }
 }
 
+@Suppress("MemberNameEqualsClassName")
 object RadioDomainModule {
     val radioDomainModule = module {
         single { RadioDataOperationUseCase(get()) }

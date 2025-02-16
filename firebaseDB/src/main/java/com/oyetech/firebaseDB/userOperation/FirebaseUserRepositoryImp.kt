@@ -138,6 +138,10 @@ class FirebaseUserRepositoryImp(
         return userDataStateFlow.value?.username ?: ""
     }
 
+    override fun getUserId(): String {
+        return userDataStateFlow.value?.uid ?: ""
+    }
+
     override fun isMyContent(contentUsername: String): Boolean {
         val username = getUsername()
         return username == contentUsername

@@ -24,6 +24,7 @@ data class FirebaseMessageConversationData(
     val lastMessageId: String = "",
     @ServerTimestamp
     val createdAt: Date? = null,
+    val participantUserIdList: List<String> = participantList.map { it.userId }.sorted(),
 
     ) : Parcelable
 

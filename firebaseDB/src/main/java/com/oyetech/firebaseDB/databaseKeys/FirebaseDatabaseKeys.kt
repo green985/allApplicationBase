@@ -16,4 +16,6 @@ object FirebaseDatabaseKeys {
     const val commentTable = "commentTable"
     const val likeOperationTable = "likeOperationTable"
 
+    const val conversations = "conversations"
+    const val messages = "messages"
 }
