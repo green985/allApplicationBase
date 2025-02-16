@@ -114,7 +114,6 @@ fun CommentScreenWithContentScreenSetup(
             }
         )
 
-
     }
 
 
@@ -180,7 +179,8 @@ fun CommentInputView(
 ) {
     Row(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(start = 2.dp, end = 2.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
 

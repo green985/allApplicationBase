@@ -33,6 +33,10 @@ object AllScreenNavigator {
     val generalListOfScreen = listOf(
 
         // Quote App Routes
+//        QuoteAppProjectRoutes.MessagingList.route,
+        QuoteAppProjectRoutes.MessageDetail.route,
+
+
         QuoteAppProjectRoutes.AdviceQuoteDebug.route,
         QuoteAppProjectRoutes.QuoteAdviceScreen.route,
         QuoteAppProjectRoutes.QuoteSettings.route,

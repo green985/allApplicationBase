@@ -29,6 +29,7 @@ import com.oyetech.composebase.projectRadioFeature.viewModelSlice.IRadioFavViewM
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.IRadioPlayerViewModelSlice
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.RadioFavViewModelSliceImp
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.RadioPlayerViewModelSliceImp
+import com.oyetech.composebase.sharedScreens.messaging.MessageDetailVm
 import com.oyetech.domain.repository.helpers.logicRepositories.RadioListSortRepository
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.singleOf
@@ -72,5 +73,8 @@ object ComposeMainModule {
         viewModelOf(::CommentScreenWithContentIdVM)
         singleOf(::UserOperationViewModelSlice)
 //        factory<ContentOperationViewModelSlice> { ContentOperationViewModelSliceImp(get(), get()) }
+
+        // messaging
+        viewModelOf(::MessageDetailVm)
     }
 }

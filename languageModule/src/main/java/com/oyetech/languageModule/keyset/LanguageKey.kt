@@ -11,6 +11,7 @@ Created by Erdi Özbek
  **/
 
 object LanguageKey {
+    var messageSendHint set(value) {} get() = LocalLanguageHelper.getStringWithKey("messageSendHint")
 
     // added to firebase 12.02.2025 for general language keys
     var copyToClipboardSuccess set(value) {} get() = LocalLanguageHelper.getStringWithKey("copyToClipboardSuccess")

@@ -16,6 +16,7 @@ import com.oyetech.composebase.projectQuotesFeature.searchScreen.QuoteSearchScre
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.navigateRouteOperation
 import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactWithMe.ContactScreen
+import com.oyetech.composebase.sharedScreens.messaging.MessageDetailScreenSetup
 
 @Suppress("LongMethod")
 fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
@@ -72,6 +73,13 @@ fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
     // TabHistory Route
     composable(QuoteAppProjectRoutes.CompleteProfileScreen.route) {
         CompleteProfileScreenSetup(
+            navigationRoute = navigateRouteOperation(navController)
+        )
+    }
+
+    // messaging
+    composable(QuoteAppProjectRoutes.MessageDetail.route) {
+        MessageDetailScreenSetup(
             navigationRoute = navigateRouteOperation(navController)
         )
     }
