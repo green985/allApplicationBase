@@ -1,66 +1,86 @@
-package com.oyetech.composebase.experimental.viewModelSlice
+package com.oyetech.composebase.projectQuotesFeature.contentOperation
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.helpers.errorHelper.ErrorHelper
-import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationEvent
 import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationEvent.LikeContent
-import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationUiState
-import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteUiState
 import com.oyetech.domain.repository.firebase.FirebaseContentLikeOperationRepository
 import com.oyetech.models.newPackages.helpers.dataOrNull
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 /**
 Created by Erdi Özbek
--13.02.2025-
--23:48-
+-16.02.2025-
+-13:55-
  **/
 
-class ContentOperationViewModelSliceImp(
+class ContentOperationVm(
     appDispatchers: AppDispatchers,
     private val firebaseContentLikeOperationRepository: FirebaseContentLikeOperationRepository,
     private val snackbarDelegate: SnackbarDelegate,
 ) : BaseViewModel(appDispatchers) {
 
-    private lateinit var updateErrorText: (String) -> Unit
-    private lateinit var updateLoading: (Boolean) -> Unit
-    private lateinit var contentOperationUiState: MutableStateFlow<ContentOperationUiState>
+    var contentOperationUiState: MutableStateFlow<ContentOperationUiState> = MutableStateFlow(
+        ContentOperationUiState()
+    )
+
+    var contentOperationJob: Job? = null
 
     fun initContentOperationState(
-        quoteId: String,
-        contentOperationUiState: MutableStateFlow<ContentOperationUiState>,
-        uiState: MutableStateFlow<QuoteUiState>,
+        contentId: String,
     ) {
-        this.contentOperationUiState = contentOperationUiState
-        this.contentOperationUiState.updateState {
-            ContentOperationUiState(contentId = quoteId)
+        contentOperationUiState.updateState {
+            copy(
+                isInitialed = false
+            )
         }
-        updateLoading = { isLoading ->
-            uiState.updateState {
-                copy(isLoading = isLoading)
-            }
+        contentOperationJob?.cancel()
+        contentOperationJob = viewModelScope.launch(getDispatcherIo()) {
+            firebaseContentLikeOperationRepository.getInitialStateOfContent(contentId).map {
+                ContentOperationUiState(
+                    contentId = contentId,
+                    isLiked = it.like
+                )
+            }.asResult()
+                .collectLatest {
+                    it.fold(
+                        onSuccess = {
+                            contentOperationUiState.value = it
+                            contentOperationUiState.updateState {
+                                copy(
+                                    isInitialed = true
+                                )
+                            }
+                        },
+                        onFailure = {
+                            // will be handled
+                        }
+                    )
+                }
         }
-        updateErrorText = { errorText ->
-            uiState.updateState {
-                copy(errorMessage = errorText)
-            }
-        }
+
+
+        Timber.d("init contentttt " + contentId)
+
     }
 
     fun onContentEvent(event: ContentOperationEvent) {
         Timber.d("onContentEvent: $event")
         when (event) {
             is LikeContent -> {
-                updateLoading(true)
+                contentOperationUiState.updateState {
+                    copy(isLoading = true)
+                }
                 viewModelScope.launch(Dispatchers.IO) {
                     firebaseContentLikeOperationRepository.likeOperation(event.contentId)
                         .asResult()
@@ -70,7 +90,9 @@ class ContentOperationViewModelSliceImp(
                                     contentOperationUiState.updateState {
                                         copy(isLiked = it.dataOrNull()?.like ?: false)
                                     }
-                                    updateLoading(false)
+                                    contentOperationUiState.updateState {
+                                        copy(isLoading = false)
+                                    }
 
                                 },
                                 onFailure = {
@@ -79,14 +101,16 @@ class ContentOperationViewModelSliceImp(
                                             it
                                         )
                                     )
-                                    updateErrorText(ErrorHelper.getErrorMessage(it))
-                                    contentOperationUiState.value =
-                                        contentOperationUiState.value.copy(
+                                    contentOperationUiState.updateState {
+                                        copy(
                                             errorText = ErrorHelper.getErrorMessage(
                                                 it
                                             )
                                         )
-                                    updateLoading(false)
+                                    }
+                                    contentOperationUiState.updateState {
+                                        copy(isLoading = true)
+                                    }
                                 }
                             )
                         }

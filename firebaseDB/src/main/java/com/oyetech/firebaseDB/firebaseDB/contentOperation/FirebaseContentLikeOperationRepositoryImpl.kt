@@ -48,6 +48,38 @@ class FirebaseContentLikeOperationRepositoryImpl(
 
     }
 
+    override suspend fun getInitialStateOfContent(contentId: String): Flow<LikeOperationModel> {
+        return flow<LikeOperationModel> {
+            val username = userRepository.getUsername() ?: ""
+
+            if (username.isBlank()) {
+                emit(
+                    LikeOperationModel(
+                        contentId = contentId,
+                    )
+                )
+                return@flow
+            }
+
+            val likeOperationModel = firestore.collection(FirebaseDatabaseKeys.likeOperationTable)
+                .document(contentId)
+                .collection("likes")
+                .document(username).get().await()
+
+            val userOldInputResult = likeOperationModel.toObject(LikeOperationModel::class.java)
+
+            if (userOldInputResult == null) {
+                emit(
+                    LikeOperationModel(
+                        contentId = contentId,
+                    )
+                )
+            } else {
+                emit(userOldInputResult)
+            }
+        }
+    }
+
     @Suppress("TooGenericExceptionThrown")
     override suspend fun likeOperation(
         contentId: String,
@@ -71,32 +103,34 @@ class FirebaseContentLikeOperationRepositoryImpl(
                 LikeOperationModel(contentId = contentId, username = username, like = true)
             val documentReference =
                 firestore.runTransactionWithTimeout() { transaction ->
-                    val commentRef = firestore.collection(FirebaseDatabaseKeys.likeOperationTable)
-                        .document(contentId)
-                        .collection("likes")
-                        .document(username)
+                    val commentRef =
+                        firestore.collection(FirebaseDatabaseKeys.likeOperationTable)
+                            .document(contentId)
+                            .collection("likes")
+                            .document(username)
 
                     transaction.set(commentRef, userOldInputResult!!)
                     commentRef
                 }
 
-            Timber.d("Like added: ${documentReference.id}")
+            Timber.d("Like added: NEW return fav = " + userOldInputResult.like)
             emit(OperationState.Success(userOldInputResult))
         } else {
             userOldInputResult = userOldInputResult.copy(like = !userOldInputResult.like)
 
             val documentReference =
                 firestore.runTransactionWithTimeout() { transaction ->
-                    val commentRef = firestore.collection(FirebaseDatabaseKeys.likeOperationTable)
-                        .document(contentId)
-                        .collection("likes")
-                        .document(username)
+                    val commentRef =
+                        firestore.collection(FirebaseDatabaseKeys.likeOperationTable)
+                            .document(contentId)
+                            .collection("likes")
+                            .document(username)
 
                     transaction.update(commentRef, "like", userOldInputResult.like)
                     commentRef
                 }
 
-            Timber.d("Like added: ${documentReference.id}")
+            Timber.d("Like added: Update return fav = " + userOldInputResult.like)
             emit(OperationState.Success(userOldInputResult))
         }
 

@@ -160,7 +160,7 @@ fun LoadingDialogFullScreen(
 fun ErrorDialogFullScreen(
     errorMessage: String = "An error occurred.",
     onDismiss: (() -> Unit)? = null,
-    onRetry: () -> Unit,
+    onRetry: (() -> Unit)? = null,
 ) {
     androidx.compose.ui.window.Dialog(
         properties = DialogHelper.fullScreenDialogProperties,
@@ -190,10 +190,12 @@ fun ErrorDialogFullScreen(
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
-                Button(onClick = onRetry) {
-                    Text(text = "Retry")
+                if (onRetry != null) {
+                    Button(onClick = onRetry) {
+                        Text(text = "Retry")
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
-                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }

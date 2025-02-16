@@ -4,13 +4,12 @@ import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationDelega
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenWithContentIdVM
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
-import com.oyetech.composebase.experimental.viewModelSlice.ContentOperationViewModelSlice
-import com.oyetech.composebase.experimental.viewModelSlice.ContentOperationViewModelSliceImp
 import com.oyetech.composebase.experimental.viewModelSlice.UserOperationViewModelSlice
 import com.oyetech.composebase.helpers.adViewDelegate.AdViewOperationDelegate
 import com.oyetech.composebase.helpers.adViewDelegate.AdViewOperationDelegateImpl
 import com.oyetech.composebase.helpers.vibrationHelper.IVibrationHelper
 import com.oyetech.composebase.helpers.vibrationHelper.VibrationHelperImpl
+import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationVm
 import com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer.QuotesVM
 import com.oyetech.composebase.projectQuotesFeature.quotes.tagList.QuoteTagListVM
 import com.oyetech.composebase.projectRadioFeature.helper.RadioListSortRepositoryImp
@@ -69,8 +68,9 @@ object ComposeMainModule {
         singleOf(::LoginOperationVM)
         viewModelOf(::QuotesVM)
         viewModelOf(::QuoteTagListVM)
+        viewModelOf(::ContentOperationVm)
         viewModelOf(::CommentScreenWithContentIdVM)
         singleOf(::UserOperationViewModelSlice)
-        factory<ContentOperationViewModelSlice> { ContentOperationViewModelSliceImp(get(), get()) }
+//        factory<ContentOperationViewModelSlice> { ContentOperationViewModelSliceImp(get(), get()) }
     }
 }

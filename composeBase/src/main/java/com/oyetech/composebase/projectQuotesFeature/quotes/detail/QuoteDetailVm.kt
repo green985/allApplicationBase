@@ -4,10 +4,8 @@ import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
-import com.oyetech.composebase.experimental.viewModelSlice.ContentOperationViewModelSlice
 import com.oyetech.composebase.helpers.errorHelper.ErrorHelper
 import com.oyetech.composebase.mappers.mapToUi.QuotesMappers
-import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationEvent
 import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationUiState
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.ClickNextButton
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.ClickPreviousButton
@@ -36,9 +34,7 @@ class QuoteDetailVm(
     var quoteId: String = "",
     private val quoteDataOperationRepository: QuoteDataOperationRepository,
     private val snackbarDelegate: SnackbarDelegate,
-    private val contentOperationViewModelSlice: ContentOperationViewModelSlice,
-) : BaseViewModel(appDispatchers),
-    ContentOperationViewModelSlice by contentOperationViewModelSlice {
+) : BaseViewModel(appDispatchers) {
 
     val uiState = MutableStateFlow(QuoteUiState())
     val contentOperationUiState = MutableStateFlow(ContentOperationUiState())
@@ -51,8 +47,6 @@ class QuoteDetailVm(
     )
 
     init {
-        initContentOperationState(quoteId = quoteId)
-
         getQuoteDetail(quoteId)
         viewModelScope.launch(getDispatcherIo()) {
             quoteDataOperationRepository.setSeenQuote(quoteId).asResult().collectLatest {
@@ -65,14 +59,6 @@ class QuoteDetailVm(
                 )
             }
         }
-    }
-
-    private fun initContentOperationState(quoteId: String) {
-        contentOperationViewModelSlice.initContentOperationState(
-            quoteId,
-            contentOperationUiState,
-            uiState,
-        )
     }
 
     private fun getQuoteDetail(quoteId: String = "", isRandom: Boolean = false) {
@@ -88,7 +74,6 @@ class QuoteDetailVm(
                 it.fold(
                     onSuccess = { quote ->
                         uiState.value = QuotesMappers.mapToQuoteUiState(quote)
-                        initContentOperationState(quoteId)
                     }, onFailure = {
                         uiState.updateState {
                             copy(errorMessage = ErrorHelper.getErrorMessage(it))
@@ -134,7 +119,4 @@ class QuoteDetailVm(
         }
     }
 
-    fun onContentEventf(event: ContentOperationEvent) {
-        onContentEvent(event)
-    }
 }

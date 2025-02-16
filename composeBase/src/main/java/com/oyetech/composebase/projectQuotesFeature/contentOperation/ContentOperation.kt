@@ -7,6 +7,7 @@ Created by Erdi Özbek
  **/
 
 data class ContentOperationUiState(
+    val isInitialed: Boolean = false,
     val isLoading: Boolean = false,
     val errorText: String = "",
     val isLiked: Boolean = false,
