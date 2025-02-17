@@ -22,7 +22,7 @@ import timber.log.Timber
 @Composable
 fun <T : Any> BasePagingListScreen(
     items: LazyPagingItems<T>,
-    itemKey: (T) -> Any,
+    itemKey: ((T) -> Any)? = null,
     onBindItem: @Composable (T) -> Unit,
     onItemVisible: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
@@ -81,7 +81,9 @@ fun <T : Any> BasePagingListScreen(
         LazyColumn(modifier = modifier, state = state, reverseLayout = reverseLayout) {
             items(
                 count = items.itemCount,
-                key = { index ->
+                key = if (itemKey == null) {
+                    null
+                } else { index ->
                     items.itemKey { item -> itemKey(item) }.invoke(index)
                 },
                 itemContent = { index ->

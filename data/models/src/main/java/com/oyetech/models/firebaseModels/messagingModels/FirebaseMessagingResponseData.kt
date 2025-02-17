@@ -38,7 +38,7 @@ data class FirebaseMessagingResponseData(
     val conversationId: String = "",
     val senderId: String = "",
     val receiverId: String = "",
-    val text: String = "",
+    val messageText: String = "",
     val status: MessageStatus = MessageStatus.IDLE,
     @ServerTimestamp
     val createdAt: Date? = null,

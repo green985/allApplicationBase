@@ -17,6 +17,7 @@ import com.oyetech.composebase.projectRadioFeature.navigationRoutes.navigateRout
 import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactWithMe.ContactScreen
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailScreenSetup
+import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListScreenSetup
 
 @Suppress("LongMethod")
 fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
@@ -80,6 +81,11 @@ fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
     // messaging
     composable(QuoteAppProjectRoutes.MessageDetail.route) {
         MessageDetailScreenSetup(
+            navigationRoute = navigateRouteOperation(navController)
+        )
+    }
+    composable(QuoteAppProjectRoutes.MessageConversationList.route) {
+        MessageConversationListScreenSetup(
             navigationRoute = navigateRouteOperation(navController)
         )
     }

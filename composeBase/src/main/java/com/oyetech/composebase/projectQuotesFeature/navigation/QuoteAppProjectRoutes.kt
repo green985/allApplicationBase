@@ -28,6 +28,7 @@ object QuoteAppProjectRoutes {
     val LoginOperationScreen = Route("LoginOperationScreen")
     val SearchScreen = Route("quote/SearchScreen")
     val MessageDetail = Route("quote/MessageDetail")
+    val MessageConversationList = Route("quote/MessageConversationList")
 
     val quoteApplicationBottomTabNavList = listOf(
         TabQuoteAppHomepage, QuoteSettingsTab

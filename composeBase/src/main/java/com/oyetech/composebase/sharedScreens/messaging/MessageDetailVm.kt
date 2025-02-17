@@ -26,19 +26,22 @@ class MessageDetailVm(
     val uiState = MutableStateFlow(MessageDetailUiState())
 
     val receiverSenderId = "1234567890" // will be change if group chat or something.
+    var conversationId = "1234567890" // will be change if group chat or something.
 
     init {
         viewModelScope.launch(getDispatcherIo()) {
-            firebaseMessagingRepository.conversationStateFlow.asResult().collectLatest {
-                it.fold(
-                    onSuccess = { conversationData ->
-                        Timber.d("Conversation data: $conversationData")
-                    },
-                    onFailure = {
-                        Timber.e(it)
-                    }
-                )
-            }
+            firebaseMessagingRepository.getConversationDetailOrCreateFlow(receiverSenderId)
+                .asResult().collectLatest {
+                    it.fold(
+                        onSuccess = { conversationData ->
+                            conversationId = conversationData.conversationId
+                            Timber.d("Conversation data: $conversationData")
+                        },
+                        onFailure = {
+                            Timber.e(it)
+                        }
+                    )
+                }
         }
     }
 
@@ -56,21 +59,34 @@ class MessageDetailVm(
 
     private fun sendMessage() {
         viewModelScope.launch(getDispatcherIo()) {
-            firebaseMessagingRepository.getConversationDetailOrCreate("asjdnaksjdnakjsdn")
-            firebaseMessagingRepository.getConversationDetailOrCreate("asjdnaksjdnakjsdn123123")
-            firebaseMessagingRepository.getConversationDetailOrCreate("asjdnaksjdnakjsdn123123aasgasraw")
-            firebaseMessagingRepository.getConversationDetailOrCreate("asldnalkdnlaknsdagasgasg")
-            firebaseMessagingRepository.getConversationDetailOrCreate("asldnalkdnlaknsdagasgasgasd")
-            firebaseMessagingRepository.getConversationDetailOrCreate("asldnalkdnlaknsdagasgasgasd1")
-            firebaseMessagingRepository.getConversationDetailOrCreate("asldnalkdnlaknsdagasgasgasd13")
-            firebaseMessagingRepository.getConversationDetailOrCreate("asdklansdljkansjkldnasd")
-            firebaseMessagingRepository.getConversationDetailOrCreate("asdjnaskjdbnakjsdbad")
+            firebaseMessagingRepository.getConversationList()
+                .asResult().collectLatest {
+                    it.fold(
+                        onSuccess = { conversationList ->
+                            Timber.d("Conversation list: $conversationList")
+                        },
+                        onFailure = {
+                            Timber.e(it)
+                        }
+                    )
+                }
         }
-
-        return
-
-
-
+        viewModelScope.launch(getDispatcherIo()) {
+            firebaseMessagingRepository.sendMessage(
+                messageText = uiState.value.messageText,
+                conversationId = conversationId,
+                receiverUserId = receiverSenderId
+            ).asResult().collectLatest {
+                it.fold(
+                    onSuccess = { messageDetail ->
+                        Timber.d("Message sent: $messageDetail")
+                    },
+                    onFailure = {
+                        Timber.e(it)
+                    }
+                )
+            }
+        }
         Timber.d("Message sent: ${uiState.value.messageText}")
         uiState.updateState {
             copy(messageText = "")
