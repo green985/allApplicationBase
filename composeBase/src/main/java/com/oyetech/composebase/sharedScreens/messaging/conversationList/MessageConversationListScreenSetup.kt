@@ -1,8 +1,8 @@
 package com.oyetech.composebase.sharedScreens.messaging.conversationList
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -12,6 +12,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.basePagingList.BasePagingListScreen
 import com.oyetech.composebase.sharedScreens.messaging.MessageConversationUiState
+import com.oyetech.composebase.sharedScreens.messaging.views.MessageConversationItemView
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -36,7 +37,8 @@ fun MessageConversationListScreenSetup(
             MessageConversationListScreen(
                 uiState = uiState,
                 onEvent = { vm.onEvent(it) },
-                lazyPagingItems = lazyPagingItems
+                lazyPagingItems = lazyPagingItems,
+                navigationRoute = navigationRoute,
             )
         }
     }
@@ -50,6 +52,7 @@ fun MessageConversationListScreen(
     uiState: MessageConversationListUiState,
     onEvent: (MessageConversationListEvent) -> (Unit),
     lazyPagingItems: LazyPagingItems<MessageConversationUiState>,
+    navigationRoute: (navigationRoute: String) -> Unit = {},
 ) {
 
     // todo itemKey eklenecek
@@ -58,7 +61,13 @@ fun MessageConversationListScreen(
             BasePagingListScreen(
                 items = lazyPagingItems, // This parameter is abstracted, not used here
                 onBindItem = { conversation ->
-                    Text(text = conversation.toString())
+                    MessageConversationItemView(
+                        modifier = Modifier.clickable {
+                            onEvent(MessageConversationListEvent.Idlee)
+                            //navigationRoute.invoke(QuoteAppProjectRoutes.MessageDetail.route)
+                        },
+                        uiState = conversation,
+                    )
                 },
             )
         }

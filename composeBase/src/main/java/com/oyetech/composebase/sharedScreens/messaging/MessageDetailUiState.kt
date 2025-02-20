@@ -1,8 +1,11 @@
 package com.oyetech.composebase.sharedScreens.messaging
 
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessageConversationData
+import com.oyetech.models.firebaseModels.messagingModels.FirebaseParticipantData
+import com.oyetech.models.utils.helper.TimeFunctions
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.util.Date
 
 /**
 Created by Erdi Özbek
@@ -22,8 +25,13 @@ sealed class MessageDetailEvent {
 }
 
 data class MessageConversationUiState(
-    val isLoading: Boolean = false,
-    val errorText: String = "",
+    val conversationId: String = "",
+    val participantList: List<FirebaseParticipantData> = emptyList(),
+    val lastMessageId: String = "",
+    val createdAt: Date? = null,
+    val createdAtString: String = TimeFunctions.getDateFromLongWithHour(createdAt?.time ?: 0) ?: "",
+    val participantUserIdList: List<String> = participantList.map { it.userId }.sorted(),
+    val username: String = participantList.firstOrNull()?.username ?: "",
 )
 
 sealed class MessageConversationEvent {
@@ -33,8 +41,13 @@ sealed class MessageConversationEvent {
 
 fun Flow<List<FirebaseMessageConversationData>>.mapToUiState(): Flow<List<MessageConversationUiState>> {
     return this.map {
-        it.map {
+        it.map { data ->
             MessageConversationUiState(
+                conversationId = data.conversationId,
+                participantList = data.participantList,
+                lastMessageId = data.lastMessageId,
+                createdAt = data.createdAt,
+                participantUserIdList = data.participantList.map { it.userId }.sorted()
             )
         }
     }

@@ -69,9 +69,10 @@ dependencies {
     implementation(Libraries.retrofit)
     implementation(Libraries.retrofitGsonConverter)
     implementation(Libraries.retrofitMoshiConverter)
+    implementation(Libraries.timber)
     implementation(project(":data:models"))
-    implementation("com.jakewharton.timber:timber:4.7.1")
     implementation(project(":subImpl:tools"))
+    implementation(project(":firebaseRealtime"))
 
 
 

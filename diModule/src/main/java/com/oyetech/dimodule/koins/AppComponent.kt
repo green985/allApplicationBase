@@ -8,6 +8,7 @@ import com.oyetech.domain.di.DomainModule
 import com.oyetech.domain.di.RadioDomainModule
 import com.oyetech.exoplayermodule.di.ExoPlayerModuleDi
 import com.oyetech.firebaseDB.di.FirebaseDBModule
+import com.oyetech.firebaserealtime.di.FirebaseRealtimeModule
 import com.oyetech.glidemodule.GlideModuleDi
 import com.oyetech.googlelogin.di.GoogleSignInModule
 import com.oyetech.languageimp.LanguageImplModule
@@ -67,6 +68,7 @@ object AppComponent {
         QuotesLocalModuleDi.localModule,
         GoogleSignInModule.googleSignInModulee,
         LanguageImplModule.languageImplModule,
+        FirebaseRealtimeModule.module,
 //        RevenueCatModuleDi.revenueCatOperationModule
     )
 }
