@@ -257,6 +257,7 @@ class FirebaseMessagingRepositoryImpl(
 
     override suspend fun getConversationList() = flow {
 //            val userId = userRepository.getUserId()
+
         val userId = "denemeFirstUser"
         require(userId.isNotBlank()) { "User not logged in" }
 
@@ -278,5 +279,6 @@ class FirebaseMessagingRepositoryImpl(
             throw e
         }
     }
+
 
 }

@@ -11,7 +11,10 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.basePagingList.BasePagingListScreen
+import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
+import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import com.oyetech.composebase.sharedScreens.messaging.MessageConversationUiState
+import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListEvent.OnConversationClick
 import com.oyetech.composebase.sharedScreens.messaging.views.MessageConversationItemView
 import org.koin.androidx.compose.koinViewModel
 
@@ -55,16 +58,20 @@ fun MessageConversationListScreen(
     navigationRoute: (navigationRoute: String) -> Unit = {},
 ) {
 
-    // todo itemKey eklenecek
     BaseScaffold {
         Column(modifier = Modifier.padding()) {
             BasePagingListScreen(
                 items = lazyPagingItems, // This parameter is abstracted, not used here
+                itemKey = { it.conversationId },
                 onBindItem = { conversation ->
                     MessageConversationItemView(
                         modifier = Modifier.clickable {
-                            onEvent(MessageConversationListEvent.Idlee)
-                            //navigationRoute.invoke(QuoteAppProjectRoutes.MessageDetail.route)
+                            onEvent(OnConversationClick(conversation.conversationId))
+                            navigationRoute.invoke(
+                                QuoteAppProjectRoutes.MessageDetail.withArgs(
+                                    ScreenKey.conversationId to conversation.conversationId,
+                                )
+                            )
                         },
                         uiState = conversation,
                     )

@@ -37,6 +37,7 @@ Created by Erdi Özbek
 fun MessageDetailScreenSetup(
     modifier: Modifier = Modifier,
     navigationRoute: (navigationRoute: String) -> Unit = {},
+    conversationId: String,
 ) {
     val vm = koinViewModel<MessageDetailVm>()
 

@@ -15,6 +15,7 @@ import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailScr
 import com.oyetech.composebase.projectQuotesFeature.searchScreen.QuoteSearchScreenSetup
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.navigateRouteOperation
 import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
+import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey.conversationId
 import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactWithMe.ContactScreen
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailScreenSetup
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListScreenSetup
@@ -81,11 +82,29 @@ fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
     // messaging
     composable(QuoteAppProjectRoutes.MessageDetail.route) {
         MessageDetailScreenSetup(
-            navigationRoute = navigateRouteOperation(navController)
+            navigationRoute = navigateRouteOperation(navController),
+            conversationId = conversationId
         )
     }
     composable(QuoteAppProjectRoutes.MessageConversationList.route) {
         MessageConversationListScreenSetup(
+            navigationRoute = navigateRouteOperation(navController)
+        )
+    }
+
+
+    composable(
+        route = "${QuoteAppProjectRoutes.MessageDetail.route}?" +
+                "${ScreenKey.conversationId}={conversationId}", arguments = listOf(
+            navArgument(ScreenKey.conversationId) {
+                defaultValue = "empty"
+                nullable = false
+            },
+        )
+    ) {
+        val conversationId = it.arguments?.getString(ScreenKey.conversationId) ?: "empty"
+        MessageDetailScreenSetup(
+            conversationId = conversationId,
             navigationRoute = navigateRouteOperation(navController)
         )
     }

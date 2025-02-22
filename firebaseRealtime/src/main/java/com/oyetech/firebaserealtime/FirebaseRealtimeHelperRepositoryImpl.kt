@@ -69,6 +69,7 @@ class FirebaseRealtimeHelperRepositoryImpl(private val firebaseDatabase: Firebas
      * daha performansli
      */
     override fun observeSomething() {
+        return
         val myRef = firebaseDatabase.getReference(userPath)
         myRef.child("received444").addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {

@@ -42,7 +42,7 @@ class MessageConversationListVm(
     }
 
     fun onEvent(event: Any) {
-        firebaseRealtimeHelperRepository.sendTestMessage()
+//        firebaseRealtimeHelperRepository.sendTestMessage()
         when (event) {
 
             else -> {}

@@ -10,7 +10,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteBottomNavigationView
 import com.oyetech.composebase.projectQuotesFeature.navigation.quotesAppNavigation
@@ -72,7 +71,7 @@ object AllScreenNavigator {
 
         // TabRadioAllList Route
         composable(radioStart) {
-            val navHostControllerRadio = rememberNavController()
+            val navHostControllerRadio = navHostController
             GeneralOperationScreenSetup(
                 content =
                 {
@@ -93,7 +92,7 @@ object AllScreenNavigator {
         }
         // TabRadioAllList Route
         composable(quoteStart) {
-            val navHostControllerQuote = rememberNavController()
+            val navHostControllerQuote = navHostController
             GeneralOperationScreenSetup(
                 content =
                 {
