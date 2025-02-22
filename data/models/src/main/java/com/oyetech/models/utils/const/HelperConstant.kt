@@ -27,6 +27,7 @@ object HelperConstant {
     const val RadioModelVersion: Int = 6
     const val RadioLastListDatabaseVersion: Int = 6
     const val RadioAllListVersion: Int = 1
+    const val FirebaseMessagingVersion: Int = 2
 
     const val ANIM_TIME: Long = 300L
     const val BOTTOM_NAVIGATION_SHOW_ANIM_TIME: Int = 200
@@ -49,6 +50,7 @@ object HelperConstant {
     const val SENDING_TYPING_OPERATION_TIMEOUT = 3000L
     const val SENDING_TYPING_VIEW_OPERATION_TIMEOUT = 5000L
     const val SENDING_ONLINE_OPERATION = 1000L * 60 * 1
+    const val SENDING_PERIOD = 1000L * 10 * 1
 
     const val VIBRATE_TIME_MILIS: Long = 150
 

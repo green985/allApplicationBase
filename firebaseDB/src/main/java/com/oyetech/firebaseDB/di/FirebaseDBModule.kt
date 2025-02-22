@@ -31,7 +31,7 @@ object FirebaseDBModule {
 
     var firebaseDBModulee = module {
         single<FirebaseFirestore> {
-            FirebaseFirestore.setLoggingEnabled(true)
+//            FirebaseFirestore.setLoggingEnabled(true)
 
             val firestore = FirebaseFirestore.getInstance()
 
@@ -71,7 +71,14 @@ object FirebaseDBModule {
             )
         }
         single<FirebaseLanguageOperationRepository> { FirebaseLanguageOperationRepositoryImp(get()) }
-        single<FirebaseMessagingRepository> { FirebaseMessagingRepositoryImpl(get(), get()) }
+        single<FirebaseMessagingRepository> {
+            FirebaseMessagingRepositoryImpl(
+                get(),
+                get(),
+                get(),
+                get(), get()
+            )
+        }
 
 
         single { FirebaseOnlineHelper() }

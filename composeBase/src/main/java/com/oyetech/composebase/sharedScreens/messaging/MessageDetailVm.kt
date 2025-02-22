@@ -5,6 +5,7 @@ import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnMessageSend
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnMessageTextChange
+import com.oyetech.domain.repository.firebase.FirebaseMessagingLocalRepository
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
@@ -22,6 +23,7 @@ Created by Erdi Özbek
 class MessageDetailVm(
     appDispatchers: AppDispatchers,
     private val firebaseMessagingRepository: FirebaseMessagingRepository,
+    private val firebaseMessagingLocalRepository: FirebaseMessagingLocalRepository,
 ) : BaseViewModel(appDispatchers) {
     val uiState = MutableStateFlow(MessageDetailUiState())
 
@@ -43,6 +45,8 @@ class MessageDetailVm(
                     )
                 }
         }
+
+        firebaseMessagingRepository.initLocalMessageSendOperation(viewModelScope)
     }
 
     fun onEvent(event: MessageDetailEvent) {
@@ -58,19 +62,19 @@ class MessageDetailVm(
     }
 
     private fun sendMessage() {
-        viewModelScope.launch(getDispatcherIo()) {
-            firebaseMessagingRepository.getConversationList()
-                .asResult().collectLatest {
-                    it.fold(
-                        onSuccess = { conversationList ->
-                            Timber.d("Conversation list: $conversationList")
-                        },
-                        onFailure = {
-                            Timber.e(it)
-                        }
-                    )
-                }
-        }
+//        viewModelScope.launch(getDispatcherIo()) {
+//            firebaseMessagingRepository.getConversationList()
+//                .asResult().collectLatest {
+//                    it.fold(
+//                        onSuccess = { conversationList ->
+//                            Timber.d("Conversation list: $conversationList")
+//                        },
+//                        onFailure = {
+//                            Timber.e(it)
+//                        }
+//                    )
+//                }
+//        }
         viewModelScope.launch(getDispatcherIo()) {
             firebaseMessagingRepository.sendMessage(
                 messageText = uiState.value.messageText,

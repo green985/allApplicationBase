@@ -21,6 +21,7 @@ import com.oyetech.remote.di.WallpaperRemoteModule
 import com.oyetech.remote.di.dataSourceModule
 import com.oyetech.remote.quotesRemote.QuotesRemoteModule
 import com.oyetech.repository.di.RadioRepositoryDI
+import com.oyetech.repository.di.RepositoryModule
 import com.oyetech.repository.di.WallpaperRepositoryModule
 import com.oyetech.repository.quotesImp.QuotesImpModule
 import com.oyetech.reviewer.di.GoogleAppReviewerModule
@@ -55,6 +56,7 @@ object AppComponent {
 //        RadioModuleDI.createRemoteModule(BaseUrlConfigHelper.BASE_DOMAIN_RADIO),
         RadioModuleDI.createRemoteModule("https://at1.api.radio-browser.info/json/"),
         RadioRepositoryDI.repositoryModule,
+        RepositoryModule.module,
         RadioLocalModuleDi.localModule,
         RadioOperationModuleDi.radioModule,
         ExoPlayerModuleDi.exoPlayerModule,

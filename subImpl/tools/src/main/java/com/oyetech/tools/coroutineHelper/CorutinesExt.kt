@@ -4,6 +4,7 @@ import androidx.annotation.FloatRange
 import com.oyetech.models.utils.const.HelperConstant
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.retryWhen
@@ -126,3 +128,22 @@ val periodicTimerEveryMin = (0..Int.MAX_VALUE)
     .asSequence()
     .asFlow()
     .onEach { delay(HelperConstant.SENDING_ONLINE_OPERATION) }
+
+val periodicTimerForResendLocalMessage = (0..Int.MAX_VALUE)
+    .asSequence()
+    .asFlow()
+    .onEach { delay(HelperConstant.SENDING_ONLINE_OPERATION) }
+
+fun startTimerFlow(duration: Long): Flow<Long> = flow {
+    var counter = 0L
+    while (true) {
+        emit(counter++)
+        delay(duration) // Her 5 saniyede bir yay
+    }
+}
+    .flowOn(Dispatchers.IO) // IO thread üzerinde çalıştır
+    .catch { e ->
+        // Hata durumlarını logla ve akışı devam ettir
+        println("Error in Timer Flow: ${e.localizedMessage}")
+        emit(-1L) // Hata durumunda fallback değeri yay
+    }

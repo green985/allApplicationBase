@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.annotation.Keep
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverter
 import com.google.firebase.firestore.ServerTimestamp
 import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
@@ -19,45 +20,103 @@ Created by Erdi Özbek
 @Keep
 @JsonClass(generateAdapter = true)
 data class FirebaseMessageConversationData(
-    val conversationId: String = "",
-    val participantList: List<FirebaseParticipantData> = emptyList(),
-    val lastMessageId: String = "",
+    var conversationId: String = "",
+    var participantList: List<FirebaseParticipantData> = emptyList(),
+    var lastMessageId: String = "",
     @ServerTimestamp
-    val createdAt: Date? = null,
-    val participantUserIdList: List<String> = participantList.map { it.userId }.sorted(),
+    var createdAt: Date? = null,
+    var participantUserIdList: List<String> = participantList.map { it.userId }.sorted(),
 
     ) : Parcelable
 
 @Parcelize
+@Keep
 @Entity(tableName = "messages")
+@JsonClass(generateAdapter = true)
+data class FirebaseMessagingLocalData(
+    @PrimaryKey(autoGenerate = true) var rowId: Long = 0,
+    var messageId: String = "",
+    var conversationId: String = "",
+    var senderId: String = "",
+    var receiverId: String = "",
+    var messageText: String = "",
+    var status: MessageStatus = MessageStatus.IDLE,
+    var createdAt: Long? = System.currentTimeMillis(),
+
+//    var mediaType: String? = null,
+//    var mediaUrl: String? = null,
+) : Parcelable
+
+@Parcelize
 @Keep
 @JsonClass(generateAdapter = true)
 data class FirebaseMessagingResponseData(
     @PrimaryKey
-    val messageId: String = "",
-    val conversationId: String = "",
-    val senderId: String = "",
-    val receiverId: String = "",
-    val messageText: String = "",
-    val status: MessageStatus = MessageStatus.IDLE,
+    var messageId: String = "",
+    var conversationId: String = "",
+    var senderId: String = "",
+    var receiverId: String = "",
+    var messageText: String = "",
+    var status: MessageStatus = MessageStatus.IDLE,
     @ServerTimestamp
-    val createdAt: Date? = null,
-//    val mediaType: String? = null,
-//    val mediaUrl: String? = null,
+    var createdAt: Date? = null,
+
+//    var mediaType: String? = null,
+//    var mediaUrl: String? = null,
 ) : Parcelable
 
 @Parcelize
 @Keep
 @JsonClass(generateAdapter = true)
 data class FirebaseParticipantData(
-    val userId: String = "",
-    val username: String = "",
-    val isActiveUser: Boolean = false,
+    var userId: String = "",
+    var username: String = "",
+    var isActiveUser: Boolean = false,
 ) : Parcelable
+
+fun FirebaseMessagingResponseData.toLocalData(): FirebaseMessagingLocalData {
+    return FirebaseMessagingLocalData(
+        messageId = messageId,
+        conversationId = conversationId,
+        senderId = senderId,
+        receiverId = receiverId,
+        messageText = messageText,
+        status = status,
+        createdAt = createdAt?.time,
+    )
+}
+
+// local to remote
+fun FirebaseMessagingLocalData.toRemoteData(): FirebaseMessagingResponseData {
+    return FirebaseMessagingResponseData(
+        messageId = messageId,
+        conversationId = conversationId,
+        senderId = senderId,
+        receiverId = receiverId,
+        messageText = messageText,
+        status = status,
+        createdAt = createdAt?.let { Date(it) },
+    )
+}
+
 
 enum class MessageStatus {
     IDLE,
     SENT,
     DELIVERED,
     READ
+}
+
+class MessageStatusTypeConverter {
+
+    @TypeConverter
+    fun fromMessageStatus(status: MessageStatus): String {
+        return status.name
+    }
+
+    @TypeConverter
+    fun toMessageStatus(status: String): MessageStatus {
+        return MessageStatus.valueOf(status)
+    }
+
 }

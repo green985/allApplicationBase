@@ -21,6 +21,9 @@ class ActivityProviderUseCase(application: Application) {
 
     var activityMutableStateFlow = MutableSharedFlow<Activity?>(replay = 1, extraBufferCapacity = 1)
 
+    val activityOnResumeMutableStateFlow =
+        MutableSharedFlow<Boolean?>(replay = 1, extraBufferCapacity = 1)
+
     init {
         application.registerActivityLifecycleCallbacks(object :
             Application.ActivityLifecycleCallbacks {
@@ -44,6 +47,7 @@ class ActivityProviderUseCase(application: Application) {
                 if (isLoggingActive) {
                     Timber.d("activityName = " + activity?.localClassName + "  status == onActivityResumed")
                 }
+                activityOnResumeMutableStateFlow.tryEmit(true)
                 activeActivity = activity
             }
 
@@ -51,6 +55,7 @@ class ActivityProviderUseCase(application: Application) {
                 if (isLoggingActive) {
                     Timber.d("activityName = " + activity?.localClassName + "  status == onActivityPaused")
                 }
+                activityOnResumeMutableStateFlow.tryEmit(false)
                 activeActivity = null
             }
 

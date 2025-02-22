@@ -2,6 +2,7 @@ package com.oyetech.domain.repository.firebase
 
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessageConversationData
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingResponseData
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -16,4 +17,6 @@ interface FirebaseMessagingRepository {
         conversationId: String,
         receiverUserId: String,
     ): Flow<FirebaseMessagingResponseData>
+
+    fun initLocalMessageSendOperation(scope: CoroutineScope)
 }
