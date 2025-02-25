@@ -3,9 +3,9 @@ package com.oyetech.firebaseDB.firebaseDB.messaging
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.oyetech.domain.helper.ActivityProviderUseCase
-import com.oyetech.domain.repository.firebase.FirebaseMessagingLocalRepository
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
+import com.oyetech.domain.repository.messaging.MessagesSendingOperationRepository
 import com.oyetech.firebaseDB.databaseKeys.FirebaseDatabaseKeys
 import com.oyetech.firebaseDB.firebaseDB.helper.runTransactionWithTimeout
 import com.oyetech.languageModule.keyset.LanguageKey
@@ -43,7 +43,7 @@ Created by Erdi Özbek
 class FirebaseMessagingRepositoryImpl(
     private val firestore: FirebaseFirestore,
     private val userRepository: FirebaseUserRepository,
-    private val firebaseMessagingLocalRepository: FirebaseMessagingLocalRepository,
+    private val messagesSendingOperationRepository: MessagesSendingOperationRepository,
     private val dispatcher: AppDispatchers,
     private val activityProviderUseCase: ActivityProviderUseCase,
 ) : FirebaseMessagingRepository {
@@ -95,7 +95,7 @@ class FirebaseMessagingRepositoryImpl(
 
     fun observeAndSendMessageSingle(scope: CoroutineScope): Job {
         return scope.launch(dispatcher.io) {
-            firebaseMessagingLocalRepository.firstInMessageFlow().onEach {
+            messagesSendingOperationRepository.firstInMessageFlow().onEach {
                 Timber.d("observeAndSendMessageSingle: message sending start == " + it?.messageText)
                 delay(newMessageToSendOperationDelay)
                 sendMessageWithLocalTrigger(it)
@@ -123,7 +123,7 @@ class FirebaseMessagingRepositoryImpl(
                 val result =
                     sendMessageWithTry(it.messageId).firstOrNull()
                 if (result != null) {
-                    firebaseMessagingLocalRepository.deleteMessageFromLocal(it.messageId)
+                    messagesSendingOperationRepository.deleteMessageFromLocal(it.messageId)
                     it
                 } else {
                     throw Exception("Message send error")
@@ -137,7 +137,8 @@ class FirebaseMessagingRepositoryImpl(
     }
 
     private suspend fun sendMessageWithTry(messageId: String): Flow<FirebaseMessagingResponseData> {
-        val foundedMessage = firebaseMessagingLocalRepository.getMessage(messageId)
+        val foundedMessage =
+            messagesSendingOperationRepository.getSendingMessageWithMessageId(messageId)
 
         if (foundedMessage != null) {
             val messageBody = foundedMessage.toRemoteData()
@@ -204,7 +205,7 @@ class FirebaseMessagingRepositoryImpl(
 
                 emit(result)
             } catch (e: Exception) {
-                firebaseMessagingLocalRepository.insertMessage(localMessage)
+                messagesSendingOperationRepository.insertSendingMessage(localMessage)
                 Timber.d("message send error = " + ErrorMessage.fetchErrorMessage(e.message))
                 throw e
             }

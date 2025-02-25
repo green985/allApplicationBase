@@ -8,7 +8,7 @@ import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingLocalD
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface FirebaseMessagingDao : BaseDao<FirebaseMessagingLocalData> {
+interface MessagesSendingDao : BaseDao<FirebaseMessagingLocalData> {
 
     @Query("select * FROM messages " + "WHERE messageId = :messageId")
     fun findRadioStationWithStationId(messageId: String): FirebaseMessagingLocalData?

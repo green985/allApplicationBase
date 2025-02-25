@@ -5,10 +5,10 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.oyetech.composebase.base.BaseViewModel
-import com.oyetech.domain.repository.firebase.FirebaseMessagingLocalRepository
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.firebase.realtime.FirebaseRealtimeHelperRepository
+import com.oyetech.domain.repository.messaging.MessagesSendingOperationRepository
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +25,7 @@ Created by Erdi Özbek
 class MessageConversationListVm(
     appDispatchers: AppDispatchers,
     private val firebaseMessagingRepository: FirebaseMessagingRepository,
-    private val firebaseMessagingLocalRepository: FirebaseMessagingLocalRepository,
+    private val messagesSendingOperationRepository: MessagesSendingOperationRepository,
     private val firebaseRealtimeHelperRepository: FirebaseRealtimeHelperRepository,
     private val firebaseUserRepository: FirebaseUserRepository,
 ) : BaseViewModel(appDispatchers) {

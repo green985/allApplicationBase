@@ -5,7 +5,8 @@ import com.oyetech.local.database.RadioDatabase
 import com.oyetech.local.database.RadioFavListDatabase
 import com.oyetech.local.database.RadioHistoryDatabase
 import com.oyetech.local.database.RadioLastListDatabase
-import com.oyetech.local.database.messaging.FirebaseMessagingMessageDatabase
+import com.oyetech.local.database.messaging.MessagesAllDatabase
+import com.oyetech.local.database.messaging.MessagesSendingDatabase
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -25,10 +26,6 @@ object RadioLocalModuleDi {
     private const val RADIO_ALL_LIST_DATABASE = "RADIO_ALL_LIST_DATABASE"
     private const val FIREBASE_MESSAGE_DATABASE = "RADIO_ALL_LIST_DATABASE"
 
-
-
-
-
     val localModule = module {
         single(named(DATABASE)) { RadioDatabase.buildDatabase(androidContext()) }
         factory { (get(named(DATABASE)) as RadioDatabase).radioModelDao() }
@@ -47,11 +44,18 @@ object RadioLocalModuleDi {
         factory { (get(named(RADIO_ALL_LIST_DATABASE)) as RadioAllListDatabase).radioModelDao() }
 
         single(named(FIREBASE_MESSAGE_DATABASE)) {
-            FirebaseMessagingMessageDatabase.buildDatabase(
+            MessagesSendingDatabase.buildDatabase(
                 androidContext()
             )
         }
-        factory { (get(named(FIREBASE_MESSAGE_DATABASE)) as FirebaseMessagingMessageDatabase).radioModelDao() }
+        factory { (get(named(FIREBASE_MESSAGE_DATABASE)) as MessagesSendingDatabase).radioModelDao() }
+
+        single(named(FIREBASE_MESSAGE_DATABASE)) {
+            MessagesAllDatabase.buildDatabase(
+                androidContext()
+            )
+        }
+        factory { (get(named(FIREBASE_MESSAGE_DATABASE)) as MessagesAllDatabase).modelDao() }
 
     }
 }

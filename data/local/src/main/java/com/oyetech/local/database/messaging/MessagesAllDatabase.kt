@@ -5,15 +5,15 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.oyetech.dao.firebaseMessaging.FirebaseMessagingDao
+import com.oyetech.dao.firebaseMessaging.MessagesAllDao
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingLocalData
 import com.oyetech.models.firebaseModels.messagingModels.MessageStatusTypeConverter
 import com.oyetech.models.utils.const.HelperConstant
 
 /**
 Created by Erdi Özbek
--20.02.2025-
--20:44-
+-25.02.2025-
+-23:16-
  **/
 
 @Database(
@@ -22,29 +22,29 @@ Created by Erdi Özbek
     exportSchema = false
 )
 @TypeConverters(MessageStatusTypeConverter::class)
-abstract class FirebaseMessagingMessageDatabase : RoomDatabase() {
+abstract class MessagesAllDatabase : RoomDatabase() {
 
-    abstract fun radioModelDao(): FirebaseMessagingDao
+    abstract fun modelDao(): MessagesAllDao
     // abstract fun messageConversationDao(): MessagesConversationDao
 
     companion object {
 
-        lateinit var radioDatabaseee: FirebaseMessagingMessageDatabase
+        lateinit var databasee: MessagesSendingDatabase
 
-        fun buildDatabase(context: Context): FirebaseMessagingMessageDatabase {
+        fun buildDatabase(context: Context): MessagesSendingDatabase {
 
-            radioDatabaseee = Room.databaseBuilder(
+            databasee = Room.databaseBuilder(
                 context.applicationContext,
-                FirebaseMessagingMessageDatabase::class.java,
-                "FirebaseMessagingSending.db"
+                MessagesSendingDatabase::class.java,
+                "MessagesAllDatabase.db"
             )
                 .fallbackToDestructiveMigration()
                 .build()
-            return radioDatabaseee
+            return databasee
         }
 
         fun clearAllTable() {
-            radioDatabaseee.clearAllTables()
+            databasee.clearAllTables()
         }
     }
 }
