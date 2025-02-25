@@ -3,7 +3,7 @@ package com.oyetech.composebase.sharedScreens.messaging.conversationList
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.oyetech.composebase.sharedScreens.messaging.MessageConversationUiState
-import com.oyetech.composebase.sharedScreens.messaging.mapToUiState
+import com.oyetech.composebase.sharedScreens.messaging.mapFromLocalToUiState
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +37,7 @@ class MessagingConversationPagingSource(
             withContext(Dispatchers.IO) {
                 val response =
                     firebaseMessagingRepository.getConversationList()
-                        .mapToUiState(clientUserId = userId)
+                        .mapFromLocalToUiState(clientUserId = userId)
                         .firstOrNull() ?: emptyList()
 
                 LoadResult.Page(

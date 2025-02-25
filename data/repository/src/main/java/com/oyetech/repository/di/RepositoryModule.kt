@@ -1,6 +1,8 @@
 package com.oyetech.repository.di
 
+import com.oyetech.domain.repository.messaging.MessagesAllOperationRepository
 import com.oyetech.domain.repository.messaging.MessagesSendingOperationRepository
+import com.oyetech.repository.firebaseMessaging.MessagesAllOperationRepositoryImp
 import com.oyetech.repository.firebaseMessaging.MessagesSendingOperationRepositoryImp
 import org.koin.dsl.module
 
@@ -13,5 +15,6 @@ Created by Erdi Özbek
 object RepositoryModule {
     val module = module {
         single<MessagesSendingOperationRepository> { MessagesSendingOperationRepositoryImp(get()) }
+        single<MessagesAllOperationRepository> { MessagesAllOperationRepositoryImp(get()) }
     }
 }

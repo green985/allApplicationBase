@@ -24,6 +24,7 @@ object RadioLocalModuleDi {
     private const val RADIO_LIST_DATABASE = "RADIO_LIST_DATABASE"
     private const val RADIO_FAV_LIST_DATABASE = "RADIO_FAV_LIST_DATABASE"
     private const val RADIO_ALL_LIST_DATABASE = "RADIO_ALL_LIST_DATABASE"
+    private const val MESSAGE_SENDING_DATABASE = "MESSAGE_SENDING_DATABASE"
     private const val FIREBASE_MESSAGE_DATABASE = "RADIO_ALL_LIST_DATABASE"
 
     val localModule = module {
@@ -43,12 +44,12 @@ object RadioLocalModuleDi {
         single(named(RADIO_ALL_LIST_DATABASE)) { RadioAllListDatabase.buildDatabase(androidContext()) }
         factory { (get(named(RADIO_ALL_LIST_DATABASE)) as RadioAllListDatabase).radioModelDao() }
 
-        single(named(FIREBASE_MESSAGE_DATABASE)) {
+        single(named(MESSAGE_SENDING_DATABASE)) {
             MessagesSendingDatabase.buildDatabase(
                 androidContext()
             )
         }
-        factory { (get(named(FIREBASE_MESSAGE_DATABASE)) as MessagesSendingDatabase).radioModelDao() }
+        factory { (get(named(MESSAGE_SENDING_DATABASE)) as MessagesSendingDatabase).radioModelDao() }
 
         single(named(FIREBASE_MESSAGE_DATABASE)) {
             MessagesAllDatabase.buildDatabase(

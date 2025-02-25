@@ -10,6 +10,7 @@ import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnRefr
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnRetry
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
+import com.oyetech.domain.repository.messaging.MessagesAllOperationRepository
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.collections.immutable.toImmutableList
@@ -29,6 +30,7 @@ class MessageDetailVm(
     var conversationId: String = "",
     var receiverUserId: String = "",
     private val firebaseMessagingRepository: FirebaseMessagingRepository,
+    private val messagingAllOperationRepository: MessagesAllOperationRepository,
     private val firebaseUserRepository: FirebaseUserRepository,
 ) : BaseListViewModel<MessageDetailUiState>(appDispatchers) {
     val uiState = MutableStateFlow(
@@ -73,8 +75,8 @@ class MessageDetailVm(
 
     private fun observeMessageList() {
         viewModelScope.launch(getDispatcherIo()) {
-            firebaseMessagingRepository.getMessageListWithConversationId(conversationId)
-                .mapToUiState().asResult().collectLatest {
+            messagingAllOperationRepository.getMessageListFlow(conversationId)
+                .mapFromLocalToUiState().asResult().collectLatest {
                     it.fold(
                         onSuccess = { messageList ->
                             Timber.d("Message list: $messageList")

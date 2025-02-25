@@ -4,14 +4,12 @@ import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessageConversa
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingResponseData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 
 interface FirebaseMessagingRepository {
     fun idlee()
     suspend fun getConversationDetailOrCreateFlow(receiverUserId: String): Flow<FirebaseMessageConversationData>
     suspend fun getConversationList(): Flow<List<FirebaseMessageConversationData>>
 
-    val userMessageConversationList: MutableStateFlow<List<FirebaseMessageConversationData>?>
     suspend fun sendMessage(
         messageText: String,
         conversationId: String,

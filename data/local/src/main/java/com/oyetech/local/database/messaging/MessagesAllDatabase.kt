@@ -25,17 +25,16 @@ Created by Erdi Özbek
 abstract class MessagesAllDatabase : RoomDatabase() {
 
     abstract fun modelDao(): MessagesAllDao
-    // abstract fun messageConversationDao(): MessagesConversationDao
 
     companion object {
 
-        lateinit var databasee: MessagesSendingDatabase
+        lateinit var databasee: MessagesAllDatabase
 
-        fun buildDatabase(context: Context): MessagesSendingDatabase {
+        fun buildDatabase(context: Context): MessagesAllDatabase {
 
             databasee = Room.databaseBuilder(
                 context.applicationContext,
-                MessagesSendingDatabase::class.java,
+                MessagesAllDatabase::class.java,
                 "MessagesAllDatabase.db"
             )
                 .fallbackToDestructiveMigration()

@@ -1,6 +1,7 @@
 package com.oyetech.composebase.sharedScreens.messaging
 
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessageConversationData
+import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingLocalData
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingResponseData
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseParticipantData
 import com.oyetech.models.firebaseModels.messagingModels.MessageStatus
@@ -32,7 +33,7 @@ data class MessageDetailUiState(
     val isLoading: Boolean = false,
     val errorText: String = "",
     val messageText: String = "",
-    val createdAt: Date? = null,
+    val createdAt: Long? = null,
     val createdAtString: String = "",
     val senderId: String = "",
     val receiverId: String = "",
@@ -64,7 +65,7 @@ sealed class MessageConversationEvent {
 //    object OnMessageSend : MessageDetailEvent()
 }
 
-fun Flow<List<FirebaseMessageConversationData>>.mapToUiState(clientUserId: String): Flow<List<MessageConversationUiState>> {
+fun Flow<List<FirebaseMessageConversationData>>.mapFromLocalToUiState(clientUserId: String): Flow<List<MessageConversationUiState>> {
     if (clientUserId.isEmpty()) return this.map {
         Timber.d("clientUserId is empty")
         emptyList()
@@ -86,7 +87,27 @@ fun Flow<List<FirebaseMessageConversationData>>.mapToUiState(clientUserId: Strin
     }
 }
 
-fun Flow<List<FirebaseMessagingResponseData>>.mapToUiState(): Flow<List<MessageDetailUiState>> {
+fun Flow<List<FirebaseMessagingResponseData>>.mapFromFirebaseToUiState(): Flow<List<MessageDetailUiState>> {
+    return this.map {
+        it.map { data ->
+            MessageDetailUiState(
+//                isLoading = data.isLoading,
+//                errorText = data.errorText,
+                messageText = data.messageText,
+                createdAt = data.createdAt?.time,
+                createdAtString = TimeFunctions.getDateFromLongWithHour(data.createdAt?.time ?: 0)
+                    ?: "",
+                senderId = data.senderId,
+                receiverId = data.receiverId,
+                messageId = data.messageId,
+                status = data.status,
+                conversationId = data.conversationId,
+            )
+        }
+    }
+}
+
+fun Flow<List<FirebaseMessagingLocalData>>.mapFromLocalToUiState(): Flow<List<MessageDetailUiState>> {
     return this.map {
         it.map { data ->
             MessageDetailUiState(
@@ -94,7 +115,7 @@ fun Flow<List<FirebaseMessagingResponseData>>.mapToUiState(): Flow<List<MessageD
 //                errorText = data.errorText,
                 messageText = data.messageText,
                 createdAt = data.createdAt,
-                createdAtString = TimeFunctions.getDateFromLongWithHour(data.createdAt?.time ?: 0)
+                createdAtString = TimeFunctions.getDateFromLongWithHour(data.createdAt ?: 0)
                     ?: "",
                 senderId = data.senderId,
                 receiverId = data.receiverId,

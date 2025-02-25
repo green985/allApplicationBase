@@ -34,7 +34,7 @@ data class FirebaseMessageConversationData(
 @Entity(tableName = "messages")
 @JsonClass(generateAdapter = true)
 data class FirebaseMessagingLocalData(
-    @PrimaryKey(autoGenerate = true) var rowId: Long = 0,
+    @PrimaryKey
     var messageId: String = "",
     var conversationId: String = "",
     var senderId: String = "",
@@ -103,6 +103,7 @@ fun FirebaseMessagingLocalData.toRemoteData(): FirebaseMessagingResponseData {
 enum class MessageStatus {
     IDLE,
     SENT,
+    ERROR,
     DELIVERED,
     READ
 }

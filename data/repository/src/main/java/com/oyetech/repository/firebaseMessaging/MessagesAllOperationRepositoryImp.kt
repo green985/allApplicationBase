@@ -3,6 +3,7 @@ package com.oyetech.repository.firebaseMessaging
 import com.oyetech.dao.firebaseMessaging.MessagesAllDao
 import com.oyetech.domain.repository.messaging.MessagesAllOperationRepository
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingLocalData
+import kotlinx.coroutines.flow.Flow
 
 /**
 Created by Erdi Özbek
@@ -13,35 +14,38 @@ Created by Erdi Özbek
 class MessagesAllOperationRepositoryImp(private val messagesAllDao: MessagesAllDao) :
     MessagesAllOperationRepository {
 
-    override fun getFirstInMessage() {
-        messagesAllDao.getFirstInMessage()
+    override fun getMessageListFlow(conversationId: String): Flow<List<FirebaseMessagingLocalData>> {
+        return messagesAllDao.getMessageListFlow(conversationId)
     }
 
-    override fun getMessageListFlow(conversationId: String) {
-        messagesAllDao.getMessageListFlow(conversationId)
+    override fun getMessageListWithLastMessageId(
+        conversationId: String,
+        messageId: String,
+    ): List<FirebaseMessagingLocalData> {
+        return messagesAllDao.getMessageListWithLastMessageId(conversationId, messageId)
     }
 
-    override fun getMessageListWithLastMessageId(conversationId: String, messageId: String) {
-        messagesAllDao.getMessageListWithLastMessageId(conversationId, messageId)
+    override fun getMessageWithId(messageId: String): FirebaseMessagingLocalData? {
+        return messagesAllDao.getMessageWithId(messageId)
     }
 
-    override fun getMessageWithId(messageId: String) {
-        messagesAllDao.getMessageWithId(messageId)
+    override fun deleteLastList(idList: List<String>): Int {
+        return messagesAllDao.deleteLastList(idList)
     }
 
-    override fun deleteLastList(idList: List<String>) {
-        messagesAllDao.deleteLastList(idList)
-    }
-
-    override fun deleteAllList() {
+    override fun deleteAllMessages() {
         messagesAllDao.deleteAllList()
     }
 
-    override fun findRadioStationWithStationIdList(messageIdList: List<String>) {
-        messagesAllDao.findMessageListWithMessageIdList(messageIdList)
+    override fun getMessageListWithMessageIdList(messageIdList: List<String>): List<FirebaseMessagingLocalData> {
+        return messagesAllDao.findMessageListWithMessageIdList(messageIdList)
     }
 
-    override fun insertLastList(list: List<FirebaseMessagingLocalData>) {
+    override suspend fun insertLastList(list: List<FirebaseMessagingLocalData>) {
         messagesAllDao.insertLastList(list)
+    }
+
+    override suspend fun insertMessage(message: FirebaseMessagingLocalData) {
+        messagesAllDao.insert(message)
     }
 }

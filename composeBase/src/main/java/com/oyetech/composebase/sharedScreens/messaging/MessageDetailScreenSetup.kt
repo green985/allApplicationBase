@@ -104,12 +104,21 @@ fun MessageDetailScreen(
                 errorMessage = complexItemViewState.errorMessage,
                 content = {
                     items(items = items, key = { it.messageId }, itemContent = { messageDetail ->
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            text = messageDetail.toString()
-                        )
+                        Column {
+
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                text = messageDetail.toString()
+                            )
+                            Spacer(Modifier.size(8.dp))
+                            Text(
+                                modifier = Modifier
+                                    .padding(8.dp),
+                                text = messageDetail.status.toString()
+                            )
+                        }
                     })
 
                 },
@@ -118,6 +127,7 @@ fun MessageDetailScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 2.dp, end = 2.dp)
+                    .weight(1f)
                     .imePadding(),
                 verticalAlignment = Alignment.CenterVertically
             ) {

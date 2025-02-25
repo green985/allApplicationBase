@@ -5,16 +5,20 @@ import com.google.firebase.firestore.Query
 import com.oyetech.domain.helper.ActivityProviderUseCase
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
+import com.oyetech.domain.repository.messaging.MessagesAllOperationRepository
 import com.oyetech.domain.repository.messaging.MessagesSendingOperationRepository
 import com.oyetech.firebaseDB.databaseKeys.FirebaseDatabaseKeys
 import com.oyetech.firebaseDB.firebaseDB.helper.runTransactionWithTimeout
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.errors.ErrorMessage
+import com.oyetech.models.errors.exceptionHelper.GeneralException
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessageConversationData
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingLocalData
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingResponseData
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseParticipantData
+import com.oyetech.models.firebaseModels.messagingModels.MessageStatus
 import com.oyetech.models.firebaseModels.messagingModels.MessageStatus.IDLE
+import com.oyetech.models.firebaseModels.messagingModels.MessageStatus.SENT
 import com.oyetech.models.firebaseModels.messagingModels.toLocalData
 import com.oyetech.models.firebaseModels.messagingModels.toRemoteData
 import com.oyetech.tools.coroutineHelper.AppDispatchers
@@ -24,7 +28,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
@@ -44,12 +47,11 @@ class FirebaseMessagingRepositoryImpl(
     private val firestore: FirebaseFirestore,
     private val userRepository: FirebaseUserRepository,
     private val messagesSendingOperationRepository: MessagesSendingOperationRepository,
+    private val messagesAllOperationRepository: MessagesAllOperationRepository,
     private val dispatcher: AppDispatchers,
     private val activityProviderUseCase: ActivityProviderUseCase,
 ) : FirebaseMessagingRepository {
 
-    override val userMessageConversationList =
-        MutableStateFlow<List<FirebaseMessageConversationData>?>(null)
 
     private val sendingDelay = 100L
     private val newMessageToSendOperationDelay = 25L
@@ -66,7 +68,6 @@ class FirebaseMessagingRepositoryImpl(
 
     override fun initLocalMessageSendOperation(scope: CoroutineScope) {
         GlobalScope.launch {
-
             activityProviderUseCase.activityOnResumeMutableStateFlow.collectLatest {
                 Timber.d("activityOnResumeMutableStateFlow: $it")
                 sendingOperationJob?.cancel()
@@ -102,12 +103,10 @@ class FirebaseMessagingRepositoryImpl(
             }.asResult().collectLatest {
                 Timber.d("observeAndSendMessageSingle: finish")
             }
-
         }
-
     }
 
-    private suspend fun FirebaseMessagingRepositoryImpl.sendMessageWithLocalTrigger(
+    private suspend fun sendMessageWithLocalTrigger(
         it: FirebaseMessagingLocalData?,
     ) {
         if (it == null) {
@@ -116,18 +115,16 @@ class FirebaseMessagingRepositoryImpl(
 
         try {
             delay(sendingDelay)
-            if (it == null) {
-                Timber.d("observeAndSendMessageSingle: null ama nasil aq :D")
-                throw Exception("Message is null")
+            val result =
+                sendMessageWithTry(it.messageId).firstOrNull()
+            if (result != null) {
+                messagesSendingOperationRepository.deleteMessageFromLocal(it.messageId)
+                messagesAllOperationRepository.insertMessage(
+                    result.toLocalData().copy(status = SENT)
+                )
+                it
             } else {
-                val result =
-                    sendMessageWithTry(it.messageId).firstOrNull()
-                if (result != null) {
-                    messagesSendingOperationRepository.deleteMessageFromLocal(it.messageId)
-                    it
-                } else {
-                    throw Exception("Message send error")
-                }
+                throw GeneralException("Message send error")
             }
         } catch (e: Exception) {
             Timber.d("error send again ")
@@ -147,7 +144,7 @@ class FirebaseMessagingRepositoryImpl(
                 emit(sendMessageResult)
             }
         } else {
-            throw Exception("Message not found")
+            throw GeneralException("Message not found")
         }
 
     }
@@ -164,7 +161,7 @@ class FirebaseMessagingRepositoryImpl(
             }
             return result
         } catch (e: Exception) {
-            throw Exception("Message send error")
+            throw GeneralException("Message send error")
         }
     }
 
@@ -198,14 +195,20 @@ class FirebaseMessagingRepositoryImpl(
                 )
 
                 localMessage = newMessage.toLocalData()
+                messagesAllOperationRepository.insertMessage(localMessage)
+
                 val result = firestore.runTransactionWithTimeout {
                     it.set(conversationRef, newMessage)
                     newMessage
                 }
 
                 emit(result)
+                messagesAllOperationRepository.insertMessage(localMessage.copy(status = SENT))
+
             } catch (e: Exception) {
                 messagesSendingOperationRepository.insertSendingMessage(localMessage)
+                messagesAllOperationRepository.insertMessage(localMessage.copy(status = MessageStatus.ERROR))
+
                 Timber.d("message send error = " + ErrorMessage.fetchErrorMessage(e.message))
                 throw e
             }
