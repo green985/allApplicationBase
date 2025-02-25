@@ -78,6 +78,21 @@ class FirebaseMessagingRepositoryImpl(
         }
     }
 
+    override fun getMessageListWithConversationId(conversationId: String): Flow<List<FirebaseMessagingResponseData>> {
+        return flow {
+            val query = firestore.collection(FirebaseDatabaseKeys.conversations)
+                .document(conversationId)
+                .collection(FirebaseDatabaseKeys.messages)
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+            val result = query.get().await().documents
+            val messageList = result.mapNotNull { doc ->
+                val docc = doc.toObject(FirebaseMessagingResponseData::class.java)
+                docc?.copy(messageId = doc.id)
+            }
+            emit(messageList)
+        }
+    }
+
     fun observeAndSendMessageSingle(scope: CoroutineScope): Job {
         return scope.launch(dispatcher.io) {
             firebaseMessagingLocalRepository.firstInMessageFlow().onEach {
@@ -158,9 +173,7 @@ class FirebaseMessagingRepositoryImpl(
         receiverUserId: String,
     ) =
         flow {
-//            val userId = userRepository.getUserId()
-
-            val senderUserId = "denemeFirstUser"
+            val senderUserId = userRepository.getUserId()
             var localMessage = FirebaseMessagingLocalData()
             require(senderUserId.isNotBlank()) { "User not logged in" }
             require(senderUserId != receiverUserId) { "Cannot create conversation with self" }
@@ -199,13 +212,11 @@ class FirebaseMessagingRepositoryImpl(
 
     override suspend fun getConversationDetailOrCreateFlow(receiverUserId: String): Flow<FirebaseMessageConversationData> =
         flow {
-//            val userId = userRepository.getUserId()
+            val userId = userRepository.getUserId()
+
+            // todo will be add receiver property
 
             try {
-
-                val userId = "denemeFirstUser"
-
-
                 require(userId.isNotBlank()) { "User not logged in" }
                 require(userId != receiverUserId) { "Cannot create conversation with self" }
 
@@ -256,9 +267,7 @@ class FirebaseMessagingRepositoryImpl(
         }
 
     override suspend fun getConversationList() = flow {
-//            val userId = userRepository.getUserId()
-
-        val userId = "denemeFirstUser"
+        val userId = userRepository.getUserId() //
         require(userId.isNotBlank()) { "User not logged in" }
 
         try {

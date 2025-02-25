@@ -70,6 +70,7 @@ fun MessageConversationListScreen(
                             navigationRoute.invoke(
                                 QuoteAppProjectRoutes.MessageDetail.withArgs(
                                     ScreenKey.conversationId to conversation.conversationId,
+                                    ScreenKey.receiverUserId to conversation.usernameId,
                                 )
                             )
                         },

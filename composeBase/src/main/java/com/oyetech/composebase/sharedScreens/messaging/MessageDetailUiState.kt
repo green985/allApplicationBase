@@ -1,10 +1,13 @@
 package com.oyetech.composebase.sharedScreens.messaging
 
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessageConversationData
+import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingResponseData
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseParticipantData
+import com.oyetech.models.firebaseModels.messagingModels.MessageStatus
 import com.oyetech.models.utils.helper.TimeFunctions
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 import java.util.Date
 
 /**
@@ -13,15 +16,36 @@ Created by Erdi Özbek
 -19:00-
  **/
 
+data class MessageDetailScreenUiState(
+    val isLoading: Boolean = false,
+    val errorText: String = "",
+    val messageText: String = "",
+
+    val createdAt: Date?,
+    val createdAtString: String,
+    val senderId: String = "",
+    val receiverId: String = "",
+    val conversationId: String = "",
+)
+
 data class MessageDetailUiState(
     val isLoading: Boolean = false,
     val errorText: String = "",
     val messageText: String = "",
+    val createdAt: Date? = null,
+    val createdAtString: String = "",
+    val senderId: String = "",
+    val receiverId: String = "",
+    val messageId: String = "",
+    val status: MessageStatus = MessageStatus.IDLE,
+    val conversationId: String = "",
 )
 
 sealed class MessageDetailEvent {
     data class OnMessageTextChange(val messageText: String) : MessageDetailEvent()
     object OnMessageSend : MessageDetailEvent()
+    object OnRetry : MessageDetailEvent()
+    object OnRefresh : MessageDetailEvent()
 }
 
 data class MessageConversationUiState(
@@ -32,6 +56,7 @@ data class MessageConversationUiState(
     val createdAtString: String = TimeFunctions.getDateFromLongWithHour(createdAt?.time ?: 0) ?: "",
     val participantUserIdList: List<String> = participantList.map { it.userId }.sorted(),
     val username: String = participantList.firstOrNull()?.username ?: "",
+    val usernameId: String = "",
 )
 
 sealed class MessageConversationEvent {
@@ -39,7 +64,11 @@ sealed class MessageConversationEvent {
 //    object OnMessageSend : MessageDetailEvent()
 }
 
-fun Flow<List<FirebaseMessageConversationData>>.mapToUiState(): Flow<List<MessageConversationUiState>> {
+fun Flow<List<FirebaseMessageConversationData>>.mapToUiState(clientUserId: String): Flow<List<MessageConversationUiState>> {
+    if (clientUserId.isEmpty()) return this.map {
+        Timber.d("clientUserId is empty")
+        emptyList()
+    }
     return this.map {
         it.map { data ->
             MessageConversationUiState(
@@ -47,7 +76,31 @@ fun Flow<List<FirebaseMessageConversationData>>.mapToUiState(): Flow<List<Messag
                 participantList = data.participantList,
                 lastMessageId = data.lastMessageId,
                 createdAt = data.createdAt,
-                participantUserIdList = data.participantList.map { it.userId }.sorted()
+                participantUserIdList = data.participantList.map { it.userId }.sorted(),
+                username = data.participantList.firstOrNull { it.userId != clientUserId }?.username
+                    ?: "",
+                usernameId = data.participantList.firstOrNull { it.userId != clientUserId }?.userId
+                    ?: ""
+            )
+        }
+    }
+}
+
+fun Flow<List<FirebaseMessagingResponseData>>.mapToUiState(): Flow<List<MessageDetailUiState>> {
+    return this.map {
+        it.map { data ->
+            MessageDetailUiState(
+//                isLoading = data.isLoading,
+//                errorText = data.errorText,
+                messageText = data.messageText,
+                createdAt = data.createdAt,
+                createdAtString = TimeFunctions.getDateFromLongWithHour(data.createdAt?.time ?: 0)
+                    ?: "",
+                senderId = data.senderId,
+                receiverId = data.receiverId,
+                messageId = data.messageId,
+                status = data.status,
+                conversationId = data.conversationId,
             )
         }
     }

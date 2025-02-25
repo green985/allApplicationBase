@@ -5,12 +5,16 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.oyetech.composebase.base.BaseViewModel
-import com.oyetech.composebase.sharedScreens.messaging.MessagingConversationPagingSource
 import com.oyetech.domain.repository.firebase.FirebaseMessagingLocalRepository
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
+import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.firebase.realtime.FirebaseRealtimeHelperRepository
 import com.oyetech.tools.coroutineHelper.AppDispatchers
+import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 /**
 Created by Erdi Özbek
@@ -23,6 +27,7 @@ class MessageConversationListVm(
     private val firebaseMessagingRepository: FirebaseMessagingRepository,
     private val firebaseMessagingLocalRepository: FirebaseMessagingLocalRepository,
     private val firebaseRealtimeHelperRepository: FirebaseRealtimeHelperRepository,
+    private val firebaseUserRepository: FirebaseUserRepository,
 ) : BaseViewModel(appDispatchers) {
     val uiState = MutableStateFlow(MessageConversationListUiState())
 
@@ -31,13 +36,23 @@ class MessageConversationListVm(
             pageSize = 1
         ),
         pagingSourceFactory = {
-            MessagingConversationPagingSource(firebaseMessagingRepository)
+            MessagingConversationPagingSource(
+                firebaseMessagingRepository,
+                firebaseUserRepository = firebaseUserRepository
+            )
         }
     ).flow.cachedIn(viewModelScope)
 
     init {
-        firebaseRealtimeHelperRepository.observeSomething()
+//        firebaseRealtimeHelperRepository.observeSomething()
 
+        viewModelScope.launch(getDispatcherIo()) {
+            firebaseMessagingRepository.getConversationDetailOrCreateFlow("denemeUserIdddddddddddddd")
+                .asResult()
+                .collectLatest {
+                    Timber.d("conversationDetailOrCreateFlow: $it")
+                }
+        }
 
     }
 

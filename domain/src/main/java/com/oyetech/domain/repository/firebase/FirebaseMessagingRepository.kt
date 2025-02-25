@@ -19,4 +19,15 @@ interface FirebaseMessagingRepository {
     ): Flow<FirebaseMessagingResponseData>
 
     fun initLocalMessageSendOperation(scope: CoroutineScope)
+
+    // this function will return all message information with flow
+    // realtime, so we can observe the message list and update the ui
+    // when new message comes
+    fun getMessageListWithConversationId(conversationId: String): Flow<List<FirebaseMessagingResponseData>>
+
+    // will be used for load more messages
+//    fun getMessagesLoadMoreWithMessageId(
+//        conversationId: String,
+//        messageId: String,
+//    ): Flow<List<FirebaseMessagingResponseData>>
 }

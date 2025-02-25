@@ -3,8 +3,10 @@ package com.oyetech.composebase.projectQuotesFeature.navigation
 import com.oyetech.composebase.R
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationItem
 import com.oyetech.composebase.navigator.Route
+import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppNavItem.QuoteMessageTab
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppNavItem.QuoteSettingsTab
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppNavItem.TabQuoteAppHomepage
+import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes.MessageConversationList
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes.QuoteAppHomepage
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes.QuoteSettings
 import com.oyetech.languageModule.keyset.LanguageKey
@@ -31,7 +33,7 @@ object QuoteAppProjectRoutes {
     val MessageConversationList = Route("quote/MessageConversationList")
 
     val quoteApplicationBottomTabNavList = listOf(
-        TabQuoteAppHomepage, QuoteSettingsTab
+        TabQuoteAppHomepage, QuoteSettingsTab, QuoteMessageTab
     )
 }
 
@@ -41,6 +43,13 @@ sealed class QuoteAppNavItem {
             path = QuoteAppHomepage.route.toString(),
             titleText = LanguageKey.home,
             icon = R.drawable.ic_tab_all_radio
+        )
+
+    object QuoteMessageTab :
+        BottomNavigationItem(
+            path = MessageConversationList.route.toString(),
+            title = R.string.nav_item_settings,
+            icon = R.drawable.ic_settings
         )
 
     object QuoteSettingsTab :

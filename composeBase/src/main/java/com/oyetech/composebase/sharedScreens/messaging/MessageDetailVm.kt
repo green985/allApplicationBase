@@ -1,14 +1,18 @@
 package com.oyetech.composebase.sharedScreens.messaging;
 
 import androidx.lifecycle.viewModelScope
-import com.oyetech.composebase.base.BaseViewModel
+import com.oyetech.composebase.base.baseList.BaseListViewModel
+import com.oyetech.composebase.base.baseList.ComplexItemListState
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnMessageSend
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnMessageTextChange
-import com.oyetech.domain.repository.firebase.FirebaseMessagingLocalRepository
+import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnRefresh
+import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnRetry
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
+import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -22,22 +26,64 @@ Created by Erdi Özbek
 
 class MessageDetailVm(
     appDispatchers: AppDispatchers,
+    var conversationId: String = "",
+    var receiverUserId: String = "",
     private val firebaseMessagingRepository: FirebaseMessagingRepository,
-    private val firebaseMessagingLocalRepository: FirebaseMessagingLocalRepository,
-) : BaseViewModel(appDispatchers) {
-    val uiState = MutableStateFlow(MessageDetailUiState())
+    private val firebaseUserRepository: FirebaseUserRepository,
+) : BaseListViewModel<MessageDetailUiState>(appDispatchers) {
+    val uiState = MutableStateFlow(
+        MessageDetailScreenUiState(
+            isLoading = false,
+            errorText = "",
+            createdAt = null,
+            createdAtString = "",
+            senderId = firebaseUserRepository.getUserId(),
+            receiverId = receiverUserId,
+            conversationId = conversationId
+        )
+    )
 
-    val receiverSenderId = "1234567890" // will be change if group chat or something.
-    var conversationId = "1234567890" // will be change if group chat or something.
+    override val complexItemViewState: MutableStateFlow<ComplexItemListState<MessageDetailUiState>> =
+        MutableStateFlow<ComplexItemListState<MessageDetailUiState>>(
+            ComplexItemListState(
+                isLoadingInitial = true
+            )
+        )
 
     init {
+        Timber.d("MessageDetailVm created == " + uiState.value.toString())
         viewModelScope.launch(getDispatcherIo()) {
-            firebaseMessagingRepository.getConversationDetailOrCreateFlow(receiverSenderId)
+            firebaseMessagingRepository.getConversationDetailOrCreateFlow(receiverUserId)
                 .asResult().collectLatest {
                     it.fold(
                         onSuccess = { conversationData ->
                             conversationId = conversationData.conversationId
                             Timber.d("Conversation data: $conversationData")
+                            observeMessageList()
+                        },
+                        onFailure = {
+                            Timber.d(it)
+                        }
+                    )
+                }
+        }
+
+        firebaseMessagingRepository.initLocalMessageSendOperation(viewModelScope)
+    }
+
+    private fun observeMessageList() {
+        viewModelScope.launch(getDispatcherIo()) {
+            firebaseMessagingRepository.getMessageListWithConversationId(conversationId)
+                .mapToUiState().asResult().collectLatest {
+                    it.fold(
+                        onSuccess = { messageList ->
+                            Timber.d("Message list: $messageList")
+                            complexItemViewState.updateState {
+                                copy(
+                                    isLoadingInitial = false,
+                                    items = messageList.toImmutableList()
+                                )
+                            }
                         },
                         onFailure = {
                             Timber.e(it)
@@ -45,8 +91,6 @@ class MessageDetailVm(
                     )
                 }
         }
-
-        firebaseMessagingRepository.initLocalMessageSendOperation(viewModelScope)
     }
 
     fun onEvent(event: MessageDetailEvent) {
@@ -58,28 +102,25 @@ class MessageDetailVm(
             is OnMessageTextChange -> {
                 uiState.value = uiState.value.copy(messageText = event.messageText)
             }
+
+            OnRefresh -> {
+                Timber.d("OnRefresh")
+                refreshList()
+            }
+
+            OnRetry -> {
+                Timber.d("OnRetry")
+                retry()
+            }
         }
     }
 
     private fun sendMessage() {
-//        viewModelScope.launch(getDispatcherIo()) {
-//            firebaseMessagingRepository.getConversationList()
-//                .asResult().collectLatest {
-//                    it.fold(
-//                        onSuccess = { conversationList ->
-//                            Timber.d("Conversation list: $conversationList")
-//                        },
-//                        onFailure = {
-//                            Timber.e(it)
-//                        }
-//                    )
-//                }
-//        }
         viewModelScope.launch(getDispatcherIo()) {
             firebaseMessagingRepository.sendMessage(
                 messageText = uiState.value.messageText,
                 conversationId = conversationId,
-                receiverUserId = receiverSenderId
+                receiverUserId = receiverUserId
             ).asResult().collectLatest {
                 it.fold(
                     onSuccess = { messageDetail ->

@@ -1,8 +1,11 @@
-package com.oyetech.composebase.sharedScreens.messaging
+package com.oyetech.composebase.sharedScreens.messaging.conversationList
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.oyetech.composebase.sharedScreens.messaging.MessageConversationUiState
+import com.oyetech.composebase.sharedScreens.messaging.mapToUiState
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
+import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
@@ -14,7 +17,10 @@ Created by Erdi Özbek
 -22:40-
  **/
 
-class MessagingConversationPagingSource(private val firebaseMessagingRepository: FirebaseMessagingRepository) :
+class MessagingConversationPagingSource(
+    private val firebaseMessagingRepository: FirebaseMessagingRepository,
+    private val firebaseUserRepository: FirebaseUserRepository,
+) :
     PagingSource<Int, MessageConversationUiState>() {
     override fun getRefreshKey(state: PagingState<Int, MessageConversationUiState>): Int? {
         val keyy = state.anchorPosition?.let { position ->
@@ -26,12 +32,13 @@ class MessagingConversationPagingSource(private val firebaseMessagingRepository:
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MessageConversationUiState> {
-
+        val userId = firebaseUserRepository.getUserId()
         return try {
             withContext(Dispatchers.IO) {
                 val response =
                     firebaseMessagingRepository.getConversationList()
-                        .mapToUiState().firstOrNull() ?: emptyList()
+                        .mapToUiState(clientUserId = userId)
+                        .firstOrNull() ?: emptyList()
 
                 LoadResult.Page(
                     data = response,
