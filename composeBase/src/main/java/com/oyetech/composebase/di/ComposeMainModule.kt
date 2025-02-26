@@ -31,6 +31,7 @@ import com.oyetech.composebase.projectRadioFeature.viewModelSlice.RadioFavViewMo
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.RadioPlayerViewModelSliceImp
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailVm
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListVm
+import com.oyetech.composebase.sharedScreens.userList.UserListVm
 import com.oyetech.domain.repository.helpers.logicRepositories.RadioListSortRepository
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.singleOf
@@ -78,5 +79,6 @@ object ComposeMainModule {
         // messaging
         viewModelOf(::MessageDetailVm)
         viewModelOf(::MessageConversationListVm)
+        viewModelOf(::UserListVm)
     }
 }

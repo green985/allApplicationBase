@@ -5,10 +5,12 @@ import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationItem
 import com.oyetech.composebase.navigator.Route
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppNavItem.QuoteMessageTab
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppNavItem.QuoteSettingsTab
+import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppNavItem.QuoteUserListTab
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppNavItem.TabQuoteAppHomepage
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes.MessageConversationList
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes.QuoteAppHomepage
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes.QuoteSettings
+import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes.UserList
 import com.oyetech.languageModule.keyset.LanguageKey
 
 /**
@@ -31,9 +33,10 @@ object QuoteAppProjectRoutes {
     val SearchScreen = Route("quote/SearchScreen")
     val MessageDetail = Route("quote/MessageDetail")
     val MessageConversationList = Route("quote/MessageConversationList")
+    val UserList = Route("quote/UserList")
 
     val quoteApplicationBottomTabNavList = listOf(
-        TabQuoteAppHomepage, QuoteSettingsTab, QuoteMessageTab
+        TabQuoteAppHomepage, QuoteSettingsTab, QuoteMessageTab, QuoteUserListTab
     )
 }
 
@@ -55,6 +58,13 @@ sealed class QuoteAppNavItem {
     object QuoteSettingsTab :
         BottomNavigationItem(
             path = QuoteSettings.route.toString(),
+            title = R.string.nav_item_settings,
+            icon = R.drawable.ic_settings
+        )
+
+    object QuoteUserListTab :
+        BottomNavigationItem(
+            path = UserList.route.toString(),
             title = R.string.nav_item_settings,
             icon = R.drawable.ic_settings
         )

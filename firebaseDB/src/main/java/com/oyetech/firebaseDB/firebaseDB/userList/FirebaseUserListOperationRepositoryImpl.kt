@@ -9,6 +9,7 @@ import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.firebaseDB.databaseKeys.FirebaseDatabaseKeys
 import com.oyetech.firebaseDB.firebaseDB.helper.runTransactionWithTimeout
 import com.oyetech.models.errors.exceptionHelper.GeneralException
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
@@ -45,8 +46,8 @@ class FirebaseUserListOperationRepositoryImpl(
         }
     }
 
-    override suspend fun addUserToUserList() {
-        flow<Unit> {
+    override suspend fun addUserToUserList(): Flow<Unit> {
+        return flow<Unit> {
             val userId = firebaseUserRepository.getUserId()
             val username = firebaseUserRepository.getUsername()
             if (userId.isBlank() || username.isBlank()) {

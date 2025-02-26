@@ -1,5 +1,7 @@
 package com.oyetech.domain.repository.firebase
 
+import kotlinx.coroutines.flow.Flow
+
 interface FirebaseUserListOperationRepository {
-    suspend fun addUserToUserList()
+    suspend fun addUserToUserList(): Flow<Unit>
 }
