@@ -7,6 +7,7 @@ import com.oyetech.domain.repository.firebase.FirebaseLanguageOperationRepositor
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuotesDebugOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuotesOperationRepository
+import com.oyetech.domain.repository.firebase.FirebaseUserListOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.firebase.RadioAnalyticsOperationRepository
 import com.oyetech.domain.repository.helpers.FirebaseContactWithMeOperationRepository
@@ -18,6 +19,7 @@ import com.oyetech.firebaseDB.firebaseDB.language.FirebaseLanguageOperationRepos
 import com.oyetech.firebaseDB.firebaseDB.messaging.FirebaseMessagingRepositoryImpl
 import com.oyetech.firebaseDB.firebaseDB.quotes.FirebaseQuotesOperationRepositoryImp
 import com.oyetech.firebaseDB.firebaseDB.radio.RadioAnalyticsOperationRepositoryImp
+import com.oyetech.firebaseDB.firebaseDB.userList.FirebaseUserListOperationRepositoryImpl
 import com.oyetech.firebaseDB.userOperation.FirebaseUserRepositoryImp
 import org.koin.dsl.module
 
@@ -84,6 +86,12 @@ object FirebaseDBModule {
         single { FirebaseOnlineHelper() }
         single<FirebaseContentLikeOperationRepository> {
             FirebaseContentLikeOperationRepositoryImpl(
+                get(), get()
+            )
+        }
+
+        single<FirebaseUserListOperationRepository> {
+            FirebaseUserListOperationRepositoryImpl(
                 get(), get()
             )
         }
