@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface FirebaseMessagingRepository {
     fun idlee()
     suspend fun getConversationDetailOrCreateFlow(receiverUserId: String): Flow<FirebaseMessageConversationData>
-    suspend fun getConversationList(): Flow<List<FirebaseMessageConversationData>>
+    fun getConversationList(): Flow<List<FirebaseMessageConversationData>>
 
     suspend fun sendMessage(
         messageText: String,

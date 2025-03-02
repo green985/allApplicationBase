@@ -3,6 +3,8 @@ package com.oyetech.domain.di
 import com.oyetech.domain.helper.ActivityProviderUseCase
 import com.oyetech.domain.radioOperationUseCases.remoteUseCase.RadioDataOperationUseCase
 import com.oyetech.domain.radioOperationUseCases.remoteUseCase.RadioStationListOperationUseCase
+import com.oyetech.domain.repository.messaging.MessagesAllOperationRepository
+import com.oyetech.domain.repository.messaging.MessagesAllOperationRepositoryImp
 import com.oyetech.domain.repository.usernameGeneratorRepository.UsernameGeneratorImp
 import com.oyetech.domain.repository.usernameGeneratorRepository.UsernameGeneratorRepository
 import com.oyetech.domain.useCases.AdsHelperUseCase
@@ -47,17 +49,20 @@ object DomainModule {
     }
 }
 
-@Suppress("MemberNameEqualsClassName")
 object RadioDomainModule {
-    val radioDomainModule = module {
+    val module = module {
         single { RadioDataOperationUseCase(get()) }
         single { RadioOperationUseCase(get(), get(), get()) }
         single { RadioStationListOperationUseCase(get(), get()) }
         single { RadioCountryTagOperationUseCase(get()) }
-        // single { ExoPlayerOperationUseCase(get()) }
-//        single { SharedOperationUseCase(get()) }
         single { VolumeOperationUseCase(get()) }
         single { AlarmOperationUseCase(get()) }
+    }
+}
+
+object QuoteDomainModule {
+    val module = module {
+        single<MessagesAllOperationRepository> { MessagesAllOperationRepositoryImp(get(), get()) }
     }
 }
 

@@ -3,6 +3,7 @@ package com.oyetech.models.firebaseModels.messagingModels
 import android.os.Parcelable
 import androidx.annotation.Keep
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 import com.google.firebase.firestore.ServerTimestamp
@@ -26,6 +27,9 @@ data class FirebaseMessageConversationData(
     @ServerTimestamp
     var createdAt: Date? = null,
     var participantUserIdList: List<String> = participantList.map { it.userId }.sorted(),
+
+    @Ignore
+    var lastMessage: FirebaseMessagingLocalData? = null,
 
     ) : Parcelable
 
@@ -98,7 +102,6 @@ fun FirebaseMessagingLocalData.toRemoteData(): FirebaseMessagingResponseData {
         createdAt = createdAt?.let { Date(it) },
     )
 }
-
 
 enum class MessageStatus {
     IDLE,

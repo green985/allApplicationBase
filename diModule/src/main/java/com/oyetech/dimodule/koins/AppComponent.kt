@@ -5,6 +5,7 @@ import com.oyetech.composebase.di.ComposeMainModule
 import com.oyetech.composebase.projectQuotesFeature.QuotesProjectModule
 import com.oyetech.cripto.privateKeys.WallpaperAppFragmentArgs
 import com.oyetech.domain.di.DomainModule
+import com.oyetech.domain.di.QuoteDomainModule
 import com.oyetech.domain.di.RadioDomainModule
 import com.oyetech.exoplayermodule.di.ExoPlayerModuleDi
 import com.oyetech.firebaseDB.di.FirebaseDBModule
@@ -49,10 +50,9 @@ object AppComponent {
         // Features modules
         // ImageViewerModuleDi.imageViewerModule,
         AdsHelperModule.adsHelperModulee,
-        FirebaseDBModule.firebaseDBModulee,
         ComposeMainModule.composeMainModule1,
 
-        RadioDomainModule.radioDomainModule,
+        RadioDomainModule.module,
 //        RadioModuleDI.createRemoteModule(BaseUrlConfigHelper.BASE_DOMAIN_RADIO),
         RadioModuleDI.createRemoteModule("https://at1.api.radio-browser.info/json/"),
         RadioRepositoryDI.repositoryModule,
@@ -63,15 +63,18 @@ object AppComponent {
         RadioServiceModule.serviceModule,
         GlideModuleDi.glideModule,
         GoogleAppReviewerModule.googlePlayReviewerModule,
+        FirebaseDBModule.firebaseDBModulee,
 
-        QuotesProjectModule.module,
         QuotesImpModule.quoteImpModule,
         QuotesRemoteModule.createZenQuotesRemoteModule(),
         QuotesLocalModuleDi.localModule,
         GoogleSignInModule.googleSignInModulee,
         LanguageImplModule.languageImplModule,
         FirebaseRealtimeModule.module,
-//        RevenueCatModuleDi.revenueCatOperationModule
+        QuoteDomainModule.module,
+
+        QuotesProjectModule.module,
+
     )
 }
 

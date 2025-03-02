@@ -5,6 +5,7 @@ import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingLocalD
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingResponseData
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseParticipantData
 import com.oyetech.models.firebaseModels.messagingModels.MessageStatus
+import com.oyetech.models.firebaseModels.messagingModels.toRemoteData
 import com.oyetech.models.utils.helper.TimeFunctions
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -58,6 +59,8 @@ data class MessageConversationUiState(
     val participantUserIdList: List<String> = participantList.map { it.userId }.sorted(),
     val username: String = participantList.firstOrNull()?.username ?: "",
     val usernameId: String = "",
+
+    val lastMessageUiSate: MessageDetailUiState? = null,
 )
 
 sealed class MessageConversationEvent {
@@ -81,18 +84,30 @@ fun Flow<List<FirebaseMessageConversationData>>.mapFromLocalToUiState(clientUser
                 username = data.participantList.firstOrNull { it.userId != clientUserId }?.username
                     ?: "",
                 usernameId = data.participantList.firstOrNull { it.userId != clientUserId }?.userId
-                    ?: ""
+                    ?: "",
+                lastMessageUiSate = data.lastMessage?.toRemoteData()?.mapToUiState()
             )
         }
     }
+}
+
+fun FirebaseMessagingResponseData.mapToUiState(): MessageDetailUiState {
+    return MessageDetailUiState(
+        messageText = this.messageText,
+        createdAt = this.createdAt?.time,
+        createdAtString = TimeFunctions.getDateFromLongWithHour(this.createdAt?.time ?: 0) ?: "",
+        senderId = this.senderId,
+        receiverId = this.receiverId,
+        messageId = this.messageId,
+        status = this.status,
+        conversationId = this.conversationId,
+    )
 }
 
 fun Flow<List<FirebaseMessagingResponseData>>.mapFromFirebaseToUiState(): Flow<List<MessageDetailUiState>> {
     return this.map {
         it.map { data ->
             MessageDetailUiState(
-//                isLoading = data.isLoading,
-//                errorText = data.errorText,
                 messageText = data.messageText,
                 createdAt = data.createdAt?.time,
                 createdAtString = TimeFunctions.getDateFromLongWithHour(data.createdAt?.time ?: 0)

@@ -1,10 +1,9 @@
-package com.oyetech.domain.repository.messaging
+package com.oyetech.domain.repository.messaging.local
 
-import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessageConversationData
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingLocalData
 import kotlinx.coroutines.flow.Flow
 
-interface MessagesAllOperationRepository {
+interface MessagesAllLocalDataSourceRepository {
     fun getMessageListFlow(conversationId: String): Flow<List<FirebaseMessagingLocalData>>
     fun getMessageListWithLastMessageId(
         conversationId: String,
@@ -12,12 +11,11 @@ interface MessagesAllOperationRepository {
     ): List<FirebaseMessagingLocalData>
 
     fun getMessageWithId(messageId: String): FirebaseMessagingLocalData?
+    fun deleteLastList(idList: List<String>): Int
+    fun deleteAllMessages()
     fun getMessageListWithMessageIdList(messageIdList: List<String>): List<FirebaseMessagingLocalData>
 
     suspend fun insertLastList(list: List<FirebaseMessagingLocalData>)
-    suspend fun insertMessage(message: FirebaseMessagingLocalData)
 
-    fun deleteLastList(idList: List<String>): Int
-    fun deleteAllMessages()
-    fun getConversationList(): Flow<List<FirebaseMessageConversationData>>
+    suspend fun insertMessage(message: FirebaseMessagingLocalData)
 }

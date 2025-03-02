@@ -56,7 +56,7 @@ fun MessageConversationItemView(
                 )
                 Spacer(modifier = Modifier.size(8.dp))
                 Text(
-                    text = uiState.conversationId,
+                    text = "".plus(uiState.lastMessageUiSate?.messageText),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.secondary
                 )

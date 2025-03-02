@@ -2,16 +2,15 @@ package com.oyetech.composebase.sharedScreens.messaging.conversationList
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
 import com.oyetech.composebase.base.BaseScaffold
-import com.oyetech.composebase.baseViews.basePagingList.BasePagingListScreen
+import com.oyetech.composebase.base.baseGenericList.GenericListScreenSetup
+import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import com.oyetech.composebase.sharedScreens.messaging.MessageConversationUiState
@@ -35,13 +34,14 @@ fun MessageConversationListScreenSetup(
 
     val uiState by vm.uiState.collectAsStateWithLifecycle()
 
-    val lazyPagingItems = vm.conversationPaging.collectAsLazyPagingItems()
+    val listViewState by vm.listViewState.collectAsStateWithLifecycle()
+
     BaseScaffold {
         Column(modifier = Modifier.padding()) {
             MessageConversationListScreen(
                 uiState = uiState,
                 onEvent = { vm.onEvent(it) },
-                lazyPagingItems = lazyPagingItems,
+                listViewState = listViewState,
                 navigationRoute = navigationRoute,
             )
         }
@@ -55,31 +55,30 @@ fun MessageConversationListScreen(
     modifier: Modifier = Modifier,
     uiState: MessageConversationListUiState,
     onEvent: (MessageConversationListEvent) -> (Unit),
-    lazyPagingItems: LazyPagingItems<MessageConversationUiState>,
+    listViewState: GenericListState<MessageConversationUiState>,
     navigationRoute: (navigationRoute: String) -> Unit = {},
 ) {
-
     BaseScaffold {
         Column(modifier = Modifier.padding(it)) {
-            BasePagingListScreen(
-                modifier = modifier.fillMaxSize(),
-                items = lazyPagingItems, // This parameter is abstracted, not used here
-                itemKey = { it.conversationId },
-                onBindItem = { conversation ->
-                    MessageConversationItemView(
-                        modifier = Modifier.clickable {
-                            onEvent(OnConversationClick(conversation.conversationId))
-                            navigationRoute.invoke(
-                                QuoteAppProjectRoutes.MessageDetail.withArgs(
-                                    ScreenKey.conversationId to conversation.conversationId,
-                                    ScreenKey.receiverUserId to conversation.usernameId,
+            GenericListScreenSetup(listViewState = listViewState) {
+                items(
+                    items = listViewState.items,
+                    key = { it.conversationId },
+                    itemContent = { itemDetail ->
+                        MessageConversationItemView(
+                            modifier = Modifier.clickable {
+                                onEvent(OnConversationClick(itemDetail.conversationId))
+                                navigationRoute.invoke(
+                                    QuoteAppProjectRoutes.MessageDetail.withArgs(
+                                        ScreenKey.conversationId to itemDetail.conversationId,
+                                        ScreenKey.receiverUserId to itemDetail.usernameId,
+                                    )
                                 )
-                            )
-                        },
-                        uiState = conversation,
-                    )
-                },
-            )
+                            },
+                            uiState = itemDetail,
+                        )
+                    })
+            }
         }
     }
 

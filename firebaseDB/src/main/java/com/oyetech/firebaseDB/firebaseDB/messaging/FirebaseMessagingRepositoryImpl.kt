@@ -5,8 +5,8 @@ import com.google.firebase.firestore.Query
 import com.oyetech.domain.helper.ActivityProviderUseCase
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
-import com.oyetech.domain.repository.messaging.MessagesAllOperationRepository
 import com.oyetech.domain.repository.messaging.MessagesSendingOperationRepository
+import com.oyetech.domain.repository.messaging.local.MessagesAllLocalDataSourceRepository
 import com.oyetech.firebaseDB.databaseKeys.FirebaseDatabaseKeys
 import com.oyetech.firebaseDB.firebaseDB.helper.runTransactionWithTimeout
 import com.oyetech.languageModule.keyset.LanguageKey
@@ -47,11 +47,10 @@ class FirebaseMessagingRepositoryImpl(
     private val firestore: FirebaseFirestore,
     private val userRepository: FirebaseUserRepository,
     private val messagesSendingOperationRepository: MessagesSendingOperationRepository,
-    private val messagesAllOperationRepository: MessagesAllOperationRepository,
+    private val messagesAllOperationRepository: MessagesAllLocalDataSourceRepository,
     private val dispatcher: AppDispatchers,
     private val activityProviderUseCase: ActivityProviderUseCase,
 ) : FirebaseMessagingRepository {
-
 
     private val sendingDelay = 100L
     private val newMessageToSendOperationDelay = 25L
@@ -178,6 +177,10 @@ class FirebaseMessagingRepositoryImpl(
 
             try {
 
+                val messageLastMessageIdRef =
+                    firestore.collection(FirebaseDatabaseKeys.conversations)
+                        .document(conversationId)
+
                 val conversationRef =
                     firestore.collection(FirebaseDatabaseKeys.conversations)
                         .document(conversationId)
@@ -199,6 +202,11 @@ class FirebaseMessagingRepositoryImpl(
 
                 val result = firestore.runTransactionWithTimeout {
                     it.set(conversationRef, newMessage)
+                    it.update(
+                        messageLastMessageIdRef,
+                        FirebaseDatabaseKeys.lastMessageId,
+                        conversationRef.id
+                    )
                     newMessage
                 }
 
@@ -270,23 +278,24 @@ class FirebaseMessagingRepositoryImpl(
 
         }
 
-    override suspend fun getConversationList() = flow {
+    override fun getConversationList() = flow {
         val userId = userRepository.getUserId() //
         require(userId.isNotBlank()) { "User not logged in" }
 
         try {
-            val query = firestore.collection("conversations")
+
+            val queryConversation = firestore.collection("conversations")
                 .whereArrayContains("participantUserIdList", userId)
                 .orderBy("createdAt", Query.Direction.DESCENDING)
-//                .orderBy("lastMessageTimestamp", Query.Direction.DESCENDING)
-            // todo will be fix after connection between messages and conversation
 
-            val result = query.get().await().documents
+            val result = queryConversation.get().await().documents
             val conversationList = result.mapNotNull { doc ->
                 doc.toObject(FirebaseMessageConversationData::class.java)
                     ?.copy(conversationId = doc.id)
             }
             emit(conversationList)
+
+
         } catch (e: Exception) {
             e.printStackTrace()
             throw e

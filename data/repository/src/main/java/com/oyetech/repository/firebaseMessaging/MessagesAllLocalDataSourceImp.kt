@@ -1,18 +1,12 @@
 package com.oyetech.repository.firebaseMessaging
 
 import com.oyetech.dao.firebaseMessaging.MessagesAllDao
-import com.oyetech.domain.repository.messaging.MessagesAllOperationRepository
+import com.oyetech.domain.repository.messaging.local.MessagesAllLocalDataSourceRepository
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingLocalData
 import kotlinx.coroutines.flow.Flow
 
-/**
-Created by Erdi Özbek
--25.02.2025-
--23:31-
- **/
-
-class MessagesAllOperationRepositoryImp(private val messagesAllDao: MessagesAllDao) :
-    MessagesAllOperationRepository {
+class MessagesAllLocalDataSourceImp(private val messagesAllDao: MessagesAllDao) :
+    MessagesAllLocalDataSourceRepository {
 
     override fun getMessageListFlow(conversationId: String): Flow<List<FirebaseMessagingLocalData>> {
         return messagesAllDao.getMessageListFlow(conversationId)
@@ -48,4 +42,6 @@ class MessagesAllOperationRepositoryImp(private val messagesAllDao: MessagesAllD
     override suspend fun insertMessage(message: FirebaseMessagingLocalData) {
         messagesAllDao.insert(message)
     }
+
+
 }
