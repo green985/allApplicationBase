@@ -1,7 +1,7 @@
 package com.oyetech.composebase.projectRadioFeature.screens.languageList
 
 import androidx.lifecycle.viewModelScope
-import com.oyetech.composebase.base.baseList.BaseListViewModel
+import com.oyetech.composebase.base.baseList.BaseListViewModel2
 import com.oyetech.composebase.base.baseList.ComplexItemListState
 import com.oyetech.composebase.base.baseList.changeSortType
 import com.oyetech.composebase.base.updateState
@@ -31,7 +31,7 @@ class LanguageVM(
     val radioCountryTagOperationUseCase: RadioCountryTagOperationUseCase,
     val radioStationListOperationUseCase: RadioStationListOperationUseCase,
     val radioListSortRepository: RadioListSortRepository,
-) : BaseListViewModel<ItemLanguageListUiState>(appDispatchers) {
+) : BaseListViewModel2<ItemLanguageListUiState>(appDispatchers) {
 
     override val complexItemViewState: MutableStateFlow<ComplexItemListState<ItemLanguageListUiState>> =
         MutableStateFlow(

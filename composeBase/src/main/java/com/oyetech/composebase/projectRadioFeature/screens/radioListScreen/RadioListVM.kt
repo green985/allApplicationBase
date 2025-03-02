@@ -2,7 +2,7 @@ package com.oyetech.composebase.projectRadioFeature.screens.radioListScreen
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.R
-import com.oyetech.composebase.base.baseList.BaseListViewModel
+import com.oyetech.composebase.base.baseList.BaseListViewModel2
 import com.oyetech.composebase.base.baseList.ComplexItemListState
 import com.oyetech.composebase.base.baseList.changeSortType
 import com.oyetech.composebase.base.updateState
@@ -54,7 +54,7 @@ class RadioListVM(
     val radioPlayerViewModelSlice: IRadioPlayerViewModelSlice,
     val radioFavViewModelSlice: IRadioFavViewModelSlice,
     val radioListSortRepository: RadioListSortRepository,
-) : BaseListViewModel<RadioUIState>(dispatchers) {
+) : BaseListViewModel2<RadioUIState>(dispatchers) {
     val radioToolbarState: MutableStateFlow<RadioToolbarState>
         get() {
             return if (listType == Favorites.name) {

@@ -2,7 +2,7 @@
 
 
 object FirebaseLibrary {
-    const val firebaseBom = "com.google.firebase:firebase-bom:33.7.0"
+    const val firebaseBom = "com.google.firebase:firebase-bom:33.10.0"
     const val analytics = "com.google.firebase:firebase-analytics-ktx"
     const val admob = "com.google.android.gms:play-services-ads:${Versions.admob}"
     const val crashlytics = "com.google.firebase:firebase-crashlytics-ktx"

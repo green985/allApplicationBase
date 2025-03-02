@@ -1,8 +1,8 @@
 package com.oyetech.composebase.sharedScreens.messaging;
 
 import androidx.lifecycle.viewModelScope
-import com.oyetech.composebase.base.baseList.BaseListViewModel
-import com.oyetech.composebase.base.baseList.ComplexItemListState
+import com.oyetech.composebase.base.baseGenericList.BaseListViewModel
+import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnMessageSend
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnMessageTextChange
@@ -33,6 +33,15 @@ class MessageDetailVm(
     private val messagingAllOperationRepository: MessagesAllOperationRepository,
     private val firebaseUserRepository: FirebaseUserRepository,
 ) : BaseListViewModel<MessageDetailUiState>(appDispatchers) {
+
+    override val listViewState: MutableStateFlow<GenericListState<MessageDetailUiState>> =
+        MutableStateFlow(
+            GenericListState(
+                dataFlow = messagingAllOperationRepository.getMessageListFlow(conversationId)
+                    .mapFromLocalToUiState(),
+            )
+        )
+
     val uiState = MutableStateFlow(
         MessageDetailScreenUiState(
             isLoading = false,
@@ -44,13 +53,6 @@ class MessageDetailVm(
             conversationId = conversationId
         )
     )
-
-    override val complexItemViewState: MutableStateFlow<ComplexItemListState<MessageDetailUiState>> =
-        MutableStateFlow<ComplexItemListState<MessageDetailUiState>>(
-            ComplexItemListState(
-                isLoadingInitial = true
-            )
-        )
 
     init {
         Timber.d("MessageDetailVm created == " + uiState.value.toString())
@@ -80,7 +82,7 @@ class MessageDetailVm(
                     it.fold(
                         onSuccess = { messageList ->
                             Timber.d("Message list: $messageList")
-                            complexItemViewState.updateState {
+                            listViewState.updateState {
                                 copy(
                                     isLoadingInitial = false,
                                     items = messageList.toImmutableList()
@@ -112,7 +114,7 @@ class MessageDetailVm(
 
             OnRetry -> {
                 Timber.d("OnRetry")
-                retry()
+//                retry()
             }
         }
     }
@@ -139,4 +141,5 @@ class MessageDetailVm(
             copy(messageText = "")
         }
     }
+
 }

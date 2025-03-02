@@ -29,7 +29,7 @@
             android:exported="true"
             android:launchMode="standard"
             android:theme="@style/Theme.DefaultAppTheme"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

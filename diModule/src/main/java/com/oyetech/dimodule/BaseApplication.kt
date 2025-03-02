@@ -3,6 +3,7 @@ package com.oyetech.dimodule
 import android.app.Application
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
+import com.google.android.gms.dynamite.DynamiteModule
 import com.oyetech.dimodule.koins.AppComponent
 import com.oyetech.domain.helper.ActivityProviderUseCase
 import com.oyetech.domain.helper.isDebug
@@ -34,6 +35,15 @@ class BaseApplication : Application() {
         if (this.isDebug()) {
             Timber.uprootAll()
             Timber.plant(Timber.DebugTree())
+        }
+        try {
+            val dynamiteModule = DynamiteModule.load(
+                context,
+                DynamiteModule.PREFER_LOCAL,
+                "com.google.android.gms.measurement.dynamite"
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         configureDi()

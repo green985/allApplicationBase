@@ -14,7 +14,7 @@ Created by Erdi Özbek
 -18:43-
  **/
 
-abstract class BaseListViewModel<T>(dispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers) :
+abstract class BaseListViewModel2<T>(dispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers) :
     BaseViewModel(dispatchers) {
     abstract val complexItemViewState: MutableStateFlow<ComplexItemListState<T>>
     val errorMessage = context.getString(R.string.searchpreference_no_results)

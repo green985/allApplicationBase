@@ -48,12 +48,6 @@ sealed class QuoteAppNavItem {
             icon = R.drawable.ic_tab_all_radio
         )
 
-    object QuoteMessageTab :
-        BottomNavigationItem(
-            path = MessageConversationList.route.toString(),
-            title = R.string.nav_item_settings,
-            icon = R.drawable.ic_settings
-        )
 
     object QuoteSettingsTab :
         BottomNavigationItem(
@@ -62,6 +56,12 @@ sealed class QuoteAppNavItem {
             icon = R.drawable.ic_settings
         )
 
+    object QuoteMessageTab :
+        BottomNavigationItem(
+            path = MessageConversationList.route.toString(),
+            title = R.string.nav_item_settings,
+            icon = R.drawable.ic_settings
+        )
     object QuoteUserListTab :
         BottomNavigationItem(
             path = UserList.route.toString(),

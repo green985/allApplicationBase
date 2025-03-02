@@ -813,3 +813,8 @@ public static *** e(...);
     -keepclassmembers class com.yourcompany.models.** {
       *;
     }
+
+    -assumenosideeffects class kotlinx.coroutines.DebugKt {
+        boolean getDEBUG() return true;
+        boolean getRECOVER_STACK_TRACES() return true;
+    }

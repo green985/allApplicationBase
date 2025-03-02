@@ -1,7 +1,7 @@
 package com.oyetech.composebase.sharedScreens.userList;
 
 import androidx.lifecycle.viewModelScope
-import com.oyetech.composebase.base.baseList.BaseListViewModel
+import com.oyetech.composebase.base.baseList.BaseListViewModel2
 import com.oyetech.composebase.base.baseList.ComplexItemListState
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.sharedScreens.userList.UserListEvent.RegisterToUserList
@@ -25,7 +25,7 @@ Created by Erdi Özbek
 class UserListVm(
     appDispatchers: AppDispatchers,
     private val firebaseUserListOperationRepository: FirebaseUserListOperationRepository,
-) : BaseListViewModel<UserListItemUiState>(appDispatchers) {
+) : BaseListViewModel2<UserListItemUiState>(appDispatchers) {
     val uiState = MutableStateFlow(UserListUiState())
 
     override val complexItemViewState: MutableStateFlow<ComplexItemListState<UserListItemUiState>> =

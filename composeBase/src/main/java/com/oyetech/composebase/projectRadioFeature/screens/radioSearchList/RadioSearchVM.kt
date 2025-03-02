@@ -1,7 +1,7 @@
 package com.oyetech.composebase.projectRadioFeature.screens.radioSearchList
 
 import androidx.lifecycle.viewModelScope
-import com.oyetech.composebase.base.baseList.BaseListViewModel
+import com.oyetech.composebase.base.baseList.BaseListViewModel2
 import com.oyetech.composebase.base.baseList.ComplexItemListState
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.RadioUIState
@@ -31,7 +31,7 @@ class RadioSearchVM(
     private val radioDataOperationUseCase: RadioDataOperationUseCase,
     private val radioOperationUseCase: RadioOperationUseCase,
     private val radioStationListOperationUseCase: RadioStationListOperationUseCase,
-) : BaseListViewModel<RadioUIState>(appDispatchers) {
+) : BaseListViewModel2<RadioUIState>(appDispatchers) {
 
     private var searchOperationJobs: Job? = null
     private var searchString = ""

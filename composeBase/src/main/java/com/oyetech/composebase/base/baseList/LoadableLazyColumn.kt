@@ -59,8 +59,8 @@ fun LoadableLazyColumn(
     isErrorMore: Boolean = false,
     isEmptyList: Boolean = false,
     errorMessage: String = "",
-    onRetry: () -> Unit = { },
-    onRefresh: () -> Unit = { },
+    onRetry: (() -> Unit)? = null,
+    onRefresh: (() -> Unit)? = null,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     reverseLayout: Boolean = false,
     verticalArrangement: Vertical =
@@ -79,9 +79,8 @@ fun LoadableLazyColumn(
     PullToRefreshBox(
         modifier = modifier,
         isRefreshing = isRefreshing,
-        onRefresh = { onRefresh() },
+        onRefresh = { onRefresh?.let { it() } },
     ) {
-
         LazyColumn(
             contentPadding = contentPadding,
             state = state.lazyListState,
@@ -149,7 +148,7 @@ fun LoadableLazyColumn(
 }
 
 @Composable
-fun ErrorOnMoreContent(errorMessage: String = "Loading Error", onRetry: () -> Unit = {}) {
+fun ErrorOnMoreContent(errorMessage: String = "Loading Error", onRetry: (() -> Unit)? = null) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -163,7 +162,7 @@ fun ErrorOnMoreContent(errorMessage: String = "Loading Error", onRetry: () -> Un
             color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(16.dp))
-        IconButton(onClick = onRetry) {
+        IconButton(onClick = { onRetry?.invoke() }) {
             Icon(
                 modifier = Modifier.size(40.dp),
                 imageVector = Icons.Default.Refresh,
@@ -234,7 +233,7 @@ fun RadioErrorListView(
     errorMessage: String = "",
     isErrorInitial: Boolean = false,
     isEmptyList: Boolean = false,
-    onRetry: () -> Unit = {},
+    onRetry: (() -> Unit)? = null,
 ) {
     if (isErrorInitial || isEmptyList) {
         Box(
@@ -260,7 +259,7 @@ fun RadioErrorListView(
                         color = MaterialTheme.colorScheme.onBackground
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-                    IconButton(onClick = onRetry) {
+                    IconButton(onClick = { onRetry?.invoke() }) {
                         Icon(
                             modifier = Modifier.size(40.dp),
                             imageVector = Icons.Default.Refresh,

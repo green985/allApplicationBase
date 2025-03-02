@@ -2,6 +2,7 @@ package com.oyetech.composebase.sharedScreens.messaging.conversationList
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -59,8 +60,9 @@ fun MessageConversationListScreen(
 ) {
 
     BaseScaffold {
-        Column(modifier = Modifier.padding()) {
+        Column(modifier = Modifier.padding(it)) {
             BasePagingListScreen(
+                modifier = modifier.fillMaxSize(),
                 items = lazyPagingItems, // This parameter is abstracted, not used here
                 itemKey = { it.conversationId },
                 onBindItem = { conversation ->

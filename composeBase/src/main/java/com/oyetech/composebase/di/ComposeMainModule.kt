@@ -30,6 +30,7 @@ import com.oyetech.composebase.projectRadioFeature.viewModelSlice.IRadioPlayerVi
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.RadioFavViewModelSliceImp
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.RadioPlayerViewModelSliceImp
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailVm
+import com.oyetech.composebase.sharedScreens.messaging.MessageDetailVm2
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListVm
 import com.oyetech.composebase.sharedScreens.userList.UserListVm
 import com.oyetech.domain.repository.helpers.logicRepositories.RadioListSortRepository
@@ -77,6 +78,7 @@ object ComposeMainModule {
 //        factory<ContentOperationViewModelSlice> { ContentOperationViewModelSliceImp(get(), get()) }
 
         // messaging
+        viewModelOf(::MessageDetailVm2)
         viewModelOf(::MessageDetailVm)
         viewModelOf(::MessageConversationListVm)
         viewModelOf(::UserListVm)
