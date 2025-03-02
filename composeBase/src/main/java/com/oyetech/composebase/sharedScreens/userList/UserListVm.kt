@@ -1,11 +1,16 @@
 package com.oyetech.composebase.sharedScreens.userList;
 
 import androidx.lifecycle.viewModelScope
-import com.oyetech.composebase.base.BaseViewModel
+import com.oyetech.composebase.base.baseList.BaseListViewModel
+import com.oyetech.composebase.base.baseList.ComplexItemListState
+import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.sharedScreens.userList.UserListEvent.RegisterToUserList
+import com.oyetech.composebase.sharedScreens.userList.item.UserListItemUiState
+import com.oyetech.composebase.sharedScreens.userList.item.mapToUiState
 import com.oyetech.domain.repository.firebase.FirebaseUserListOperationRepository
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -20,8 +25,45 @@ Created by Erdi Özbek
 class UserListVm(
     appDispatchers: AppDispatchers,
     private val firebaseUserListOperationRepository: FirebaseUserListOperationRepository,
-) : BaseViewModel(appDispatchers) {
+) : BaseListViewModel<UserListItemUiState>(appDispatchers) {
     val uiState = MutableStateFlow(UserListUiState())
+
+    override val complexItemViewState: MutableStateFlow<ComplexItemListState<UserListItemUiState>> =
+        MutableStateFlow<ComplexItemListState<UserListItemUiState>>(
+            ComplexItemListState(
+                isLoadingInitial = true
+            )
+        )
+
+    init {
+        Timber.d("MessageDetailVm created == " + uiState.value.toString())
+        complexItemViewState.updateState {
+            copy(isLoadingInitial = true)
+        }
+        viewModelScope.launch(getDispatcherIo()) {
+            firebaseUserListOperationRepository.getRandomUsersFromDatabase().mapToUiState()
+                .asResult().collectLatest {
+                    it.fold(
+                        onSuccess = { userData ->
+                            complexItemViewState.updateState {
+                                copy(
+                                    isLoadingInitial = false,
+                                    items = userData.toImmutableList()
+                                )
+                            }
+                        },
+                        onFailure = {
+                            complexItemViewState.updateState {
+                                ComplexItemListState(
+                                    isErrorInitial = true,
+                                    errorMessage = errorMessage
+                                )
+                            }
+                        }
+                    )
+                }
+        }
+    }
 
     init {
     }

@@ -46,8 +46,7 @@ import com.oyetech.composebase.R
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import timber.log.Timber
 
-@Deprecated("Use Paging for everything instead")
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "CyclomaticComplexMethod", "FunctionNaming", "LongMethod")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoadableLazyColumn(

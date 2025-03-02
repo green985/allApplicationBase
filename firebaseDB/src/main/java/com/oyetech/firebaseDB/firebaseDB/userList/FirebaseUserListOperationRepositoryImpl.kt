@@ -9,6 +9,7 @@ import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.firebaseDB.databaseKeys.FirebaseDatabaseKeys
 import com.oyetech.firebaseDB.firebaseDB.helper.runTransactionWithTimeout
 import com.oyetech.models.errors.exceptionHelper.GeneralException
+import com.oyetech.models.firebaseModels.userList.FirebaseUserListModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
@@ -24,6 +25,31 @@ class FirebaseUserListOperationRepositoryImpl(
     private val firebaseFirestore: FirebaseFirestore,
     private val firebaseUserRepository: FirebaseUserRepository,
 ) : FirebaseUserListOperationRepository {
+
+    override suspend fun getRandomUsersFromDatabase(): Flow<List<FirebaseUserListModel>> {
+        return flow<List<FirebaseUserListModel>> {
+            val result =
+                firebaseFirestore.collection(FirebaseDatabaseKeys.userList)
+                    .document(FirebaseDatabaseKeys.generalUserList)
+                    .collection("users").orderBy("joinedAt", Query.Direction.DESCENDING)
+                    .limit(100)
+                    .get()
+                    .await()
+
+            val documentIdList = arrayListOf<String>()
+            val adviceQuoteList = result.mapNotNull {
+                documentIdList.add(it.id)
+                it.toObject(FirebaseUserListModel::class.java)
+            }
+
+            documentIdList.mapIndexed { index, s ->
+                adviceQuoteList[index].documentId = s
+            }
+            emit(adviceQuoteList)
+
+        }
+
+    }
 
     suspend fun getRandomUsersFromRoom(roomId: String): List<Map<String, Any>> {
         val db = FirebaseFirestore.getInstance()
@@ -54,7 +80,7 @@ class FirebaseUserListOperationRepositoryImpl(
                 throw GeneralException("User id is null or blank")
             }
             val userRef =
-                firebaseFirestore.collection("userList")
+                firebaseFirestore.collection(FirebaseDatabaseKeys.userList)
                     .document(FirebaseDatabaseKeys.generalUserList)
                     .collection("users").document(userId)
 

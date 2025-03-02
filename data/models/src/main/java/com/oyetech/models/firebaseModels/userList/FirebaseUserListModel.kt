@@ -12,9 +12,10 @@ Created by Erdi Özbek
 
 @Keep
 data class FirebaseUserListModel(
-    val userId: String,
-    val userName: String,
+    var documentId: String = "",
+    var userId: String = "",
+    var username: String = "",
 
     @ServerTimestamp
-    val joinedAt: Date? = null,
+    var joinedAt: Date? = null,
 )

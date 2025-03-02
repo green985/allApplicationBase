@@ -7,6 +7,7 @@ Created by Erdi Özbek
  **/
 
 object FirebaseDatabaseKeys {
+    const val userList: String = "userList"
     const val generalUserList: String = "generalUserList"
     const val adviceQuoteCollection: String = "adviceQuoteCollection"
     const val languageTable: String = "languageTable"
