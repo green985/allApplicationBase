@@ -11,6 +11,7 @@ fun <T> GenericListScreenSetup(
     modifier: Modifier = Modifier,
     listViewState: GenericListState<T>,
     content: LazyListScope.() -> Unit,
+    reverseLayout: Boolean = false,
 ) {
     LoadableLazyColumn(
         state = rememberLoadableLazyColumnState(onLoadMore = { listViewState.triggerLoadMore?.invoke() }),
@@ -24,7 +25,7 @@ fun <T> GenericListScreenSetup(
         isLoadingMore = listViewState.isLoadingMore,
         isErrorMore = listViewState.isErrorMore,
         onRetry = listViewState.triggerRefresh,
-        reverseLayout = false,
+        reverseLayout = reverseLayout,
     ) {
         content()
 

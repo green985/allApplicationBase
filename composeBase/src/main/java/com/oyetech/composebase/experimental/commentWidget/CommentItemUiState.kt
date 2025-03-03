@@ -3,6 +3,7 @@ package com.oyetech.composebase.experimental.commentWidget
 import com.oyetech.models.newPackages.helpers.OperationState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import java.util.Calendar
 import java.util.Date
 
 /**
@@ -26,7 +27,7 @@ data class CommentScreenUiState(
 data class CommentItemUiState(
     val commentId: String = "",
     val commentContent: String = "",
-    val createdAt: Date = Date(),
+    val createdAt: Date = Calendar.getInstance().time,
     val createdAtString: String = "",
     val username: String = "",
     val isMine: Boolean = false,

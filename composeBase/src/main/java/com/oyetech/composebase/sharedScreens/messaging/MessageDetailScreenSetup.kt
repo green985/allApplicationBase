@@ -1,15 +1,14 @@
 package com.oyetech.composebase.sharedScreens.messaging
 
+import MessageDetailItemView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -31,7 +30,6 @@ import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.projectRadioFeature.RadioDimensions
 import com.oyetech.languageModule.keyset.LanguageKey
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.coroutines.flow.flowOf
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -59,9 +57,9 @@ fun MessageDetailScreenSetup(
     val complexItemViewState by vm.listViewState.collectAsStateWithLifecycle()
 
     MessageDetailScreen(
-        messageText = uiState.messageText,
         onMessageTextChanged = { vm.onEvent(MessageDetailEvent.OnMessageTextChange(it)) },
         onMessageSend = { vm.onEvent(MessageDetailEvent.OnMessageSend) },
+        uiState = uiState,
         listViewState = complexItemViewState,
     )
 
@@ -72,9 +70,9 @@ fun MessageDetailScreenSetup(
 @Composable
 fun MessageDetailScreen(
     modifier: Modifier = Modifier,
+    uiState: MessageDetailScreenUiState,
     onMessageTextChanged: (String) -> Unit,
     onMessageSend: () -> Unit,
-    messageText: String,
     listViewState: GenericListState<MessageDetailUiState>,
 ) {
     val items = listViewState.items
@@ -85,25 +83,19 @@ fun MessageDetailScreen(
                     modifier = Modifier
                         .fillMaxSize(),
                     listViewState = listViewState,
-                ) {
-                    items(items = items, key = { it.messageId }, itemContent = { messageDetail ->
-                        Column {
-
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
-                                text = messageDetail.toString()
-                            )
-                            Spacer(Modifier.size(8.dp))
-                            Text(
-                                modifier = Modifier
-                                    .padding(8.dp),
-                                text = messageDetail.status.toString()
-                            )
-                        }
-                    })
-                }
+                    reverseLayout = false,
+                    content = {
+                        items(
+                            items = items,
+                            key = { it.messageId },
+                            itemContent = { messageDetail ->
+                                MessageDetailItemView(
+                                    uiState = messageDetail,
+                                    currentUserId = uiState.currentUserId
+                                )
+                            })
+                    },
+                )
             }
 
             Row(
@@ -116,12 +108,12 @@ fun MessageDetailScreen(
             ) {
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = messageText,
+                    value = uiState.messageText,
                     onValueChange = { onMessageTextChanged(it) },
                     shape = RoundedCornerShape(RadioDimensions.inputFieldRadius),
                     label = { Text(LanguageKey.commentInputAreaHint) },
                     trailingIcon = {
-                        IconButton(enabled = messageText.isNotBlank(), onClick = {
+                        IconButton(enabled = uiState.messageText.isNotBlank(), onClick = {
                             onMessageSend()
                         }) {
                             Icon(
@@ -141,23 +133,34 @@ fun MessageDetailScreen(
 @Preview(showBackground = true)
 @Composable
 private fun MessageDetailPreview() {
-    MessageDetailScreen(
-        messageText = "Message",
-        onMessageTextChanged = {},
-        onMessageSend = {},
-        listViewState = GenericListState(
-            dataFlow = flowOf(
-                persistentListOf(
 
-                )
-            ), items = persistentListOf(
+    MessageDetailScreen(
+        uiState = MessageDetailScreenUiState(
+            isLoading = false,
+            errorText = "placerat",
+            messageText = "pertinax",
+            createdAt = null,
+            createdAtString = "porta",
+            senderId = "sumo",
+            receiverId = "idque",
+            currentUserId = "postulant",
+            conversationId = "cursus"
+        ),
+        onMessageTextChanged = {}, onMessageSend = {},
+        listViewState = GenericListState(
+            items = persistentListOf(
                 MessageDetailUiState(
-                    isLoading = false,
-                    errorText = "",
-                    messageText = "asdaasdjaskdmnaksmnd",
-                    createdAtString = "32 sdub",
+                    messageId = "mollis",
+                    content = "asdasdasdasdadwwww",
+                    createdAt = null,
+                    createdAtString = "porta",
+                    senderId = "sumo",
+                    receiverId = "idque",
+                    conversationId = "cursus"
                 )
             )
-        )
+        ),
     )
+
+
 }

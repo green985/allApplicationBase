@@ -6,13 +6,15 @@ import kotlinx.coroutines.flow.Flow
 
 interface MessagesAllOperationRepository {
     fun getMessageListFlow(conversationId: String): Flow<List<FirebaseMessagingLocalData>>
+
+    //    fun getMessageListWithUserIdFlow(userId:String): Flow<List<FirebaseMessagingLocalData>>
     fun getMessageListWithLastMessageId(
         conversationId: String,
         messageId: String,
     ): List<FirebaseMessagingLocalData>
 
     fun getMessageWithId(messageId: String): FirebaseMessagingLocalData?
-    fun getMessageListWithMessageIdList(messageIdList: List<String>): List<FirebaseMessagingLocalData>
+    fun getMessageListWithMessageIdListFromLocal(messageIdList: List<String>): List<FirebaseMessagingLocalData>
 
     suspend fun insertLastList(list: List<FirebaseMessagingLocalData>)
     suspend fun insertMessage(message: FirebaseMessagingLocalData)
@@ -20,4 +22,5 @@ interface MessagesAllOperationRepository {
     fun deleteLastList(idList: List<String>): Int
     fun deleteAllMessages()
     fun getConversationList(): Flow<List<FirebaseMessageConversationData>>
+    fun getMessagesFromRemoteAndInsertToLocal(conversationId: String): Flow<List<FirebaseMessagingLocalData>>
 }

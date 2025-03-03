@@ -30,11 +30,17 @@ fun String.toErrorMessage(): String {
 
 object ErrorHelper {
 
-    fun getErrorMessage(exception: Exception): String {
+    fun getErrorMessage(exception: Exception, ignoreStack: Boolean = false): String {
+        if (!ignoreStack) {
+            exception.printStackTrace()
+        }
         return exception.message?.toErrorMessage() ?: errorMessage
     }
 
-    fun getErrorMessage(exception: Throwable): String {
+    fun getErrorMessage(exception: Throwable, ignoreStack: Boolean = false): String {
+        if (!ignoreStack) {
+            exception.printStackTrace()
+        }
         return exception.message?.toErrorMessage() ?: errorMessage
     }
 

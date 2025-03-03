@@ -194,20 +194,20 @@ class FirebaseMessagingRepositoryImpl(
                     receiverId = receiverUserId,
                     messageText = messageText,
                     status = IDLE,
-                    createdAt = null
                 )
 
                 localMessage = newMessage.toLocalData()
                 messagesAllOperationRepository.insertMessage(localMessage)
 
                 val result = firestore.runTransactionWithTimeout {
-                    it.set(conversationRef, newMessage)
+                    val dbMessage = newMessage.copy(status = SENT)
+                    it.set(conversationRef, dbMessage)
                     it.update(
                         messageLastMessageIdRef,
                         FirebaseDatabaseKeys.lastMessageId,
                         conversationRef.id
                     )
-                    newMessage
+                    dbMessage
                 }
 
                 emit(result)

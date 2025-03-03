@@ -54,6 +54,7 @@ fun LoadableLazyColumn(
     state: LoadableLazyColumnState,
     isRefreshing: Boolean,
     isLoadingInitial: Boolean,
+    isRefreshEnable: Boolean = false,
     isErrorInitial: Boolean = false,
     isLoadingMore: Boolean = false,
     isErrorMore: Boolean = false,
@@ -76,36 +77,51 @@ fun LoadableLazyColumn(
     val listLayoutInfo by remember { derivedStateOf { lazyListState.layoutInfo } }
 
 
-    PullToRefreshBox(
-        modifier = modifier,
-        isRefreshing = isRefreshing,
-        onRefresh = { onRefresh?.let { it() } },
-    ) {
-        LazyColumn(
-            contentPadding = contentPadding,
-            state = state.lazyListState,
-            reverseLayout = reverseLayout,
-            verticalArrangement = verticalArrangement,
-            horizontalAlignment = horizontalAlignment,
-            flingBehavior = flingBehavior,
-            userScrollEnabled = userScrollEnabled,
-            content = {
-                content()
+    Column {
+        if (!isRefreshEnable) {
+            Column(modifier = modifier) {
+                initLazyColumn(
+                    contentPadding,
+                    state,
+                    reverseLayout,
+                    verticalArrangement,
+                    horizontalAlignment,
+                    flingBehavior,
+                    userScrollEnabled,
+                    content,
+                    isLoadingInitial,
+                    isErrorMore,
+                    isErrorInitial,
+                    loadMoreLoadingContent,
+                    isLoadingMore,
+                    onRetry
+                )
+            }
+        } else {
+            PullToRefreshBox(
+                modifier = modifier,
+                isRefreshing = isRefreshing,
+                onRefresh = { onRefresh?.let { it() } },
+            ) {
+                initLazyColumn(
+                    contentPadding,
+                    state,
+                    reverseLayout,
+                    verticalArrangement,
+                    horizontalAlignment,
+                    flingBehavior,
+                    userScrollEnabled,
+                    content,
+                    isLoadingInitial,
+                    isErrorMore,
+                    isErrorInitial,
+                    loadMoreLoadingContent,
+                    isLoadingMore,
+                    onRetry
+                )
+            }
+        }
 
-                item {
-                    if (!isLoadingInitial && !isErrorMore && !isErrorInitial) {
-                        loadMoreLoadingContent?.invoke()
-                    }
-
-                    if (isLoadingMore) {
-                        loadMoreLoadingContent?.invoke()
-                    }
-                    if (isErrorMore) {
-                        ErrorOnMoreContent(onRetry = onRetry)
-                    }
-                }
-            },
-        )
 
         if (isLoadingInitial) {
             LoadingScreenFullSize(modifier)
@@ -145,6 +161,50 @@ fun LoadableLazyColumn(
     LaunchedEffect(currentLastVisibleIndex) {
         onItemVisible(currentLastVisibleIndex)
     }
+}
+
+@Composable
+private fun initLazyColumn(
+    contentPadding: PaddingValues,
+    state: LoadableLazyColumnState,
+    reverseLayout: Boolean,
+    verticalArrangement: Vertical,
+    horizontalAlignment: Horizontal,
+    flingBehavior: FlingBehavior,
+    userScrollEnabled: Boolean,
+    content: LazyListScope.() -> Unit,
+    isLoadingInitial: Boolean,
+    isErrorMore: Boolean,
+    isErrorInitial: Boolean,
+    loadMoreLoadingContent: @Composable() (() -> Unit)?,
+    isLoadingMore: Boolean,
+    onRetry: (() -> Unit)?,
+) {
+    LazyColumn(
+        contentPadding = contentPadding,
+        state = state.lazyListState,
+        reverseLayout = reverseLayout,
+        verticalArrangement = verticalArrangement,
+        horizontalAlignment = horizontalAlignment,
+        flingBehavior = flingBehavior,
+        userScrollEnabled = userScrollEnabled,
+        content = {
+            content()
+
+            item {
+                if (!isLoadingInitial && !isErrorMore && !isErrorInitial) {
+                    loadMoreLoadingContent?.invoke()
+                }
+
+                if (isLoadingMore) {
+                    loadMoreLoadingContent?.invoke()
+                }
+                if (isErrorMore) {
+                    ErrorOnMoreContent(onRetry = onRetry)
+                }
+            }
+        },
+    )
 }
 
 @Composable
@@ -242,15 +302,6 @@ fun RadioErrorListView(
                 .background(Color.Black.copy(alpha = 0.3f)),
             contentAlignment = Alignment.Center
         ) {
-            if (isEmptyList) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        style = MaterialTheme.typography.displaySmall,
-                        text = stringResource(R.string.searchpreference_no_results),
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-            }
             if (isErrorInitial) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
@@ -269,7 +320,18 @@ fun RadioErrorListView(
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                 }
+            } else {
+                if (isEmptyList) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            style = MaterialTheme.typography.displaySmall,
+                            text = stringResource(R.string.searchpreference_no_results),
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                }
             }
+
         }
     }
 }

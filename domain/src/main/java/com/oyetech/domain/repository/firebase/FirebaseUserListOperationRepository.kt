@@ -5,5 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface FirebaseUserListOperationRepository {
     suspend fun addUserToUserList(): Flow<Unit>
-    suspend fun getRandomUsersFromDatabase(): Flow<List<FirebaseUserListModel>>
+    fun getRandomUsersFromDatabase(): Flow<List<FirebaseUserListModel>>
 }

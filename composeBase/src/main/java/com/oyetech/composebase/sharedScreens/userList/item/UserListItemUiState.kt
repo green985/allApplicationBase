@@ -11,7 +11,12 @@ Created by Erdi Özbek
 -20:37-
  **/
 
-data class UserListItemUiState(val userId: String, val username: String, val joinedAtString: String)
+data class UserListItemUiState(
+    val id: String,
+    val userId: String,
+    val username: String,
+    val joinedAtString: String,
+)
 
 sealed class UserListItemEvent {
 //    data class Idle(val data: Int) : UserListItemEvent()
@@ -22,6 +27,7 @@ fun Flow<List<FirebaseUserListModel>>.mapToUiState(): Flow<List<UserListItemUiSt
     return this.map {
         it.map {
             UserListItemUiState(
+                id = it.documentId,
                 userId = it.userId,
                 username = it.username,
                 joinedAtString = TimeFunctions.getDateFromLongWithHour(it.joinedAt?.time ?: 0L)

@@ -98,7 +98,7 @@ fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
                 "&${ScreenKey.receiverUserId}={receiverUserId}", arguments = listOf(
             navArgument(ScreenKey.conversationId) {
                 defaultValue = "empty"
-                nullable = false
+                nullable = true
             },
             navArgument(ScreenKey.receiverUserId) {
                 defaultValue = ""
@@ -106,7 +106,7 @@ fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
             },
         )
     ) {
-        val conversationId = it.arguments?.getString(ScreenKey.conversationId) ?: "empty"
+        val conversationId = it.arguments?.getString(ScreenKey.conversationId) ?: ""
         val receiverUserId = it.arguments?.getString(ScreenKey.receiverUserId) ?: ""
         MessageDetailScreenSetup(
             conversationId = conversationId,

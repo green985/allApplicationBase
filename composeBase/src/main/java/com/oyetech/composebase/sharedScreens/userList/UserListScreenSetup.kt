@@ -1,5 +1,6 @@
 package com.oyetech.composebase.sharedScreens.userList
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,11 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
-import com.oyetech.composebase.base.baseList.ComplexItemListState
-import com.oyetech.composebase.base.baseList.ListUIEvent
-import com.oyetech.composebase.base.baseList.LoadableLazyColumn
-import com.oyetech.composebase.base.baseList.LoadableLazyColumnState
-import com.oyetech.composebase.base.baseList.rememberLoadableLazyColumnState
+import com.oyetech.composebase.base.baseGenericList.GenericListScreenSetup
+import com.oyetech.composebase.base.baseGenericList.GenericListState
+import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
+import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import com.oyetech.composebase.sharedScreens.userList.item.UserListItemUiState
 import org.koin.androidx.compose.koinViewModel
 
@@ -36,21 +36,15 @@ fun UserListScreenSetup(
     val vm = koinViewModel<UserListVm>()
 
     val uiState by vm.uiState.collectAsStateWithLifecycle()
-    val complexItemViewState by vm.complexItemViewState.collectAsStateWithLifecycle()
-    val lazyListState = rememberLoadableLazyColumnState(
-        onLoadMore = {
-            vm.handleListEvent(ListUIEvent.LoadMore)
-        },
-    )
+    val listViewState by vm.listViewState.collectAsStateWithLifecycle()
+
+
     UserListScreen(
         modifier = modifier,
         uiState = uiState,
         onEvent = { vm.onEvent(it) },
-        lazyListState = lazyListState,
+        listViewState = listViewState,
         navigationRoute = navigationRoute,
-        complexItemViewState = complexItemViewState,
-//        onRetry = { vm.onEvent(MessageDetailEvent.OnRetry) },
-//        onRefresh = { vm.onEvent(MessageDetailEvent.OnRefresh) },
     )
 
 }
@@ -62,8 +56,7 @@ fun UserListScreen(
     uiState: UserListUiState,
     onEvent: (UserListEvent) -> Unit,
     navigationRoute: (navigationRoute: String) -> Unit = {},
-    complexItemViewState: ComplexItemListState<UserListItemUiState>,
-    lazyListState: LoadableLazyColumnState,
+    listViewState: GenericListState<UserListItemUiState>,
 ) {
     BaseScaffold {
         Column(modifier = Modifier.padding(it)) {
@@ -74,30 +67,30 @@ fun UserListScreen(
             ) {
                 Text("Get Users")
             }
-            val items = complexItemViewState.items
-            LoadableLazyColumn(
+            GenericListScreenSetup(
                 modifier = Modifier.fillMaxSize(),
-                state = lazyListState,
-                isRefreshing = false,
-                isLoadingInitial = complexItemViewState.isLoadingInitial,
-                isErrorInitial = complexItemViewState.isErrorInitial,
-//                onRetry = onRetry,
-                isEmptyList = complexItemViewState.isEmptyList,
-//                onRefresh = onRefresh,
-                errorMessage = complexItemViewState.errorMessage,
-                content = {
-                    items(items = items, key = { it.userId }, itemContent = { userDetail ->
-                        Column {
+                listViewState = listViewState,
+                {
+                    items(
+                        items = listViewState.items,
+                        key = { it.userId },
+                        itemContent = { itemDetail ->
                             Text(
                                 modifier = Modifier
+                                    .clickable {
+                                        navigationRoute.invoke(
+                                            QuoteAppProjectRoutes.MessageDetail.withArgs(
+                                                ScreenKey.receiverUserId to itemDetail.userId,
+                                            )
+                                        )
+                                    }
                                     .fillMaxWidth()
                                     .padding(8.dp),
-                                text = userDetail.toString()
+                                text = itemDetail.toString()
                             )
-                        }
-                    })
-
+                        })
                 },
+                true
             )
         }
     }

@@ -60,7 +60,7 @@ fun MessageConversationListScreen(
 ) {
     BaseScaffold {
         Column(modifier = Modifier.padding(it)) {
-            GenericListScreenSetup(listViewState = listViewState) {
+            GenericListScreenSetup(listViewState = listViewState, content = {
                 items(
                     items = listViewState.items,
                     key = { it.conversationId },
@@ -71,14 +71,14 @@ fun MessageConversationListScreen(
                                 navigationRoute.invoke(
                                     QuoteAppProjectRoutes.MessageDetail.withArgs(
                                         ScreenKey.conversationId to itemDetail.conversationId,
-                                        ScreenKey.receiverUserId to itemDetail.usernameId,
+                                        ScreenKey.receiverUserId to itemDetail.userId,
                                     )
                                 )
                             },
                             uiState = itemDetail,
                         )
                     })
-            }
+            })
         }
     }
 

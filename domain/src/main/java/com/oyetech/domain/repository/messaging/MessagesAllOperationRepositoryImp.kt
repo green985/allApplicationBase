@@ -4,7 +4,10 @@ import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
 import com.oyetech.domain.repository.messaging.local.MessagesAllLocalDataSourceRepository
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessageConversationData
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingLocalData
+import com.oyetech.models.firebaseModels.messagingModels.MessageStatus
+import com.oyetech.models.firebaseModels.messagingModels.toLocalDataWithStatus
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 
 class MessagesAllOperationRepositoryImp(
@@ -24,6 +27,20 @@ class MessagesAllOperationRepositoryImp(
         return messagesAllDao.getMessageListWithLastMessageId(conversationId, messageId)
     }
 
+    override fun getMessagesFromRemoteAndInsertToLocal(
+        conversationId: String,
+    ): Flow<List<FirebaseMessagingLocalData>> {
+        return firebaseMessagingRepository.getMessageListWithConversationId(conversationId)
+            .map {
+                it.map {
+                    it.toLocalDataWithStatus(status = MessageStatus.SENT)
+                }
+            }
+            .onEach {
+                messagesAllDao.insertLastList(it)
+            }
+    }
+
     override fun getMessageWithId(messageId: String): FirebaseMessagingLocalData? {
         return messagesAllDao.getMessageWithId(messageId)
     }
@@ -36,7 +53,7 @@ class MessagesAllOperationRepositoryImp(
         messagesAllDao.deleteAllMessages()
     }
 
-    override fun getMessageListWithMessageIdList(messageIdList: List<String>): List<FirebaseMessagingLocalData> {
+    override fun getMessageListWithMessageIdListFromLocal(messageIdList: List<String>): List<FirebaseMessagingLocalData> {
         return messagesAllDao.getMessageListWithMessageIdList(messageIdList)
     }
 
@@ -51,7 +68,7 @@ class MessagesAllOperationRepositoryImp(
     override fun getConversationList(): Flow<List<FirebaseMessageConversationData>> {
         return firebaseMessagingRepository.getConversationList().onEach {
             val messageIdList = it.map { it.lastMessageId }
-            val messageList = getMessageListWithMessageIdList(messageIdList)
+            val messageList = getMessageListWithMessageIdListFromLocal(messageIdList)
             it.forEach { conversation ->
                 conversation.lastMessage =
                     messageList.find { it.messageId == conversation.lastMessageId }

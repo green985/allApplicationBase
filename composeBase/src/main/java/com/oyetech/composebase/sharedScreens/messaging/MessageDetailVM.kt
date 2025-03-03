@@ -3,6 +3,7 @@ package com.oyetech.composebase.sharedScreens.messaging;
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.baseGenericList.BaseListViewModel
 import com.oyetech.composebase.base.baseGenericList.GenericListState
+import com.oyetech.composebase.base.baseGenericList.updateErrorInitial
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnMessageSend
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnMessageTextChange
@@ -13,7 +14,7 @@ import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.messaging.MessagesAllOperationRepository
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
-import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -34,11 +35,14 @@ class MessageDetailVm(
     private val firebaseUserRepository: FirebaseUserRepository,
 ) : BaseListViewModel<MessageDetailUiState>(appDispatchers) {
 
+    var messagesJob: Job? = null
+
     override val listViewState: MutableStateFlow<GenericListState<MessageDetailUiState>> =
         MutableStateFlow(
             GenericListState(
-                dataFlow = messagingAllOperationRepository.getMessageListFlow(conversationId)
-                    .mapFromLocalToUiState(),
+                dataFlow = messagingAllOperationRepository.getMessagesFromRemoteAndInsertToLocal(
+                    conversationId
+                ).mapFromLocalToUiState(),
             )
         )
 
@@ -50,44 +54,51 @@ class MessageDetailVm(
             createdAtString = "",
             senderId = firebaseUserRepository.getUserId(),
             receiverId = receiverUserId,
-            conversationId = conversationId
+            conversationId = conversationId,
+            currentUserId = firebaseUserRepository.getUserId()
         )
     )
 
     init {
         Timber.d("MessageDetailVm created == " + uiState.value.toString())
-        viewModelScope.launch(getDispatcherIo()) {
-            firebaseMessagingRepository.getConversationDetailOrCreateFlow(receiverUserId)
-                .asResult().collectLatest {
-                    it.fold(
-                        onSuccess = { conversationData ->
-                            conversationId = conversationData.conversationId
-                            Timber.d("Conversation data: $conversationData")
-                            observeMessageList()
-                        },
-                        onFailure = {
-                            Timber.d(it)
-                        }
-                    )
-                }
-        }
+        if (conversationId.isNotBlank()) {
+            initMessageDetailOperation()
+        } else {
+            viewModelScope.launch(getDispatcherIo()) {
+                firebaseMessagingRepository.getConversationDetailOrCreateFlow(receiverUserId)
+                    .asResult().collectLatest {
+                        it.fold(
+                            onSuccess = { conversationData ->
+                                Timber.d("Conversation data: $conversationData")
+                                conversationId = conversationData.conversationId
 
-        firebaseMessagingRepository.initLocalMessageSendOperation(viewModelScope)
+                                initMessageDetailOperation()
+                            },
+                            onFailure = {
+                                listViewState.updateErrorInitial(it)
+                            }
+                        )
+                    }
+            }
+        }
     }
 
-    private fun observeMessageList() {
-        viewModelScope.launch(getDispatcherIo()) {
+    private fun initMessageDetailOperation() {
+        firebaseMessagingRepository.initLocalMessageSendOperation(viewModelScope)
+        loadList()
+        observeMessages()
+    }
+
+    private fun observeMessages() {
+        messagesJob?.cancel()
+        messagesJob = viewModelScope.launch(getDispatcherIo()) {
             messagingAllOperationRepository.getMessageListFlow(conversationId)
-                .mapFromLocalToUiState().asResult().collectLatest {
+                .asResult()
+                .collectLatest {
                     it.fold(
                         onSuccess = { messageList ->
                             Timber.d("Message list: $messageList")
-                            listViewState.updateState {
-                                copy(
-                                    isLoadingInitial = false,
-                                    items = messageList.toImmutableList()
-                                )
-                            }
+                            messageList.mergeMessages(listViewState)
                         },
                         onFailure = {
                             Timber.e(it)
@@ -96,7 +107,6 @@ class MessageDetailVm(
                 }
         }
     }
-
     fun onEvent(event: MessageDetailEvent) {
         when (event) {
             OnMessageSend -> {
@@ -114,7 +124,6 @@ class MessageDetailVm(
 
             OnRetry -> {
                 Timber.d("OnRetry")
-//                retry()
             }
         }
     }

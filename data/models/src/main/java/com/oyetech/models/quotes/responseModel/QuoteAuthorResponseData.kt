@@ -2,7 +2,7 @@ package com.oyetech.models.quotes.responseModel
 
 import androidx.annotation.Keep
 import com.squareup.moshi.Json
-import java.util.Date
+import java.util.Calendar
 
 /**
 Created by Erdi Özbek
@@ -13,7 +13,7 @@ Created by Erdi Özbek
 @Keep
 data class QuoteAuthorResponseData(
     @Json(name = "createdAt")
-    var createdAt: Long = Date().time,
+    var createdAt: Long = Calendar.getInstance().timeInMillis,
 
     @Json(name = "a")
     var authorDisplayName: String = "",

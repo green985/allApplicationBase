@@ -1,9 +1,11 @@
 package com.oyetech.composebase.sharedScreens.messaging.conversationList;
 
+import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.baseGenericList.BaseListViewModel
 import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.sharedScreens.messaging.MessageConversationUiState
 import com.oyetech.composebase.sharedScreens.messaging.mapFromLocalToUiState
+import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.messaging.MessagesAllOperationRepository
 import com.oyetech.tools.coroutineHelper.AppDispatchers
@@ -18,6 +20,7 @@ Created by Erdi Özbek
 class MessageConversationListVm(
     appDispatchers: AppDispatchers,
     private val firebaseUserRepository: FirebaseUserRepository,
+    private val firebaseMessagingRepository: FirebaseMessagingRepository,
     private val messagesAllOperationRepository: MessagesAllOperationRepository,
 ) : BaseListViewModel<MessageConversationUiState>(appDispatchers) {
     val uiState = MutableStateFlow(MessageConversationListUiState())
@@ -25,28 +28,18 @@ class MessageConversationListVm(
     override val listViewState: MutableStateFlow<GenericListState<MessageConversationUiState>> =
         MutableStateFlow(
             GenericListState(
-//                dataFlow = flowOf(emptyList())
                 dataFlow = messagesAllOperationRepository.getConversationList()
+                    .mapFromLocalToUiState(clientUserId = firebaseUserRepository.getUserId()),
+                refreshDataFlow = messagesAllOperationRepository.getConversationList()
                     .mapFromLocalToUiState(clientUserId = firebaseUserRepository.getUserId())
             )
         )
 
     init {
-//        firebaseRealtimeHelperRepository.observeSomething()
-//
-//        viewModelScope.launch(getDispatcherIo()) {
-//            firebaseMessagingRepository.getConversationDetailOrCreateFlow("denemeUserIdddddddddddddd")
-//                .asResult()
-//                .collectLatest {
-//                    Timber.d("conversationDetailOrCreateFlow: $it")
-//                }
-//
-//        }
-
+        firebaseMessagingRepository.initLocalMessageSendOperation(viewModelScope)
     }
 
     fun onEvent(event: Any) {
-//        firebaseRealtimeHelperRepository.sendTestMessage()
         when (event) {
 
             else -> {}

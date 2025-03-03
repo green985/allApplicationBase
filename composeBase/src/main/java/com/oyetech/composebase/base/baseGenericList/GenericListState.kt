@@ -2,6 +2,7 @@ package com.oyetech.composebase.base.baseGenericList
 
 import com.oyetech.composebase.base.baseList.ItemSortType
 import com.oyetech.composebase.base.updateState
+import com.oyetech.composebase.helpers.errorHelper.ErrorHelper
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
@@ -9,7 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 
 data class GenericListState<T>(
-    val dataFlow: Flow<List<T>>,
+    val dataFlow: Flow<List<T>>? = null,
 
     val items: ImmutableList<T> = emptyList<T>().toImmutableList(),
     val isRefreshing: Boolean = false,
@@ -60,6 +61,50 @@ fun <T> MutableStateFlow<GenericListState<T>>.updateListItem(list: List<T>): Gen
             isLoadingMore = false,
             isErrorInitial = false,
             isErrorMore = false,
+        )
+    }
+    return this.value
+}
+
+fun <T> MutableStateFlow<GenericListState<T>>.setList(list: List<T>): GenericListState<T> {
+    this.updateState {
+        copy(
+            items = list.toImmutableList(),
+            isEmptyList = false,
+            errorMessage = "",
+            isRefreshing = false,
+            isLoadingInitial = false,
+            isLoadingMore = false,
+            isErrorInitial = false,
+            isErrorMore = false,
+        )
+    }
+    return this.value
+}
+
+fun <T> MutableStateFlow<GenericListState<T>>.updateErrorInitial(errorMessage: Throwable): GenericListState<T> {
+    this.updateState {
+        copy(
+            errorMessage = ErrorHelper.getErrorMessage(errorMessage),
+            isRefreshing = false,
+            isLoadingInitial = false,
+            isLoadingMore = false,
+            isErrorInitial = true,
+            isErrorMore = false,
+        )
+    }
+    return this.value
+}
+
+fun <T> MutableStateFlow<GenericListState<T>>.updateErrorMore(errorMessage: Throwable): GenericListState<T> {
+    this.updateState {
+        copy(
+            errorMessage = ErrorHelper.getErrorMessage(errorMessage),
+            isRefreshing = false,
+            isLoadingInitial = false,
+            isLoadingMore = false,
+            isErrorInitial = false,
+            isErrorMore = true,
         )
     }
     return this.value

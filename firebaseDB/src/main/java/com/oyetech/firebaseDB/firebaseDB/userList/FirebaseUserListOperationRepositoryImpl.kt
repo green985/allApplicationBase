@@ -26,7 +26,8 @@ class FirebaseUserListOperationRepositoryImpl(
     private val firebaseUserRepository: FirebaseUserRepository,
 ) : FirebaseUserListOperationRepository {
 
-    override suspend fun getRandomUsersFromDatabase(): Flow<List<FirebaseUserListModel>> {
+    override fun getRandomUsersFromDatabase(): Flow<List<FirebaseUserListModel>> {
+        val userId = firebaseUserRepository.getUserId()
         return flow<List<FirebaseUserListModel>> {
             val result =
                 firebaseFirestore.collection(FirebaseDatabaseKeys.userList)
@@ -36,16 +37,21 @@ class FirebaseUserListOperationRepositoryImpl(
                     .get()
                     .await()
 
-            val documentIdList = arrayListOf<String>()
-            val adviceQuoteList = result.mapNotNull {
+            var documentIdList = arrayListOf<String>()
+            var resultList = result.mapNotNull {
                 documentIdList.add(it.id)
                 it.toObject(FirebaseUserListModel::class.java)
             }
 
             documentIdList.mapIndexed { index, s ->
-                adviceQuoteList[index].documentId = s
+                resultList[index].documentId = s
             }
-            emit(adviceQuoteList)
+
+            resultList = resultList.filter {
+                it.userId != userId
+            }
+
+            emit(resultList)
 
         }
 

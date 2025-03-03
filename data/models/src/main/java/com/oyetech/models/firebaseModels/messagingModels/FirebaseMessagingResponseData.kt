@@ -1,5 +1,6 @@
 package com.oyetech.models.firebaseModels.messagingModels
 
+import android.icu.util.Calendar
 import android.os.Parcelable
 import androidx.annotation.Keep
 import androidx.room.Entity
@@ -7,6 +8,7 @@ import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 import com.google.firebase.firestore.ServerTimestamp
+import com.oyetech.models.firebaseModels.messagingModels.MessageStatus.IDLE
 import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
 import java.util.Date
@@ -35,6 +37,22 @@ data class FirebaseMessageConversationData(
 
 @Parcelize
 @Keep
+@JsonClass(generateAdapter = true)
+data class FirebaseMessagingResponseData(
+    @PrimaryKey
+    var messageId: String = "",
+    var conversationId: String = "",
+    var senderId: String = "",
+    var receiverId: String = "",
+    var messageText: String = "",
+    var status: MessageStatus = MessageStatus.IDLE,
+    @ServerTimestamp
+    var createdAt: Date? = null,
+
+    ) : Parcelable
+
+@Parcelize
+@Keep
 @Entity(tableName = "messages")
 @JsonClass(generateAdapter = true)
 data class FirebaseMessagingLocalData(
@@ -54,29 +72,23 @@ data class FirebaseMessagingLocalData(
 @Parcelize
 @Keep
 @JsonClass(generateAdapter = true)
-data class FirebaseMessagingResponseData(
-    @PrimaryKey
-    var messageId: String = "",
-    var conversationId: String = "",
-    var senderId: String = "",
-    var receiverId: String = "",
-    var messageText: String = "",
-    var status: MessageStatus = MessageStatus.IDLE,
-    @ServerTimestamp
-    var createdAt: Date? = null,
-
-//    var mediaType: String? = null,
-//    var mediaUrl: String? = null,
-) : Parcelable
-
-@Parcelize
-@Keep
-@JsonClass(generateAdapter = true)
 data class FirebaseParticipantData(
     var userId: String = "",
     var username: String = "",
     var isActiveUser: Boolean = false,
 ) : Parcelable
+
+fun FirebaseMessagingResponseData.toLocalDataWithStatus(status: MessageStatus = IDLE): FirebaseMessagingLocalData {
+    return FirebaseMessagingLocalData(
+        messageId = messageId,
+        conversationId = conversationId,
+        senderId = senderId,
+        receiverId = receiverId,
+        messageText = messageText,
+        status = status,
+        createdAt = createdAt?.time ?: 0L,
+    )
+}
 
 fun FirebaseMessagingResponseData.toLocalData(): FirebaseMessagingLocalData {
     return FirebaseMessagingLocalData(
@@ -86,7 +98,7 @@ fun FirebaseMessagingResponseData.toLocalData(): FirebaseMessagingLocalData {
         receiverId = receiverId,
         messageText = messageText,
         status = status,
-        createdAt = createdAt?.time,
+        createdAt = createdAt?.time ?: Calendar.getInstance().timeInMillis,
     )
 }
 

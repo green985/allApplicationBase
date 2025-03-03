@@ -1,5 +1,7 @@
 package com.oyetech.composebase.sharedScreens.messaging
 
+import com.oyetech.composebase.base.baseGenericList.GenericListState
+import com.oyetech.composebase.base.updateState
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessageConversationData
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingLocalData
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingResponseData
@@ -7,10 +9,14 @@ import com.oyetech.models.firebaseModels.messagingModels.FirebaseParticipantData
 import com.oyetech.models.firebaseModels.messagingModels.MessageStatus
 import com.oyetech.models.firebaseModels.messagingModels.toRemoteData
 import com.oyetech.models.utils.helper.TimeFunctions
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import timber.log.Timber
+import java.util.Calendar
 import java.util.Date
+import kotlin.system.measureTimeMillis
 
 /**
 Created by Erdi Özbek
@@ -23,17 +29,18 @@ data class MessageDetailScreenUiState(
     val errorText: String = "",
     val messageText: String = "",
 
-    val createdAt: Date?,
+    val createdAt: Date? = Calendar.getInstance().time,
     val createdAtString: String,
     val senderId: String = "",
     val receiverId: String = "",
+    val currentUserId: String = "",
     val conversationId: String = "",
 )
 
 data class MessageDetailUiState(
     val isLoading: Boolean = false,
     val errorText: String = "",
-    val messageText: String = "",
+    val content: String = "",
     val createdAt: Long? = null,
     val createdAtString: String = "",
     val senderId: String = "",
@@ -58,7 +65,7 @@ data class MessageConversationUiState(
     val createdAtString: String = TimeFunctions.getDateFromLongWithHour(createdAt?.time ?: 0) ?: "",
     val participantUserIdList: List<String> = participantList.map { it.userId }.sorted(),
     val username: String = participantList.firstOrNull()?.username ?: "",
-    val usernameId: String = "",
+    val userId: String = "",
 
     val lastMessageUiSate: MessageDetailUiState? = null,
 )
@@ -83,7 +90,7 @@ fun Flow<List<FirebaseMessageConversationData>>.mapFromLocalToUiState(clientUser
                 participantUserIdList = data.participantList.map { it.userId }.sorted(),
                 username = data.participantList.firstOrNull { it.userId != clientUserId }?.username
                     ?: "",
-                usernameId = data.participantList.firstOrNull { it.userId != clientUserId }?.userId
+                userId = data.participantList.firstOrNull { it.userId != clientUserId }?.userId
                     ?: "",
                 lastMessageUiSate = data.lastMessage?.toRemoteData()?.mapToUiState()
             )
@@ -91,9 +98,22 @@ fun Flow<List<FirebaseMessageConversationData>>.mapFromLocalToUiState(clientUser
     }
 }
 
+fun FirebaseMessagingLocalData.mapToUiState(): MessageDetailUiState {
+    return MessageDetailUiState(
+        content = this.messageText,
+        createdAt = this.createdAt,
+        createdAtString = TimeFunctions.getDateFromLongWithHour(this.createdAt ?: 0) ?: "",
+        senderId = this.senderId,
+        receiverId = this.receiverId,
+        messageId = this.messageId,
+        status = this.status,
+        conversationId = this.conversationId,
+    )
+}
+
 fun FirebaseMessagingResponseData.mapToUiState(): MessageDetailUiState {
     return MessageDetailUiState(
-        messageText = this.messageText,
+        content = this.messageText,
         createdAt = this.createdAt?.time,
         createdAtString = TimeFunctions.getDateFromLongWithHour(this.createdAt?.time ?: 0) ?: "",
         senderId = this.senderId,
@@ -108,7 +128,7 @@ fun Flow<List<FirebaseMessagingResponseData>>.mapFromFirebaseToUiState(): Flow<L
     return this.map {
         it.map { data ->
             MessageDetailUiState(
-                messageText = data.messageText,
+                content = data.messageText,
                 createdAt = data.createdAt?.time,
                 createdAtString = TimeFunctions.getDateFromLongWithHour(data.createdAt?.time ?: 0)
                     ?: "",
@@ -122,13 +142,36 @@ fun Flow<List<FirebaseMessagingResponseData>>.mapFromFirebaseToUiState(): Flow<L
     }
 }
 
+fun List<FirebaseMessagingLocalData>.mergeMessages(
+    listViewState: MutableStateFlow<GenericListState<MessageDetailUiState>>,
+) {
+    val mergeMessagesDuration = measureTimeMillis {
+
+        val newListView = this.map {
+            it.mapToUiState()
+        }.toMutableSet()
+
+        val oldListView = listViewState.value.items.toMutableSet()
+        val mergedList =
+            newListView.union(oldListView).distinctBy { it.messageId }.toImmutableList()
+
+        listViewState.updateState {
+            copy(
+                items = mergedList,
+            )
+        }
+    }
+
+    Timber.d("mergeMessagesDuration: $mergeMessagesDuration")
+}
+
 fun Flow<List<FirebaseMessagingLocalData>>.mapFromLocalToUiState(): Flow<List<MessageDetailUiState>> {
     return this.map {
         it.map { data ->
             MessageDetailUiState(
 //                isLoading = data.isLoading,
 //                errorText = data.errorText,
-                messageText = data.messageText,
+                content = data.messageText,
                 createdAt = data.createdAt,
                 createdAtString = TimeFunctions.getDateFromLongWithHour(data.createdAt ?: 0)
                     ?: "",
