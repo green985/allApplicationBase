@@ -51,7 +51,7 @@ import timber.log.Timber
 @Composable
 fun LoadableLazyColumn(
     modifier: Modifier = Modifier,
-    state: LoadableLazyColumnState,
+    lazyColumnState: LoadableLazyColumnState,
     isRefreshing: Boolean,
     isLoadingInitial: Boolean,
     isRefreshEnable: Boolean = false,
@@ -73,7 +73,7 @@ fun LoadableLazyColumn(
     onItemVisible: (Int) -> Unit = {},
     content: LazyListScope.() -> Unit,
 ) {
-    val lazyListState = state.lazyListState
+    val lazyListState = lazyColumnState.lazyListState
     val listLayoutInfo by remember { derivedStateOf { lazyListState.layoutInfo } }
 
 
@@ -82,7 +82,7 @@ fun LoadableLazyColumn(
             Column(modifier = modifier) {
                 initLazyColumn(
                     contentPadding,
-                    state,
+                    lazyColumnState,
                     reverseLayout,
                     verticalArrangement,
                     horizontalAlignment,
@@ -105,7 +105,7 @@ fun LoadableLazyColumn(
             ) {
                 initLazyColumn(
                     contentPadding,
-                    state,
+                    lazyColumnState,
                     reverseLayout,
                     verticalArrangement,
                     horizontalAlignment,
@@ -147,10 +147,10 @@ fun LoadableLazyColumn(
         if (currentLastVisibleIndex != lastTimeLastVisibleIndex) {
             val isScrollDown = currentLastVisibleIndex > lastTimeLastVisibleIndex
             val remainCount = listLayoutInfo.totalItemsCount - currentLastVisibleIndex - 1
-            if (isScrollDown && remainCount <= state.loadMoreState.loadMoreRemainCountThreshold) {
+            if (isScrollDown && remainCount <= lazyColumnState.loadMoreState.loadMoreRemainCountThreshold) {
                 LaunchedEffect(Unit) {
                     Timber.d(" LoadableLazyColumn: onLoadMore")
-                    state.loadMoreState.onLoadMore()
+                    lazyColumnState.loadMoreState.onLoadMore()
                 }
             }
         }

@@ -114,7 +114,7 @@ fun RadioSearchListScreenScreen(
 
                 LoadableLazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    state = lazyListState,
+                    lazyColumnState = lazyListState,
                     isRefreshing = complexItemViewState.isRefreshing,
                     isErrorInitial = complexItemViewState.isErrorInitial,
                     isEmptyList = complexItemViewState.isEmptyList,

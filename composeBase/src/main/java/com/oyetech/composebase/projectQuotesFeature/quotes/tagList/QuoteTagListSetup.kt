@@ -45,7 +45,7 @@ fun QuoteTagListSetup(
         Column(modifier = Modifier.padding(paddingValues)) {
             LoadableLazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                state = lazyListState,
+                lazyColumnState = lazyListState,
                 isRefreshing = complexItemViewState.isRefreshing,
                 isLoadingInitial = complexItemViewState.isLoadingInitial,
                 isErrorInitial = complexItemViewState.isErrorInitial,

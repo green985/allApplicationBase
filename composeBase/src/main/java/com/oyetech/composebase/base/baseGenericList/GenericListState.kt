@@ -28,6 +28,7 @@ data class GenericListState<T>(
 
     val triggerRefresh: (() -> Unit)? = null,
     val triggerLoadMore: (() -> Unit)? = null,
+    val triggerScrollToPosition: ((Int) -> Unit)? = null,
 
     )
 

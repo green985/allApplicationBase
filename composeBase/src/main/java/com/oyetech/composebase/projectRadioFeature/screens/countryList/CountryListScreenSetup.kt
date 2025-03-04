@@ -67,7 +67,7 @@ fun CountryListScreenSetup(
         Column(modifier = Modifier.padding()) {
             LoadableLazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                state = lazyListState,
+                lazyColumnState = lazyListState,
                 isRefreshing = complexItemViewState.isRefreshing,
                 isLoadingInitial = complexItemViewState.isLoadingInitial,
                 isErrorInitial = complexItemViewState.isErrorInitial,

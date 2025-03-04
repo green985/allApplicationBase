@@ -97,7 +97,7 @@ class MessageDetailVm2(
 
     fun onEvent(event: MessageDetailEvent) {
         when (event) {
-            OnMessageSend -> {
+            is OnMessageSend -> {
                 sendMessage()
             }
 

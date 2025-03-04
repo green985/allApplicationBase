@@ -4,6 +4,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.oyetech.composebase.base.baseList.LoadableLazyColumn
+import com.oyetech.composebase.base.baseList.LoadableLazyColumnState
 import com.oyetech.composebase.base.baseList.rememberLoadableLazyColumnState
 
 @Composable
@@ -12,9 +13,10 @@ fun <T> GenericListScreenSetup(
     listViewState: GenericListState<T>,
     content: LazyListScope.() -> Unit,
     reverseLayout: Boolean = false,
+    lazyColumnState: LoadableLazyColumnState = rememberLoadableLazyColumnState(onLoadMore = { listViewState.triggerLoadMore?.invoke() }),
 ) {
     LoadableLazyColumn(
-        state = rememberLoadableLazyColumnState(onLoadMore = { listViewState.triggerLoadMore?.invoke() }),
+        lazyColumnState = lazyColumnState,
         isRefreshing = listViewState.isRefreshing,
         isLoadingInitial = listViewState.isLoadingInitial,
         isEmptyList = listViewState.items.isEmpty(),

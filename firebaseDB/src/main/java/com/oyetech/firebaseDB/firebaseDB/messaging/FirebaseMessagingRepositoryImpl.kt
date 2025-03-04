@@ -89,6 +89,7 @@ class FirebaseMessagingRepositoryImpl(
                 val docc = doc.toObject(FirebaseMessagingResponseData::class.java)
                 docc?.copy(messageId = doc.id)
             }
+            Timber.d("getMessageListWithConversationId: ${messageList.toString()}")
             emit(messageList)
         }
     }
@@ -209,6 +210,7 @@ class FirebaseMessagingRepositoryImpl(
                     )
                     dbMessage
                 }
+                Timber.d("Sending message document ID result =" + result.messageId)
 
                 emit(result)
                 messagesAllOperationRepository.insertMessage(localMessage.copy(status = SENT))

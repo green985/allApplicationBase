@@ -26,6 +26,7 @@ Created by Erdi Özbek
 
 data class MessageDetailScreenUiState(
     val isLoading: Boolean = false,
+    val onMessageSendTriggered: Boolean = false,
     val errorText: String = "",
     val messageText: String = "",
 
@@ -52,7 +53,7 @@ data class MessageDetailUiState(
 
 sealed class MessageDetailEvent {
     data class OnMessageTextChange(val messageText: String) : MessageDetailEvent()
-    object OnMessageSend : MessageDetailEvent()
+    data class OnMessageSend(val triggered: Boolean = false) : MessageDetailEvent()
     object OnRetry : MessageDetailEvent()
     object OnRefresh : MessageDetailEvent()
 }

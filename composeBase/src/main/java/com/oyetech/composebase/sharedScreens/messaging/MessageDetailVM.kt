@@ -49,6 +49,7 @@ class MessageDetailVm(
     val uiState = MutableStateFlow(
         MessageDetailScreenUiState(
             isLoading = false,
+            onMessageSendTriggered = false,
             errorText = "",
             createdAt = null,
             createdAtString = "",
@@ -107,9 +108,16 @@ class MessageDetailVm(
                 }
         }
     }
+
     fun onEvent(event: MessageDetailEvent) {
         when (event) {
-            OnMessageSend -> {
+            is OnMessageSend -> {
+                uiState.updateState {
+                    copy(onMessageSendTriggered = event.triggered)
+                }
+                if (!event.triggered) {
+                    return
+                }
                 sendMessage()
             }
 

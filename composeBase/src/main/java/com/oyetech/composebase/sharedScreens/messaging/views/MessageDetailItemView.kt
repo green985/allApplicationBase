@@ -1,3 +1,4 @@
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,11 +27,12 @@ import com.oyetech.models.firebaseModels.messagingModels.MessageStatus
 fun MessageDetailItemView(
     uiState: MessageDetailUiState,
     currentUserId: String, // Şu anki kullanıcının ID'si
+    modifier: Modifier = Modifier,
 ) {
     val isCurrentUser = uiState.senderId == currentUserId
 
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
         horizontalArrangement = if (isCurrentUser) Arrangement.End else Arrangement.Start
@@ -110,7 +112,7 @@ private fun MessageDetailItemPreview() {
                 receiverId = "receiverId",
                 conversationId = "conversationId"
             ),
-            currentUserId = "senderId"
+            currentUserId = "senderId",
         )
         MessageDetailItemView(
             uiState = MessageDetailUiState(
@@ -120,7 +122,7 @@ private fun MessageDetailItemPreview() {
                 receiverId = "receiverId",
                 conversationId = "conversationId"
             ),
-            currentUserId = "senderId2"
+            currentUserId = "senderId2",
         )
     }
 }

@@ -18,7 +18,7 @@ interface MessagesAllDao : BaseDao<FirebaseMessagingLocalData> {
     @Query("SELECT * FROM messages " + " " + "ORDER BY createdAt DESC LIMIT 1")
     fun getFirstInMessage(): Flow<FirebaseMessagingLocalData>
 
-    @Query("SELECT * FROM messages " + "where conversationId = :conversationId ORDER BY createdAt  " + "limit 100 ")
+    @Query("SELECT * FROM messages " + "where conversationId = :conversationId ORDER BY createdAt  DESC " + "limit 100 ")
     fun getMessageListFlow(conversationId: String): Flow<List<FirebaseMessagingLocalData>>
 
     @Query(
