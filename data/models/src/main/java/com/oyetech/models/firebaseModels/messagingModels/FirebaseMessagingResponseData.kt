@@ -35,7 +35,6 @@ data class FirebaseMessageConversationData(
 
     ) : Parcelable
 
-@Parcelize
 @Keep
 @JsonClass(generateAdapter = true)
 data class FirebaseMessagingResponseData(
@@ -49,7 +48,9 @@ data class FirebaseMessagingResponseData(
     @ServerTimestamp
     var createdAt: Date? = null,
 
-    ) : Parcelable
+    @Ignore
+    var timestamp: Any? = null,
+)
 
 @Parcelize
 @Keep

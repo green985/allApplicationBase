@@ -78,7 +78,7 @@ object FirebaseDBModule {
                 get(),
                 get(),
                 get(),
-                get(), get(), get()
+                get(), get(), get(), get()
             )
         }
 

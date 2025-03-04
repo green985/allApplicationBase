@@ -4,9 +4,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.oyetech.domain.repository.firebase.FirebaseQuotesDebugOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuotesOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
-import com.oyetech.firebaseDB.databaseKeys.FirebaseDatabaseKeys
 import com.oyetech.firebaseDB.firebaseDB.helper.runTransactionWithTimeout
 import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.models.firebaseModels.databaseKeys.FirebaseDatabaseKeys
 import com.oyetech.models.quotes.responseModel.AdviceQuoteResponseData
 import com.oyetech.models.quotes.responseModel.QuoteResponseData
 import kotlinx.coroutines.GlobalScope

@@ -163,7 +163,7 @@ fun List<FirebaseMessagingLocalData>.mergeMessages(
         }
     }
 
-    Timber.d("mergeMessagesDuration: $mergeMessagesDuration")
+//    Timber.d("mergeMessagesDuration: $mergeMessagesDuration")
 }
 
 fun Flow<List<FirebaseMessagingLocalData>>.mapFromLocalToUiState(): Flow<List<MessageDetailUiState>> {

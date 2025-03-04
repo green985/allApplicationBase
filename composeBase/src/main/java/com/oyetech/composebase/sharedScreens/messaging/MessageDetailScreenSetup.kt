@@ -81,7 +81,6 @@ fun MessageDetailScreenSetup(
         }
     }
 
-
 }
 
 @Suppress("FunctionName", "LongParameterList")

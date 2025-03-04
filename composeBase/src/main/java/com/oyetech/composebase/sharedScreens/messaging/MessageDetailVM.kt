@@ -11,6 +11,7 @@ import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnRefr
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnRetry
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
+import com.oyetech.domain.repository.firebase.realtime.FirebaseRealtimeHelperRepository
 import com.oyetech.domain.repository.messaging.MessagesAllOperationRepository
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
@@ -33,9 +34,13 @@ class MessageDetailVm(
     private val firebaseMessagingRepository: FirebaseMessagingRepository,
     private val messagingAllOperationRepository: MessagesAllOperationRepository,
     private val firebaseUserRepository: FirebaseUserRepository,
+    private val firebaseRealtimeHelperRepository: FirebaseRealtimeHelperRepository,
+    private val messageOperationVM: MessageOperationVM,
 ) : BaseListViewModel<MessageDetailUiState>(appDispatchers) {
 
     var messagesJob: Job? = null
+
+    val tmp = messageOperationVM.initFun()
 
     override val listViewState: MutableStateFlow<GenericListState<MessageDetailUiState>> =
         MutableStateFlow(
@@ -61,6 +66,7 @@ class MessageDetailVm(
     )
 
     init {
+        tmp.hashCode()
         Timber.d("MessageDetailVm created == " + uiState.value.toString())
         if (conversationId.isNotBlank()) {
             initMessageDetailOperation()
@@ -98,7 +104,7 @@ class MessageDetailVm(
                 .collectLatest {
                     it.fold(
                         onSuccess = { messageList ->
-                            Timber.d("Message list: $messageList")
+//                            Timber.d("Message list: $messageList")
                             messageList.mergeMessages(listViewState)
                         },
                         onFailure = {
@@ -112,10 +118,10 @@ class MessageDetailVm(
     fun onEvent(event: MessageDetailEvent) {
         when (event) {
             is OnMessageSend -> {
-                uiState.updateState {
-                    copy(onMessageSendTriggered = event.triggered)
-                }
                 if (!event.triggered) {
+                    uiState.updateState {
+                        copy(onMessageSendTriggered = false)
+                    }
                     return
                 }
                 sendMessage()
@@ -145,6 +151,9 @@ class MessageDetailVm(
             ).asResult().collectLatest {
                 it.fold(
                     onSuccess = { messageDetail ->
+                        uiState.updateState {
+                            copy(onMessageSendTriggered = true)
+                        }
                         Timber.d("Message sent: $messageDetail")
                     },
                     onFailure = {

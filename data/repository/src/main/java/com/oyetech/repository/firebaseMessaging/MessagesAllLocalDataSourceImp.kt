@@ -43,5 +43,9 @@ class MessagesAllLocalDataSourceImp(private val messagesAllDao: MessagesAllDao) 
         messagesAllDao.insert(message)
     }
 
+    override suspend fun getLastMessage(receiverId: String): FirebaseMessagingLocalData? {
+        return messagesAllDao.getLastMessage(receiverId)
+    }
+
 
 }

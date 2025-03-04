@@ -3,7 +3,8 @@ package com.oyetech.firebaserealtime.di
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Logger.Level.DEBUG
 import com.oyetech.domain.repository.firebase.realtime.FirebaseRealtimeHelperRepository
-import com.oyetech.firebaserealtime.FirebaseRealtimeHelperRepositoryImpl
+import com.oyetech.domain.repository.firebase.realtime.FirebaseRealtimeHelperRepositoryDeneme
+import com.oyetech.firebaserealtime.FirebaseRealtimeHelperRepositoryDenemeImpl
 import org.koin.dsl.module
 
 /**
@@ -21,6 +22,16 @@ object FirebaseRealtimeModule {
             database
         }
 
-        single<FirebaseRealtimeHelperRepository> { FirebaseRealtimeHelperRepositoryImpl(get()) }
+        single<FirebaseRealtimeHelperRepositoryDeneme> {
+            FirebaseRealtimeHelperRepositoryDenemeImpl(
+                get()
+            )
+        }
+        single<FirebaseRealtimeHelperRepository> {
+            FirebaseRealtimeHelperRepositoryImpl(
+                get(),
+                get(), get()
+            )
+        }
     }
 }

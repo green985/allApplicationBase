@@ -2,7 +2,7 @@ package com.oyetech.firebaseDB.firebaseDB.language
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.oyetech.domain.repository.firebase.FirebaseLanguageOperationRepository
-import com.oyetech.firebaseDB.databaseKeys.FirebaseDatabaseKeys
+import com.oyetech.models.firebaseModels.databaseKeys.FirebaseDatabaseKeys
 import com.oyetech.models.firebaseModels.language.FirebaseLanguageResponseData
 import com.oyetech.models.firebaseModels.language.FirebaseLanguageResponseDataWrapper
 import com.oyetech.models.postBody.world.LanguageCodeRequestBody

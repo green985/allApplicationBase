@@ -5,13 +5,14 @@ import com.google.firebase.firestore.Query
 import com.oyetech.domain.helper.ActivityProviderUseCase
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
+import com.oyetech.domain.repository.firebase.realtime.FirebaseRealtimeHelperRepository
 import com.oyetech.domain.repository.messaging.MessagesSendingOperationRepository
 import com.oyetech.domain.repository.messaging.local.MessagesAllLocalDataSourceRepository
-import com.oyetech.firebaseDB.databaseKeys.FirebaseDatabaseKeys
 import com.oyetech.firebaseDB.firebaseDB.helper.runTransactionWithTimeout
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.errors.ErrorMessage
 import com.oyetech.models.errors.exceptionHelper.GeneralException
+import com.oyetech.models.firebaseModels.databaseKeys.FirebaseDatabaseKeys
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessageConversationData
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingLocalData
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingResponseData
@@ -50,6 +51,7 @@ class FirebaseMessagingRepositoryImpl(
     private val messagesAllOperationRepository: MessagesAllLocalDataSourceRepository,
     private val dispatcher: AppDispatchers,
     private val activityProviderUseCase: ActivityProviderUseCase,
+    private val firebaseRealtimeHelperRepository: FirebaseRealtimeHelperRepository,
 ) : FirebaseMessagingRepository {
 
     private val sendingDelay = 100L
@@ -197,8 +199,11 @@ class FirebaseMessagingRepositoryImpl(
                     status = IDLE,
                 )
 
+                firebaseRealtimeHelperRepository.sendMessageWithRealtime(newMessage)
+
                 localMessage = newMessage.toLocalData()
                 messagesAllOperationRepository.insertMessage(localMessage)
+                emit(newMessage)
 
                 val result = firestore.runTransactionWithTimeout {
                     val dbMessage = newMessage.copy(status = SENT)

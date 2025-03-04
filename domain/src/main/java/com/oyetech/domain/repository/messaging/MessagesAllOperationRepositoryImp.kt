@@ -7,6 +7,7 @@ import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingLocalD
 import com.oyetech.models.firebaseModels.messagingModels.MessageStatus
 import com.oyetech.models.firebaseModels.messagingModels.toLocalDataWithStatus
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 
@@ -30,6 +31,9 @@ class MessagesAllOperationRepositoryImp(
     override fun getMessagesFromRemoteAndInsertToLocal(
         conversationId: String,
     ): Flow<List<FirebaseMessagingLocalData>> {
+        if (conversationId.isBlank()) {
+            return flowOf(emptyList())
+        }
         return firebaseMessagingRepository.getMessageListWithConversationId(conversationId)
             .map {
                 it.map {
@@ -75,5 +79,9 @@ class MessagesAllOperationRepositoryImp(
             }
             it
         }
+    }
+
+    private suspend fun getLastMessage(): FirebaseMessagingLocalData? {
+        return messagesAllDao.getLastMessage("")
     }
 }

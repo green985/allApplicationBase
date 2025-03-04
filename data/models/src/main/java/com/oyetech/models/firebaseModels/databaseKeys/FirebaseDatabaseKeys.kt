@@ -1,4 +1,4 @@
-package com.oyetech.firebaseDB.databaseKeys
+package com.oyetech.models.firebaseModels.databaseKeys
 
 /**
 Created by Erdi Özbek

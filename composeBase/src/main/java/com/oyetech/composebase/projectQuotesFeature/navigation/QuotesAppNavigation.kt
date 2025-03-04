@@ -97,7 +97,7 @@ fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
                 "${ScreenKey.conversationId}={conversationId}" +
                 "&${ScreenKey.receiverUserId}={receiverUserId}", arguments = listOf(
             navArgument(ScreenKey.conversationId) {
-                defaultValue = "empty"
+                defaultValue = ""
                 nullable = true
             },
             navArgument(ScreenKey.receiverUserId) {

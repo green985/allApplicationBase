@@ -5,7 +5,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.oyetech.domain.repository.firebase.realtime.FirebaseRealtimeHelperRepository
+import com.oyetech.domain.repository.firebase.realtime.FirebaseRealtimeHelperRepositoryDeneme
 import com.oyetech.models.entity.auth.TokenDataResponse
 import com.oyetech.models.entity.auth.TokenDataResponse22
 import kotlinx.coroutines.GlobalScope
@@ -19,8 +19,8 @@ Created by Erdi Özbek
 -19:41-
  **/
 
-class FirebaseRealtimeHelperRepositoryImpl(private val firebaseDatabase: FirebaseDatabase) :
-    FirebaseRealtimeHelperRepository {
+class FirebaseRealtimeHelperRepositoryDenemeImpl(private val firebaseDatabase: FirebaseDatabase) :
+    FirebaseRealtimeHelperRepositoryDeneme {
     val userID = "deneneneuseisrurn"
 
     val userPath = "users/$userID/message"

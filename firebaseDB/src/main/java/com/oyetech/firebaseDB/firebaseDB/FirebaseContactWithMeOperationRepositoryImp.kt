@@ -2,7 +2,7 @@ package com.oyetech.firebaseDB.firebaseDB
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.oyetech.domain.repository.helpers.FirebaseContactWithMeOperationRepository
-import com.oyetech.firebaseDB.databaseKeys.FirebaseDatabaseKeys
+import com.oyetech.models.firebaseModels.databaseKeys.FirebaseDatabaseKeys
 import com.oyetech.models.postBody.feedback.FeedbackOperationRequestBody
 import kotlinx.coroutines.flow.MutableStateFlow
 

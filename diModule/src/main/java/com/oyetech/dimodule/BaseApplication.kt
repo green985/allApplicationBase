@@ -38,12 +38,12 @@ class BaseApplication : Application() {
         }
         try {
             val dynamiteModule = DynamiteModule.load(
-                context,
+                this,
                 DynamiteModule.PREFER_LOCAL,
                 "com.google.android.gms.measurement.dynamite"
             )
         } catch (e: Exception) {
-            e.printStackTrace()
+//            e.printStackTrace()
         }
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         configureDi()

@@ -44,6 +44,9 @@ interface MessagesAllDao : BaseDao<FirebaseMessagingLocalData> {
     @Query("delete FROM messages ")
     fun deleteAllList()
 
+    @Query("    SELECT * FROM messages " + "where receiverId = :receiverId    ORDER BY createdAt DESC LIMIT 1")
+    fun getLastMessage(receiverId: String): FirebaseMessagingLocalData?
+
     @Query("select * FROM messages " + "WHERE messageId in (:messageIdList)")
     fun findMessageListWithMessageIdList(messageIdList: List<String>): List<FirebaseMessagingLocalData>
 
