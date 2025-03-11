@@ -2,6 +2,7 @@ package com.oyetech.composebase.projectRadioFeature.screens.generalOperationScre
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
+import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
 import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.domain.useCases.helpers.AppReviewOperationUseCase
@@ -19,6 +20,7 @@ class GeneralOperationVM(
     private val appReviewOperationUseCase: AppReviewOperationUseCase,
     private val sharedHelperRepository: SharedOperationRepository,
     private val googleLoginRepository: GoogleLoginRepository,
+    val loginOperationVM: LoginOperationVM,
 ) : BaseViewModel(appDispatchers) {
 
     fun getReviewCanShowState() = appReviewOperationUseCase.getReviewCanShowState()
@@ -45,7 +47,6 @@ class GeneralOperationVM(
             googleLoginRepository.signInWithGoogleAnonymous()
         }
     }
-
 
     init {
         sharedHelperRepository.increaseAppOpenCount()

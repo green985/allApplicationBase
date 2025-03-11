@@ -7,7 +7,6 @@ import com.oyetech.firebaseDB.firebaseDB.helper.runTransactionWithTimeout
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.firebaseModels.contentOperationModel.LikeOperationModel
 import com.oyetech.models.firebaseModels.databaseKeys.FirebaseDatabaseKeys
-import com.oyetech.models.newPackages.helpers.OperationState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
@@ -83,7 +82,7 @@ class FirebaseContentLikeOperationRepositoryImpl(
     @Suppress("TooGenericExceptionThrown")
     override suspend fun likeOperation(
         contentId: String,
-    ): Flow<OperationState<LikeOperationModel>> = flow {
+    ): Flow<LikeOperationModel> = flow {
         val username = userRepository.getUsername() ?: ""
 
         if (username.isBlank()) {
@@ -114,7 +113,7 @@ class FirebaseContentLikeOperationRepositoryImpl(
                 }
 
             Timber.d("Like added: NEW return fav = " + userOldInputResult.like)
-            emit(OperationState.Success(userOldInputResult))
+            emit(userOldInputResult)
         } else {
             userOldInputResult = userOldInputResult.copy(like = !userOldInputResult.like)
 
@@ -131,7 +130,7 @@ class FirebaseContentLikeOperationRepositoryImpl(
                 }
 
             Timber.d("Like added: Update return fav = " + userOldInputResult.like)
-            emit(OperationState.Success(userOldInputResult))
+            emit(userOldInputResult)
         }
 
     }

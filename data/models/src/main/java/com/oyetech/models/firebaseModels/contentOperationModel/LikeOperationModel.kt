@@ -1,16 +1,26 @@
 package com.oyetech.models.firebaseModels.contentOperationModel
 
 import androidx.annotation.Keep
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 import com.google.firebase.firestore.ServerTimestamp
+import com.squareup.moshi.JsonClass
 import java.util.Date
 
+@Entity(
+    tableName = "contentLike"
+)
+@JsonClass(generateAdapter = true)
 @Keep
 data class LikeOperationModel(
-    val contentId: String = "",
-    val username: String = "",
-    val likeId: String = "",
-    val like: Boolean = false,
+    @PrimaryKey
+    var contentId: String = "",
+    var username: String = "",
+    var likeId: String = "",
+    var like: Boolean = false,
 
     @ServerTimestamp
-    val createdAt: Date? = null,
+    @Ignore
+    var createdAt: Date? = null,
 )

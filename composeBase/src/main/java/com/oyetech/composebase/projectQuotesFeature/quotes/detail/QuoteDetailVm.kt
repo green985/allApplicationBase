@@ -6,7 +6,7 @@ import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.helpers.errorHelper.ErrorHelper
 import com.oyetech.composebase.mappers.mapToUi.QuotesMappers
-import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationUiState
+import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationVm
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.ClickNextButton
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.ClickPreviousButton
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.LongClickForCopy
@@ -34,10 +34,10 @@ class QuoteDetailVm(
     var quoteId: String = "",
     private val quoteDataOperationRepository: QuoteDataOperationRepository,
     private val snackbarDelegate: SnackbarDelegate,
+    val contentOperationVm: ContentOperationVm,
 ) : BaseViewModel(appDispatchers) {
 
-    val uiState = MutableStateFlow(QuoteUiState())
-    val contentOperationUiState = MutableStateFlow(ContentOperationUiState())
+    val uiState = MutableStateFlow(QuoteUiState(quoteId = quoteId))
 
     val toolbarState = MutableStateFlow(
         QuoteToolbarState(
@@ -47,6 +47,8 @@ class QuoteDetailVm(
     )
 
     init {
+        contentOperationVm.initContentOperationState(listOf(quoteId), inList = false)
+
         getQuoteDetail(quoteId)
         viewModelScope.launch(getDispatcherIo()) {
             quoteDataOperationRepository.setSeenQuote(quoteId).asResult().collectLatest {

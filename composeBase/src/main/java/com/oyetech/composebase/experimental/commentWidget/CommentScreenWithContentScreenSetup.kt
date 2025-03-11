@@ -33,7 +33,6 @@ import com.oyetech.composebase.baseViews.loadingErrors.LoadingDialogFullScreen
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationUiState
-import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
 import com.oyetech.composebase.projectRadioFeature.RadioDimensions
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.newPackages.helpers.OperationState.Error
@@ -62,7 +61,7 @@ fun CommentScreenWithContentScreenSetup(
         )
     }
     val snackbarDelegate = koinInject<SnackbarDelegate>()
-    val loginOperationVM = koinViewModel<LoginOperationVM>()
+    val loginOperationVM = vm.loginOperationVM
     val uiState by vm.uiState.collectAsStateWithLifecycle()
     val loginOperationState by loginOperationVM.getLoginOperationSharedState()
         .collectAsStateWithLifecycle(

@@ -28,6 +28,7 @@ object HelperConstant {
     const val RadioLastListDatabaseVersion: Int = 6
     const val RadioAllListVersion: Int = 1
     const val FirebaseMessagingVersion: Int = 2
+    const val ContentLikeVersion: Int = 2
 
     const val ANIM_TIME: Long = 300L
     const val BOTTOM_NAVIGATION_SHOW_ANIM_TIME: Int = 200

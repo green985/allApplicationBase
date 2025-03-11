@@ -7,6 +7,7 @@ import androidx.paging.cachedIn
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.baseList.ComplexItemListState
 import com.oyetech.composebase.mappers.mapToUi.QuotesMappers.mapToQuoteUiState
+import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationVm
 import com.oyetech.composebase.projectQuotesFeature.quotes.listScreen.QuotePagingSource
 import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteListUiEvent
 import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteListUiEvent.QuoteSeen
@@ -29,6 +30,7 @@ Created by Erdi Özbek
 class QuotesVM(
     private val appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     private val quoteDataOperationRepository: QuoteDataOperationRepository,
+    val contentOperationVm: ContentOperationVm,
 ) : BaseViewModel(appDispatchers) {
 
     val quotesPage =
@@ -39,7 +41,8 @@ class QuotesVM(
             pagingSourceFactory = {
                 QuotePagingSource(
                     quoteDataOperationRepository,
-                    complexItemViewState = complexItemViewState
+                    complexItemViewState = complexItemViewState,
+                    contentOperationVm = contentOperationVm
                 )
             }
         ).flow.cachedIn(viewModelScope)
@@ -63,7 +66,7 @@ class QuotesVM(
 
     private var isVisibleControl = false
     fun itemVisible(index: Int) {
-        Timber.d("itemVisible  $index")
+//        Timber.d("itemVisible  $index")
         viewModelScope.launch(getDispatcherIo()) {
             if (index == 0) {
                 isVisibleControl = true

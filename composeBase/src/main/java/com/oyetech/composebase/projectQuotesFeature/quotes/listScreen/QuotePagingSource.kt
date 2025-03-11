@@ -3,6 +3,7 @@ package com.oyetech.composebase.projectQuotesFeature.quotes.listScreen
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.oyetech.composebase.base.baseList.ComplexItemListState
+import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationVm
 import com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer.mapToUiState
 import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteUiState
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
@@ -17,6 +18,7 @@ import timber.log.Timber
 
 class QuotePagingSource(
     private val quoteDataOperationRepository: QuoteDataOperationRepository,
+    private val contentOperationVm: ContentOperationVm,
     private val complexItemViewState: MutableStateFlow<ComplexItemListState<QuoteUiState>>,
 ) : PagingSource<Int, QuoteUiState>() {
     override fun getRefreshKey(state: PagingState<Int, QuoteUiState>): Int? {
@@ -43,6 +45,9 @@ class QuotePagingSource(
                             val result = oldList.contains(it.quoteId)
                             result
                         }
+
+                        val contentIdList = listt.map { content -> content.quoteId }
+                        contentOperationVm.initContentOperationState(contentIdList, inList = true)
                         listt
                     }.mapToUiState().map {
                         complexItemViewState.value = complexItemViewState.value.copy(

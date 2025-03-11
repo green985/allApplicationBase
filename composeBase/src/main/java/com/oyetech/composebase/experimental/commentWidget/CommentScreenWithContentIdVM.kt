@@ -14,6 +14,7 @@ import com.oyetech.composebase.experimental.commentWidget.CommentOptionsEvent.Re
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenEvent.CommentOperationClicked
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenEvent.OnCommentInputChanged
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenEvent.OnCommentSubmit
+import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
 import com.oyetech.composebase.helpers.errorHelper.ErrorHelper
 import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
@@ -41,6 +42,7 @@ class CommentScreenWithContentIdVM(
     private val contentId: String,
     private val userRepository: FirebaseUserRepository,
     private val commentOperationRepository: FirebaseCommentOperationRepository,
+    val loginOperationVM: LoginOperationVM,
 ) :
     BaseViewModel(appDispatchers) {
 

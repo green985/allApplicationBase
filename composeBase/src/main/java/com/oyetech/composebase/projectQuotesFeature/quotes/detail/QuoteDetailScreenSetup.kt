@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,7 +26,6 @@ import com.oyetech.composebase.helpers.general.GeneralSettings
 import com.oyetech.composebase.projectQuotesFeature.QuotesDimensions
 import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationEvent
 import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationUiState
-import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationVm
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.ClickNextButton
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.ClickPreviousButton
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.LongClickForCopy
@@ -59,17 +57,12 @@ fun QuoteDetailScreenSetup(
             quoteId
         )
     },
-    contentOperationVm: ContentOperationVm = koinViewModel<ContentOperationVm>(),
 ) {
-
+    val contentOperationVm = vm.contentOperationVm
     val uiState by vm.uiState.collectAsStateWithLifecycle()
     val toolbarState by vm.toolbarState.collectAsStateWithLifecycle()
     val contentOperationState by contentOperationVm.getContentStateFlow(quoteId)
         .collectAsStateWithLifecycle()
-
-    LaunchedEffect(uiState.quoteId) {
-        contentOperationVm.initContentOperationState(quoteId)
-    }
 
     QuoteDetailScreen(
         modifier = modifier,

@@ -75,7 +75,7 @@ object AppComponent {
 
         QuotesProjectModule.module,
 
-    )
+        )
 }
 
 object Modules {
