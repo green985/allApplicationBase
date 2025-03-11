@@ -12,14 +12,17 @@ Created by Erdi Özbek
 
 interface GoogleLoginRepository {
     //    val googleAuthStateFlow: MutableStateFlow<GoogleAuthResponseData>
-    fun controlUserAlreadySignIn()
-    fun signInWithGoogle()
+//    fun signInWithGoogle()
 
     // for google sign in
-    val googleAuthStateFlow: MutableStateFlow<GoogleAuthResponseData>
 
-    val googleUserStateFlow: MutableStateFlow<GoogleUserResponseData>
-    fun signInWithGoogleAnonymous()
-    fun autoLoginOperation()
     val userAutoLoginStateFlow: MutableStateFlow<Boolean>
+
+    val googleAuthStateFlow: MutableStateFlow<GoogleAuthResponseData>
+    val googleUserStateFlow: MutableStateFlow<GoogleUserResponseData>
+
+    suspend fun signInWithGoogle()
+    fun signInWithGoogleAnonymous()
+
+    fun autoLoginOperation()
 }

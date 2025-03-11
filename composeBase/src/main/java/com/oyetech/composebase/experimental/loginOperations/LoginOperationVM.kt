@@ -82,7 +82,13 @@ class LoginOperationVM(
         when (event) {
             LoginClicked -> {
                 loginOperationState.value = LoginOperationUiState(isLoading = true)
-                googleLoginRepository.signInWithGoogleAnonymous()
+                viewModelScope.launch(getDispatcherIo()) {
+                    try {
+                        googleLoginRepository.signInWithGoogle()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
             }
 
             ErrorDismiss -> {
