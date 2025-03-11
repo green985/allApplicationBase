@@ -64,7 +64,8 @@ fun QuoteDetailScreenSetup(
 
     val uiState by vm.uiState.collectAsStateWithLifecycle()
     val toolbarState by vm.toolbarState.collectAsStateWithLifecycle()
-    val contentOperationState by contentOperationVm.contentOperationUiState.collectAsStateWithLifecycle()
+    val contentOperationState by contentOperationVm.getContentStateFlow(quoteId)
+        .collectAsStateWithLifecycle()
 
     LaunchedEffect(uiState.quoteId) {
         contentOperationVm.initContentOperationState(quoteId)

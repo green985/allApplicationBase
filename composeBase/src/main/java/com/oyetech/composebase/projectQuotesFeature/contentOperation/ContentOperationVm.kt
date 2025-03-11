@@ -10,7 +10,6 @@ import com.oyetech.domain.repository.firebase.FirebaseContentLikeOperationReposi
 import com.oyetech.models.newPackages.helpers.dataOrNull
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -30,70 +29,62 @@ class ContentOperationVm(
     private val snackbarDelegate: SnackbarDelegate,
 ) : BaseViewModel(appDispatchers) {
 
-    var contentOperationUiState: MutableStateFlow<ContentOperationUiState> = MutableStateFlow(
-        ContentOperationUiState()
-    )
+    private val contentOperationStateMap =
+        HashMap<String, MutableStateFlow<ContentOperationUiState>>()
+    private val contentOperationJobs = HashMap<String, Job>()
 
-    var contentOperationJob: Job? = null
-
-    fun initContentOperationState(
-        contentId: String,
-    ) {
-        contentOperationUiState.updateState {
-            copy(
-                isInitialed = false
-            )
+    fun getContentStateFlow(contentId: String): MutableStateFlow<ContentOperationUiState> {
+        return contentOperationStateMap.getOrPut(contentId) {
+            MutableStateFlow(ContentOperationUiState(contentId = contentId))
         }
-        contentOperationJob?.cancel()
-        contentOperationJob = viewModelScope.launch(getDispatcherIo()) {
-            firebaseContentLikeOperationRepository.getInitialStateOfContent(contentId).map {
-                ContentOperationUiState(
-                    contentId = contentId,
-                    isLiked = it.like
-                )
-            }.asResult()
-                .collectLatest {
-                    it.fold(
+    }
+
+    fun initContentOperationState(contentId: String) {
+        val stateFlow = getContentStateFlow(contentId)
+
+        stateFlow.updateState { copy(isInitialed = false) }
+
+        contentOperationJobs[contentId]?.cancel()
+        contentOperationJobs[contentId] = viewModelScope.launch(getDispatcherIo()) {
+            firebaseContentLikeOperationRepository.getInitialStateOfContent(contentId)
+                .map { ContentOperationUiState(contentId = contentId, isLiked = it.like) }
+                .asResult()
+                .collectLatest { result ->
+                    result.fold(
                         onSuccess = {
-                            contentOperationUiState.value = it
-                            contentOperationUiState.updateState {
-                                copy(
-                                    isInitialed = true
-                                )
-                            }
+                            stateFlow.value = it.copy(isInitialed = true)
                         },
                         onFailure = {
-                            // will be handled
+                            snackbarDelegate.triggerSnackbarState(ErrorHelper.getErrorMessage(it))
+                            // optional...
+                            stateFlow.updateState { copy(errorText = ErrorHelper.getErrorMessage(it)) }
                         }
                     )
                 }
         }
 
-
-        Timber.d("init contentttt " + contentId)
-
+        Timber.d("Initialized content operation for: $contentId")
     }
 
     fun onContentEvent(event: ContentOperationEvent) {
         Timber.d("onContentEvent: $event")
         when (event) {
             is LikeContent -> {
-                contentOperationUiState.updateState {
-                    copy(isLoading = true)
-                }
-                viewModelScope.launch(Dispatchers.IO) {
+                val stateFlow = getContentStateFlow(event.contentId)
+
+                stateFlow.updateState { copy(isLoading = true) }
+                viewModelScope.launch(getDispatcherIo()) {
                     firebaseContentLikeOperationRepository.likeOperation(event.contentId)
                         .asResult()
                         .collectLatest { result ->
                             result.fold(
                                 onSuccess = {
-                                    contentOperationUiState.updateState {
-                                        copy(isLiked = it.dataOrNull()?.like ?: false)
+                                    stateFlow.updateState {
+                                        copy(
+                                            isLiked = it.dataOrNull()?.like ?: false,
+                                            isLoading = false
+                                        )
                                     }
-                                    contentOperationUiState.updateState {
-                                        copy(isLoading = false)
-                                    }
-
                                 },
                                 onFailure = {
                                     snackbarDelegate.triggerSnackbarState(
@@ -101,22 +92,17 @@ class ContentOperationVm(
                                             it
                                         )
                                     )
-                                    contentOperationUiState.updateState {
+                                    stateFlow.updateState {
                                         copy(
-                                            errorText = ErrorHelper.getErrorMessage(
-                                                it
-                                            )
+                                            errorText = ErrorHelper.getErrorMessage(it),
+                                            isLoading = false
                                         )
-                                    }
-                                    contentOperationUiState.updateState {
-                                        copy(isLoading = true)
                                     }
                                 }
                             )
                         }
                 }
             }
-
         }
     }
 

@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.oyetech.composebase.baseViews.loadingErrors.ErrorDialogFullScreen
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingDialogFullScreen
 import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationEvent.LikeContent
 
@@ -63,12 +62,13 @@ fun QuoteContentOperationView(
     if (contentOperationUiState.isLoading) {
         LoadingDialogFullScreen()
     }
-
-    if (contentOperationUiState.errorText.isNotBlank()) {
-        ErrorDialogFullScreen(
-            errorMessage = contentOperationUiState.errorText,
-        )
-    }
+//
+//    if (contentOperationUiState.errorText.isNotBlank()) {
+//        ErrorDialogFullScreen(
+//            errorMessage = contentOperationUiState.errorText,
+//
+//        )
+//    }
 
 }
 
