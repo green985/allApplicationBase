@@ -81,12 +81,12 @@ abstract class BaseListViewModel<T>(
                 }
         }
     }
-//
-//    override fun retry() {
+
+    fun retry() {
 //        complexItemViewState.updateState {
 //            copy(isLoadingInitial = true)
 //        }
 //        loadMore()
-//    }
+    }
 
 }

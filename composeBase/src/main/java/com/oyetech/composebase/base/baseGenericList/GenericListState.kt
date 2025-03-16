@@ -1,6 +1,5 @@
 package com.oyetech.composebase.base.baseGenericList
 
-import com.oyetech.composebase.base.baseList.ItemSortType
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.helpers.errorHelper.ErrorHelper
 import kotlinx.collections.immutable.ImmutableList
@@ -13,6 +12,7 @@ data class GenericListState<T>(
     val dataFlow: Flow<List<T>>? = null,
 
     val items: ImmutableList<T> = emptyList<T>().toImmutableList(),
+    val isRefreshEnable: Boolean = false,
     val isRefreshing: Boolean = false,
     val isLoadingInitial: Boolean = false,
     val isLoadingMore: Boolean = false,

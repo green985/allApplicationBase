@@ -20,9 +20,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
-import com.oyetech.composebase.base.baseList.ListUIEvent
-import com.oyetech.composebase.base.baseList.LoadableLazyColumn
-import com.oyetech.composebase.base.baseList.rememberLoadableLazyColumnState
+import com.oyetech.composebase.base.baseGenericList.ListUIEvent.LoadMore
+import com.oyetech.composebase.base.baseGenericList.ListUIEvent.Refresh
+import com.oyetech.composebase.base.baseGenericList.ListUIEvent.Retry
+import com.oyetech.composebase.base.baseGenericList.LoadableLazyColumn
+import com.oyetech.composebase.base.baseGenericList.rememberLoadableLazyColumnState
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
 import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.subs.ItemRadioView
@@ -65,7 +67,7 @@ fun RadioListScreenSetup(
 
     val lazyListState = rememberLoadableLazyColumnState(
         onLoadMore = {
-            viewModel.handleListEvent(ListUIEvent.LoadMore)
+            viewModel.handleListEvent(LoadMore)
         },
     )
     val scope = rememberCoroutineScope()
@@ -168,9 +170,9 @@ fun RadioListScreenSetup(
                 isRefreshing = complexItemViewState.isRefreshing,
                 isLoadingInitial = complexItemViewState.isLoadingInitial,
                 isErrorInitial = complexItemViewState.isErrorInitial,
-                onRetry = { viewModel.handleListEvent(ListUIEvent.Retry) },
+                onRetry = { viewModel.handleListEvent(Retry) },
                 isEmptyList = complexItemViewState.isEmptyList,
-                onRefresh = { viewModel.handleListEvent(ListUIEvent.Refresh) },
+                onRefresh = { viewModel.handleListEvent(Refresh) },
                 errorMessage = complexItemViewState.errorMessage,
                 content = {
                     items(items = items, key = { it.stationuuid }, itemContent = { station ->

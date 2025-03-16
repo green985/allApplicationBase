@@ -20,6 +20,7 @@ import com.oyetech.languageModule.keyset.LanguageKey
 import timber.log.Timber
 
 @Composable
+@Suppress("LongParameterList", "CyclomaticComplexMethod", "FunctionNaming", "LongMethod")
 fun <T : Any> BasePagingListScreen(
     items: LazyPagingItems<T>,
     itemKey: ((T) -> Any)? = null,
@@ -27,7 +28,7 @@ fun <T : Any> BasePagingListScreen(
     onItemVisible: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
     reverseLayout: Boolean = false,
-    emptyListAgainButtonVisibilty: Boolean = false,
+    emptyListAgainButtonVisibility: Boolean = false,
 ) {
     val state = rememberLazyListState()
 
@@ -61,7 +62,7 @@ fun <T : Any> BasePagingListScreen(
                     ErrorScreenFullSize(
                         modifier = modifier,
                         errorMessage = LanguageKey.emptyCommentError,
-                        onRetry = if (emptyListAgainButtonVisibilty) {
+                        onRetry = if (emptyListAgainButtonVisibility) {
                             { items.retry() }
                         } else {
                             null

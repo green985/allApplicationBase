@@ -2,10 +2,12 @@ package com.oyetech.composebase.base.baseList
 
 import com.oyetech.composebase.R
 import com.oyetech.composebase.base.BaseViewModel
-import com.oyetech.composebase.base.baseList.ListUIEvent.ItemVisible
-import com.oyetech.composebase.base.baseList.ListUIEvent.LoadMore
-import com.oyetech.composebase.base.baseList.ListUIEvent.Refresh
-import com.oyetech.composebase.base.baseList.ListUIEvent.Retry
+import com.oyetech.composebase.base.baseGenericList.ComplexItemListState
+import com.oyetech.composebase.base.baseGenericList.ListUIEvent
+import com.oyetech.composebase.base.baseGenericList.ListUIEvent.ItemVisible
+import com.oyetech.composebase.base.baseGenericList.ListUIEvent.LoadMore
+import com.oyetech.composebase.base.baseGenericList.ListUIEvent.Refresh
+import com.oyetech.composebase.base.baseGenericList.ListUIEvent.Retry
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**

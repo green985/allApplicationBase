@@ -1,6 +1,6 @@
 package com.oyetech.composebase.projectRadioFeature.viewModelSlice
 
-import com.oyetech.composebase.base.baseList.ComplexItemListState
+import com.oyetech.composebase.base.baseGenericList.ComplexItemListState
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.RadioUIState
 import com.oyetech.models.radioProject.entity.radioEntity.station.RadioStationResponseData
 import kotlinx.coroutines.flow.Flow

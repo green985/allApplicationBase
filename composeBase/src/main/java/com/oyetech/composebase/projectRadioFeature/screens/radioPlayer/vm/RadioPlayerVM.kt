@@ -2,7 +2,7 @@ package com.oyetech.composebase.projectRadioFeature.screens.radioPlayer.vm
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
-import com.oyetech.composebase.base.baseList.ComplexItemListState
+import com.oyetech.composebase.base.baseGenericList.ComplexItemListState
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.RadioUIEvent
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.RadioUIState

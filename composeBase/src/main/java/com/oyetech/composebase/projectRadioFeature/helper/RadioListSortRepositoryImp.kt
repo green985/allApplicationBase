@@ -1,7 +1,7 @@
 package com.oyetech.composebase.projectRadioFeature.helper
 
-import com.oyetech.composebase.base.baseList.ItemSortType.DefaultSortType
-import com.oyetech.composebase.base.baseList.ItemSortType.NameSortType
+import com.oyetech.composebase.base.baseGenericList.ItemSortType.DefaultSortType
+import com.oyetech.composebase.base.baseGenericList.ItemSortType.NameSortType
 import com.oyetech.domain.repository.helpers.logicRepositories.RadioListSortRepository
 import com.oyetech.models.radioProject.entity.radioEntity.language.LanguageResponseData
 import com.oyetech.models.radioProject.entity.radioEntity.station.RadioStationResponseData

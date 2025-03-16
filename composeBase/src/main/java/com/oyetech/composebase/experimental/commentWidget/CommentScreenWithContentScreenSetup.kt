@@ -76,7 +76,7 @@ fun CommentScreenWithContentScreenSetup(
 
         BasePagingListScreen(
             reverseLayout = true,
-            emptyListAgainButtonVisibilty = false,
+            emptyListAgainButtonVisibility = false,
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f),

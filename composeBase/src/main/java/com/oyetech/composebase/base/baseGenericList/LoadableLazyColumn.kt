@@ -1,4 +1,4 @@
-package com.oyetech.composebase.base.baseList
+package com.oyetech.composebase.base.baseGenericList
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -240,7 +240,7 @@ fun ErrorOnMoreContent(errorMessage: String = "Loading Error", onRetry: (() -> U
 fun rememberLoadableLazyColumnState(
     onLoadMore: () -> Unit,
     refreshThreshold: Dp = PullToRefreshDefaults.PositionalThreshold,
-    loadMoreRemainCountThreshold: Int = 1,
+    loadMoreRemainCountThreshold: Int = 10,
     initialFirstVisibleItemIndex: Int = 0,
     initialFirstVisibleItemScrollOffset: Int = 0,
 ): LoadableLazyColumnState {

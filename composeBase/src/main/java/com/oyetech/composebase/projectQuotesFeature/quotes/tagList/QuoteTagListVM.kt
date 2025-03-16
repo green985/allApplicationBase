@@ -2,8 +2,8 @@ package com.oyetech.composebase.projectQuotesFeature.quotes.tagList
 
 import androidx.compose.runtime.mutableStateOf
 import com.oyetech.composebase.R
+import com.oyetech.composebase.base.baseGenericList.ComplexItemListState
 import com.oyetech.composebase.base.baseList.BaseListViewModel2
-import com.oyetech.composebase.base.baseList.ComplexItemListState
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarState
 import com.oyetech.models.quotes.responseModel.QuotesTagResponseData
 import kotlinx.collections.immutable.toImmutableList

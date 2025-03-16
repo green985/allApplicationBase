@@ -2,7 +2,7 @@ package com.oyetech.composebase.projectQuotesFeature.quotes.listScreen
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.oyetech.composebase.base.baseList.ComplexItemListState
+import com.oyetech.composebase.base.baseGenericList.ComplexItemListState
 import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationVm
 import com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer.mapToUiState
 import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteUiState

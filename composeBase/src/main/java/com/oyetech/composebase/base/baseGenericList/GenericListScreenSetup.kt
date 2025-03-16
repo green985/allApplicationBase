@@ -2,10 +2,37 @@ package com.oyetech.composebase.base.baseGenericList
 
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.oyetech.composebase.base.baseList.LoadableLazyColumn
-import com.oyetech.composebase.base.baseList.LoadableLazyColumnState
-import com.oyetech.composebase.base.baseList.rememberLoadableLazyColumnState
+
+@Composable
+fun <T> GenericListScreenSetup2(
+    modifier: Modifier = Modifier,
+    viewModel: BaseListViewModel<T>,
+    content: LazyListScope.() -> Unit,
+    reverseLayout: Boolean = false,
+) {
+    val listViewState by viewModel.listViewState.collectAsState()
+
+    LoadableLazyColumn(
+        lazyColumnState = rememberLoadableLazyColumnState(onLoadMore = { viewModel.loadMore() }),
+        isRefreshing = listViewState.isRefreshing,
+        isRefreshEnable = listViewState.isRefreshEnable,
+        isLoadingInitial = listViewState.isLoadingInitial,
+        isEmptyList = listViewState.items.isEmpty(),
+        errorMessage = listViewState.errorMessage,
+        onRefresh = { viewModel.refreshList() },
+        modifier = modifier,
+        isErrorInitial = listViewState.isErrorInitial,
+        isLoadingMore = listViewState.isLoadingMore,
+        isErrorMore = listViewState.isErrorMore,
+        onRetry = { viewModel.retry() },
+        reverseLayout = reverseLayout,
+    ) {
+        content()
+    }
+}
 
 @Composable
 fun <T> GenericListScreenSetup(
@@ -13,13 +40,15 @@ fun <T> GenericListScreenSetup(
     listViewState: GenericListState<T>,
     content: LazyListScope.() -> Unit,
     reverseLayout: Boolean = false,
-    lazyColumnState: LoadableLazyColumnState = rememberLoadableLazyColumnState(onLoadMore = { listViewState.triggerLoadMore?.invoke() }),
+    lazyColumnState: LoadableLazyColumnState =
+        rememberLoadableLazyColumnState(onLoadMore = { listViewState.triggerLoadMore?.invoke() }),
 ) {
     LoadableLazyColumn(
         lazyColumnState = lazyColumnState,
         isRefreshing = listViewState.isRefreshing,
         isLoadingInitial = listViewState.isLoadingInitial,
         isEmptyList = listViewState.items.isEmpty(),
+        isRefreshEnable = listViewState.isRefreshEnable,
         errorMessage = listViewState.errorMessage,
         onRefresh = { listViewState.triggerRefresh?.invoke() },
         modifier = modifier,
@@ -30,6 +59,11 @@ fun <T> GenericListScreenSetup(
         reverseLayout = reverseLayout,
     ) {
         content()
+
+        /**
+         * This is the place where we can add the items to the list
+         * Example usage of detail section...
+         */
 
         /**
          * This is the place where we can add the items to the list

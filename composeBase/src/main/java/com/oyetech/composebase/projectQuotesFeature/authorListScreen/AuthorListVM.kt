@@ -5,7 +5,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.oyetech.composebase.base.BaseViewModel
-import com.oyetech.composebase.base.baseList.ComplexItemListState
+import com.oyetech.composebase.base.baseGenericList.ComplexItemListState
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 

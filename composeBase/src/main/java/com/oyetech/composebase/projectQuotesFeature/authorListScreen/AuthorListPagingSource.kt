@@ -2,7 +2,7 @@ package com.oyetech.composebase.projectQuotesFeature.authorListScreen
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.oyetech.composebase.base.baseList.ComplexItemListState
+import com.oyetech.composebase.base.baseGenericList.ComplexItemListState
 import com.oyetech.composebase.base.updateState
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
 import kotlinx.collections.immutable.toImmutableList

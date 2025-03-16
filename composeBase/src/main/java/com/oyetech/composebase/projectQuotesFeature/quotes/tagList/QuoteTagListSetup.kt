@@ -8,9 +8,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
-import com.oyetech.composebase.base.baseList.ListUIEvent
-import com.oyetech.composebase.base.baseList.LoadableLazyColumn
-import com.oyetech.composebase.base.baseList.rememberLoadableLazyColumnState
+import com.oyetech.composebase.base.baseGenericList.ListUIEvent.LoadMore
+import com.oyetech.composebase.base.baseGenericList.ListUIEvent.Refresh
+import com.oyetech.composebase.base.baseGenericList.ListUIEvent.Retry
+import com.oyetech.composebase.base.baseGenericList.LoadableLazyColumn
+import com.oyetech.composebase.base.baseGenericList.rememberLoadableLazyColumnState
 import com.oyetech.composebase.helpers.viewProperties.gridItems
 import com.oyetech.composebase.projectQuotesFeature.quotes.views.ItemQuoteTagView
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarSetup
@@ -32,7 +34,7 @@ fun QuoteTagListSetup(
     val complexItemViewState by viewModel.complexItemViewState.collectAsStateWithLifecycle()
     val lazyListState = rememberLoadableLazyColumnState(
         onLoadMore = {
-            viewModel.handleListEvent(ListUIEvent.LoadMore)
+            viewModel.handleListEvent(LoadMore)
         },
     )
     BaseScaffold(
@@ -49,9 +51,9 @@ fun QuoteTagListSetup(
                 isRefreshing = complexItemViewState.isRefreshing,
                 isLoadingInitial = complexItemViewState.isLoadingInitial,
                 isErrorInitial = complexItemViewState.isErrorInitial,
-                onRetry = { viewModel.handleListEvent(ListUIEvent.Retry) },
+                onRetry = { viewModel.handleListEvent(Retry) },
                 isEmptyList = complexItemViewState.isEmptyList,
-                onRefresh = { viewModel.handleListEvent(ListUIEvent.Refresh) },
+                onRefresh = { viewModel.handleListEvent(Refresh) },
                 errorMessage = complexItemViewState.errorMessage,
                 content = {
                     gridItems(complexItemViewState.items, 3, itemContent = { model ->

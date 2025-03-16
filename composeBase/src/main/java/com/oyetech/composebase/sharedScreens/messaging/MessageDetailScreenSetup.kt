@@ -27,13 +27,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
-import com.oyetech.composebase.base.baseGenericList.GenericListScreenSetup
+import com.oyetech.composebase.base.baseGenericList.BaseListViewModel
+import com.oyetech.composebase.base.baseGenericList.GenericListScreenSetup2
 import com.oyetech.composebase.base.baseGenericList.GenericListState
-import com.oyetech.composebase.base.baseList.LoadableLazyColumnState
-import com.oyetech.composebase.base.baseList.rememberLoadableLazyColumnState
+import com.oyetech.composebase.base.baseGenericList.LoadableLazyColumnState
+import com.oyetech.composebase.base.baseGenericList.rememberLoadableLazyColumnState
 import com.oyetech.composebase.projectRadioFeature.RadioDimensions
 import com.oyetech.languageModule.keyset.LanguageKey
-import kotlinx.collections.immutable.persistentListOf
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import timber.log.Timber
@@ -71,7 +71,7 @@ fun MessageDetailScreenSetup(
         },
         uiState = uiState,
         listViewState = listViewState,
-        lazyColumnState = lazyColumnState
+        baseListViewModel = vm,
     )
 
     if (uiState.onMessageSendTriggered) {
@@ -91,18 +91,17 @@ fun MessageDetailScreen(
     onMessageTextChanged: (String) -> Unit,
     onMessageSend: () -> Unit,
     listViewState: GenericListState<MessageDetailUiState>,
-    lazyColumnState: LoadableLazyColumnState = rememberLoadableLazyColumnState(onLoadMore = { listViewState.triggerLoadMore?.invoke() }),
+    baseListViewModel: BaseListViewModel<MessageDetailUiState>,
 ) {
     val items = listViewState.items
     BaseScaffold { contentPadding ->
         Column(modifier = Modifier.padding(contentPadding)) {
             Box(modifier = Modifier.weight(1f)) {
-                GenericListScreenSetup(
+                GenericListScreenSetup2(
                     modifier = Modifier
                         .fillMaxSize(),
-                    listViewState = listViewState,
-                    lazyColumnState = lazyColumnState,
                     reverseLayout = true,
+                    viewModel = baseListViewModel,
                     content = {
                         itemsIndexed(
                             items = items,
@@ -157,33 +156,6 @@ fun MessageDetailScreen(
 @Composable
 private fun MessageDetailPreview() {
 
-    MessageDetailScreen(
-        uiState = MessageDetailScreenUiState(
-            isLoading = false,
-            errorText = "placerat",
-            messageText = "pertinax",
-            createdAt = null,
-            createdAtString = "porta",
-            senderId = "sumo",
-            receiverId = "idque",
-            currentUserId = "postulant",
-            conversationId = "cursus"
-        ),
-        onMessageTextChanged = {}, onMessageSend = {},
-        listViewState = GenericListState(
-            items = persistentListOf(
-                MessageDetailUiState(
-                    messageId = "mollis",
-                    content = "asdasdasdasdadwwww",
-                    createdAt = null,
-                    createdAtString = "porta",
-                    senderId = "sumo",
-                    receiverId = "idque",
-                    conversationId = "cursus"
-                )
-            )
-        ),
-    )
 
 
 }

@@ -1,8 +1,8 @@
 package com.oyetech.composebase.sharedScreens.messaging;
 
 import androidx.lifecycle.viewModelScope
+import com.oyetech.composebase.base.baseGenericList.ComplexItemListState
 import com.oyetech.composebase.base.baseList.BaseListViewModel2
-import com.oyetech.composebase.base.baseList.ComplexItemListState
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnMessageSend
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnMessageTextChange
