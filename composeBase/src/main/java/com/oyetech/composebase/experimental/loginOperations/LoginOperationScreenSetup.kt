@@ -10,7 +10,6 @@ import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorDialogFullScreen
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingDialogFullScreen
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.ErrorDismiss
-import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.LoginClicked
 import com.oyetech.composebase.helpers.general.GeneralSettings
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
 import org.koin.androidx.compose.koinViewModel
@@ -44,8 +43,7 @@ fun LoginOperationScreenSetup(navigationRoute: (navigationRoute: String) -> Unit
     } else if (uiState.isError) {
         ErrorDialogFullScreen(
             errorMessage = uiState.errorMessage,
-            onDismiss = { vm.handleEvent(ErrorDismiss) },
-            onRetry = { vm.handleEvent(LoginClicked) },
+            onDismiss = { vm.handleEvent(ErrorDismiss) }
         )
     }
 }

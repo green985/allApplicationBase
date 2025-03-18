@@ -5,7 +5,6 @@ import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData
 import com.oyetech.models.firebaseModels.googleAuth.isUserLogin
 import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
-import kotlinx.coroutines.flow.getAndUpdate
 
 /**
 Created by Erdi Özbek
@@ -50,21 +49,19 @@ fun LoginOperationVM.mapToProfileValue(userData: FirebaseUserProfileModel?) {
 
 
     if (userData.uid.isNotBlank()) {
+        val isLoading = loginOperationState.value.isLoading
         loginOperationState.value = LoginOperationUiState(
+            isLoading = isLoading,
             displayNameRemote = userData.username ?: "",
             uid = userData.uid,
             isAnonymous = userData.isAnonymous,
-            lastSignInTimestamp = userData.lastSignInTimestamp
+            lastSignInTimestamp = userData.lastSignInTimestamp,
         )
     } else {
-        loginOperationState.updateState {
-            val isLoading = loginOperationState.getAndUpdate {
-                LoginOperationUiState()
-            }
-            LoginOperationUiState(
-                isLoading = isLoading.isLoading,
-            )
-        }
+        val isLoading = loginOperationState.value.isLoading
+        loginOperationState.value = LoginOperationUiState(
+            isLoading = isLoading,
+        )
     }
 
 

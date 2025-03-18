@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -16,39 +17,32 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.oyetech.composebase.baseViews.helper.GenderSegmentedControl
 import com.oyetech.composebase.helpers.viewProperties.DialogHelper
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarSetup
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarState
 import org.koin.compose.koinInject
 import timber.log.Timber
 
-/**
-Created by Erdi Özbek
--22.12.2024-
--19:34-
- **/
-
 @Composable
 fun CompleteProfileScreenSetup(navigationRoute: (navigationRoute: String) -> Unit = {}) {
     val vm = koinInject<LoginOperationVM>()
     val uiState by vm.loginOperationState.collectAsStateWithLifecycle()
 
-
-
-    CompleteProfileScreen(uiState = uiState, onEvent = { vm.handleEvent(it) }, navigationRoute)
+    CompleteProfileScreen(uiState = uiState, onEvent = { vm.handleEvent(it) })
 
     if (uiState.displayNameRemote.isNotBlank()) {
         LaunchedEffect(uiState.displayNameRemote) {
-            // make snacbar success message
+            // Snackbar success message
             navigationRoute.invoke("back")
         }
     }
 
-
     BackHandler {
-        // your action
         Timber.d("BackHandler")
     }
 }
@@ -57,7 +51,6 @@ fun CompleteProfileScreenSetup(navigationRoute: (navigationRoute: String) -> Uni
 fun CompleteProfileScreen(
     uiState: LoginOperationUiState,
     onEvent: (LoginOperationEvent) -> Unit,
-    navigationRoute: (navigationRoute: String) -> Unit = {},
 ) {
     androidx.compose.ui.window.Dialog(
         properties = DialogHelper.fullScreenDialogProperties,
@@ -82,10 +75,13 @@ fun CompleteProfileScreen(
                     style = MaterialTheme.typography.displayLarge
                 )
                 Spacer(modifier = Modifier.height(32.dp))
+
+                // Username Field
                 OutlinedTextField(
                     value = uiState.displayName,
                     onValueChange = { onEvent(LoginOperationEvent.UsernameChanged(it)) },
                     label = { Text("Name") },
+                    singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -97,11 +93,39 @@ fun CompleteProfileScreen(
                         style = MaterialTheme.typography.labelMedium
                     )
                 }
+
                 Spacer(modifier = Modifier.height(16.dp))
-                Button({ onEvent.invoke(LoginOperationEvent.UsernameSetClicked) }) {
-                    Text(text = "Set Your UserName")
+
+                // Age Field
+                OutlinedTextField(
+                    value = uiState.age,
+                    onValueChange = {
+                        onEvent(LoginOperationEvent.AgeChanged(it))
+                    },
+                    label = { Text("Age") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                GenderSegmentedControl(
+                    selectedGender = uiState.gender,
+                    onGenderSelected = { onEvent.invoke(LoginOperationEvent.GenderChanged(it)) }
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+                Button({ onEvent.invoke(LoginOperationEvent.OnSubmit) }) {
+                    Text(text = "Set Your Profile")
                 }
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CompleteProfileScreenPreview() {
+    CompleteProfileScreen(LoginOperationUiState()) { }
 }

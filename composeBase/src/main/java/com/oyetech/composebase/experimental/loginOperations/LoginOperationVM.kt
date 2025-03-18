@@ -3,15 +3,19 @@ package com.oyetech.composebase.experimental.loginOperations
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
+import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.AgeChanged
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.DeleteAccountClick
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.ErrorDismiss
+import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.GenderChanged
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.LoginClicked
+import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.OnSubmit
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.UsernameChanged
-import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.UsernameSetClicked
 import com.oyetech.composebase.experimental.viewModelSlice.UserOperationViewModelSlice
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
+import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.tools.coroutineHelper.asResult
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -35,6 +39,8 @@ class LoginOperationVM(
 
     val loginOperationState =
         MutableStateFlow(LoginOperationUiState())
+
+    val uiEvent = MutableSharedFlow<LoginOperationUiEvent>()
 
     init {
         Timber.d("LoginOperationVM init")
@@ -118,15 +124,101 @@ class LoginOperationVM(
                 }
             }
 
-            UsernameSetClicked -> {
+            OnSubmit -> {
+                if (onSubmitOperation()) return
+            }
+
+            is AgeChanged -> {
                 loginOperationState.updateState {
-                    copy(isLoading = true)
+                    copy(
+                        age = event.age
+                    )
                 }
-                viewModelScope.launch(getDispatcherIo()) {
-                    profileRepository.updateUserName(loginOperationState.value.displayName)
+            }
+
+            is GenderChanged -> {
+                loginOperationState.updateState {
+                    copy(gender = event.gender)
                 }
             }
         }
+    }
+
+    private fun onSubmitOperation(): Boolean {
+        if (loginOperationState.value.displayName.isBlank()) {
+            loginOperationState.updateState {
+                copy(
+                    isError = true,
+                    errorMessage = LanguageKey.usernameIsEmpty
+                )
+            }
+            return true
+        }
+        if (loginOperationState.value.age.isBlank()) {
+            loginOperationState.updateState {
+                copy(
+                    isError = true,
+                    errorMessage = LanguageKey.ageCannotBeNull
+                )
+            }
+            return true
+        }
+        try {
+            val ageInvalid =
+                loginOperationState.value.age.toInt() < 18 || loginOperationState.value.age.toInt() > 100
+            loginOperationState.updateState {
+                copy(
+                    isError = true,
+                    errorMessage = LanguageKey.invalidAgeError
+                )
+            }
+            if (ageInvalid) {
+                return true
+            }
+        } catch (e: Exception) {
+            loginOperationState.updateState {
+                copy(
+                    isError = true,
+                    errorMessage = LanguageKey.ageCannotBeNull
+                )
+            }
+            return true
+        }
+
+        if (loginOperationState.value.gender.isBlank()) {
+            loginOperationState.updateState {
+                copy(
+                    isError = true,
+                    errorMessage = LanguageKey.genderCannotBeEmpty
+                )
+            }
+            return true
+        }
+
+        loginOperationState.updateState {
+            copy(isLoading = true)
+        }
+        viewModelScope.launch(getDispatcherIo()) {
+            val userData = profileRepository.userDataStateFlow.value
+            if (userData == null) {
+                loginOperationState.updateState {
+                    copy(
+                        isLoading = false,
+                        isError = true,
+                        errorMessage = "User not found"
+                    )
+                }
+                return@launch
+            }
+
+            val editedUserData = userData.copy(
+                username = loginOperationState.value.displayName,
+                age = loginOperationState.value.age,
+                gender = loginOperationState.value.gender
+            )
+            profileRepository.updateUserName(editedUserData)
+        }
+        return false
     }
 
 }

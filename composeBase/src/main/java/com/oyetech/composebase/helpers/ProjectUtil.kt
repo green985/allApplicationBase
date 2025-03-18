@@ -8,4 +8,6 @@ Created by Erdi Özbek
 
 object ProjectUtil {
     const val backgroudAlpha = 0.53f
+
+    val genderList = listOf("male", "female", "other")
 }

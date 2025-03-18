@@ -27,4 +27,6 @@ interface FirebaseUserRepository {
         firebaseProfileUserModel: FirebaseUserProfileModel,
         afterAction: (Boolean) -> Unit,
     )
+
+    suspend fun updateUserName(userData: FirebaseUserProfileModel)
 }

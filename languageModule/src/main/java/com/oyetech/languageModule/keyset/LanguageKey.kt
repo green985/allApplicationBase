@@ -11,6 +11,9 @@ Created by Erdi Özbek
  **/
 
 object LanguageKey {
+    var ageCannotBeNull set(value) {} get() = LocalLanguageHelper.getStringWithKey("ageCannotBeNull")
+    var invalidAgeError set(value) {} get() = LocalLanguageHelper.getStringWithKey("invalidAgeError")
+    var genderCannotBeEmpty set(value) {} get() = LocalLanguageHelper.getStringWithKey("genderCannotBeEmpty")
     var messageSendHint set(value) {} get() = LocalLanguageHelper.getStringWithKey("messageSendHint")
     var conversationNotFound set(value) {} get() = LocalLanguageHelper.getStringWithKey("conversationNotFound")
 

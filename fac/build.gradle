@@ -1,0 +1,123 @@
+plugins {
+    id 'com.android.application'
+    id 'com.google.gms.google-services'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'org.jlleitschuh.gradle.ktlint'
+    id 'io.gitlab.arturbosch.detekt'
+    id 'kotlin-android'
+    id 'kotlin-parcelize'
+    id 'org.lsposed.lsparanoid'
+    id 'com.google.firebase.crashlytics'
+    id 'org.jetbrains.kotlin.plugin.compose'
+    id 'androidx.baselineprofile'
+    id 'kotlinx-serialization'
+}
+ext.getArtifactNameRadio = {
+    defaultConfig ->
+        def project = "FAC"
+        def SEP = "_"
+        def version = defaultConfig.versionName
+        version = version.replace(".", "_")
+
+        def date = new Date()
+        def formattedDate = date.format('dd-MM-yyyy')
+
+        def buildNumber = defaultConfig.versionCode
+
+
+        def newApkName = project + SEP + version + SEP + buildNumber + SEP + formattedDate
+        return newApkName
+}
+
+android {
+    namespace 'com.oyetech.fac'
+
+    compileSdkVersion Versions.compileSdk
+    defaultConfig {
+        minSdkVersion Versions.minSdk
+        targetSdkVersion Versions.targetSdk
+        versionCode QuoteReleaseProperty.versionCode
+        versionName QuoteReleaseProperty.versionName
+    }
+    setProperty("archivesBaseName", getArtifactNameRadio(defaultConfig))
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+    compileOptions {
+
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+        freeCompilerArgs += "-Xcontext-receivers"
+    }
+
+    ktlint {
+        debug = true
+    }
+
+    lintOptions {
+        abortOnError false        // true by default
+        checkAllWarnings false
+        checkReleaseBuilds false
+        ignoreWarnings true       // false by default
+        quiet true
+    }
+
+
+    signingConfigs {
+        release {
+            storeFile file('/Users/balbazar/Desktop/releaseKeys/nac/oyetechReleaseKey')
+            storePassword '7SPd@WF0Lx!RGb2S'
+            keyPassword '7SPd@WF0Lx!RGb2S'
+            keyAlias 'oyetech'
+        }
+    }
+    buildTypes {
+        debug {
+            ext.alwaysUpdateBuildId = false
+            crunchPngs false
+            minifyEnabled false
+            debuggable true
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            splits.abi.enable = false
+            splits.density.enable = false
+            aaptOptions.cruncherEnabled = false
+        }
+        release {
+            ndk {
+                debugSymbolLevel 'FULL'
+            }
+            shrinkResources true
+            minifyEnabled true
+            debuggable false
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation project(Modules.diModule)
+    implementation project(Modules.composeBase)
+//    implementation 'androidx.profileinstaller:profileinstaller:1.4.1'
+//    baselineProfile project(':quoteBaseline')
+}
+
+
+ktlint {
+    android.set(true)
+
+    outputColorName.set("RED")
+
+    filter {
+        exclude("**/generated/**")
+        include("**/kotlin/**")
+    }
+}

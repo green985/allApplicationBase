@@ -21,6 +21,9 @@ data class FirebaseUserProfileModel(
     val username: String = "",
     val uid: String = "",
 
+    val gender: String = "",
+    val age: String = "",
+
     val lastSignInTimestamp: Long? = null,
     val creationTimestamp: Long = System.currentTimeMillis(),
 )
