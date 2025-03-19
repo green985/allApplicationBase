@@ -2,15 +2,15 @@ package com.oyetech.firebaseDB.firebaseDB.userList
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.SetOptions
 import com.oyetech.domain.repository.firebase.FirebaseUserListOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.firebaseDB.firebaseDB.helper.runTransactionWithTimeout
 import com.oyetech.models.errors.exceptionHelper.GeneralException
 import com.oyetech.models.firebaseModels.databaseKeys.FirebaseDatabaseKeys
 import com.oyetech.models.firebaseModels.userList.FirebaseUserListModel
-import com.oyetech.models.firebaseModels.userList.toMapFirebaseUserListModel
+import com.oyetech.models.firebaseModels.userList.toMapListFirebaseUserListModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
@@ -80,34 +80,62 @@ class FirebaseUserListOperationRepositoryImpl(
         }
     }
 
+    override suspend fun removeUserFromUserList(): Flow<Unit> {
+        return flow<Unit> {
+            firebaseUserRepository.getUserProfileModel().collectLatest { userProfileModel ->
+                Timber.d("User profile model: $userProfileModel")
+                if (userProfileModel == null) {
+                    throw GeneralException("User profile model is null")
+                }
+                val userId = userProfileModel.userId
+                val username = firebaseUserRepository.getUsername()
+                if (userId.isBlank() || username.isBlank()) {
+                    throw GeneralException("User id is null or blank")
+                }
+                val userRef =
+                    firebaseFirestore.collection(FirebaseDatabaseKeys.userList)
+                        .document(FirebaseDatabaseKeys.generalUserList)
+                        .collection("users").document(userId)
+
+                val result = firebaseFirestore.runTransactionWithTimeout {
+                    userRef.delete()
+                }
+
+                Timber.d("User removed from userList: $result")
+
+                emit(Unit)
+            }
+
+        }
+    }
+
     override suspend fun addUserToUserList(): Flow<Unit> {
         return flow<Unit> {
-            val userProfileModel = firebaseUserRepository.getUserProfileModel()
-            if (userProfileModel == null) {
-                throw GeneralException("User profile model is null")
+            firebaseUserRepository.getUserProfileModel().collectLatest { userProfileModel ->
+                Timber.d("User profile model: $userProfileModel")
+                if (userProfileModel != null) {
+                    val userId = userProfileModel.userId
+                    val username = firebaseUserRepository.getUsername()
+                    if (userId.isBlank() || username.isBlank()) {
+                        throw GeneralException("User id is null or blank")
+                    }
+                    val userRef =
+                        firebaseFirestore.collection(FirebaseDatabaseKeys.userList)
+                            .document(FirebaseDatabaseKeys.generalUserList)
+                            .collection("users").document(userId)
+
+                    val data = userProfileModel.toMapListFirebaseUserListModel()
+
+                    val result = firebaseFirestore.runTransactionWithTimeout {
+                        userRef.set(data)
+                        data
+                    }
+
+                    Timber.d("User added to userList: $result")
+
+                    emit(Unit)
+                }
             }
-            val userId = userProfileModel.userId
-            val username = firebaseUserRepository.getUsername()
-            if (userId.isBlank() || username.isBlank()) {
-                throw GeneralException("User id is null or blank")
-            }
-            val userRef =
-                firebaseFirestore.collection(FirebaseDatabaseKeys.userList)
-                    .document(FirebaseDatabaseKeys.generalUserList)
-                    .collection("users").document(userId)
-
-            val data = userProfileModel.toMapFirebaseUserListModel()
-
-            val result = firebaseFirestore.runTransactionWithTimeout {
-                userRef.set(data, SetOptions.merge())
-                data
-            }
-
-            Timber.d("User added to userList: $result")
-
-            emit(Unit)
         }
-
-
     }
 }

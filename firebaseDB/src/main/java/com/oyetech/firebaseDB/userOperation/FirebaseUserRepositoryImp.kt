@@ -77,6 +77,7 @@ class FirebaseUserRepositoryImp(
             .set(user)
             .addOnSuccessListener {
                 userDataStateFlow.value = user.copy()
+
             }
             .addOnFailureListener { exception ->
                 userDataStateFlow.value =
@@ -164,8 +165,8 @@ class FirebaseUserRepositoryImp(
         return userDataStateFlow.value?.userId ?: ""
     }
 
-    override fun getUserProfileModel(): FirebaseUserProfileModel? {
-        return userDataStateFlow.value
+    override fun getUserProfileModel(): MutableStateFlow<FirebaseUserProfileModel?> {
+        return userDataStateFlow
     }
 
     override fun isMyContent(contentUsername: String): Boolean {

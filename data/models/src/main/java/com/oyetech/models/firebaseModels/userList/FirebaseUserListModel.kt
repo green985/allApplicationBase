@@ -1,6 +1,7 @@
 package com.oyetech.models.firebaseModels.userList
 
 import androidx.annotation.Keep
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ServerTimestamp
 import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
 import java.util.Date
@@ -20,9 +21,6 @@ data class FirebaseUserListModel(
 
     @ServerTimestamp
     var lastTriggeredTime: Date? = null,
-
-    @ServerTimestamp
-    var joinedAt: Date? = null,
 )
 
 fun FirebaseUserProfileModel.toMapFirebaseUserListModel(): FirebaseUserListModel {
@@ -33,4 +31,14 @@ fun FirebaseUserProfileModel.toMapFirebaseUserListModel(): FirebaseUserListModel
         gender = gender,
     )
 
+}
+
+fun FirebaseUserProfileModel.toMapListFirebaseUserListModel(): Map<String, Any> {
+    return mapOf(
+        "lastTriggeredTime" to FieldValue.serverTimestamp(),
+        "userId" to userId,
+        "username" to username,
+        "age" to age,
+        "gender" to gender
+    )
 }

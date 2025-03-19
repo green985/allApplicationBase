@@ -17,7 +17,6 @@ data class UserListItemUiState(
     val age: String = "",
     val gender: String = "",
     val lastTriggeredTimeString: String = "",
-    val joinedAtString: String,
 )
 
 sealed class UserListItemEvent {
@@ -35,8 +34,7 @@ fun Flow<List<FirebaseUserListModel>>.mapToUiState(): Flow<List<UserListItemUiSt
                 gender = it.gender,
                 lastTriggeredTimeString = TimeFunctions.getDateFromLongWithHour(
                     it.lastTriggeredTime?.time ?: 0L
-                ),
-                joinedAtString = TimeFunctions.getDateFromLongWithHour(it.joinedAt?.time ?: 0L)
+                )
             )
         }
     }
