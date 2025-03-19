@@ -37,7 +37,7 @@ class FirebaseUserRepositoryImp(
 
         var newUserDataModel = userData.copy(username = username)
 
-        firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(userData.uid).set(
+        firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(userData.userId).set(
             newUserDataModel,
         ).addOnSuccessListener {
             newUserDataModel = newUserDataModel.copy(errorException = null)
@@ -59,7 +59,7 @@ class FirebaseUserRepositoryImp(
 
         var newUserDataModel = userData
 
-        firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(userData.uid).set(
+        firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(userData.userId).set(
             newUserDataModel,
         ).addOnSuccessListener {
             newUserDataModel = newUserDataModel.copy(errorException = null)
@@ -73,7 +73,7 @@ class FirebaseUserRepositoryImp(
     fun createProfile(user: FirebaseUserProfileModel) {
         userDataStateFlow.value = FirebaseUserProfileModel()
         firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION)
-            .document(user.uid)
+            .document(user.userId)
             .set(user)
             .addOnSuccessListener {
                 userDataStateFlow.value = user.copy()
@@ -108,7 +108,7 @@ class FirebaseUserRepositoryImp(
     }
 
     override fun getUserProfileWithUid(firebaseProfileUserModel: FirebaseUserProfileModel) {
-        val uid = firebaseProfileUserModel.uid
+        val uid = firebaseProfileUserModel.userId
         firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(uid).get()
             .addOnSuccessListener {
                 var userData = it.toObject(FirebaseUserProfileModel::class.java)
@@ -118,7 +118,7 @@ class FirebaseUserRepositoryImp(
                     isAnonymous = firebaseProfileUserModel.isAnonymous
                 )
 
-                if (userData != null && userData.uid == uid) {
+                if (userData != null && userData.userId == uid) {
                     userDataStateFlow.tryEmit(userData)
                 } else {
                     createProfile(firebaseProfileUserModel)
@@ -134,7 +134,7 @@ class FirebaseUserRepositoryImp(
         firebaseProfileUserModel: FirebaseUserProfileModel,
         afterAction: ((Boolean) -> Unit),
     ) {
-        val uid = firebaseProfileUserModel.uid
+        val uid = firebaseProfileUserModel.userId
         firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(uid).get()
             .addOnSuccessListener {
                 var userData = it.toObject(FirebaseUserProfileModel::class.java)
@@ -144,7 +144,7 @@ class FirebaseUserRepositoryImp(
                     isAnonymous = firebaseProfileUserModel.isAnonymous
                 )
 
-                if (userData != null && userData.uid == uid) {
+                if (userData != null && userData.userId == uid) {
                     userDataStateFlow.value = (userData)
                     afterAction.invoke(true)
                 }
@@ -161,7 +161,11 @@ class FirebaseUserRepositoryImp(
     }
 
     override fun getUserId(): String {
-        return userDataStateFlow.value?.uid ?: ""
+        return userDataStateFlow.value?.userId ?: ""
+    }
+
+    override fun getUserProfileModel(): FirebaseUserProfileModel? {
+        return userDataStateFlow.value
     }
 
     override fun isMyContent(contentUsername: String): Boolean {

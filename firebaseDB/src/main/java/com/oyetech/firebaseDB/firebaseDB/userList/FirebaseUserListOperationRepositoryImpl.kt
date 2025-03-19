@@ -1,6 +1,5 @@
 package com.oyetech.firebaseDB.firebaseDB.userList
 
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
@@ -10,6 +9,7 @@ import com.oyetech.firebaseDB.firebaseDB.helper.runTransactionWithTimeout
 import com.oyetech.models.errors.exceptionHelper.GeneralException
 import com.oyetech.models.firebaseModels.databaseKeys.FirebaseDatabaseKeys
 import com.oyetech.models.firebaseModels.userList.FirebaseUserListModel
+import com.oyetech.models.firebaseModels.userList.toMapFirebaseUserListModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
@@ -26,6 +26,12 @@ class FirebaseUserListOperationRepositoryImpl(
     private val firebaseUserRepository: FirebaseUserRepository,
 ) : FirebaseUserListOperationRepository {
 
+    private val visibleUserIdList = arrayListOf<String>()
+
+    override fun setVisibleByUserId(userId: String) {
+        visibleUserIdList.add(userId)
+    }
+
     override fun getRandomUsersFromDatabase(): Flow<List<FirebaseUserListModel>> {
         val userId = firebaseUserRepository.getUserId()
         return flow<List<FirebaseUserListModel>> {
@@ -41,10 +47,6 @@ class FirebaseUserListOperationRepositoryImpl(
             var resultList = result.mapNotNull {
                 documentIdList.add(it.id)
                 it.toObject(FirebaseUserListModel::class.java)
-            }
-
-            documentIdList.mapIndexed { index, s ->
-                resultList[index].documentId = s
             }
 
             resultList = resultList.filter {
@@ -80,7 +82,11 @@ class FirebaseUserListOperationRepositoryImpl(
 
     override suspend fun addUserToUserList(): Flow<Unit> {
         return flow<Unit> {
-            val userId = firebaseUserRepository.getUserId()
+            val userProfileModel = firebaseUserRepository.getUserProfileModel()
+            if (userProfileModel == null) {
+                throw GeneralException("User profile model is null")
+            }
+            val userId = userProfileModel.userId
             val username = firebaseUserRepository.getUsername()
             if (userId.isBlank() || username.isBlank()) {
                 throw GeneralException("User id is null or blank")
@@ -90,16 +96,11 @@ class FirebaseUserListOperationRepositoryImpl(
                     .document(FirebaseDatabaseKeys.generalUserList)
                     .collection("users").document(userId)
 
-            val user = mapOf(
-                "userId" to userId,
-                "username" to username,
-                "joinedAt" to FieldValue.serverTimestamp()
-            )
+            val data = userProfileModel.toMapFirebaseUserListModel()
 
             val result = firebaseFirestore.runTransactionWithTimeout {
-
-                userRef.set(user, SetOptions.merge())
-                user
+                userRef.set(data, SetOptions.merge())
+                data
             }
 
             Timber.d("User added to userList: $result")

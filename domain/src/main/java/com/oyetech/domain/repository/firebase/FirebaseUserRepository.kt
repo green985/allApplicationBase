@@ -29,4 +29,5 @@ interface FirebaseUserRepository {
     )
 
     suspend fun updateUserName(userData: FirebaseUserProfileModel)
+    fun getUserProfileModel(): FirebaseUserProfileModel?
 }

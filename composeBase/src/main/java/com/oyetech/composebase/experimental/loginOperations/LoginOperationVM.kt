@@ -131,7 +131,7 @@ class LoginOperationVM(
             is AgeChanged -> {
                 loginOperationState.updateState {
                     copy(
-                        age = event.age
+                        age = event.age.toString()
                     )
                 }
             }

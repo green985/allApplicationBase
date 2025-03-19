@@ -4,10 +4,14 @@ import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
 import com.oyetech.domain.repository.SharedOperationRepository
+import com.oyetech.domain.repository.firebase.FirebaseUserListOperationRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.domain.useCases.helpers.AppReviewOperationUseCase
+import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 /**
 Created by Erdi Özbek
@@ -20,6 +24,7 @@ class GeneralOperationVM(
     private val appReviewOperationUseCase: AppReviewOperationUseCase,
     private val sharedHelperRepository: SharedOperationRepository,
     private val googleLoginRepository: GoogleLoginRepository,
+    private val firebaseUserListOperationRepository: FirebaseUserListOperationRepository,
     val loginOperationVM: LoginOperationVM,
 ) : BaseViewModel(appDispatchers) {
 
@@ -48,12 +53,22 @@ class GeneralOperationVM(
         }
     }
 
+    private fun signToUserFeedList() {
+        viewModelScope.launch(getDispatcherIo()) {
+            firebaseUserListOperationRepository.addUserToUserList().asResult()
+                .collectLatest {
+                    Timber.d("User added to user list")
+                }
+        }
+    }
+
     init {
         sharedHelperRepository.increaseAppOpenCount()
         viewModelScope.launch(getDispatcherIo()) {
             delay(1000)
             appReviewOperationUseCase.controlReviewCanShow()
         }
+        signToUserFeedList()
     }
 
 

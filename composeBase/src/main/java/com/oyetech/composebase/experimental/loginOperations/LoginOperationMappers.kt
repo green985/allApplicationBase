@@ -48,12 +48,12 @@ fun LoginOperationVM.mapToProfileValue(userData: FirebaseUserProfileModel?) {
     }
 
 
-    if (userData.uid.isNotBlank()) {
+    if (userData.userId.isNotBlank()) {
         val isLoading = loginOperationState.value.isLoading
         loginOperationState.value = LoginOperationUiState(
             isLoading = isLoading,
             displayNameRemote = userData.username ?: "",
-            uid = userData.uid,
+            uid = userData.userId,
             isAnonymous = userData.isAnonymous,
             lastSignInTimestamp = userData.lastSignInTimestamp,
         )

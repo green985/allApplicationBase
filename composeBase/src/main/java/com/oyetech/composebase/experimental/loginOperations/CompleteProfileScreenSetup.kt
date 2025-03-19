@@ -98,7 +98,7 @@ fun CompleteProfileScreen(
 
                 // Age Field
                 OutlinedTextField(
-                    value = uiState.age,
+                    value = uiState.age.toString(),
                     onValueChange = {
                         onEvent(LoginOperationEvent.AgeChanged(it))
                     },

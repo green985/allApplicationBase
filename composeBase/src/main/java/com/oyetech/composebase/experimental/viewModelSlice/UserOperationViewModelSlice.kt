@@ -34,7 +34,7 @@ class UserOperationViewModelSlice(
 
     context(BaseViewModel)
     fun deleteUser(uid: String = "") {
-        val userId = userPropertyState.value.uid
+        val userId = userPropertyState.value.userId
         profileRepository.deleteUser(userId)
     }
 
