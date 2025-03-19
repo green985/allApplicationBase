@@ -47,11 +47,9 @@ fun LoginOperationVM.mapToProfileValue(userData: FirebaseUserProfileModel?) {
         return
     }
 
-
+    // todo anoynmous user icin ayarlamalar burdan yapilacak
     if (userData.userId.isNotBlank()) {
-        val isLoading = loginOperationState.value.isLoading
         loginOperationState.value = LoginOperationUiState(
-            isLoading = isLoading,
             displayNameRemote = userData.username ?: "",
             uid = userData.userId,
             isAnonymous = userData.isAnonymous,
