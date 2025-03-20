@@ -19,6 +19,7 @@ import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactWi
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailScreenSetup
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListScreenSetup
 import com.oyetech.composebase.sharedScreens.userList.UserListScreenSetup
+import com.oyetech.composebase.sharedScreens.userProfile.UserProfileScreenSetup
 
 @Suppress("LongMethod")
 fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
@@ -110,6 +111,21 @@ fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
         val receiverUserId = it.arguments?.getString(ScreenKey.receiverUserId) ?: ""
         MessageDetailScreenSetup(
             conversationId = conversationId,
+            receiverUserId = receiverUserId,
+            navigationRoute = navigateRouteOperation(navController)
+        )
+    }
+    composable(
+        route = "${QuoteAppProjectRoutes.UserProfile.route}?" +
+                "&${ScreenKey.receiverUserId}={receiverUserId}", arguments = listOf(
+            navArgument(ScreenKey.receiverUserId) {
+                defaultValue = ""
+                nullable = false
+            },
+        )
+    ) {
+        val receiverUserId = it.arguments?.getString(ScreenKey.receiverUserId) ?: ""
+        UserProfileScreenSetup(
             receiverUserId = receiverUserId,
             navigationRoute = navigateRouteOperation(navController)
         )

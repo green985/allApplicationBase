@@ -34,6 +34,7 @@ object QuoteAppProjectRoutes {
     val MessageDetail = Route("quote/MessageDetail")
     val MessageConversationList = Route("quote/MessageConversationList")
     val UserList = Route("quote/UserList")
+    val UserProfile = Route("quote/UserProfile")
 
     val quoteApplicationBottomTabNavList = listOf(
         TabQuoteAppHomepage, QuoteSettingsTab, QuoteMessageTab, QuoteUserListTab
@@ -48,7 +49,6 @@ sealed class QuoteAppNavItem {
             icon = R.drawable.ic_tab_all_radio
         )
 
-
     object QuoteSettingsTab :
         BottomNavigationItem(
             path = QuoteSettings.route.toString(),
@@ -62,6 +62,7 @@ sealed class QuoteAppNavItem {
             title = R.string.nav_item_settings,
             icon = R.drawable.ic_settings
         )
+
     object QuoteUserListTab :
         BottomNavigationItem(
             path = UserList.route.toString(),
