@@ -2,7 +2,6 @@ package com.oyetech.composebase.projectRadioFeature.screens.generalOperationScre
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
-import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
 import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserListOperationRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
@@ -25,7 +24,6 @@ class GeneralOperationVM(
     private val sharedHelperRepository: SharedOperationRepository,
     private val googleLoginRepository: GoogleLoginRepository,
     private val firebaseUserListOperationRepository: FirebaseUserListOperationRepository,
-    val loginOperationVM: LoginOperationVM,
 ) : BaseViewModel(appDispatchers) {
 
     fun getReviewCanShowState() = appReviewOperationUseCase.getReviewCanShowState()

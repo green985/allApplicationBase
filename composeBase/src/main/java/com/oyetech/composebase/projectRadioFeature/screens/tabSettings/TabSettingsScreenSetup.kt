@@ -20,6 +20,7 @@ import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.views.Sim
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarSetup
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarState
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 /**
 Created by Erdi Özbek
@@ -31,7 +32,7 @@ Created by Erdi Özbek
 fun TabSettingsScreenSetup(
     navigationRoute: (navigationRoute: String) -> Unit = {},
     viewModel: TabSettingsVM = koinViewModel(),
-    generalViewModel: GeneralOperationVM = koinViewModel(),
+    generalViewModel: GeneralOperationVM = koinInject(),
 ) {
     val toolbarUiState by viewModel.toolbarUiState.collectAsStateWithLifecycle()
 

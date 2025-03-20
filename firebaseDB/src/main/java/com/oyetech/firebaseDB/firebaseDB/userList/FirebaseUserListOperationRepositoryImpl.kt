@@ -38,7 +38,7 @@ class FirebaseUserListOperationRepositoryImpl(
             val result =
                 firebaseFirestore.collection(FirebaseDatabaseKeys.userList)
                     .document(FirebaseDatabaseKeys.generalUserList)
-                    .collection("users").orderBy("joinedAt", Query.Direction.DESCENDING)
+                    .collection("users").orderBy("lastTriggeredTime", Query.Direction.DESCENDING)
                     .limit(100)
                     .get()
                     .await()
@@ -113,7 +113,7 @@ class FirebaseUserListOperationRepositoryImpl(
         return flow<Unit> {
             firebaseUserRepository.getUserProfileModel().collectLatest { userProfileModel ->
                 Timber.d("User profile model: $userProfileModel")
-                if (userProfileModel != null) {
+                if (userProfileModel?.userId?.isNotBlank() == true && userProfileModel.username.isNotBlank()) {
                     val userId = userProfileModel.userId
                     val username = firebaseUserRepository.getUsername()
                     if (userId.isBlank() || username.isBlank()) {

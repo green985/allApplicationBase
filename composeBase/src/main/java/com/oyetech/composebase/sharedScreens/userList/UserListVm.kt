@@ -29,6 +29,7 @@ class UserListVm(
     override val listViewState: MutableStateFlow<GenericListState<UserListItemUiState>> =
         MutableStateFlow(
             GenericListState<UserListItemUiState>(
+                isRefreshEnable = true,
                 dataFlow = firebaseUserListOperationRepository.getRandomUsersFromDatabase()
                     .mapToUiState(),
             )
@@ -50,5 +51,4 @@ class UserListVm(
             }
         }
     }
-
 }

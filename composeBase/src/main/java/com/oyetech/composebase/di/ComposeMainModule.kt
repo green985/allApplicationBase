@@ -59,7 +59,6 @@ object ComposeMainModule {
         viewModelOf(::TabSettingsVM)
         viewModelOf(::ContactViewModel)
         viewModelOf(::TagListVM)
-        viewModelOf(::GeneralOperationVM)
         viewModelOf(::GeneralPlaygroundVm)
 
         single<IRadioPlayerViewModelSlice> { RadioPlayerViewModelSliceImp(get(), get()) }
@@ -69,8 +68,9 @@ object ComposeMainModule {
         single<BottomNavigationDelegate> { BottomNavigationDelegate() }
 
 
-
+        singleOf(::GeneralOperationVM)
         singleOf(::LoginOperationVM)
+
         viewModelOf(::QuotesVM)
         viewModelOf(::QuoteTagListVM)
         viewModelOf(::ContentOperationVm)

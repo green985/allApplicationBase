@@ -26,15 +26,15 @@ import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScree
 import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.views.SimpleSettingsInfoViewSetup
 import com.oyetech.composebase.projectRadioFeature.screens.views.dialogs.DeleteAccountInfoDialog
 import com.oyetech.languageModule.keyset.LanguageKey
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Suppress("FunctionName")
 @Composable
 fun QuoteSettingsScreenSetup(
     navigationRoute: (navigationRoute: String) -> Unit = {},
-    generalViewModel: GeneralOperationVM = koinViewModel(),
 ) {
-    val vm = koinViewModel<QuoteSettingsVm>()
+    val generalViewModel: GeneralOperationVM = koinInject<GeneralOperationVM>()
+    val vm = koinInject<QuoteSettingsVm>()
 
     val uiState by vm.uiState.collectAsStateWithLifecycle()
     val toolbarState by vm.toolbarState.collectAsStateWithLifecycle()
