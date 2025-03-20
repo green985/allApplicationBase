@@ -62,7 +62,7 @@ fun UserListScreen(
         Column(modifier = Modifier.padding(it)) {
             Button(
                 onClick = {
-                    onEvent(UserListEvent.RegisterToUserList)
+                    onEvent(UserListEvent.RemoveUserFromList)
                 }
             ) {
                 Text("Get Users")

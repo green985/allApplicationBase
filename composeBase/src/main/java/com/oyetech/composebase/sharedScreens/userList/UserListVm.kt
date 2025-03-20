@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.baseGenericList.BaseListViewModel
 import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.sharedScreens.userList.UserListEvent.RegisterToUserList
+import com.oyetech.composebase.sharedScreens.userList.UserListEvent.RemoveUserFromList
 import com.oyetech.composebase.sharedScreens.userList.item.UserListItemUiState
 import com.oyetech.composebase.sharedScreens.userList.item.mapToUiState
 import com.oyetech.domain.repository.firebase.FirebaseUserListOperationRepository
@@ -48,6 +49,16 @@ class UserListVm(
                         }
                 }
 
+            }
+
+            RemoveUserFromList -> {
+                viewModelScope.launch(getDispatcherIo()) {
+                    firebaseUserListOperationRepository.removeUserFromUserList().asResult()
+                        .collectLatest {
+                            Timber.d("User removed from user list")
+                            refreshList()
+                        }
+                }
             }
         }
     }
