@@ -91,7 +91,8 @@ class LoginOperationVM(
                 loginOperationState.value = LoginOperationUiState(isLoading = true)
                 viewModelScope.launch(getDispatcherIo()) {
                     try {
-                        googleLoginRepository.signInWithGoogle()
+//                        googleLoginRepository.signInWithGoogle()
+                        googleLoginRepository.signInWithGoogleAnonymous()
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
@@ -153,6 +154,7 @@ class LoginOperationVM(
         viewModelScope.launch(getDispatcherIo()) {
             profileRepository.deleteUser(googleLoginRepository.getUserUid())
             googleLoginRepository.removeUser(googleLoginRepository.getUserUid())
+            loginOperationState.value = LoginOperationUiState()
             uiEvent.emit(LoginOperationUiEvent.OnCancelUserCreation)
         }
         return true

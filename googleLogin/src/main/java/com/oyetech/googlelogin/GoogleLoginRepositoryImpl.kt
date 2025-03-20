@@ -108,24 +108,28 @@ class GoogleLoginRepositoryImpl(
 
     private suspend fun signWithGoogle() {
 
-        // Instantiate a Google sign-in request
-        val googleIdOption = GetGoogleIdOption.Builder()
-            // Your server's client ID, not your Android client ID.
-            // todo will be change....
-            .setServerClientId("652520712669-5sudspef6cq60j7drtgr06rm567r0qa2.apps.googleusercontent.com")
-            // Only show accounts previously used to sign in.
+        try {
 
-            .setFilterByAuthorizedAccounts(false)
-            .build()
+            // Instantiate a Google sign-in request
+            val googleIdOption = GetGoogleIdOption.Builder()
+                // Your server's client ID, not your Android client ID.
+                // todo will be change....
+                .setServerClientId("652520712669-5sudspef6cq60j7drtgr06rm567r0qa2.apps.googleusercontent.com")
+                // Only show accounts previously used to sign in.
+
+                .build()
 
 // Create the Credential Manager request
-        val request = GetCredentialRequest.Builder()
-            .addCredentialOption(googleIdOption)
-            .build()
+            val request = GetCredentialRequest.Builder()
+                .addCredentialOption(googleIdOption)
+                .build()
 
-        val credential =
-            CredentialManager.Companion.create(activity).getCredential(activity, request)
-        handleGoogleCriential(credential)
+            val credential =
+                CredentialManager.Companion.create(activity).getCredential(activity, request)
+            handleGoogleCriential(credential)
+        } catch (e: Exception) {
+            googleUserStateFlow.value = getNewWithException(e.message)
+        }
     }
 
     private fun handleGoogleCriential(result: GetCredentialResponse) {
