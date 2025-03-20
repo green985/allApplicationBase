@@ -22,6 +22,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.baseViews.helper.GenderSegmentedControl
+import com.oyetech.composebase.experimental.loginOperations.LoginOperationUiEvent.OnCancelUserCreation
+import com.oyetech.composebase.experimental.loginOperations.LoginOperationUiEvent.OnRegisterSuccess
 import com.oyetech.composebase.helpers.viewProperties.DialogHelper
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarSetup
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarState
@@ -32,6 +34,25 @@ import timber.log.Timber
 fun CompleteProfileScreenSetup(navigationRoute: (navigationRoute: String) -> Unit = {}) {
     val vm = koinInject<LoginOperationVM>()
     val uiState by vm.loginOperationState.collectAsStateWithLifecycle()
+    val uiEventFlow by vm.uiEvent.collectAsStateWithLifecycle(null)
+
+    when (uiEventFlow) {
+        OnCancelUserCreation -> {
+            LaunchedEffect(Unit) {
+                navigationRoute.invoke("back")
+            }
+        }
+
+        OnRegisterSuccess -> {
+            LaunchedEffect(Unit) {
+                navigationRoute.invoke("back")
+            }
+        }
+
+        null -> {
+
+        }
+    }
 
     CompleteProfileScreen(uiState = uiState, onEvent = { vm.handleEvent(it) })
 
@@ -118,6 +139,10 @@ fun CompleteProfileScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 Button({ onEvent.invoke(LoginOperationEvent.OnSubmit) }) {
                     Text(text = "Set Your Profile")
+                }
+                Spacer(modifier = Modifier.height(64.dp))
+                Button({ onEvent.invoke(LoginOperationEvent.OnCancel) }) {
+                    Text(text = "Cancel")
                 }
             }
         }

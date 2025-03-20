@@ -211,6 +211,14 @@ class GoogleLoginRepositoryImpl(
 
     }
 
+    override fun removeUser(uid: String) {
+        firebaseAuth.signOut()
+    }
+
+    override fun getUserUid(): String {
+        return firebaseAuth.currentUser?.uid ?: ""
+    }
+
     fun getCurrentUserResponse(
     ): GoogleUserResponseData? {
 

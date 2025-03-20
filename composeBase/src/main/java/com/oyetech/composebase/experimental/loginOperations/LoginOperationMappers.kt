@@ -1,10 +1,12 @@
 package com.oyetech.composebase.experimental.loginOperations
 
+import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.updateState
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData
 import com.oyetech.models.firebaseModels.googleAuth.isUserLogin
 import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
+import kotlinx.coroutines.launch
 
 /**
 Created by Erdi Özbek
@@ -49,6 +51,9 @@ fun LoginOperationVM.mapToProfileValue(userData: FirebaseUserProfileModel?) {
 
     // todo anoynmous user icin ayarlamalar burdan yapilacak
     if (userData.userId.isNotBlank()) {
+        viewModelScope.launch(getDispatcherIo()) {
+            uiEvent.emit(LoginOperationUiEvent.OnRegisterSuccess)
+        }
         loginOperationState.value = LoginOperationUiState(
             displayNameRemote = userData.username ?: "",
             uid = userData.userId,

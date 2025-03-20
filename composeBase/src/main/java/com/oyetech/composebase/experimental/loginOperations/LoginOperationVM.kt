@@ -8,6 +8,7 @@ import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.ErrorDismiss
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.GenderChanged
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.LoginClicked
+import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.OnCancel
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.OnSubmit
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.UsernameChanged
 import com.oyetech.composebase.experimental.viewModelSlice.UserOperationViewModelSlice
@@ -128,6 +129,10 @@ class LoginOperationVM(
                 if (onSubmitOperation()) return
             }
 
+            OnCancel -> {
+                if (onCancelCreationProfile()) return
+            }
+
             is AgeChanged -> {
                 loginOperationState.updateState {
                     copy(
@@ -142,6 +147,15 @@ class LoginOperationVM(
                 }
             }
         }
+    }
+
+    private fun onCancelCreationProfile(): Boolean {
+        viewModelScope.launch(getDispatcherIo()) {
+            profileRepository.deleteUser(googleLoginRepository.getUserUid())
+            googleLoginRepository.removeUser(googleLoginRepository.getUserUid())
+            uiEvent.emit(LoginOperationUiEvent.OnCancelUserCreation)
+        }
+        return true
     }
 
     private fun onSubmitOperation(): Boolean {

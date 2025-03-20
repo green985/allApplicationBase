@@ -29,7 +29,8 @@ data class LoginOperationUiState(
 )
 
 sealed class LoginOperationUiEvent : BaseUIEvent() {
-
+    object OnCancelUserCreation : LoginOperationUiEvent()
+    object OnRegisterSuccess : LoginOperationUiEvent()
 }
 
 sealed class LoginOperationEvent : BaseEvent() {
@@ -41,4 +42,5 @@ sealed class LoginOperationEvent : BaseEvent() {
     data class GenderChanged(val gender: String) : LoginOperationEvent()
     data class AgeChanged(val age: String) : LoginOperationEvent()
     object OnSubmit : LoginOperationEvent()
+    object OnCancel : LoginOperationEvent()
 }

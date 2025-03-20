@@ -96,16 +96,21 @@ class FirebaseUserRepositoryImp(
     }
 
     override fun deleteUser(uid: String) {
-        firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION)
-            .document(uid)
-            .delete()
-            .addOnSuccessListener {
-                userDataStateFlow.value = FirebaseUserProfileModel(isUserDeleted = true)
-            }
-            .addOnFailureListener { exception ->
-                userDataStateFlow.value =
-                    userDataStateFlow.value?.copy(errorException = Exception(LanguageKey.deleteUserErrorMessage))
-            }
+        try {
+            firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION)
+                .document(uid)
+                .delete()
+                .addOnSuccessListener {
+
+                }
+                .addOnFailureListener { exception ->
+                    userDataStateFlow.value =
+                        userDataStateFlow.value?.copy(errorException = Exception(LanguageKey.deleteUserErrorMessage))
+                }
+        } catch (e: Exception) {
+
+        }
+
     }
 
     override fun getUserProfileWithUid(firebaseProfileUserModel: FirebaseUserProfileModel) {
