@@ -81,8 +81,13 @@ fun UserListScreen(
                         key = { it.userId },
                         itemContent = { itemDetail ->
                             UserListItemView(modifier = Modifier.clickable {
+//                                navigationRoute.invoke(
+//                                    QuoteAppProjectRoutes.UserProfile.withArgs(
+//                                        ScreenKey.receiverUserId to itemDetail.userId,
+//                                    )
+//                                )
                                 navigationRoute.invoke(
-                                    QuoteAppProjectRoutes.UserProfile.withArgs(
+                                    QuoteAppProjectRoutes.MessageDetail.withArgs(
                                         ScreenKey.receiverUserId to itemDetail.userId,
                                     )
                                 )

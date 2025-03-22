@@ -20,6 +20,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,7 +34,10 @@ import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.base.baseGenericList.LoadableLazyColumnState
 import com.oyetech.composebase.base.baseGenericList.rememberLoadableLazyColumnState
 import com.oyetech.composebase.projectRadioFeature.RadioDimensions
+import com.oyetech.composebase.sharedScreens.messaging.MessageDetailUiEvent.OnMessageIdle
+import com.oyetech.composebase.sharedScreens.messaging.MessageDetailUiEvent.OnMessageSend
 import com.oyetech.languageModule.keyset.LanguageKey
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import timber.log.Timber
@@ -57,12 +61,12 @@ fun MessageDetailScreenSetup(
             conversationId, receiverUserId
         )
     }
-
-    val uiState by vm.uiState.collectAsStateWithLifecycle()
     val listViewState by vm.listViewState.collectAsStateWithLifecycle()
 
     val lazyColumnState: LoadableLazyColumnState =
         rememberLoadableLazyColumnState(onLoadMore = { listViewState.triggerLoadMore?.invoke() })
+
+    val uiState by vm.uiState.collectAsStateWithLifecycle()
 
     MessageDetailScreen(
         onMessageTextChanged = { vm.onEvent(MessageDetailEvent.OnMessageTextChange(it)) },
@@ -70,17 +74,27 @@ fun MessageDetailScreenSetup(
             vm.onEvent(MessageDetailEvent.OnMessageSend(true))
         },
         uiState = uiState,
+        lazyColumnState = lazyColumnState,
         listViewState = listViewState,
         baseListViewModel = vm,
     )
 
-    if (uiState.onMessageSendTriggered) {
-        LaunchedEffect(System.currentTimeMillis()) {
-            lazyColumnState.lazyListState.animateScrollToItem(0)
-            vm.onEvent(MessageDetailEvent.OnMessageSend(false))
+    val eventtt by vm.uiEvent.collectAsState(OnMessageIdle)
+    LaunchedEffect(eventtt) {
+        when (eventtt) {
+            OnMessageIdle -> {
+                Timber.d("MessageDetailUiEvent.OnMessageSendSuccess " + eventtt.toString())
+
+            }
+
+            is OnMessageSend -> {
+
+                Timber.d("MessageDetailUiEvent.OnMessageSendSuccess " + eventtt.toString())
+                delay(200)
+                lazyColumnState.lazyListState.animateScrollToItem(0)
+            }
         }
     }
-
 }
 
 @Suppress("FunctionName", "LongParameterList")
@@ -92,12 +106,14 @@ fun MessageDetailScreen(
     onMessageSend: () -> Unit,
     listViewState: GenericListState<MessageDetailUiState>,
     baseListViewModel: BaseListViewModel<MessageDetailUiState>,
+    lazyColumnState: LoadableLazyColumnState,
 ) {
     val items = listViewState.items
     BaseScaffold { contentPadding ->
         Column(modifier = Modifier.padding(contentPadding)) {
             Box(modifier = Modifier.weight(1f)) {
                 GenericListScreenSetup2(
+                    lazyColumnState = lazyColumnState,
                     modifier = Modifier
                         .fillMaxSize(),
                     reverseLayout = true,
@@ -155,7 +171,6 @@ fun MessageDetailScreen(
 @Preview(showBackground = true)
 @Composable
 private fun MessageDetailPreview() {
-
 
 
 }

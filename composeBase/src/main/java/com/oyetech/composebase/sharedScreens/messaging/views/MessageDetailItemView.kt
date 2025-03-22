@@ -1,4 +1,3 @@
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,7 +44,8 @@ fun MessageDetailItemView(
                 bottomEnd = 16.dp
             ),
             colors = CardDefaults.cardColors(
-                containerColor = if (isCurrentUser) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
+                containerColor = if (isCurrentUser) MaterialTheme.colorScheme.primary
+                else MaterialTheme.colorScheme.surfaceVariant
             ),
             modifier = Modifier
                 .widthIn(min = 60.dp, max = 280.dp)
@@ -80,8 +80,9 @@ fun MessageDetailItemView(
 }
 
 @Composable
-fun MessageStatusIcon(status: MessageStatus) {
+private fun MessageStatusIcon(status: MessageStatus) {
     val icon = when (status) {
+        MessageStatus.IDLE -> ""
         MessageStatus.SENT -> "✓"
 //        MessageStatus.RECEIVED -> "✓✓"
 //        MessageStatus.READ -> "✓✓"

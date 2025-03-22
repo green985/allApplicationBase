@@ -44,6 +44,7 @@ Created by Erdi Özbek
 -17:51-
  **/
 
+@Suppress("LongParameterList")
 class FirebaseMessagingRepositoryImpl(
     private val firestore: FirebaseFirestore,
     private val userRepository: FirebaseUserRepository,
@@ -190,8 +191,10 @@ class FirebaseMessagingRepositoryImpl(
                         .collection(FirebaseDatabaseKeys.messages).document()
 
                 Timber.d("Sending message document ID =" + conversationRef.id)
+                val messageId = conversationRef.id
+
                 val newMessage = FirebaseMessagingResponseData(
-                    messageId = conversationRef.id,
+                    messageId = messageId,
                     conversationId = conversationId,
                     senderId = senderUserId,
                     receiverId = receiverUserId,
@@ -215,7 +218,7 @@ class FirebaseMessagingRepositoryImpl(
                     )
                     dbMessage
                 }
-                Timber.d("Sending message document ID result =" + result.messageId)
+//                Timber.d("Sending message document ID result =" + result.messageId)
 
                 emit(result)
                 messagesAllOperationRepository.insertMessage(localMessage.copy(status = SENT))

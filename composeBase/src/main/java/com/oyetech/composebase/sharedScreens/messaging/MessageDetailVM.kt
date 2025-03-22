@@ -16,6 +16,8 @@ import com.oyetech.domain.repository.messaging.MessagesAllOperationRepository
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -27,6 +29,7 @@ Created by Erdi Özbek
 -19:02-
  **/
 
+@Suppress("MatchingDeclarationName")
 class MessageDetailVm(
     appDispatchers: AppDispatchers,
     var conversationId: String = "",
@@ -41,6 +44,12 @@ class MessageDetailVm(
     var messagesJob: Job? = null
 
     val tmp = messageOperationVM.initFun()
+
+    val uiEvent = MutableSharedFlow<MessageDetailUiEvent>(
+        replay = 0,
+        extraBufferCapacity = 1,
+        BufferOverflow.DROP_OLDEST
+    )
 
     override val listViewState: MutableStateFlow<GenericListState<MessageDetailUiState>> =
         MutableStateFlow(
@@ -143,18 +152,23 @@ class MessageDetailVm(
     }
 
     private fun sendMessage() {
+        val messageText = uiState.value.messageText
+        if (messageText.isBlank()) {
+            Timber.d("Message text is blank")
+        }
+        uiState.updateState {
+            copy(messageText = "")
+        }
         viewModelScope.launch(getDispatcherIo()) {
             firebaseMessagingRepository.sendMessage(
-                messageText = uiState.value.messageText,
+                messageText = messageText,
                 conversationId = conversationId,
                 receiverUserId = receiverUserId
             ).asResult().collectLatest {
                 it.fold(
                     onSuccess = { messageDetail ->
-                        uiState.updateState {
-                            copy(onMessageSendTriggered = true)
-                        }
                         Timber.d("Message sent: $messageDetail")
+
                     },
                     onFailure = {
                         Timber.e(it)
@@ -162,9 +176,12 @@ class MessageDetailVm(
                 )
             }
         }
-        Timber.d("Message sent: ${uiState.value.messageText}")
-        uiState.updateState {
-            copy(messageText = "")
+        Timber.d("Message sent: " + messageText)
+        viewModelScope.launch(getDispatcherIo()) {
+            val ddd = MessageDetailUiEvent.OnMessageSend()
+            val idle = MessageDetailUiEvent.OnMessageIdle
+            Timber.d("MessageDetailUiEvent.OnMessageSendSuccess " + ddd)
+            uiEvent.emit(ddd)
         }
     }
 

@@ -1,5 +1,7 @@
 package com.oyetech.composebase.sharedScreens.messaging
 
+import com.oyetech.composebase.base.BaseEvent
+import com.oyetech.composebase.base.BaseUIEvent
 import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.base.updateState
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessageConversationData
@@ -51,7 +53,12 @@ data class MessageDetailUiState(
     val conversationId: String = "",
 )
 
-sealed class MessageDetailEvent {
+sealed class MessageDetailUiEvent : BaseUIEvent() {
+    data object OnMessageIdle : MessageDetailUiEvent()
+    data class OnMessageSend(val id: Long = System.currentTimeMillis()) : MessageDetailUiEvent()
+}
+
+sealed class MessageDetailEvent : BaseEvent() {
     data class OnMessageTextChange(val messageText: String) : MessageDetailEvent()
     data class OnMessageSend(val triggered: Boolean = false) : MessageDetailEvent()
     object OnRetry : MessageDetailEvent()

@@ -2,9 +2,9 @@ package com.oyetech.composebase.base.baseGenericList
 
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun <T> GenericListScreenSetup2(
@@ -12,11 +12,13 @@ fun <T> GenericListScreenSetup2(
     viewModel: BaseListViewModel<T>,
     content: LazyListScope.() -> Unit,
     reverseLayout: Boolean = false,
+    lazyColumnState: LoadableLazyColumnState =
+        rememberLoadableLazyColumnState(onLoadMore = { viewModel.loadMore() }),
 ) {
-    val listViewState by viewModel.listViewState.collectAsState()
+    val listViewState by viewModel.listViewState.collectAsStateWithLifecycle()
 
     LoadableLazyColumn(
-        lazyColumnState = rememberLoadableLazyColumnState(onLoadMore = { viewModel.loadMore() }),
+        lazyColumnState = lazyColumnState,
         isRefreshing = listViewState.isRefreshing,
         isRefreshEnable = listViewState.isRefreshEnable,
         isLoadingInitial = listViewState.isLoadingInitial,
