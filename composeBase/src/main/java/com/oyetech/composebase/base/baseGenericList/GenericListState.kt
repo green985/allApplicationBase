@@ -20,6 +20,7 @@ data class GenericListState<T>(
     val isErrorMore: Boolean = false,
     val isEmptyList: Boolean = false,
     val errorMessage: String = "",
+    val skipInitialLoading: Boolean = false,
 
     val itemSortType: ItemSortType = ItemSortType.DefaultSortType,
 

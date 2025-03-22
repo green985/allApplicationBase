@@ -29,6 +29,7 @@ fun <T> GenericListScreenSetup2(
         isErrorInitial = listViewState.isErrorInitial,
         isLoadingMore = listViewState.isLoadingMore,
         isErrorMore = listViewState.isErrorMore,
+        skipInitialLoading = listViewState.skipInitialLoading,
         onRetry = { viewModel.retry() },
         reverseLayout = reverseLayout,
     ) {

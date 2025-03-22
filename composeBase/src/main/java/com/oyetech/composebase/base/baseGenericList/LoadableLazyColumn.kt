@@ -58,6 +58,7 @@ fun LoadableLazyColumn(
     isErrorInitial: Boolean = false,
     isLoadingMore: Boolean = false,
     isErrorMore: Boolean = false,
+    skipInitialLoading: Boolean = false,
     isEmptyList: Boolean = false,
     errorMessage: String = "",
     onRetry: (() -> Unit)? = null,
@@ -124,7 +125,9 @@ fun LoadableLazyColumn(
 
 
         if (isLoadingInitial) {
-            LoadingScreenFullSize(modifier)
+            if (!skipInitialLoading) {
+                LoadingScreenFullSize(modifier)
+            }
         } else {
             RadioErrorListView(
                 errorMessage = errorMessage,

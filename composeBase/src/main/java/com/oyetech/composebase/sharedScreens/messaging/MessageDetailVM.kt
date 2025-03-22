@@ -57,6 +57,7 @@ class MessageDetailVm(
                 dataFlow = messagingAllOperationRepository.getMessagesFromRemoteAndInsertToLocal(
                     conversationId
                 ).mapFromLocalToUiState(),
+                skipInitialLoading = true
             )
         )
 

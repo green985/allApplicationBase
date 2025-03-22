@@ -38,7 +38,7 @@ abstract class BaseListViewModel<T>(
         loadJob?.cancel()
         loadJob = viewModelScope.launch(dispatchers.io) {
             listViewState.value.dataFlow?.asResult()?.collectLatest { result ->
-                Timber.d("ListResulttt== : $result")
+                Timber.d("ListResulttt== : ${result.isSuccess}")
                 result.fold({ list ->
                     if (list.isEmpty()) {
                         listViewState.makeEmptyListState()
