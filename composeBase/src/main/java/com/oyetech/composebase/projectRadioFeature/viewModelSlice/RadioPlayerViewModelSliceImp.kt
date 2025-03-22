@@ -89,19 +89,22 @@ class RadioPlayerViewModelSliceImp(
         // make analytics operation later...
     }
 
-    context(BaseViewModel)
     private fun playPauseSelectedRadio(
+        baseViewModel: BaseViewModel,
         selectedItem: RadioUIState,
     ) {
-        if (selectedItem.playerState == Playing) {
-            radioOperationUseCase.stopPlayer()
-            return
-        }
+        with(baseViewModel) {
+            if (selectedItem.playerState == Playing) {
+                radioOperationUseCase.stopPlayer()
+                return
+            }
 
-        viewModelScope.launch(getDispatcherIo()) {
-            val selectedRadioStation =
-                radioOperationUseCase.findStation(selectedItem.stationuuid)
-            radioOperationUseCase.startPlayer(selectedRadioStation)
+
+            viewModelScope.launch(getDispatcherIo()) {
+                val selectedRadioStation =
+                    radioOperationUseCase.findStation(selectedItem.stationuuid)
+                radioOperationUseCase.startPlayer(selectedRadioStation)
+            }
         }
     }
 

@@ -20,8 +20,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,11 +33,13 @@ import com.oyetech.composebase.base.baseGenericList.GenericListScreenSetup2
 import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.base.baseGenericList.LoadableLazyColumnState
 import com.oyetech.composebase.base.baseGenericList.rememberLoadableLazyColumnState
+import com.oyetech.composebase.base.baseGenericList.safeScrollToItem
 import com.oyetech.composebase.projectRadioFeature.RadioDimensions
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailUiEvent.OnMessageIdle
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailUiEvent.OnMessageSend
 import com.oyetech.languageModule.keyset.LanguageKey
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import timber.log.Timber
@@ -61,9 +63,13 @@ fun MessageDetailScreenSetup(
             conversationId, receiverUserId
         )
     }
+    val coroutineScope = rememberCoroutineScope()
     val listViewState by vm.listViewState.collectAsStateWithLifecycle()
 
     val lazyColumnState: LoadableLazyColumnState =
+        rememberLoadableLazyColumnState(onLoadMore = { listViewState.triggerLoadMore?.invoke() })
+
+    val lazyColumnState2: LoadableLazyColumnState =
         rememberLoadableLazyColumnState(onLoadMore = { listViewState.triggerLoadMore?.invoke() })
 
     val uiState by vm.uiState.collectAsStateWithLifecycle()
@@ -79,19 +85,18 @@ fun MessageDetailScreenSetup(
         baseListViewModel = vm,
     )
 
-    val eventtt by vm.uiEvent.collectAsState(OnMessageIdle)
-    LaunchedEffect(eventtt) {
-        when (eventtt) {
-            OnMessageIdle -> {
-                Timber.d("MessageDetailUiEvent.OnMessageSendSuccess " + eventtt.toString())
+    LaunchedEffect(Unit) {
+        vm.uiEvent.collectLatest { event ->
+            when (event) {
+                OnMessageIdle -> {
+                    Timber.d("MessageDetailUiEvent.OnMessageSendSuccess " + event.toString())
+                }
 
-            }
-
-            is OnMessageSend -> {
-
-                Timber.d("MessageDetailUiEvent.OnMessageSendSuccess " + eventtt.toString())
-                delay(200)
-                lazyColumnState.lazyListState.animateScrollToItem(0)
+                is OnMessageSend -> {
+                    Timber.d("MessageDetailUiEvent.OnMessageSendSuccess " + event.toString())
+                    delay(200)
+                    safeScrollToItem(lazyColumnState2.lazyListState, 0)
+                }
             }
         }
     }

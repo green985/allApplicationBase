@@ -178,9 +178,7 @@ class MessageDetailVm(
         }
         Timber.d("Message sent: " + messageText)
         viewModelScope.launch(getDispatcherIo()) {
-            val ddd = MessageDetailUiEvent.OnMessageSend()
-            val idle = MessageDetailUiEvent.OnMessageIdle
-            Timber.d("MessageDetailUiEvent.OnMessageSendSuccess " + ddd)
+            val ddd = MessageDetailUiEvent.OnMessageSend
             uiEvent.emit(ddd)
         }
     }

@@ -55,7 +55,7 @@ data class MessageDetailUiState(
 
 sealed class MessageDetailUiEvent : BaseUIEvent() {
     data object OnMessageIdle : MessageDetailUiEvent()
-    data class OnMessageSend(val id: Long = System.currentTimeMillis()) : MessageDetailUiEvent()
+    data object OnMessageSend : MessageDetailUiEvent()
 }
 
 sealed class MessageDetailEvent : BaseEvent() {
