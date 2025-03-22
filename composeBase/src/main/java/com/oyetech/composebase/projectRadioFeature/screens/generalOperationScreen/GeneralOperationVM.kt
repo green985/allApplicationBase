@@ -2,6 +2,7 @@ package com.oyetech.composebase.projectRadioFeature.screens.generalOperationScre
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
+import com.oyetech.composebase.sharedScreens.messaging.MessageOperationVM
 import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserListOperationRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
@@ -24,6 +25,7 @@ class GeneralOperationVM(
     private val sharedHelperRepository: SharedOperationRepository,
     private val googleLoginRepository: GoogleLoginRepository,
     private val firebaseUserListOperationRepository: FirebaseUserListOperationRepository,
+    private val messageOperationVM: MessageOperationVM,
 ) : BaseViewModel(appDispatchers) {
 
     fun getReviewCanShowState() = appReviewOperationUseCase.getReviewCanShowState()
@@ -51,6 +53,8 @@ class GeneralOperationVM(
         }
     }
 
+    fun observeRealtimeMessages() {}
+
     private fun signToUserFeedList() {
         viewModelScope.launch(getDispatcherIo()) {
             firebaseUserListOperationRepository.addUserToUserList().asResult()
@@ -61,6 +65,7 @@ class GeneralOperationVM(
     }
 
     init {
+        messageOperationVM.initFun()
         sharedHelperRepository.increaseAppOpenCount()
         viewModelScope.launch(getDispatcherIo()) {
             delay(1000)

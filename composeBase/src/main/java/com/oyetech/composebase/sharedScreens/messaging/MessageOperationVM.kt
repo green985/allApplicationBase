@@ -6,6 +6,7 @@ import com.oyetech.domain.repository.firebase.realtime.FirebaseRealtimeHelperRep
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -35,6 +36,7 @@ class MessageOperationVM(
                 .collectLatest {
                     it.fold(
                         onSuccess = {}, onFailure = {
+                            delay(100)
                             observeRealtimeOperation()
                         })
                 }

@@ -38,12 +38,9 @@ class MessageDetailVm(
     private val messagingAllOperationRepository: MessagesAllOperationRepository,
     private val firebaseUserRepository: FirebaseUserRepository,
     private val firebaseRealtimeHelperRepository: FirebaseRealtimeHelperRepository,
-    private val messageOperationVM: MessageOperationVM,
 ) : BaseListViewModel<MessageDetailUiState>(appDispatchers) {
 
     var messagesJob: Job? = null
-
-    val tmp = messageOperationVM.initFun()
 
     val uiEvent = MutableSharedFlow<MessageDetailUiEvent>(
         replay = 0,
@@ -76,7 +73,6 @@ class MessageDetailVm(
     )
 
     init {
-        tmp.hashCode()
         Timber.d("MessageDetailVm created == " + uiState.value.toString())
         if (conversationId.isNotBlank()) {
             initMessageDetailOperation()

@@ -18,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -69,61 +70,65 @@ class FirebaseRealtimeHelperRepositoryImpl(
     override suspend fun observeUserMessagesRealtimeOperations(): Flow<Unit> {
         return flow<Unit> {
             try {
-                val userId = firebaseUserRepository.getUserId()
-                if (userId.isBlank()) {
-                    throw GeneralException("User id is null or blank")
+                firebaseUserRepository.getUserProfileModel().collectLatest {
+                    val userId = it?.userId ?: ""
+
+                    if (userId.isBlank()) {
+                        throw GeneralException("User id is null or blank")
+                    }
+                    val myRef = getUserRef()
+
+                    val lastMessage = messagesAllLocalDataSourceRepository.getLastMessage(userId)
+                    val lastMessageTimestamp = lastMessage?.createdAt ?: 0L
+
+                    myRef?.child(FirebaseDatabaseKeys.messages)
+                        ?.orderByChild("timestamp")
+                        ?.startAt(lastMessageTimestamp.toDouble())
+                        ?.addChildEventListener(object :
+                            ChildEventListener {
+                            override fun onChildAdded(
+                                snapshot: DataSnapshot,
+                                previousChildName: String?,
+                            ) {
+                                val message =
+                                    snapshot.getValue(FirebaseMessagingResponseData::class.java)
+
+                                saveMessageToLocal(message)
+
+                                Timber.d("onChildAdded: ${message?.messageText}")
+                            }
+
+                            override fun onChildChanged(
+                                snapshot: DataSnapshot,
+                                previousChildName: String?,
+                            ) {
+                                val message =
+                                    snapshot.getValue(FirebaseMessagingResponseData::class.java)
+                                saveMessageToLocal(message)
+                                Timber.d("onChildChanged: ${message?.messageText}")
+                            }
+
+                            override fun onChildRemoved(snapshot: DataSnapshot) {
+                                val message =
+                                    snapshot.getValue(FirebaseMessagingResponseData::class.java)
+                                Timber.d("onChildRemoved: ${message?.messageText}")
+                            }
+
+                            override fun onChildMoved(
+                                snapshot: DataSnapshot,
+                                previousChildName: String?,
+                            ) {
+                                val message =
+                                    snapshot.getValue(FirebaseMessagingResponseData::class.java)
+                                Timber.d("onChildMoved: ${message?.messageText}")
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+                                Timber.d("onCancelled: ${error.message}")
+                            }
+                        })
                 }
-                val myRef = getUserRef()
 
-                val lastMessage = messagesAllLocalDataSourceRepository.getLastMessage(userId)
-                val lastMessageTimestamp = lastMessage?.createdAt ?: 0L
-
-                myRef?.child(FirebaseDatabaseKeys.messages)
-                    ?.orderByChild("timestamp")
-                    ?.startAt(lastMessageTimestamp.toDouble())
-                    ?.addChildEventListener(object :
-                        ChildEventListener {
-                        override fun onChildAdded(
-                            snapshot: DataSnapshot,
-                            previousChildName: String?,
-                        ) {
-                            val message =
-                                snapshot.getValue(FirebaseMessagingResponseData::class.java)
-
-                            saveMessageToLocal(message)
-
-                            Timber.d("onChildAdded: ${message?.messageText}")
-                        }
-
-                        override fun onChildChanged(
-                            snapshot: DataSnapshot,
-                            previousChildName: String?,
-                        ) {
-                            val message =
-                                snapshot.getValue(FirebaseMessagingResponseData::class.java)
-                            saveMessageToLocal(message)
-                            Timber.d("onChildChanged: ${message?.messageText}")
-                        }
-
-                        override fun onChildRemoved(snapshot: DataSnapshot) {
-                            val message =
-                                snapshot.getValue(FirebaseMessagingResponseData::class.java)
-                            Timber.d("onChildRemoved: ${message?.messageText}")
-                        }
-
-                        override fun onChildMoved(
-                            snapshot: DataSnapshot,
-                            previousChildName: String?,
-                        ) {
-                            val message =
-                                snapshot.getValue(FirebaseMessagingResponseData::class.java)
-                            Timber.d("onChildMoved: ${message?.messageText}")
-                        }
-
-                        override fun onCancelled(error: DatabaseError) {
-                            Timber.d("onCancelled: ${error.message}")
-                        }
-                    })
             } catch (e: Exception) {
                 Timber.d("observeUserMessagesRealtimeOperations error: ${e.message}")
                 throw GeneralException(e)
