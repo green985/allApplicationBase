@@ -180,6 +180,7 @@ class MessageDetailVm(
                     }
                 )
             }
+
         }
         Timber.d("Message sent: " + messageText)
         viewModelScope.launch(getDispatcherIo()) {

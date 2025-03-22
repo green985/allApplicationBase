@@ -82,7 +82,7 @@ fun MessageDetailItemView(
 @Composable
 private fun MessageStatusIcon(status: MessageStatus) {
     val icon = when (status) {
-        MessageStatus.IDLE -> ""
+        MessageStatus.IDLE -> "*"
         MessageStatus.SENT -> "✓"
 //        MessageStatus.RECEIVED -> "✓✓"
 //        MessageStatus.READ -> "✓✓"

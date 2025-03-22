@@ -202,7 +202,7 @@ class FirebaseMessagingRepositoryImpl(
                     status = IDLE,
                 )
 
-                firebaseRealtimeHelperRepository.sendMessageWithRealtime(newMessage)
+                firebaseRealtimeHelperRepository.sendMessageWithRealtime(newMessage.copy(status = SENT))
 
                 localMessage = newMessage.toLocalData()
                 messagesAllOperationRepository.insertMessage(localMessage)
