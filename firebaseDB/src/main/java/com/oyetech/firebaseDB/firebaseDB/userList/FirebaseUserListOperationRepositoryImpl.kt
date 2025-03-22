@@ -52,9 +52,8 @@ class FirebaseUserListOperationRepositoryImpl(
             resultList = resultList.filter {
                 it.userId != userId
             }
-
+            Timber.d("getRandomUsersFromDatabase Result list: ${resultList.size}")
             emit(resultList)
-
         }
 
     }
