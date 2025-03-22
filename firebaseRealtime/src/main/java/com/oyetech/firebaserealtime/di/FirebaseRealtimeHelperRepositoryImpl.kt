@@ -13,9 +13,13 @@ import com.oyetech.models.errors.exceptionHelper.GeneralException
 import com.oyetech.models.firebaseModels.databaseKeys.FirebaseDatabaseKeys
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingResponseData
 import com.oyetech.models.firebaseModels.messagingModels.MessageStatus
+import com.oyetech.models.firebaseModels.messagingModels.toLocalData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 /**
@@ -62,7 +66,7 @@ class FirebaseRealtimeHelperRepositoryImpl(
         }
     }
 
-    override fun observeUserMessagesRealtimeOperations(): Flow<Unit> {
+    override suspend fun observeUserMessagesRealtimeOperations(): Flow<Unit> {
         return flow<Unit> {
             try {
                 val userId = firebaseUserRepository.getUserId()
@@ -85,7 +89,8 @@ class FirebaseRealtimeHelperRepositoryImpl(
                         ) {
                             val message =
                                 snapshot.getValue(FirebaseMessagingResponseData::class.java)
-                            // add to local list with sent flag
+
+                            saveMessageToLocal(message)
 
                             Timber.d("onChildAdded: ${message?.messageText}")
                         }
@@ -96,6 +101,7 @@ class FirebaseRealtimeHelperRepositoryImpl(
                         ) {
                             val message =
                                 snapshot.getValue(FirebaseMessagingResponseData::class.java)
+                            saveMessageToLocal(message)
                             Timber.d("onChildChanged: ${message?.messageText}")
                         }
 
@@ -124,6 +130,21 @@ class FirebaseRealtimeHelperRepositoryImpl(
             }
         }
 
+    }
+
+    private fun saveMessageToLocal(message: FirebaseMessagingResponseData?) {
+        val localMessageData = message?.toLocalData()
+
+        if (localMessageData?.messageId?.isNotBlank() == true) {
+            GlobalScope.launch(Dispatchers.IO) {
+                messagesAllLocalDataSourceRepository.insertMessage(
+                    localMessageData
+                )
+            }
+        } else {
+            // todo analytics nasil olur aq eventi ekle
+            Timber.d("messageId null do nothing")
+        }
     }
 
     private fun getUserRef(userSelection: String? = null): DatabaseReference? {

@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.MutableStateFlow
 interface FirebaseRealtimeHelperRepository {
     val realtimeMessageSendOperationResultState: MutableStateFlow<FirebaseMessagingResponseData?>
     fun sendMessageWithRealtime(messageBody: FirebaseMessagingResponseData)
-    fun observeUserMessagesRealtimeOperations(): Flow<Unit>
+    suspend fun observeUserMessagesRealtimeOperations(): Flow<Unit>
 }

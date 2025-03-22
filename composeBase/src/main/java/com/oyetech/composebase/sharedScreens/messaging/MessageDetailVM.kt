@@ -80,22 +80,26 @@ class MessageDetailVm(
         if (conversationId.isNotBlank()) {
             initMessageDetailOperation()
         } else {
-            viewModelScope.launch(getDispatcherIo()) {
-                firebaseMessagingRepository.getConversationDetailOrCreateFlow(receiverUserId)
-                    .asResult().collectLatest {
-                        it.fold(
-                            onSuccess = { conversationData ->
-                                Timber.d("Conversation data: $conversationData")
-                                conversationId = conversationData.conversationId
+            initConversationOperation()
+        }
+    }
 
-                                initMessageDetailOperation()
-                            },
-                            onFailure = {
-                                listViewState.updateErrorInitial(it)
-                            }
-                        )
-                    }
-            }
+    private fun initConversationOperation() {
+        viewModelScope.launch(getDispatcherIo()) {
+            firebaseMessagingRepository.getConversationDetailOrCreateFlow(receiverUserId)
+                .asResult().collectLatest {
+                    it.fold(
+                        onSuccess = { conversationData ->
+                            Timber.d("Conversation data: $conversationData")
+                            conversationId = conversationData.conversationId
+
+                            initMessageDetailOperation()
+                        },
+                        onFailure = {
+                            listViewState.updateErrorInitial(it)
+                        }
+                    )
+                }
         }
     }
 
@@ -114,7 +118,11 @@ class MessageDetailVm(
                     it.fold(
                         onSuccess = { messageList ->
 //                            Timber.d("Message list: $messageList")
-                            messageList.mergeMessages(listViewState)
+                            messageList.mergeMessages(onSizeChanged = {
+                                viewModelScope.launch(getDispatcherIo()) {
+                                    uiEvent.emit(MessageDetailUiEvent.OnNewMessage)
+                                }
+                            }, listViewState = listViewState)
                         },
                         onFailure = {
                             Timber.e(it)
@@ -178,8 +186,8 @@ class MessageDetailVm(
         }
         Timber.d("Message sent: " + messageText)
         viewModelScope.launch(getDispatcherIo()) {
-            val ddd = MessageDetailUiEvent.OnMessageSend
-            uiEvent.emit(ddd)
+//            val ddd = MessageDetailUiEvent.OnNewMessage
+//            uiEvent.emit(ddd)
         }
     }
 

@@ -21,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,7 +35,7 @@ import com.oyetech.composebase.base.baseGenericList.rememberLoadableLazyColumnSt
 import com.oyetech.composebase.base.baseGenericList.safeScrollToItem
 import com.oyetech.composebase.projectRadioFeature.RadioDimensions
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailUiEvent.OnMessageIdle
-import com.oyetech.composebase.sharedScreens.messaging.MessageDetailUiEvent.OnMessageSend
+import com.oyetech.composebase.sharedScreens.messaging.MessageDetailUiEvent.OnNewMessage
 import com.oyetech.languageModule.keyset.LanguageKey
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -63,13 +62,9 @@ fun MessageDetailScreenSetup(
             conversationId, receiverUserId
         )
     }
-    val coroutineScope = rememberCoroutineScope()
     val listViewState by vm.listViewState.collectAsStateWithLifecycle()
 
     val lazyColumnState: LoadableLazyColumnState =
-        rememberLoadableLazyColumnState(onLoadMore = { listViewState.triggerLoadMore?.invoke() })
-
-    val lazyColumnState2: LoadableLazyColumnState =
         rememberLoadableLazyColumnState(onLoadMore = { listViewState.triggerLoadMore?.invoke() })
 
     val uiState by vm.uiState.collectAsStateWithLifecycle()
@@ -92,10 +87,10 @@ fun MessageDetailScreenSetup(
                     Timber.d("MessageDetailUiEvent.OnMessageSendSuccess " + event.toString())
                 }
 
-                is OnMessageSend -> {
+                is OnNewMessage -> {
                     Timber.d("MessageDetailUiEvent.OnMessageSendSuccess " + event.toString())
                     delay(200)
-                    safeScrollToItem(lazyColumnState2.lazyListState, 0)
+                    safeScrollToItem(lazyColumnState.lazyListState, 0)
                 }
             }
         }

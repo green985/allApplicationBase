@@ -12,6 +12,7 @@ import com.oyetech.models.firebaseModels.messagingModels.MessageStatus
 import com.oyetech.models.firebaseModels.messagingModels.toRemoteData
 import com.oyetech.models.utils.helper.TimeFunctions
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -55,7 +56,8 @@ data class MessageDetailUiState(
 
 sealed class MessageDetailUiEvent : BaseUIEvent() {
     data object OnMessageIdle : MessageDetailUiEvent()
-    data object OnMessageSend : MessageDetailUiEvent()
+    data object OnNewMessage : MessageDetailUiEvent()
+//    data object OnMessageReceive : MessageDetailUiEvent()
 }
 
 sealed class MessageDetailEvent : BaseEvent() {
@@ -152,6 +154,7 @@ fun Flow<List<FirebaseMessagingResponseData>>.mapFromFirebaseToUiState(): Flow<L
 
 fun List<FirebaseMessagingLocalData>.mergeMessages(
     listViewState: MutableStateFlow<GenericListState<MessageDetailUiState>>,
+    onSizeChanged: () -> Job,
 ) {
     val mergeMessagesDuration = measureTimeMillis {
 
@@ -163,14 +166,19 @@ fun List<FirebaseMessagingLocalData>.mergeMessages(
         val mergedList =
             newListView.union(oldListView).distinctBy { it.messageId }.toImmutableList()
 
+        if (mergedList.size > oldListView.size) {
+            onSizeChanged.invoke()
+        }
+
         listViewState.updateState {
             copy(
                 items = mergedList,
             )
         }
+
     }
 
-//    Timber.d("mergeMessagesDuration: $mergeMessagesDuration")
+    Timber.d("mergeMessagesDuration: $mergeMessagesDuration")
 }
 
 fun Flow<List<FirebaseMessagingLocalData>>.mapFromLocalToUiState(): Flow<List<MessageDetailUiState>> {
