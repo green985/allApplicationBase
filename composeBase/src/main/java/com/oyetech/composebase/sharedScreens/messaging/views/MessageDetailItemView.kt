@@ -84,6 +84,7 @@ private fun MessageStatusIcon(status: MessageStatus) {
     val icon = when (status) {
         MessageStatus.IDLE -> "*"
         MessageStatus.SENT -> "✓"
+        MessageStatus.ERROR -> "E"
 //        MessageStatus.RECEIVED -> "✓✓"
 //        MessageStatus.READ -> "✓✓"
         else -> ""

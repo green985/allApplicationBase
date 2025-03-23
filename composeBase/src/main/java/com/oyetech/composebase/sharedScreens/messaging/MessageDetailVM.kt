@@ -1,4 +1,4 @@
-package com.oyetech.composebase.sharedScreens.messaging;
+package com.oyetech.composebase.sharedScreens.messaging
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.baseGenericList.BaseListViewModel
@@ -11,7 +11,6 @@ import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnRefr
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnRetry
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
-import com.oyetech.domain.repository.firebase.realtime.FirebaseRealtimeHelperRepository
 import com.oyetech.domain.repository.messaging.MessagesAllOperationRepository
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
@@ -29,7 +28,7 @@ Created by Erdi Özbek
 -19:02-
  **/
 
-@Suppress("MatchingDeclarationName")
+@Suppress("MatchingDeclarationName", "LongParameterList")
 class MessageDetailVm(
     appDispatchers: AppDispatchers,
     var conversationId: String = "",
@@ -37,8 +36,21 @@ class MessageDetailVm(
     private val firebaseMessagingRepository: FirebaseMessagingRepository,
     private val messagingAllOperationRepository: MessagesAllOperationRepository,
     private val firebaseUserRepository: FirebaseUserRepository,
-    private val firebaseRealtimeHelperRepository: FirebaseRealtimeHelperRepository,
 ) : BaseListViewModel<MessageDetailUiState>(appDispatchers) {
+
+    override val listViewState: MutableStateFlow<GenericListState<MessageDetailUiState>> =
+        MutableStateFlow(
+            GenericListState(
+                dataFlow = messagingAllOperationRepository.getMessagesFromRemoteAndInsertToLocal(
+                    conversationId
+                ).mapFromLocalToUiState(),
+                loadMoreDataFlow = messagingAllOperationRepository.getMessageListWithConversationIdWithMessageId(
+                    conversationId
+                ).mapFromLocalToUiState(),
+                triggerLoadMore = { loadMore() },
+                skipInitialLoading = true
+            )
+        )
 
     var messagesJob: Job? = null
 
@@ -47,16 +59,6 @@ class MessageDetailVm(
         extraBufferCapacity = 1,
         BufferOverflow.DROP_OLDEST
     )
-
-    override val listViewState: MutableStateFlow<GenericListState<MessageDetailUiState>> =
-        MutableStateFlow(
-            GenericListState(
-                dataFlow = messagingAllOperationRepository.getMessagesFromRemoteAndInsertToLocal(
-                    conversationId
-                ).mapFromLocalToUiState(),
-                skipInitialLoading = true
-            )
-        )
 
     val uiState = MutableStateFlow(
         MessageDetailScreenUiState(
@@ -103,7 +105,7 @@ class MessageDetailVm(
     private fun initMessageDetailOperation() {
         firebaseMessagingRepository.initLocalMessageSendOperation(viewModelScope)
         loadList()
-        observeMessages()
+//        observeMessages()
     }
 
     private fun observeMessages() {
@@ -117,7 +119,7 @@ class MessageDetailVm(
 //                            Timber.d("Message list: $messageList")
                             messageList.mergeMessages(onSizeChanged = {
                                 viewModelScope.launch(getDispatcherIo()) {
-                                    uiEvent.emit(MessageDetailUiEvent.OnNewMessage)
+//                                    uiEvent.emit(MessageDetailUiEvent.OnNewMessage)
                                 }
                             }, listViewState = listViewState)
                         },
@@ -160,6 +162,7 @@ class MessageDetailVm(
         val messageText = uiState.value.messageText
         if (messageText.isBlank()) {
             Timber.d("Message text is blank")
+            return
         }
         uiState.updateState {
             copy(messageText = "")

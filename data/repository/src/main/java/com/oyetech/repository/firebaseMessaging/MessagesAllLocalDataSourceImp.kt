@@ -23,6 +23,10 @@ class MessagesAllLocalDataSourceImp(private val messagesAllDao: MessagesAllDao) 
         return messagesAllDao.getMessageWithId(messageId)
     }
 
+    override fun getLastMessageWithConversationId(conversationId: String): FirebaseMessagingLocalData? {
+        return messagesAllDao.getLastMessageWithConversationId(conversationId)
+    }
+
     override fun deleteLastList(idList: List<String>): Int {
         return messagesAllDao.deleteLastList(idList)
     }

@@ -30,6 +30,7 @@ class MessageOperationVM(
     }
 
     fun observeRealtimeOperation() {
+        return
         observeMessageJob?.cancel()
         observeMessageJob = viewModelScope.launch(getDispatcherIo()) {
             firebaseRealtimeHelperRepository.observeUserMessagesRealtimeOperations().asResult()

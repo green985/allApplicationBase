@@ -28,4 +28,6 @@ interface FirebaseMessagingRepository {
 //        conversationId: String,
 //        messageId: String,
 //    ): Flow<List<FirebaseMessagingResponseData>>
+
+    fun getMessageListWithConversationIdWithMessageId(conversationId: String): Flow<List<FirebaseMessagingResponseData>>
 }

@@ -23,4 +23,5 @@ interface MessagesAllOperationRepository {
     fun deleteAllMessages()
     fun getConversationList(): Flow<List<FirebaseMessageConversationData>>
     fun getMessagesFromRemoteAndInsertToLocal(conversationId: String): Flow<List<FirebaseMessagingLocalData>>
+    fun getMessageListWithConversationIdWithMessageId(conversationId: String): Flow<List<FirebaseMessagingLocalData>>
 }

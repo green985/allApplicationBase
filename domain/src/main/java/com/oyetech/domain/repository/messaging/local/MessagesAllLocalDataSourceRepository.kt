@@ -19,4 +19,5 @@ interface MessagesAllLocalDataSourceRepository {
 
     suspend fun insertMessage(message: FirebaseMessagingLocalData)
     suspend fun getLastMessage(receiverId: String): FirebaseMessagingLocalData?
+    fun getLastMessageWithConversationId(conversationId: String): FirebaseMessagingLocalData?
 }

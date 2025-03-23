@@ -58,6 +58,8 @@ class FirebaseMessagingRepositoryImpl(
     private val sendingDelay = 100L
     private val newMessageToSendOperationDelay = 25L
 
+    private var lastVisibleMessageIdDocument = ""
+
     var sendingOperationJob: Job? = null
 
     override fun idlee() {
@@ -87,13 +89,49 @@ class FirebaseMessagingRepositoryImpl(
                 .document(conversationId)
                 .collection(FirebaseDatabaseKeys.messages)
                 .orderBy("createdAt", Query.Direction.DESCENDING)
+                .limit(20)
             val result = query.get().await().documents
+            lastVisibleMessageIdDocument = result[result.size - 1].id
             val messageList = result.mapNotNull { doc ->
                 val docc = doc.toObject(FirebaseMessagingResponseData::class.java)
                 docc?.copy(messageId = doc.id)
             }
-            Timber.d("getMessageListWithConversationId: ${messageList.toString()}")
+//            Timber.d("getMessageListWithConversationId: ${messageList.toString()}")
+            Timber.d("getMessageListWithConversationId: ${messageList.size}")
+            Timber.d("getMessageListWithConversationId: ${lastVisibleMessageIdDocument}")
             emit(messageList)
+        }
+    }
+
+    override fun getMessageListWithConversationIdWithMessageId(
+        conversationId: String,
+    ): Flow<List<FirebaseMessagingResponseData>> {
+        return flow {
+            val createdAt =
+                messagesAllOperationRepository.getLastMessageWithConversationId(conversationId)?.createdAt
+                    ?: 0L
+            if (createdAt == 0L) {
+                emit(emptyList())
+            } else {
+
+                val query = firestore.collection(FirebaseDatabaseKeys.conversations)
+                    .document(conversationId)
+                    .collection(FirebaseDatabaseKeys.messages)
+                    .orderBy("createdAt", Query.Direction.DESCENDING)
+                    .startAfter(lastVisibleMessageIdDocument, "createdAt")
+                    .limit(20)
+
+                val result = query.get().await().documents
+                lastVisibleMessageIdDocument = result[result.size - 1].id
+                Timber.d("getMessageListWithConversationId: lastVisibleMessageIdDocument ${lastVisibleMessageIdDocument}")
+
+                val messageList = result.mapNotNull { doc ->
+                    val docc = doc.toObject(FirebaseMessagingResponseData::class.java)
+                    docc?.copy(messageId = doc.id)
+                }
+//                Timber.d("getMessageListWithConversationId: ${messageList.toString()}")
+                emit(messageList)
+            }
         }
     }
 

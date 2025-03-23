@@ -35,6 +35,7 @@ abstract class BaseListViewModel<T>(
         if (!isFromRefresh) {
             listViewState.updateState { copy(isLoadingInitial = true) }
         }
+
         loadJob?.cancel()
         loadJob = viewModelScope.launch(dispatchers.io) {
             listViewState.value.dataFlow?.asResult()?.collectLatest { result ->

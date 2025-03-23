@@ -45,6 +45,24 @@ class MessagesAllOperationRepositoryImp(
             }
     }
 
+    override fun getMessageListWithConversationIdWithMessageId(
+        conversationId: String,
+    ): Flow<List<FirebaseMessagingLocalData>> {
+        if (conversationId.isBlank()) {
+            return flowOf(emptyList())
+        }
+        return firebaseMessagingRepository.getMessageListWithConversationIdWithMessageId(
+            conversationId
+        ).map {
+            it.map {
+                it.toLocalDataWithStatus(status = MessageStatus.SENT)
+            }
+        }.onEach {
+            messagesAllDao.insertLastList(it)
+        }
+
+    }
+
     override fun getMessageWithId(messageId: String): FirebaseMessagingLocalData? {
         return messagesAllDao.getMessageWithId(messageId)
     }
