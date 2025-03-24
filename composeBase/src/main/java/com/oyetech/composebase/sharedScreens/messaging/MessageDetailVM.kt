@@ -168,20 +168,22 @@ class MessageDetailVm(
             copy(messageText = "")
         }
         viewModelScope.launch(getDispatcherIo()) {
-            firebaseMessagingRepository.sendMessage(
-                messageText = messageText,
-                conversationId = conversationId,
-                receiverUserId = receiverUserId
-            ).asResult().collectLatest {
-                it.fold(
-                    onSuccess = { messageDetail ->
-                        Timber.d("Message sent: $messageDetail")
+            repeat(5) {
+                firebaseMessagingRepository.sendMessage(
+                    messageText = messageText,
+                    conversationId = conversationId,
+                    receiverUserId = receiverUserId
+                ).asResult().collectLatest {
+                    it.fold(
+                        onSuccess = { messageDetail ->
+                            Timber.d("Message sent: $messageDetail")
 
-                    },
-                    onFailure = {
-                        Timber.e(it)
-                    }
-                )
+                        },
+                        onFailure = {
+                            Timber.e(it)
+                        }
+                    )
+                }
             }
 
         }

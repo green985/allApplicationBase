@@ -91,8 +91,8 @@ class LoginOperationVM(
                 loginOperationState.value = LoginOperationUiState(isLoading = true)
                 viewModelScope.launch(getDispatcherIo()) {
                     try {
-//                        googleLoginRepository.signInWithGoogle()
-                        googleLoginRepository.signInWithGoogleAnonymous()
+                        googleLoginRepository.signInWithGoogle()
+//                        googleLoginRepository.signInWithGoogleAnonymous()
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
@@ -112,9 +112,7 @@ class LoginOperationVM(
                 loginOperationState.updateState {
                     copy(isLoading = true)
                 }
-                viewModelScope.launch(getDispatcherIo()) {
-                    userOperationViewModelSlice.deleteUser(loginOperationState.value.uid)
-                }
+                deleteUserOperation()
             }
 
             is UsernameChanged -> {
@@ -131,7 +129,7 @@ class LoginOperationVM(
             }
 
             OnCancel -> {
-                if (onCancelCreationProfile()) return
+                if (deleteUserOperation()) return
             }
 
             is AgeChanged -> {
@@ -150,7 +148,7 @@ class LoginOperationVM(
         }
     }
 
-    private fun onCancelCreationProfile(): Boolean {
+    private fun deleteUserOperation(): Boolean {
         viewModelScope.launch(getDispatcherIo()) {
             profileRepository.deleteUser(googleLoginRepository.getUserUid())
             googleLoginRepository.removeUser(googleLoginRepository.getUserUid())

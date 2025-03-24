@@ -199,10 +199,10 @@ private fun initLazyColumn(
 
 
             item {
-                // todo will be contunie
-                if (!isLoadingInitial && !isErrorMore && !isErrorInitial) {
-                    loadMoreLoadingContent?.invoke()
-                }
+//                // todo will be contunie
+//                if (!isLoadingInitial && !isErrorMore && !isErrorInitial) {
+//                    loadMoreLoadingContent?.invoke()
+//                }
 
                 if (isLoadingMore) {
                     Timber.d("LoadableLazyColumn: isLoadingMore")

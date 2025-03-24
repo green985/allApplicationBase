@@ -1,5 +1,6 @@
 package com.oyetech.firebaseDB.firebaseDB.messaging
 
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.oyetech.domain.helper.ActivityProviderUseCase
@@ -55,10 +56,12 @@ class FirebaseMessagingRepositoryImpl(
     private val firebaseRealtimeHelperRepository: FirebaseRealtimeHelperRepository,
 ) : FirebaseMessagingRepository {
 
+    private val conversationLimit = 100L
+    private val messageLimit = 20L
     private val sendingDelay = 100L
     private val newMessageToSendOperationDelay = 25L
 
-    private var lastVisibleMessageIdDocument = ""
+    private var lastVisibleMessageDocumentCreatedAt: Timestamp? = null
 
     var sendingOperationJob: Job? = null
 
@@ -89,16 +92,15 @@ class FirebaseMessagingRepositoryImpl(
                 .document(conversationId)
                 .collection(FirebaseDatabaseKeys.messages)
                 .orderBy("createdAt", Query.Direction.DESCENDING)
-                .limit(20)
+                .limit(messageLimit)
             val result = query.get().await().documents
-            lastVisibleMessageIdDocument = result[result.size - 1].id
+
+            lastVisibleMessageDocumentCreatedAt = (result.last().get("createdAt") as Timestamp)
+
             val messageList = result.mapNotNull { doc ->
                 val docc = doc.toObject(FirebaseMessagingResponseData::class.java)
                 docc?.copy(messageId = doc.id)
             }
-//            Timber.d("getMessageListWithConversationId: ${messageList.toString()}")
-            Timber.d("getMessageListWithConversationId: ${messageList.size}")
-            Timber.d("getMessageListWithConversationId: ${lastVisibleMessageIdDocument}")
             emit(messageList)
         }
     }
@@ -119,12 +121,11 @@ class FirebaseMessagingRepositoryImpl(
                     .document(conversationId)
                     .collection(FirebaseDatabaseKeys.messages)
                     .orderBy("createdAt", Query.Direction.DESCENDING)
-                    .startAfter(lastVisibleMessageIdDocument, "createdAt")
-                    .limit(20)
+                    .startAfter(lastVisibleMessageDocumentCreatedAt)
+                    .limit(messageLimit)
 
                 val result = query.get().await().documents
-                lastVisibleMessageIdDocument = result[result.size - 1].id
-                Timber.d("getMessageListWithConversationId: lastVisibleMessageIdDocument ${lastVisibleMessageIdDocument}")
+                lastVisibleMessageDocumentCreatedAt = result.last().get("createdAt") as Timestamp
 
                 val messageList = result.mapNotNull { doc ->
                     val docc = doc.toObject(FirebaseMessagingResponseData::class.java)
@@ -168,7 +169,7 @@ class FirebaseMessagingRepositoryImpl(
             } else {
                 throw GeneralException("Message send error")
             }
-        } catch (e: Exception) {
+        } catch (e: GeneralException) {
             Timber.d("error send again ")
             delay(sendingDelay)
             sendMessageWithLocalTrigger(it)
@@ -202,7 +203,7 @@ class FirebaseMessagingRepositoryImpl(
                 messageBody
             }
             return result
-        } catch (e: Exception) {
+        } catch (e: GeneralException) {
             throw GeneralException("Message send error")
         }
     }
@@ -262,7 +263,7 @@ class FirebaseMessagingRepositoryImpl(
                 emit(result)
                 messagesAllOperationRepository.insertMessage(localMessage.copy(status = SENT))
 
-            } catch (e: Exception) {
+            } catch (e: GeneralException) {
                 messagesSendingOperationRepository.insertSendingMessage(localMessage)
                 messagesAllOperationRepository.insertMessage(localMessage.copy(status = MessageStatus.ERROR))
 
@@ -316,11 +317,11 @@ class FirebaseMessagingRepositoryImpl(
                     emit(
                         result.documents.firstOrNull()
                             ?.toObject(FirebaseMessageConversationData::class.java)
-                            ?: throw Exception(LanguageKey.conversationNotFound)
+                            ?: throw GeneralException(LanguageKey.conversationNotFound)
                     )
 
                 }
-            } catch (e: Exception) {
+            } catch (e: GeneralException) {
                 e.printStackTrace()
                 throw e
             }
@@ -335,7 +336,7 @@ class FirebaseMessagingRepositoryImpl(
 
             val queryConversation = firestore.collection("conversations")
                 .whereArrayContains("participantUserIdList", userId)
-                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .orderBy("createdAt", Query.Direction.DESCENDING).limit(conversationLimit)
 
             val result = queryConversation.get().await().documents
             val conversationList = result.mapNotNull { doc ->
@@ -345,7 +346,7 @@ class FirebaseMessagingRepositoryImpl(
             emit(conversationList)
 
 
-        } catch (e: Exception) {
+        } catch (e: GeneralException) {
             e.printStackTrace()
             throw e
         }
