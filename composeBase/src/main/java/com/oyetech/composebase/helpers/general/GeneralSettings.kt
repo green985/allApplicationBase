@@ -35,4 +35,8 @@ object GeneralSettings {
         return false
     }
 
+    fun isViewVisible(): Boolean {
+        return true
+    }
+
 }

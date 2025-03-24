@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oyetech.composebase.helpers.general.GeneralSettings
 
 /**
 Created by Erdi Özbek
@@ -46,11 +47,13 @@ fun UserListItemView(
                 style = MaterialTheme.typography.bodyMedium
             )
 
-            Text(
-                modifier = Modifier.align(Alignment.BottomEnd),
-                text = uiState.lastTriggeredTimeString,
-                style = MaterialTheme.typography.bodyMedium
-            )
+            if (GeneralSettings.isViewVisible()) {
+                Text(
+                    modifier = Modifier.align(Alignment.BottomEnd),
+                    text = uiState.lastTriggeredTimeString,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
 
         }
         HorizontalDivider()
