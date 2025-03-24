@@ -50,7 +50,7 @@ fun <T> GenericListScreenSetup(
         lazyColumnState = lazyColumnState,
         isRefreshing = listViewState.isRefreshing,
         isLoadingInitial = listViewState.isLoadingInitial,
-        isEmptyList = listViewState.items.isEmpty(),
+        isEmptyList = listViewState.isEmptyList,
         isRefreshEnable = listViewState.isRefreshEnable,
         errorMessage = listViewState.errorMessage,
         onRefresh = { listViewState.triggerRefresh?.invoke() },

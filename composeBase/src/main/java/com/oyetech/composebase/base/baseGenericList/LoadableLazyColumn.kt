@@ -80,6 +80,18 @@ fun LoadableLazyColumn(
     val lazyListState = lazyColumnState.lazyListState
     val listLayoutInfo by remember { derivedStateOf { lazyListState.layoutInfo } }
 
+    if (isLoadingInitial) {
+        if (!skipInitialLoading) {
+            LoadingScreenFullSize(modifier)
+        }
+    } else {
+        RadioErrorListView(
+            errorMessage = errorMessage,
+            isErrorInitial = isErrorInitial,
+            isEmptyList = isEmptyList,
+            onRetry = onRetry
+        )
+    }
 
     Column() {
         if (!isRefreshEnable) {
@@ -125,22 +137,8 @@ fun LoadableLazyColumn(
                 )
             }
         }
-
-
-        if (isLoadingInitial) {
-            if (!skipInitialLoading) {
-                LoadingScreenFullSize(modifier)
-            }
-        } else {
-            RadioErrorListView(
-                errorMessage = errorMessage,
-                isErrorInitial = isErrorInitial,
-                isEmptyList = isEmptyList,
-                onRetry = onRetry
-            )
-        }
-
     }
+
     var lastTimeIsScrollInProgress by remember {
         mutableStateOf(lazyListState.isScrollInProgress)
     }

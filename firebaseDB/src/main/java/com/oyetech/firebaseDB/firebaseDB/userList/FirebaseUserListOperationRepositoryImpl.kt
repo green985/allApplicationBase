@@ -9,6 +9,7 @@ import com.oyetech.models.errors.exceptionHelper.GeneralException
 import com.oyetech.models.firebaseModels.databaseKeys.FirebaseDatabaseKeys
 import com.oyetech.models.firebaseModels.userList.FirebaseUserListModel
 import com.oyetech.models.firebaseModels.userList.toMapListFirebaseUserListModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
@@ -35,15 +36,16 @@ class FirebaseUserListOperationRepositoryImpl(
     override fun getRandomUsersFromDatabase(): Flow<List<FirebaseUserListModel>> {
         val userId = firebaseUserRepository.getUserId()
         return flow<List<FirebaseUserListModel>> {
+            delay(3000)
             val result =
                 firebaseFirestore.collection(FirebaseDatabaseKeys.userList)
                     .document(FirebaseDatabaseKeys.generalUserList)
                     .collection("users").orderBy("lastTriggeredTime", Query.Direction.DESCENDING)
-                    .limit(100)
+                    .limit(20)
                     .get()
                     .await()
 
-            var documentIdList = arrayListOf<String>()
+            val documentIdList = arrayListOf<String>()
             var resultList = result.mapNotNull {
                 documentIdList.add(it.id)
                 it.toObject(FirebaseUserListModel::class.java)

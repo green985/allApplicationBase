@@ -10,8 +10,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
-import com.oyetech.composebase.base.baseGenericList.GenericListScreenSetup
+import com.oyetech.composebase.base.baseGenericList.BaseListViewModel
+import com.oyetech.composebase.base.baseGenericList.GenericListScreenSetup2
 import com.oyetech.composebase.base.baseGenericList.GenericListState
+import com.oyetech.composebase.base.baseGenericList.LoadableLazyColumnState
+import com.oyetech.composebase.base.baseGenericList.rememberLoadableLazyColumnState
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarSetup
@@ -38,13 +41,18 @@ fun UserListScreenSetup(
     val uiState by vm.uiState.collectAsStateWithLifecycle()
     val listViewState by vm.listViewState.collectAsStateWithLifecycle()
 
+    val lazyColumnState: LoadableLazyColumnState =
+        rememberLoadableLazyColumnState(onLoadMore = {})
+
 
     UserListScreen(
         modifier = modifier,
         uiState = uiState,
         onEvent = { vm.onEvent(it) },
-        listViewState = listViewState,
         navigationRoute = navigationRoute,
+        lazyColumnState = lazyColumnState,
+        listViewState = listViewState,
+        baseListViewModel = vm,
     )
 
 }
@@ -57,13 +65,19 @@ fun UserListScreen(
     onEvent: (UserListEvent) -> Unit,
     navigationRoute: (navigationRoute: String) -> Unit = {},
     listViewState: GenericListState<UserListItemUiState>,
+    baseListViewModel: BaseListViewModel<UserListItemUiState>,
+    lazyColumnState: LoadableLazyColumnState,
 ) {
     BaseScaffold(topBarContent = {
         RadioToolbarSetup(
             uiState = RadioToolbarState(title = LanguageKey.connectWithPeople),
         )
     }) {
-        Column(modifier = Modifier.padding(it)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
+        ) {
 
 //            Button(
 //                onClick = {
@@ -72,10 +86,13 @@ fun UserListScreen(
 //            ) {
 //                Text("Remove from list")
 //            }
-            GenericListScreenSetup(
-                modifier = Modifier.fillMaxSize(),
-                listViewState = listViewState,
-                {
+
+            GenericListScreenSetup2(
+                lazyColumnState = lazyColumnState,
+                modifier = Modifier
+                    .fillMaxSize(),
+                viewModel = baseListViewModel,
+                content = {
                     items(
                         items = listViewState.items,
                         key = { it.userId },
@@ -93,9 +110,7 @@ fun UserListScreen(
                                 )
                             }, uiState = itemDetail)
                         })
-                },
-                true
-            )
+                })
         }
     }
 
