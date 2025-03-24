@@ -80,10 +80,8 @@ abstract class BaseListViewModel<T>(
     }
 
     fun retry() {
-//        complexItemViewState.updateState {
-//            copy(isLoadingInitial = true)
-//        }
-//        loadMore()
+        // todo analytics
+        loadList()
     }
 
 }

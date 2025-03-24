@@ -35,31 +35,30 @@ class FirebaseUserListOperationRepositoryImpl(
     override fun getRandomUsersFromDatabase(): Flow<List<FirebaseUserListModel>> {
         val userId = firebaseUserRepository.getUserId()
         return flow<List<FirebaseUserListModel>> {
-            try {
-                val result =
-                    firebaseFirestore.collection(FirebaseDatabaseKeys.userList)
-                        .document(FirebaseDatabaseKeys.generalUserList)
-                        .collection("users")
-                        .orderBy("lastTriggeredTime", Query.Direction.DESCENDING)
-                        .limit(20)
-                        .get()
-                        .await()
+            val result =
+                firebaseFirestore.collection(FirebaseDatabaseKeys.userList)
+                    .document(FirebaseDatabaseKeys.generalUserList)
+                    .collection("users")
+                    .orderBy("lastTriggeredTime", Query.Direction.DESCENDING)
+                    .limit(20)
+                    .get()
+                    .await()
 
-                val documentIdList = arrayListOf<String>()
-                var resultList = result.mapNotNull {
-                    documentIdList.add(it.id)
-                    it.toObject(FirebaseUserListModel::class.java)
-                }
-
-                resultList = resultList.filter {
-                    it.userId != userId
-                }
-                Timber.d("getRandomUsersFromDatabase Result list: ${resultList.size}")
-                emit(resultList)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Timber.d("getRandomUsersFromDatabase Error: ${e.message}")
+            if (result.isEmpty) {
+                throw GeneralException("User list is empty")
             }
+
+            val documentIdList = arrayListOf<String>()
+            var resultList = result.mapNotNull {
+                documentIdList.add(it.id)
+                it.toObject(FirebaseUserListModel::class.java)
+            }
+
+            resultList = resultList.filter {
+                it.userId != userId
+            }
+            Timber.d("getRandomUsersFromDatabase Result list: ${resultList.size}")
+            emit(resultList)
         }
 
     }
