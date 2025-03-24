@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
@@ -44,6 +46,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.R
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
+import com.oyetech.composebase.baseViews.loadingErrors.PagingMoreLoading
 import timber.log.Timber
 
 @Suppress("LongParameterList", "CyclomaticComplexMethod", "FunctionNaming", "LongMethod")
@@ -70,7 +73,7 @@ fun LoadableLazyColumn(
     horizontalAlignment: Horizontal = Alignment.Start,
     flingBehavior: FlingBehavior = ScrollableDefaults.flingBehavior(),
     userScrollEnabled: Boolean = true,
-    loadMoreLoadingContent: @Composable() (() -> Unit)? = null,
+    loadMoreLoadingContent: @Composable() (() -> Unit)? = { PagingMoreLoading() },
     onItemVisible: (Int) -> Unit = {},
     content: LazyListScope.() -> Unit,
 ) {
@@ -78,7 +81,7 @@ fun LoadableLazyColumn(
     val listLayoutInfo by remember { derivedStateOf { lazyListState.layoutInfo } }
 
 
-    Column {
+    Column() {
         if (!isRefreshEnable) {
             Column(modifier = modifier) {
                 initLazyColumn(
@@ -194,15 +197,19 @@ private fun initLazyColumn(
         content = {
             content()
 
+
             item {
+                // todo will be contunie
                 if (!isLoadingInitial && !isErrorMore && !isErrorInitial) {
                     loadMoreLoadingContent?.invoke()
                 }
 
                 if (isLoadingMore) {
+                    Timber.d("LoadableLazyColumn: isLoadingMore")
                     loadMoreLoadingContent?.invoke()
                 }
                 if (isErrorMore) {
+                    Timber.d("LoadableLazyColumn: isErrorMore")
                     ErrorOnMoreContent(onRetry = onRetry)
                 }
             }
@@ -216,7 +223,8 @@ fun ErrorOnMoreContent(errorMessage: String = "Loading Error", onRetry: (() -> U
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
-            .background(color = MaterialTheme.colorScheme.error),
+            .background(color = MaterialTheme.colorScheme.error)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(

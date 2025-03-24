@@ -59,6 +59,7 @@ abstract class BaseListViewModel<T>(
     }
 
     fun loadMore() {
+        listViewState.updateState { copy(isLoadingMore = true) }
         Timber.d("loadMore")
         loadMoreJob?.cancel()
         loadMoreJob = viewModelScope.launch(dispatchers.io) {
@@ -72,12 +73,7 @@ abstract class BaseListViewModel<T>(
                             listViewState.updateListItem(list)
                         }
                     }, {
-                        listViewState.updateState {
-                            copy(
-                                errorMessage = it.message ?: "",
-                                isErrorMore = true
-                            )
-                        }
+                        listViewState.updateErrorMore(it)
                     })
                 }
         }

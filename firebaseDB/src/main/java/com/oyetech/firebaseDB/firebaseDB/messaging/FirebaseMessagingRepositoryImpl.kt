@@ -107,6 +107,7 @@ class FirebaseMessagingRepositoryImpl(
         conversationId: String,
     ): Flow<List<FirebaseMessagingResponseData>> {
         return flow {
+            delay(1500)
             val createdAt =
                 messagesAllOperationRepository.getLastMessageWithConversationId(conversationId)?.createdAt
                     ?: 0L
