@@ -169,7 +169,7 @@ class FirebaseMessagingRepositoryImpl(
             } else {
                 throw GeneralException("Message send error")
             }
-        } catch (e: GeneralException) {
+        } catch (e: Exception) {
             Timber.d("error send again ")
             delay(sendingDelay)
             sendMessageWithLocalTrigger(it)
@@ -203,7 +203,7 @@ class FirebaseMessagingRepositoryImpl(
                 messageBody
             }
             return result
-        } catch (e: GeneralException) {
+        } catch (e: Exception) {
             throw GeneralException("Message send error")
         }
     }
@@ -263,7 +263,7 @@ class FirebaseMessagingRepositoryImpl(
                 emit(result)
                 messagesAllOperationRepository.insertMessage(localMessage.copy(status = SENT))
 
-            } catch (e: GeneralException) {
+            } catch (e: Exception) {
                 messagesSendingOperationRepository.insertSendingMessage(localMessage)
                 messagesAllOperationRepository.insertMessage(localMessage.copy(status = MessageStatus.ERROR))
 
@@ -321,7 +321,7 @@ class FirebaseMessagingRepositoryImpl(
                     )
 
                 }
-            } catch (e: GeneralException) {
+            } catch (e: Exception) {
                 e.printStackTrace()
                 throw e
             }
@@ -346,7 +346,7 @@ class FirebaseMessagingRepositoryImpl(
             emit(conversationList)
 
 
-        } catch (e: GeneralException) {
+        } catch (e: Exception) {
             e.printStackTrace()
             throw e
         }
