@@ -6,9 +6,10 @@ import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarState
+import com.oyetech.cripto.stringKeys.WebSiteUrls
 import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.tools.contextHelper.UrlHelper
 import com.oyetech.tools.coroutineHelper.AppDispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -26,9 +27,7 @@ class FacSettingsVm(
 
     val toolbarState = MutableStateFlow(QuoteToolbarState(LanguageKey.settings))
     val uiState =
-        MutableStateFlow(FacSettingsUiState(deleteAccountInfoText = LanguageKey.deleteAccountButtonText))
-
-    val navigator = MutableSharedFlow<String>()
+        MutableStateFlow(FacSettingsUiState())
 
     init {
         viewModelScope.launch(getDispatcherIo()) {
@@ -43,19 +42,20 @@ class FacSettingsVm(
     fun onEvent(event: FacSettingsUiEvent) {
         when (event) {
             FacSettingsUiEvent.ContactClicked -> {
-                navigator.tryEmit("contact") // örnek route
+
             }
 
             FacSettingsUiEvent.InfoClicked -> {
-                navigator.tryEmit("info")
+
             }
 
             FacSettingsUiEvent.PrivacyPolicyClicked -> {
-                navigator.tryEmit("privacyPolicy")
+                UrlHelper.openUrl(context, WebSiteUrls.Fac_Privacy_Policy_URL)
             }
 
             FacSettingsUiEvent.TermsAndConditionsClicked -> {
-                navigator.tryEmit("termsAndConditions")
+                UrlHelper.openUrl(context, WebSiteUrls.Fac_Terms_Conditions_URL)
+
             }
 
             FacSettingsUiEvent.LogoutClicked -> {

@@ -13,4 +13,9 @@ object WebSiteUrls {
     val Wallpaper_Terms_Conditions_URL =
         "https://www.termsandcondiitionssample.com/live.php?token=gcSnBb3RYJ7EQcYkLPiUHjUhbMYrW7it"
 
+    val Fac_Privacy_Policy_URL =
+        "https://doc-hosting.flycricket.io/fac-friendly-anonymous-chat-privacy-policy/d55a3d1e-e2da-4f28-9b9e-d77ddd82594e/privacy"
+    val Fac_Terms_Conditions_URL =
+        "https://doc-hosting.flycricket.io/fac-friendly-anonymous-chat-terms-of-use/fb86f80e-fd96-4b1c-9ae6-df3667ff462f/terms"
+
 }

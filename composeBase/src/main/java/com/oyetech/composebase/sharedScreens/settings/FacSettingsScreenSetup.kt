@@ -78,10 +78,22 @@ fun FacSettingsScreen(
             }
         )
     }) {
-        Column(modifier = Modifier.padding()) {
+        Column(modifier = Modifier.padding(it)) {
             SimpleSettingsInfoViewSetup(
                 onClick = { navigationRoute.invoke(QuoteAppProjectRoutes.ContactScreen.route) },
                 text = uiState.contactWithMeText
+            )
+            SimpleSettingsInfoViewSetup(
+                onClick = { onEvent.invoke(FacSettingsUiEvent.InfoClicked) },
+                text = uiState.infoText
+            )
+            SimpleSettingsInfoViewSetup(
+                onClick = { onEvent.invoke(FacSettingsUiEvent.PrivacyPolicyClicked) },
+                text = uiState.privacyPolicyText
+            )
+            SimpleSettingsInfoViewSetup(
+                onClick = { onEvent.invoke(FacSettingsUiEvent.TermsAndConditionsClicked) },
+                text = uiState.termsAndConditionText
             )
             if (GeneralSettings.isRatingEnable()) {
                 HorizontalDivider(
@@ -132,7 +144,7 @@ fun FacSettingsScreen(
 
 }
 
-@Preview(showSystemUi = true, showBackground = true)
+@Preview(showSystemUi = false, showBackground = true)
 @Composable
 private fun FacSettingsScreenPreview() {
     FacSettingsScreen(
