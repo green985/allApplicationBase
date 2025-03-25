@@ -7,9 +7,9 @@ import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppNavItem.Q
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppNavItem.QuoteSettingsTab
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppNavItem.QuoteUserListTab
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppNavItem.TabQuoteAppHomepage
+import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes.FacSettings
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes.MessageConversationList
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes.QuoteAppHomepage
-import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes.QuoteSettings
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes.UserList
 import com.oyetech.languageModule.keyset.LanguageKey
 
@@ -21,6 +21,7 @@ Created by Erdi Özbek
 
 object QuoteAppProjectRoutes {
 
+    val FacSettings = Route("FacSettings")
     val QuoteAdviceScreen = Route("quoteAdviceScreen")
     val QuoteAppHomepage = Route("quoteAppHomepage")
     val QuoteDetailRoute = Route("quoteDetail")
@@ -51,7 +52,7 @@ sealed class QuoteAppNavItem {
 
     object QuoteSettingsTab :
         BottomNavigationItem(
-            path = QuoteSettings.route.toString(),
+            path = FacSettings.route.toString(),
             title = R.string.nav_item_settings,
             icon = R.drawable.ic_settings
         )

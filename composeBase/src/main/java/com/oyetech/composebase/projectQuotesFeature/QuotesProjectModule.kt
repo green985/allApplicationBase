@@ -7,6 +7,7 @@ import com.oyetech.composebase.projectQuotesFeature.homeScreen.QuotesHomeScreenV
 import com.oyetech.composebase.projectQuotesFeature.quoteSettingsScreen.QuoteSettingsVm
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailVm
 import com.oyetech.composebase.projectQuotesFeature.searchScreen.QuoteSearchVM
+import com.oyetech.composebase.sharedScreens.settings.FacSettingsVm
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -23,6 +24,7 @@ object QuotesProjectModule {
         viewModelOf(::QuoteDetailVm)
         viewModelOf(::AdviceQuoteVM)
         viewModelOf(::QuoteSettingsVm)
+        viewModelOf(::FacSettingsVm)
         viewModelOf(::AdviceQuoteDebugVm)
         viewModelOf(::QuoteSearchVM)
     }

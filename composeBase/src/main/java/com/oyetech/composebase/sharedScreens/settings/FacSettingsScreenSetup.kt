@@ -1,4 +1,4 @@
-package com.oyetech.composebase.projectQuotesFeature.quoteSettingsScreen
+package com.oyetech.composebase.sharedScreens.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,53 +23,52 @@ import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRo
 import com.oyetech.composebase.projectQuotesFeature.quotes.views.AppInfoViewProperty
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarSetup
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarState
-import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.GeneralOperationVM
 import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.views.SimpleSettingsInfoViewSetup
 import com.oyetech.composebase.projectRadioFeature.screens.views.dialogs.DeleteAccountInfoDialog
 import com.oyetech.languageModule.keyset.LanguageKey
-import org.koin.compose.koinInject
+import org.koin.androidx.compose.koinViewModel
+
+/**
+Created by Erdi Özbek
+-25.03.2025-
+-21:51-
+ **/
 
 @Suppress("FunctionName")
 @Composable
-fun QuoteSettingsScreenSetup(
+fun FacSettingsScreenSetup(
+    modifier: Modifier = Modifier,
     navigationRoute: (navigationRoute: String) -> Unit = {},
 ) {
-    val generalViewModel: GeneralOperationVM = koinInject<GeneralOperationVM>()
-    val vm = koinInject<QuoteSettingsVm>()
+    val vm = koinViewModel<FacSettingsVm>()
 
     val uiState by vm.uiState.collectAsStateWithLifecycle()
     val toolbarState by vm.toolbarState.collectAsStateWithLifecycle()
 
-    val startReviewOperation = {
-        generalViewModel.startReviewOperation()
-    }
-
-    QuoteSettingsScreen(
+    FacSettingsScreen(
         uiState = uiState,
-        onEvent = { vm.onEvent(it) },
         toolbarState = toolbarState,
-        navigationRoute = navigationRoute,
-        startReviewOperation = startReviewOperation
+        onEvent = { vm.onEvent(it) },
+        navigationRoute = navigationRoute
     )
 
-    if (uiState.isDeleteDialogShown) {
+    if (uiState.isDeleteAccountShown) {
         DeleteAccountInfoDialog(
-            onDismiss = { vm.onEvent(QuoteSettingsEvent.DismissDialog) },
-            onConfirm = { vm.onEvent(QuoteSettingsEvent.DeleteAccountConfirm) }
+            onDismiss = { vm.onEvent(FacSettingsUiEvent.DeleteAccountDismissed) },
+            onConfirm = { vm.onEvent(FacSettingsUiEvent.DeleteAccountConfirmed) }
         )
     }
-
 }
 
-@Suppress("FunctionName", "LongParameterList", "LongMethod")
+@Suppress("FunctionName", "LongParameterList")
 @Composable
-fun QuoteSettingsScreen(
-//    modifier: Modifier = Modifier,
-    uiState: QuoteSettingsUiState,
-    onEvent: (QuoteSettingsEvent) -> (Unit),
-    toolbarState: QuoteToolbarState,
+fun FacSettingsScreen(
+    modifier: Modifier = Modifier,
+    uiState: FacSettingsUiState,
+    onEvent: (FacSettingsUiEvent) -> (Unit),
     navigationRoute: (navigationRoute: String) -> Unit,
-    startReviewOperation: () -> Unit,
+    toolbarState: QuoteToolbarState,
+    startReviewOperation: () -> Unit = {},
 ) {
     BaseScaffold(topBarContent = {
         QuoteToolbarSetup(
@@ -79,11 +78,10 @@ fun QuoteSettingsScreen(
             }
         )
     }) {
-        Column(modifier = Modifier.padding(it)) {
-
+        Column(modifier = Modifier.padding()) {
             SimpleSettingsInfoViewSetup(
                 onClick = { navigationRoute.invoke(QuoteAppProjectRoutes.ContactScreen.route) },
-                text = LanguageKey.contactWithUs
+                text = uiState.contactWithMeText
             )
             if (GeneralSettings.isRatingEnable()) {
                 HorizontalDivider(
@@ -91,28 +89,9 @@ fun QuoteSettingsScreen(
                 )
                 SimpleSettingsInfoViewSetup(
                     onClick = { startReviewOperation.invoke() },
-                    text = LanguageKey.rateUs
+                    text = uiState.rateUs
                 )
             }
-
-            if (GeneralSettings.isLoginOperationEnable()) {
-                if (uiState.isUserLoggedIn) {
-                    HorizontalDivider(
-                        modifier = Modifier.height(1.dp)
-                    )
-                    SimpleSettingsInfoViewSetup(
-                        onClick = {
-                            navigationRoute.invoke(QuoteAppProjectRoutes.QuoteAdviceScreen.route)
-                        },
-                        text = LanguageKey.adviceQuote
-                    )
-                }
-            }
-
-            HorizontalDivider(
-                modifier = Modifier.height(1.dp)
-            )
-            Spacer(modifier = Modifier.weight(1f))
 
             if (uiState.isUserLoggedIn) {
                 Column(
@@ -137,9 +116,9 @@ fun QuoteSettingsScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Button(onClick = {
-                        onEvent.invoke(QuoteSettingsEvent.DeleteAccountClick)
+                        onEvent.invoke(FacSettingsUiEvent.DeleteAccountClicked)
                     }) {
-                        Text(text = LanguageKey.deleteAccountButtonText)
+                        Text(text = uiState.deleteAccountInfoText)
                     }
                 }
             }
@@ -150,23 +129,16 @@ fun QuoteSettingsScreen(
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
+
 }
 
-@Preview(showBackground = true)
+@Preview(showSystemUi = true, showBackground = true)
 @Composable
-private fun Preview_QuoteSettingsScreen() {
-    QuoteSettingsScreen(
-        uiState = QuoteSettingsUiState(
-            isUserLoggedIn = true,
-            username = "john_doe"
-        ),
+private fun FacSettingsScreenPreview() {
+    FacSettingsScreen(
+        uiState = FacSettingsUiState(),
         onEvent = {},
-        toolbarState = QuoteToolbarState(
-            title = "Settings"
-        ),
         navigationRoute = {},
-        startReviewOperation = {}
+        toolbarState = QuoteToolbarState(),
     )
 }
-
-

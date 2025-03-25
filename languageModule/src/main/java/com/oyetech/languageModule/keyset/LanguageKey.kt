@@ -11,6 +11,9 @@ Created by Erdi Özbek
  **/
 
 object LanguageKey {
+    var termsAndConditionText set(value) {} get() = LocalLanguageHelper.getStringWithKey("termsAndConditionText")
+    var privacyPolicyText set(value) {} get() = LocalLanguageHelper.getStringWithKey("privacyPolicyText")
+    var applicationInfoText set(value) {} get() = LocalLanguageHelper.getStringWithKey("applicationInfoText")
     var userListFeedEmptyError set(value) {} get() = LocalLanguageHelper.getStringWithKey("userListFeedEmptyError")
     var connectWithPeople set(value) {} get() = LocalLanguageHelper.getStringWithKey("connectWithPeople")
     var ageCannotBeNull set(value) {} get() = LocalLanguageHelper.getStringWithKey("ageCannotBeNull")

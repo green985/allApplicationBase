@@ -34,6 +34,7 @@ object AllScreenNavigator {
 
         // Quote App Routes
 //        QuoteAppProjectRoutes.MessagingList.route,
+        QuoteAppProjectRoutes.FacSettings.route,
         QuoteAppProjectRoutes.MessageConversationList.route,
         QuoteAppProjectRoutes.MessageDetail.route,
 

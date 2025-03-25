@@ -18,6 +18,7 @@ import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactWithMe.ContactScreen
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailScreenSetup
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListScreenSetup
+import com.oyetech.composebase.sharedScreens.settings.FacSettingsScreenSetup
 import com.oyetech.composebase.sharedScreens.userList.UserListScreenSetup
 import com.oyetech.composebase.sharedScreens.userProfile.UserProfileScreenSetup
 
@@ -86,12 +87,6 @@ fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
         )
     }
 
-    composable(QuoteAppProjectRoutes.UserList.route) {
-        UserListScreenSetup(
-            navigationRoute = navigateRouteOperation(navController)
-        )
-    }
-
 
     composable(
         route = "${QuoteAppProjectRoutes.MessageDetail.route}?" +
@@ -130,4 +125,18 @@ fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
             navigationRoute = navigateRouteOperation(navController)
         )
     }
+
+
+    composable(QuoteAppProjectRoutes.FacSettings.route) {
+        FacSettingsScreenSetup(
+            navigationRoute = navigateRouteOperation(navController)
+        )
+    }
+
+    composable(QuoteAppProjectRoutes.UserList.route) {
+        UserListScreenSetup(
+            navigationRoute = navigateRouteOperation(navController)
+        )
+    }
+
 }
