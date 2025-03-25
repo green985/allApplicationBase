@@ -19,6 +19,7 @@ data class FirebaseUserProfileModel(
 
     val isAnonymous: Boolean = false,
     val username: String = "",
+    val displayName: String = "",
     val userId: String = "",
 
     val gender: String = "",

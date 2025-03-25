@@ -20,7 +20,8 @@ data class GoogleUserResponseData(
     fun toFirebaseUserProfileModel(): FirebaseUserProfileModel {
         return FirebaseUserProfileModel(
             userId = uid,
-            username = displayName ?: "",
+            username = "",
+            displayName = displayName ?: "",
             isAnonymous = isAnonymous,
             creationTimestamp = metadata?.creationTimestamp ?: 0,
             lastSignInTimestamp = metadata?.lastSignInTimestamp,

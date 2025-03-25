@@ -17,6 +17,7 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import com.oyetech.domain.helper.ActivityProviderUseCase
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
@@ -42,8 +43,6 @@ class GoogleLoginRepositoryImpl(
         MutableStateFlow(false)
 
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-//    private lateinit var googleSignInClient: GoogleSignInClient
-//    private lateinit var googleSignInLauncher: ActivityResultLauncher<Intent>
 
     private lateinit var activity: ComponentActivity
 
@@ -106,8 +105,7 @@ class GoogleLoginRepositoryImpl(
 
     }
 
-    private suspend fun signWithGoogle() {
-
+    private suspend fun signWithGoogle(autoLoginCheck: Boolean = false) {
         try {
 
             // Instantiate a Google sign-in request
@@ -132,7 +130,9 @@ class GoogleLoginRepositoryImpl(
         }
     }
 
-    private fun handleGoogleCriential(result: GetCredentialResponse) {
+    private fun handleGoogleCriential(
+        result: GetCredentialResponse,
+    ) {
 
         // Handle the successfully returned credential.
         val credential = result.credential
@@ -165,16 +165,9 @@ class GoogleLoginRepositoryImpl(
                         // purposes, but don't use them to store or control access to user
                         // data. For that you first need to validate the token:
                         // pass googleIdTokenCredential.getIdToken() to the backend server.
-//                        val idToken = googleIdTokenCredential.idToken
+                        val idToken = googleIdTokenCredential.idToken
 
-                        val userGoogleData = getCurrentUserResponse()
-                        if (userGoogleData?.isUserLogin() == true) {
-                            googleUserStateFlow.value = userGoogleData
-                        } else {
-                            googleUserStateFlow.value =
-                                getNewWithException("setupGoogleSignInLauncher Google sign in failed")
-                        }
-
+                        firebaseAuthWithGoogle(idToken)
                     } catch (e: GoogleIdTokenParsingException) {
                         Timber.d("Received an invalid google id token response")
                     }
@@ -185,6 +178,25 @@ class GoogleLoginRepositoryImpl(
 
             else -> {
                 Timber.d("Unexpected type of credential")
+            }
+        }
+    }
+
+    private fun firebaseAuthWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        firebaseAuth.signInWithCredential(credential).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val userGoogleData = getCurrentUserResponse()
+
+                if (userGoogleData?.isUserLogin() == true) {
+                    googleUserStateFlow.value = userGoogleData
+                } else {
+                    googleUserStateFlow.value =
+                        getNewWithException("setupGoogleSignInLauncher Google sign in failed")
+                }
+            } else {
+                googleUserStateFlow.value =
+                    getNewWithException("setupGoogleSignInLauncher Google sign in failed")
             }
         }
     }
@@ -220,7 +232,7 @@ class GoogleLoginRepositoryImpl(
     }
 
     override fun getUserUid(): String {
-        return firebaseAuth.currentUser?.uid ?: ""
+        return firebaseAuth.currentUser?.uid ?: googleUserStateFlow.value.uid
     }
 
     fun getCurrentUserResponse(

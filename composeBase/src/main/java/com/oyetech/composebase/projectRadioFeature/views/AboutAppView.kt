@@ -32,7 +32,7 @@ fun AboutAppView(
         modifier = Modifier,
     ) {
         Box(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(4.dp),
             contentAlignment = Alignment.Center
         ) {
             Column(
@@ -48,7 +48,7 @@ fun AboutAppView(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // Application Name
                 Text(
