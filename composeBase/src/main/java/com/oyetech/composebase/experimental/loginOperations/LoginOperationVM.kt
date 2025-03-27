@@ -3,6 +3,7 @@ package com.oyetech.composebase.experimental.loginOperations
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
+import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.AgeChanged
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.DeleteAccountClick
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.ErrorDismiss
@@ -16,6 +17,7 @@ import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.tools.coroutineHelper.asResult
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -36,6 +38,7 @@ class LoginOperationVM(
     val googleLoginRepository: GoogleLoginRepository,
     val profileRepository: FirebaseUserRepository,
     val userOperationViewModelSlice: UserOperationViewModelSlice,
+    val snackbarDelegate: SnackbarDelegate,
 ) : BaseViewModel(appDispatchers) {
 
     val loginOperationState =
@@ -152,6 +155,8 @@ class LoginOperationVM(
         viewModelScope.launch(getDispatcherIo()) {
             profileRepository.deleteUser(googleLoginRepository.getUserUid())
             googleLoginRepository.removeUser(googleLoginRepository.getUserUid())
+            delay(500)
+            snackbarDelegate.triggerSnackbarState(LanguageKey.deleteAccountSuccess)
             loginOperationState.value = LoginOperationUiState()
             uiEvent.emit(LoginOperationUiEvent.OnCancelUserCreation)
         }

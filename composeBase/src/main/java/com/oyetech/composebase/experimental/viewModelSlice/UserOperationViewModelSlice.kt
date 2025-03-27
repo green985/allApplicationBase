@@ -3,7 +3,6 @@ package com.oyetech.composebase.experimental.viewModelSlice
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
-import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.Dispatchers
@@ -47,10 +46,6 @@ class UserOperationViewModelSlice(
                     onSuccess = { userData ->
                         if (userData != null) {
                             userPropertyState.value = userData
-                        }
-
-                        if (userData?.isUserDeleted == true) {
-                            snackbarDelegate.triggerSnackbarState(LanguageKey.deleteAccountSuccess)
                         }
                     },
                     onFailure = {
