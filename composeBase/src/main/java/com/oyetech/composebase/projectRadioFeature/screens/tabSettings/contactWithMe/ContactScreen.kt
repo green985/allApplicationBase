@@ -16,8 +16,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oyetech.composebase.helpers.viewProperties.hideKeyboard
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarEvent
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarSetup
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarState
@@ -30,10 +32,11 @@ fun ContactScreen(
     navigationRoute: (navigationRoute: String) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
+    val context = LocalContext.current
     LaunchedEffect(uiState.isContactWasSent) {
         if (uiState.isContactWasSent) {
             Timber.d(" ContactScreen isContactWasSent")
+            context.hideKeyboard()
             navigationRoute.invoke("back")
         }
     }

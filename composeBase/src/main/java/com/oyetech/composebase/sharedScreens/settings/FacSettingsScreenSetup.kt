@@ -106,6 +106,8 @@ fun FacSettingsScreen(
             }
 
             if (uiState.isUserLoggedIn) {
+                Spacer(modifier = Modifier.height(16.dp))
+
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
