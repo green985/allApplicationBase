@@ -13,6 +13,7 @@ data class FacSettingsUiState(
     val deleteAccountInfoText: String = LanguageKey.deleteAccountButtonText,
     val rateUs: String = LanguageKey.rateUs,
 
+    val isInfoDialogShown: Boolean = false,
     val isUserLoggedIn: Boolean = false,
     val username: String = "",
     val isDeleteAccountShown: Boolean = false,
@@ -23,6 +24,7 @@ data class FacSettingsUiState(
 sealed class FacSettingsUiEvent : BaseEvent() {
     data object ContactClicked : FacSettingsUiEvent()
     data object InfoClicked : FacSettingsUiEvent()
+    data object InfoDialogDismissed : FacSettingsUiEvent()
     data object PrivacyPolicyClicked : FacSettingsUiEvent()
     data object TermsAndConditionsClicked : FacSettingsUiEvent()
     data object LogoutClicked : FacSettingsUiEvent()

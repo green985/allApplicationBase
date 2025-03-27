@@ -46,7 +46,15 @@ class FacSettingsVm(
             }
 
             FacSettingsUiEvent.InfoClicked -> {
+                uiState.updateState {
+                    copy(isInfoDialogShown = true)
+                }
+            }
 
+            FacSettingsUiEvent.InfoDialogDismissed -> {
+                uiState.updateState {
+                    copy(isInfoDialogShown = false)
+                }
             }
 
             FacSettingsUiEvent.PrivacyPolicyClicked -> {

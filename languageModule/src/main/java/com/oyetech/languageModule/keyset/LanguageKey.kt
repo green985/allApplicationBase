@@ -11,6 +11,7 @@ Created by Erdi Özbek
  **/
 
 object LanguageKey {
+    var dismiss set(value) {} get() = LocalLanguageHelper.getStringWithKey("dismiss")
     var termsAndConditionText set(value) {} get() = LocalLanguageHelper.getStringWithKey("termsAndConditionText")
     var privacyPolicyText set(value) {} get() = LocalLanguageHelper.getStringWithKey("privacyPolicyText")
     var applicationInfoText set(value) {} get() = LocalLanguageHelper.getStringWithKey("applicationInfoText")

@@ -21,6 +21,7 @@ import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.helpers.general.GeneralSettings
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectQuotesFeature.quotes.views.AppInfoViewProperty
+import com.oyetech.composebase.projectQuotesFeature.views.dialogs.InfoDialogOperation
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarSetup
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarState
 import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.views.SimpleSettingsInfoViewSetup
@@ -58,6 +59,13 @@ fun FacSettingsScreenSetup(
             onConfirm = { vm.onEvent(FacSettingsUiEvent.DeleteAccountConfirmed) }
         )
     }
+    if (uiState.isInfoDialogShown) {
+        InfoDialogOperation(
+            onDismiss = { vm.onEvent(FacSettingsUiEvent.InfoDialogDismissed) },
+            titleText = "Deneme Title",
+            descriptionText = "Deneme Description"
+        )
+    }
 }
 
 @Suppress("FunctionName", "LongParameterList")
@@ -84,7 +92,9 @@ fun FacSettingsScreen(
                 text = uiState.contactWithMeText
             )
             SimpleSettingsInfoViewSetup(
-                onClick = { onEvent.invoke(FacSettingsUiEvent.InfoClicked) },
+                onClick = {
+                    onEvent.invoke(FacSettingsUiEvent.InfoClicked)
+                },
                 text = uiState.infoText
             )
             SimpleSettingsInfoViewSetup(

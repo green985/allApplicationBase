@@ -15,7 +15,7 @@ import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.Radio
 import com.oyetech.composebase.projectRadioFeature.screens.radioSearchList.RadioSearchListScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.tabAllList.TabAllListScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.TabSettingsScreenSetup
-import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactWithMe.ContactScreen
+import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactWithMe.ContactScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.tagList.TagListScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.views.dialogs.timerDialog.RadioCountTimerDialogSetup
 import com.oyetech.models.radioProject.enums.RadioListEnums
@@ -29,7 +29,7 @@ fun NavGraphBuilder.radioAppNavigation(navController: NavController) {
     }
     // TabRadioAllList Route
     composable(RadioAppProjectRoutes.ContactScreen.route) {
-        ContactScreen(navigationRoute = navigateRouteOperation(navController))
+        ContactScreenSetup(navigationRoute = navigateRouteOperation(navController))
     }
     composable(RadioAppProjectRoutes.RadioSearchList.route) {
         RadioSearchListScreenSetup(navigationRoute = navigateRouteOperation(navController))

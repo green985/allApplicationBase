@@ -15,7 +15,7 @@ import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailScr
 import com.oyetech.composebase.projectQuotesFeature.searchScreen.QuoteSearchScreenSetup
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.navigateRouteOperation
 import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
-import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactWithMe.ContactScreen
+import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactWithMe.ContactScreenSetup
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailScreenSetup
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListScreenSetup
 import com.oyetech.composebase.sharedScreens.settings.FacSettingsScreenSetup
@@ -59,7 +59,7 @@ fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
     }
 
     composable(QuoteAppProjectRoutes.ContactScreen.route) {
-        ContactScreen(navigationRoute = navigateRouteOperation(navController))
+        ContactScreenSetup(navigationRoute = navigateRouteOperation(navController))
     }
 
     // TabHistory Route

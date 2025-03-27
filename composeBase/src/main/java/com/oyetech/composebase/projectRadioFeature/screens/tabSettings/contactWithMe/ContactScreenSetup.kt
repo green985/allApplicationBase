@@ -20,14 +20,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.helpers.viewProperties.hideKeyboard
-import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarEvent
+import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactWithMe.ContactUIEvent.Submit
+import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactWithMe.ContactUIEvent.UpdateMessage
+import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactWithMe.ContactUIEvent.UpdateName
+import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarEvent.BackButtonClick
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarSetup
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarState
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 
 @Composable
-fun ContactScreen(
+fun ContactScreenSetup(
     viewModel: ContactViewModel = koinViewModel(),
     navigationRoute: (navigationRoute: String) -> Unit = {},
 ) {
@@ -37,18 +41,28 @@ fun ContactScreen(
         if (uiState.isContactWasSent) {
             Timber.d(" ContactScreen isContactWasSent")
             context.hideKeyboard()
+            delay(100)
             navigationRoute.invoke("back")
         }
     }
 
 
 
+    ContactScreenn(navigationRoute, uiState, onEvent = { viewModel.onEvent(it) })
+}
+
+@Composable
+private fun ContactScreenn(
+    navigationRoute: (navigationRoute: String) -> Unit,
+    uiState: ContactUIState,
+    onEvent: (ContactUIEvent) -> Unit,
+) {
     Scaffold(
         topBar = {
             RadioToolbarSetup(
                 RadioToolbarState(title = "Contact with me", showBackButton = true),
                 onEvent = {
-                    if (it is RadioToolbarEvent.BackButtonClick) {
+                    if (it is BackButtonClick) {
                         navigationRoute.invoke("back")
                     }
                 })
@@ -64,7 +78,7 @@ fun ContactScreen(
 
             OutlinedTextField(
                 value = uiState.name,
-                onValueChange = { viewModel.onEvent(ContactUIEvent.UpdateName(it)) },
+                onValueChange = { onEvent(UpdateName(it)) },
                 label = { Text("Name") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -92,7 +106,7 @@ fun ContactScreen(
 
             OutlinedTextField(
                 value = uiState.message,
-                onValueChange = { viewModel.onEvent(ContactUIEvent.UpdateMessage(it)) },
+                onValueChange = { onEvent(UpdateMessage(it)) },
                 label = { Text("Message") },
                 modifier = Modifier.fillMaxWidth(),
                 maxLines = 4
@@ -111,7 +125,7 @@ fun ContactScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             FilledTonalButton(
-                onClick = { viewModel.onEvent(ContactUIEvent.Submit) },
+                onClick = { onEvent(Submit) },
                 enabled = uiState.name.isNotBlank() && uiState.message.isNotBlank() && uiState.isEmailValid
             ) {
                 Text("Submit")
@@ -123,5 +137,14 @@ fun ContactScreen(
 @Preview(showBackground = true)
 @Composable
 fun ContactScreenPreview() {
-    ContactScreen()
+    ContactScreenn(
+        navigationRoute = {}, uiState = ContactUIState(
+            name = "Fernando Pugh",
+            email = "perry.mckinney@example.com",
+            message = "dignissim",
+            isEmailValid = false,
+            isDescriptionEmpty = false,
+            isContactWasSent = false
+        ), {}
+    )
 }
