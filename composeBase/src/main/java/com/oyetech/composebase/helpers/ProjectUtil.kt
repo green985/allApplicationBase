@@ -7,7 +7,8 @@ Created by Erdi Özbek
  **/
 
 object ProjectUtil {
-    const val backgroudAlpha = 0.53f
+    const val backgroudAlpha = 0.85f
+    const val loadingBackgroudAlpha = 0.55f
 
     val genderList = listOf("male", "female", "other")
 }

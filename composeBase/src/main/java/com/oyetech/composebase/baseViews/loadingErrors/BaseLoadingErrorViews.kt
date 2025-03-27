@@ -22,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,48 +44,13 @@ fun LoadingScreenFullSize(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background.copy(alpha = ProjectUtil.backgroudAlpha))
+            .background(MaterialTheme.colorScheme.background.copy(alpha = ProjectUtil.loadingBackgroudAlpha))
             .clickable(
                 enabled = false,
                 onClick = {}), // Kullanıcı aksiyonlarını bloklamak için
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(color = MaterialTheme.colorScheme.onBackground)
-    }
-}
-
-@Suppress("FunctionName")
-
-@Composable
-fun ErrorScreenFullSize(
-    errorMessage: String = "",
-    onDismiss: (() -> Unit)? = null,
-    onRetry: (() -> Unit)? = null,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background.copy(alpha = ProjectUtil.backgroudAlpha)),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(text = errorMessage.toErrorMessage(), color = MaterialTheme.colorScheme.error)
-            if (onDismiss != null) {
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(onClick = onDismiss) {
-                    Text(text = "Dismiss")
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-            if (onRetry != null) {
-                Button(onClick = onRetry) {
-                    Text(text = "Retry")
-                }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-        }
     }
 }
 
@@ -126,7 +92,7 @@ fun PagingMoreLoading() {
         modifier = Modifier
             .fillMaxWidth()
             .height(RadioDimensions.listLoadingItemHeight)
-            .background(MaterialTheme.colorScheme.background.copy(alpha = ProjectUtil.backgroudAlpha))
+            .background(MaterialTheme.colorScheme.background.copy(alpha = ProjectUtil.loadingBackgroudAlpha))
             .verticalScroll(rememberScrollState())
             .clickable(
                 enabled = false,
@@ -148,7 +114,7 @@ fun LoadingDialogFullScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background.copy(alpha = ProjectUtil.backgroudAlpha)),
+                .background(MaterialTheme.colorScheme.background.copy(alpha = ProjectUtil.loadingBackgroudAlpha)),
             contentAlignment = Alignment.Center,
         ) {
             CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
@@ -182,12 +148,13 @@ fun ErrorDialogFullScreen(
                     Text(
                         textAlign = TextAlign.Center,
                         text = errorMessage.toErrorMessage(),
+                        style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.error
                     )
                 }
                 if (onDismiss != null) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = onDismiss) {
+                    Spacer(modifier = Modifier.height(64.dp))
+                    TextButton(onClick = onDismiss) {
                         Text(text = "Dismiss")
                     }
                 }
@@ -204,3 +171,41 @@ fun ErrorDialogFullScreen(
     }
 }
 
+@Deprecated("Use ErrorDialogFullScreen instead")
+@Suppress("FunctionName")
+@Composable
+fun ErrorScreenFullSize(
+    errorMessage: String = "",
+    onDismiss: (() -> Unit)? = null,
+    onRetry: (() -> Unit)? = null,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background.copy(alpha = ProjectUtil.backgroudAlpha)),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = errorMessage.toErrorMessage(),
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.error
+            )
+            if (onDismiss != null) {
+                Spacer(modifier = Modifier.height(64.dp))
+                Button(onClick = onDismiss) {
+                    Text(text = "Dismiss")
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+            if (onRetry != null) {
+                Button(onClick = onRetry) {
+                    Text(text = "Retry")
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
+}

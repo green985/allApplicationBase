@@ -145,7 +145,7 @@ fun CommentScreenWithContentScreenSetup(
 
 @Preview
 @Composable
-fun CommentInputViewPreview() {
+private fun CommentInputViewPreview() {
     CommentInputView(uiState = CommentScreenUiState(
         contentId = "malesuada",
         commentInput = "no",
