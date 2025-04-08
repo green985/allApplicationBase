@@ -79,13 +79,6 @@ fun UserListScreen(
                 .padding(it)
         ) {
 
-//            Button(
-//                onClick = {
-//                    onEvent(UserListEvent.RemoveUserFromList)
-//                }
-//            ) {
-//                Text("Remove from list")
-//            }
 
             GenericListScreenSetup2(
                 lazyColumnState = lazyColumnState,
