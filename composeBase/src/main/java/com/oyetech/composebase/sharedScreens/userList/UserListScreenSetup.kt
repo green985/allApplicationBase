@@ -57,7 +57,7 @@ fun UserListScreenSetup(
 
 }
 
-@Suppress("FunctionName")
+@Suppress("FunctionName", "LongParameterList")
 @Composable
 fun UserListScreen(
     modifier: Modifier = Modifier,
@@ -78,7 +78,6 @@ fun UserListScreen(
                 .fillMaxSize()
                 .padding(it)
         ) {
-
 
             GenericListScreenSetup2(
                 lazyColumnState = lazyColumnState,
