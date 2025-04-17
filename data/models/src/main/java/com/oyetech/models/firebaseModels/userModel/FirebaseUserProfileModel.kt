@@ -21,6 +21,7 @@ data class FirebaseUserProfileModel(
     val username: String = "",
     val displayName: String = "",
     val userId: String = "",
+    val notificationToken: String = "",
 
     val gender: String = "",
     val age: String = "",

@@ -13,6 +13,7 @@ import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.OnSubmit
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.UsernameChanged
 import com.oyetech.composebase.experimental.viewModelSlice.UserOperationViewModelSlice
+import com.oyetech.domain.repository.firebase.FirebaseTokenOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.languageModule.keyset.LanguageKey
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -37,6 +39,7 @@ class LoginOperationVM(
     appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     val googleLoginRepository: GoogleLoginRepository,
     val profileRepository: FirebaseUserRepository,
+    val firebaseTokenOperationRepository: FirebaseTokenOperationRepository,
     val userOperationViewModelSlice: UserOperationViewModelSlice,
     val snackbarDelegate: SnackbarDelegate,
 ) : BaseViewModel(appDispatchers) {
@@ -48,9 +51,18 @@ class LoginOperationVM(
 
     init {
         Timber.d("LoginOperationVM init")
+        observeUserNotificationToken()
         googleLoginRepository.autoLoginOperation()
         observeProfileData()
         observeUserState()
+    }
+
+    private fun observeUserNotificationToken() {
+        viewModelScope.launch(getDispatcherIo()) {
+            firebaseTokenOperationRepository.firebaseTokenStateFlow.asResult().collectLatest {
+                Timber.d("Firebase Token State Flow: $it")
+            }
+        }
     }
 
     fun getLoginOperationSharedState(): SharedFlow<LoginOperationUiState> {
@@ -164,6 +176,37 @@ class LoginOperationVM(
     }
 
     private fun onSubmitOperation(): Boolean {
+        if (isErrorInLoginForm()) {
+            return true
+        }
+
+        loginOperationState.updateState {
+            copy(isLoading = true)
+        }
+        viewModelScope.launch(getDispatcherIo()) {
+            val userData = profileRepository.userDataStateFlow.value
+            if (userData == null) {
+                loginOperationState.updateState {
+                    copy(
+                        isLoading = false,
+                        isError = true,
+                        errorMessage = "User not found"
+                    )
+                }
+                return@launch
+            }
+
+            val editedUserData = userData.copy(
+                username = loginOperationState.value.displayName,
+                age = loginOperationState.value.age,
+                gender = loginOperationState.value.gender
+            )
+            profileRepository.updateUserProperty(editedUserData)
+        }
+        return false
+    }
+
+    fun isErrorInLoginForm(): Boolean {
         if (loginOperationState.value.displayName.isBlank()) {
             loginOperationState.updateState {
                 copy(
@@ -213,31 +256,8 @@ class LoginOperationVM(
             }
             return true
         }
-
-        loginOperationState.updateState {
-            copy(isLoading = true)
-        }
-        viewModelScope.launch(getDispatcherIo()) {
-            val userData = profileRepository.userDataStateFlow.value
-            if (userData == null) {
-                loginOperationState.updateState {
-                    copy(
-                        isLoading = false,
-                        isError = true,
-                        errorMessage = "User not found"
-                    )
-                }
-                return@launch
-            }
-
-            val editedUserData = userData.copy(
-                username = loginOperationState.value.displayName,
-                age = loginOperationState.value.age,
-                gender = loginOperationState.value.gender
-            )
-            profileRepository.updateUserName(editedUserData)
-        }
         return false
     }
+
 
 }

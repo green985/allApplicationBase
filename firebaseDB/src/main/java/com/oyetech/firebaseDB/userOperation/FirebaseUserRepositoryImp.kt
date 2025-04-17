@@ -17,38 +17,38 @@ class FirebaseUserRepositoryImp(
 ) : FirebaseUserRepository {
 
     override val userDataStateFlow = MutableStateFlow<FirebaseUserProfileModel?>(null)
+//
+//    override suspend fun updateUserName(username: String) {
+//        val userData = userDataStateFlow.value
+//        if (userData == null) {
+//            userDataStateFlow.value = userDataStateFlow.value?.copy(
+//                errorException = Exception("User not found")
+//            )
+//            return
+//        }
+//
+//        val isUsernameInUse = checkIsUsernameInUse(username).firstOrNull() ?: false
+//        Timber.d("isUsernameInUse: $isUsernameInUse")
+//        if (isUsernameInUse) {
+//            userDataStateFlow.value =
+//                userDataStateFlow.value?.copy(errorException = Exception("Username is already in use"))
+//            return
+//        }
+//
+//        var newUserDataModel = userData.copy(username = username)
+//
+//        firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(userData.userId).set(
+//            newUserDataModel,
+//        ).addOnSuccessListener {
+//            newUserDataModel = newUserDataModel.copy(errorException = null)
+//            userDataStateFlow.value = newUserDataModel
+//        }.addOnFailureListener { exception ->
+//            userDataStateFlow.value = userDataStateFlow.value?.copy(errorException = exception)
+//        }
+//
+//    }
 
-    override suspend fun updateUserName(username: String) {
-        val userData = userDataStateFlow.value
-        if (userData == null) {
-            userDataStateFlow.value = userDataStateFlow.value?.copy(
-                errorException = Exception("User not found")
-            )
-            return
-        }
-
-        val isUsernameInUse = checkIsUsernameInUse(username).firstOrNull() ?: false
-        Timber.d("isUsernameInUse: $isUsernameInUse")
-        if (isUsernameInUse) {
-            userDataStateFlow.value =
-                userDataStateFlow.value?.copy(errorException = Exception("Username is already in use"))
-            return
-        }
-
-        var newUserDataModel = userData.copy(username = username)
-
-        firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(userData.userId).set(
-            newUserDataModel,
-        ).addOnSuccessListener {
-            newUserDataModel = newUserDataModel.copy(errorException = null)
-            userDataStateFlow.value = newUserDataModel
-        }.addOnFailureListener { exception ->
-            userDataStateFlow.value = userDataStateFlow.value?.copy(errorException = exception)
-        }
-
-    }
-
-    override suspend fun updateUserName(userData: FirebaseUserProfileModel) {
+    override suspend fun updateUserProperty(userData: FirebaseUserProfileModel) {
         val isUsernameInUse = checkIsUsernameInUse(userData.username).firstOrNull() ?: false
         Timber.d("isUsernameInUse: $isUsernameInUse")
         if (isUsernameInUse) {

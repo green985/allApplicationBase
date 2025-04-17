@@ -5,7 +5,6 @@ import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.sharedScreens.messaging.MessageOperationVM
 import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserListOperationRepository
-import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.domain.useCases.helpers.AppReviewOperationUseCase
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.delay
@@ -23,7 +22,6 @@ class GeneralOperationVM(
     appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     private val appReviewOperationUseCase: AppReviewOperationUseCase,
     private val sharedHelperRepository: SharedOperationRepository,
-    private val googleLoginRepository: GoogleLoginRepository,
     private val firebaseUserListOperationRepository: FirebaseUserListOperationRepository,
     private val messageOperationVM: MessageOperationVM,
 ) : BaseViewModel(appDispatchers) {
@@ -45,12 +43,6 @@ class GeneralOperationVM(
     fun dismissDialog() {
         getReviewCanShowState().value = false
         sharedHelperRepository.setReviewAlreadyShown(true)
-    }
-
-    fun signInWithGoogleAnonymous() {
-        viewModelScope.launch(getDispatcherIo()) {
-            googleLoginRepository.signInWithGoogleAnonymous()
-        }
     }
 
     fun observeRealtimeMessages() {}

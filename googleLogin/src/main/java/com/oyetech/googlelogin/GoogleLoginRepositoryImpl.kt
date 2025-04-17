@@ -21,7 +21,6 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.oyetech.domain.helper.ActivityProviderUseCase
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
-import com.oyetech.models.firebaseModels.googleAuth.GoogleAuthResponseData
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData.Companion.getNewWithException
 import com.oyetech.models.firebaseModels.googleAuth.ProviderDataInfo
@@ -34,9 +33,6 @@ class GoogleLoginRepositoryImpl(
     private val activityProviderUseCase: ActivityProviderUseCase,
     private val firebaseUserRepository: FirebaseUserRepository,
 ) : GoogleLoginRepository {
-    override val googleAuthStateFlow =
-        MutableStateFlow(GoogleAuthResponseData())
-
     override val googleUserStateFlow =
         MutableStateFlow(GoogleUserResponseData())
     override val userAutoLoginStateFlow =
@@ -107,7 +103,6 @@ class GoogleLoginRepositoryImpl(
 
     private suspend fun signWithGoogle(autoLoginCheck: Boolean = false) {
         try {
-
             // Instantiate a Google sign-in request
             val googleIdOption = GetGoogleIdOption.Builder()
                 // Your server's client ID, not your Android client ID.
@@ -202,7 +197,6 @@ class GoogleLoginRepositoryImpl(
     }
 
     override fun autoLoginOperation() {
-        activity = getActivityOrSetError("") ?: return
         try {
             val currentUser = firebaseAuth.currentUser
             if (currentUser == null) {

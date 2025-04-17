@@ -19,7 +19,8 @@ interface FirebaseUserRepository {
     //    fun updateLastLogin(uid: String)
     fun getUserProfileWithUid(firebaseProfileUserModel: FirebaseUserProfileModel)
 
-    suspend fun updateUserName(username: String)
+//    suspend fun updateUserName(username: String)
+
     fun getUsername(): String
     fun getUserId(): String
     fun isMyContent(contentUsername: String): Boolean
@@ -28,6 +29,6 @@ interface FirebaseUserRepository {
         afterAction: (Boolean) -> Unit,
     )
 
-    suspend fun updateUserName(userData: FirebaseUserProfileModel)
+    suspend fun updateUserProperty(userData: FirebaseUserProfileModel)
     fun getUserProfileModel(): MutableStateFlow<FirebaseUserProfileModel?>
 }

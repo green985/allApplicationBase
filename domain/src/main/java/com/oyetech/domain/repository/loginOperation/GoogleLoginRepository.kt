@@ -1,6 +1,5 @@
 package com.oyetech.domain.repository.loginOperation
 
-import com.oyetech.models.firebaseModels.googleAuth.GoogleAuthResponseData
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -18,7 +17,6 @@ interface GoogleLoginRepository {
 
     val userAutoLoginStateFlow: MutableStateFlow<Boolean>
 
-    val googleAuthStateFlow: MutableStateFlow<GoogleAuthResponseData>
     val googleUserStateFlow: MutableStateFlow<GoogleUserResponseData>
 
     suspend fun signInWithGoogle()
