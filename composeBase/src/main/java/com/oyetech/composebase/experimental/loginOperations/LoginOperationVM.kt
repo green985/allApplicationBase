@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
+import com.oyetech.composebase.experimental.loginOperationNew.mapToProfileValue
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.AgeChanged
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.DeleteAccountClick
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.ErrorDismiss
@@ -12,11 +13,12 @@ import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.OnCancel
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.OnSubmit
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.UsernameChanged
-import com.oyetech.composebase.experimental.viewModelSlice.UserOperationViewModelSlice
 import com.oyetech.domain.repository.firebase.FirebaseTokenOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.models.firebaseModels.googleAuth.isUserHasUID
+import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -36,12 +38,11 @@ Created by Erdi Özbek
  **/
 
 class LoginOperationVM(
-    appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
-    val googleLoginRepository: GoogleLoginRepository,
-    val profileRepository: FirebaseUserRepository,
-    val firebaseTokenOperationRepository: FirebaseTokenOperationRepository,
-    val userOperationViewModelSlice: UserOperationViewModelSlice,
-    val snackbarDelegate: SnackbarDelegate,
+    appDispatchers: AppDispatchers,
+    private val googleLoginRepository: GoogleLoginRepository,
+    private val firebaseUserRepository: FirebaseUserRepository,
+    private val firebaseTokenOperationRepository: FirebaseTokenOperationRepository,
+    private val snackbarDelegate: SnackbarDelegate,
 ) : BaseViewModel(appDispatchers) {
 
     val loginOperationState =
@@ -51,30 +52,42 @@ class LoginOperationVM(
 
     init {
         Timber.d("LoginOperationVM init")
-        observeUserNotificationToken()
+        observeGoogleUserStateFlow()
+        observeUserProfileState()
         googleLoginRepository.autoLoginOperation()
-        observeProfileData()
-        observeUserState()
-    }
-
-    private fun observeUserNotificationToken() {
-        viewModelScope.launch(getDispatcherIo()) {
-            firebaseTokenOperationRepository.firebaseTokenStateFlow.asResult().collectLatest {
-                Timber.d("Firebase Token State Flow: $it")
-            }
-        }
+        updateUserToken()
     }
 
     fun getLoginOperationSharedState(): SharedFlow<LoginOperationUiState> {
         return loginOperationState.asSharedFlow()
     }
 
-    private fun observeProfileData() {
+    private fun updateUserToken() {
         viewModelScope.launch(getDispatcherIo()) {
-            googleLoginRepository.googleUserStateFlow.asResult().onEach {
+            firebaseTokenOperationRepository.firebaseTokenStateFlow.collectLatest { firebaseTokenOperationModel ->
+                if (firebaseTokenOperationModel?.notificationToken?.isBlank() == false) {
+                    uiEvent.collectLatest {
+                        if (it is LoginOperationUiEvent.OnLoginSuccess) {
+                            Timber.d("LoginOperationVM updateUserToken")
+                            firebaseUserRepository.updateUserNotificationToken(
+                                firebaseTokenOperationModel.notificationToken
+                            )
+                        } else {
+                            Timber.d("LoginOperationVM updateUserToken else")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun observeUserProfileState() {
+        viewModelScope.launch(getDispatcherIo()) {
+            firebaseUserRepository.userDataStateFlow.asResult().onEach {
+                Timber.d(" profileRepository User State Flow: $it")
                 it.fold(
-                    onSuccess = { googleUserResponseData ->
-                        mapToSignInValue(googleUserResponseData)
+                    onSuccess = { userData ->
+                        mapToProfileValue(userData)
                     },
                     onFailure = {
                         Timber.d(" Google User State Flow Error: $it")
@@ -84,15 +97,27 @@ class LoginOperationVM(
         }
     }
 
-    private fun observeUserState() {
+    private fun observeGoogleUserStateFlow() {
         viewModelScope.launch(getDispatcherIo()) {
-            profileRepository.userDataStateFlow.asResult().onEach {
-                Timber.d(" profileRepository User State Flow: $it")
+            googleLoginRepository.googleUserStateFlow.asResult().onEach {
                 it.fold(
-                    onSuccess = { userData ->
-                        mapToProfileValue(userData)
+                    onSuccess = { googleUserResponseData ->
+                        if (googleUserResponseData.isUserHasUID()) {
+                            val firebaseProfileUserModel =
+                                googleUserResponseData.toFirebaseUserProfileModel()
+                            firebaseUserRepository.getUserProfileWithUid(firebaseProfileUserModel)
+                        } else if (googleUserResponseData.errorException != null) {
+                            loginOperationState.value = LoginOperationUiState(
+                                isError = true,
+                                errorMessage = googleUserResponseData.errorException?.message ?: ""
+                            )
+                        }
                     },
                     onFailure = {
+                        loginOperationState.value = LoginOperationUiState(
+                            isError = true,
+                            errorMessage = it.message ?: ""
+                        )
                         Timber.d(" Google User State Flow Error: $it")
                     }
                 )
@@ -165,7 +190,7 @@ class LoginOperationVM(
 
     private fun deleteUserOperation(): Boolean {
         viewModelScope.launch(getDispatcherIo()) {
-            profileRepository.deleteUser(googleLoginRepository.getUserUid())
+            firebaseUserRepository.deleteUser(googleLoginRepository.getUserUid())
             googleLoginRepository.removeUser(googleLoginRepository.getUserUid())
             delay(500)
             snackbarDelegate.triggerSnackbarState(LanguageKey.deleteAccountSuccess)
@@ -184,7 +209,7 @@ class LoginOperationVM(
             copy(isLoading = true)
         }
         viewModelScope.launch(getDispatcherIo()) {
-            val userData = profileRepository.userDataStateFlow.value
+            val userData = firebaseUserRepository.userDataStateFlow.value
             if (userData == null) {
                 loginOperationState.updateState {
                     copy(
@@ -201,12 +226,12 @@ class LoginOperationVM(
                 age = loginOperationState.value.age,
                 gender = loginOperationState.value.gender
             )
-            profileRepository.updateUserProperty(editedUserData)
+            firebaseUserRepository.updateUserProperty(editedUserData)
         }
         return false
     }
 
-    fun isErrorInLoginForm(): Boolean {
+    private fun isErrorInLoginForm(): Boolean {
         if (loginOperationState.value.displayName.isBlank()) {
             loginOperationState.updateState {
                 copy(

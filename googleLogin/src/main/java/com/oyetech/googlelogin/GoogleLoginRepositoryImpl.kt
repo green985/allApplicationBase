@@ -25,7 +25,7 @@ import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData.Companion.getNewWithException
 import com.oyetech.models.firebaseModels.googleAuth.ProviderDataInfo
 import com.oyetech.models.firebaseModels.googleAuth.UserMetadata
-import com.oyetech.models.firebaseModels.googleAuth.isUserLogin
+import com.oyetech.models.firebaseModels.googleAuth.isUserHasUID
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
 
@@ -53,7 +53,7 @@ class GoogleLoginRepositoryImpl(
                         if (task.isSuccessful) {
                             // Sign in success, update UI with the signed-in user's information
                             val userGoogleData = getCurrentUserResponse()
-                            if (userGoogleData?.isUserLogin() == true) {
+                            if (userGoogleData?.isUserHasUID() == true) {
                                 googleUserStateFlow.value = userGoogleData
                             } else {
                                 googleUserStateFlow.value =
@@ -66,7 +66,7 @@ class GoogleLoginRepositoryImpl(
                     }
             } else {
                 val userGoogleData = getCurrentUserResponse()
-                if (userGoogleData == null || !userGoogleData.isUserLogin()) {
+                if (userGoogleData == null || !userGoogleData.isUserHasUID()) {
                     googleUserStateFlow.value =
                         getNewWithException("setupGoogleSignInLauncher Google sign in failed")
                 } else {
@@ -88,7 +88,7 @@ class GoogleLoginRepositoryImpl(
                 signWithGoogle()
             } else {
                 val userGoogleData = getCurrentUserResponse()
-                if (userGoogleData == null || !userGoogleData.isUserLogin()) {
+                if (userGoogleData == null || !userGoogleData.isUserHasUID()) {
                     googleUserStateFlow.value =
                         getNewWithException("setupGoogleSignInLauncher Google sign in failed")
                 } else {
@@ -183,7 +183,7 @@ class GoogleLoginRepositoryImpl(
             if (task.isSuccessful) {
                 val userGoogleData = getCurrentUserResponse()
 
-                if (userGoogleData?.isUserLogin() == true) {
+                if (userGoogleData?.isUserHasUID() == true) {
                     googleUserStateFlow.value = userGoogleData
                 } else {
                     googleUserStateFlow.value =
@@ -204,7 +204,7 @@ class GoogleLoginRepositoryImpl(
                 userAutoLoginStateFlow.value = true
             } else {
                 val userGoogleData = getCurrentUserResponse()
-                if (userGoogleData == null || !userGoogleData.isUserLogin()) {
+                if (userGoogleData == null || !userGoogleData.isUserHasUID()) {
                     // maybe exception but not neccesserry...
                     userAutoLoginStateFlow.value = true
                 } else {

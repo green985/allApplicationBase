@@ -18,15 +18,21 @@ data class FirebaseUserProfileModel(
     val isUserDeleted: Boolean = false,
 
     val isAnonymous: Boolean = false,
-    val username: String = "",
-    val displayName: String = "",
-    val userId: String = "",
     val notificationToken: String = "",
-
-    val gender: String = "",
-    val age: String = "",
 
     val lastSignInTimestamp: Long? = null,
     val creationTimestamp: Long = System.currentTimeMillis(),
-)
+
+    val userId: String = "",
+    val username: String = "",
+    val gender: String = "",
+    val age: String = "",
+
+    ) {
+    fun isProfileComplete(): Boolean {
+        return username.isNotBlank()
+                && userId.isNotBlank()
+                && gender.isNotBlank()
+    }
+}
 

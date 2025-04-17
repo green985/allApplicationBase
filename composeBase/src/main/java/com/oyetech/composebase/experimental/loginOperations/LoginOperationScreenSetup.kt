@@ -1,12 +1,10 @@
 package com.oyetech.composebase.experimental.loginOperations
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorDialogFullScreen
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingDialogFullScreen
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.ErrorDismiss
@@ -30,11 +28,9 @@ fun LoginOperationScreenSetup(navigationRoute: (navigationRoute: String) -> Unit
 
     val uiState by vm.loginOperationState.collectAsState()
 
-    if (uiState.isLogin) {
-        if (uiState.displayNameRemote.isBlank()) {
-            LaunchedEffect(uiState.displayNameRemote) {
-                navigationRoute.invoke(RadioAppProjectRoutes.CompleteProfileScreen.route)
-            }
+    if (uiState.isRegistrationCompleteNeeded) {
+        LaunchedEffect(Unit) {
+            navigationRoute.invoke(RadioAppProjectRoutes.CompleteProfileScreen.route)
         }
     }
 
@@ -45,34 +41,5 @@ fun LoginOperationScreenSetup(navigationRoute: (navigationRoute: String) -> Unit
             errorMessage = uiState.errorMessage,
             onDismiss = { vm.handleEvent(ErrorDismiss) }
         )
-    }
-}
-
-@SuppressLint("FunctionNaming", "UnusedParameter")
-@Composable
-fun LoginOperationScreen(uiState: LoginOperationUiState, onEvent: (LoginOperationEvent) -> Unit) {
-    BaseScaffold {
-        Column {
-//            Spacer(modifier = Modifier.height(64.dp))
-//            Row(modifier = Modifier.fillMaxWidth()) {
-//
-//                if (uiState.isUserDeleted) {
-//                    Text(text = LanguageKey.accountDeleted + uiState.toString())
-//                } else {
-//                    Text(text = "Login Operation Screen == " + uiState.toString())
-//                }
-//            }
-//            Spacer(modifier = Modifier.height(32.dp))
-//
-//            Button({ onEvent.invoke(LoginOperationEvent.LoginClicked) }) {
-//                Text(text = LanguageKey.login)
-//            }
-//            Spacer(modifier = Modifier.height(32.dp))
-//
-//            Button({ onEvent.invoke(LoginOperationEvent.DeleteAccountClick) }) {
-//                Text(text = LanguageKey.deleteAccountButtonText)
-//            }
-        }
-
     }
 }

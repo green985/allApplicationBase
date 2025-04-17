@@ -31,4 +31,5 @@ interface FirebaseUserRepository {
 
     suspend fun updateUserProperty(userData: FirebaseUserProfileModel)
     fun getUserProfileModel(): MutableStateFlow<FirebaseUserProfileModel?>
+    fun updateUserNotificationToken(notificationToken: String)
 }

@@ -20,8 +20,6 @@ data class GoogleUserResponseData(
     fun toFirebaseUserProfileModel(): FirebaseUserProfileModel {
         return FirebaseUserProfileModel(
             userId = uid,
-            username = "",
-            displayName = displayName ?: "",
             isAnonymous = isAnonymous,
             creationTimestamp = metadata?.creationTimestamp ?: 0,
             lastSignInTimestamp = metadata?.lastSignInTimestamp,
@@ -43,7 +41,7 @@ data class GoogleUserResponseData(
 
 fun GoogleUserResponseData?.isUserAnonymous() = this?.isAnonymous ?: false
 
-fun GoogleUserResponseData?.isUserLogin(): Boolean = this?.uid?.isNotEmpty() ?: false
+fun GoogleUserResponseData?.isUserHasUID(): Boolean = this?.uid?.isNotEmpty() ?: false
 
 data class UserMetadata(
     val creationTimestamp: Long? = null,

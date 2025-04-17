@@ -23,14 +23,17 @@ data class LoginOperationUiState(
     val uid: String = "",
     val displayNameRemote: String = "",
     val photoUrl: String = "",
-    val isLogin: Boolean = uid.isNotBlank(),
     val isAnonymous: Boolean = false,
     val lastSignInTimestamp: Long? = null,
+
+    // uid sadece profil alindiginda set ediliyor yani kontrol icin guzel bir alan
+    val isLogin: Boolean = uid.isNotBlank(),
+    val isRegistrationCompleteNeeded: Boolean = false,
 )
 
 sealed class LoginOperationUiEvent : BaseUIEvent() {
     object OnCancelUserCreation : LoginOperationUiEvent()
-    object OnRegisterSuccess : LoginOperationUiEvent()
+    object OnLoginSuccess : LoginOperationUiEvent()
 }
 
 sealed class LoginOperationEvent : BaseEvent() {

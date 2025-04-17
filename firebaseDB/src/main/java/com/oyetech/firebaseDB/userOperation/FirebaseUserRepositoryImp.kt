@@ -17,36 +17,6 @@ class FirebaseUserRepositoryImp(
 ) : FirebaseUserRepository {
 
     override val userDataStateFlow = MutableStateFlow<FirebaseUserProfileModel?>(null)
-//
-//    override suspend fun updateUserName(username: String) {
-//        val userData = userDataStateFlow.value
-//        if (userData == null) {
-//            userDataStateFlow.value = userDataStateFlow.value?.copy(
-//                errorException = Exception("User not found")
-//            )
-//            return
-//        }
-//
-//        val isUsernameInUse = checkIsUsernameInUse(username).firstOrNull() ?: false
-//        Timber.d("isUsernameInUse: $isUsernameInUse")
-//        if (isUsernameInUse) {
-//            userDataStateFlow.value =
-//                userDataStateFlow.value?.copy(errorException = Exception("Username is already in use"))
-//            return
-//        }
-//
-//        var newUserDataModel = userData.copy(username = username)
-//
-//        firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(userData.userId).set(
-//            newUserDataModel,
-//        ).addOnSuccessListener {
-//            newUserDataModel = newUserDataModel.copy(errorException = null)
-//            userDataStateFlow.value = newUserDataModel
-//        }.addOnFailureListener { exception ->
-//            userDataStateFlow.value = userDataStateFlow.value?.copy(errorException = exception)
-//        }
-//
-//    }
 
     override suspend fun updateUserProperty(userData: FirebaseUserProfileModel) {
         val isUsernameInUse = checkIsUsernameInUse(userData.username).firstOrNull() ?: false
@@ -77,12 +47,10 @@ class FirebaseUserRepositoryImp(
             .set(user)
             .addOnSuccessListener {
                 userDataStateFlow.value = user.copy()
-
             }
             .addOnFailureListener { exception ->
                 userDataStateFlow.value =
                     FirebaseUserProfileModel(errorException = Exception(LanguageKey.createUserErrorMessage))
-
                 println("Error creating user: ${exception.message}")
             }
     }
@@ -179,26 +147,18 @@ class FirebaseUserRepositoryImp(
         return username == contentUsername
     }
 
-//
-//    fun updateLastLogin(uid: String) {
-//        val userDocRef = firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(uid)
-//
-//        userDocRef.get()
-//            .addOnSuccessListener { documentSnapshot ->
-//                val currentUser = documentSnapshot.toObject(FirebaseUserProfileModel::class.java)
-//                if (currentUser != null) {
-//                        .addOnSuccessListener {
-//                            userDataStateFlow.tryEmit(updatedUser)
-//                        }
-//                        .addOnFailureListener { exception ->
-//                            println("Error updating user: ${exception.message}")
-//                        }
-//                } else {
-//                    println("User not found!")
-//                }
-//            }
-//            .addOnFailureListener { exception ->
-//                println("Error fetching user: ${exception.message}")
-//            }
-//    }
+    override fun updateUserNotificationToken(notificationToken: String) {
+        val userId = getUserId()
+        val userDocRef =
+            firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(userId)
+
+        userDocRef.update(notificationToken, notificationToken)
+            .addOnSuccessListener {
+                Timber.d("Notification token updated successfully")
+            }
+            .addOnFailureListener { exception ->
+                Timber.e("Error updating notification token: ${exception.message}")
+            }
+    }
+
 }

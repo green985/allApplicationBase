@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.baseViews.helper.GenderSegmentedControl
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationUiEvent.OnCancelUserCreation
-import com.oyetech.composebase.experimental.loginOperations.LoginOperationUiEvent.OnRegisterSuccess
+import com.oyetech.composebase.experimental.loginOperations.LoginOperationUiEvent.OnLoginSuccess
 import com.oyetech.composebase.helpers.viewProperties.DialogHelper
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarSetup
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarState
@@ -43,7 +43,7 @@ fun CompleteProfileScreenSetup(navigationRoute: (navigationRoute: String) -> Uni
             }
         }
 
-        OnRegisterSuccess -> {
+        OnLoginSuccess -> {
             LaunchedEffect(Unit) {
                 navigationRoute.invoke("back")
             }
@@ -56,12 +56,6 @@ fun CompleteProfileScreenSetup(navigationRoute: (navigationRoute: String) -> Uni
 
     CompleteProfileScreen(uiState = uiState, onEvent = { vm.handleEvent(it) })
 
-    if (uiState.displayNameRemote.isNotBlank()) {
-        LaunchedEffect(uiState.displayNameRemote) {
-            // Snackbar success message
-            navigationRoute.invoke("back")
-        }
-    }
 
     BackHandler {
         Timber.d("BackHandler")
