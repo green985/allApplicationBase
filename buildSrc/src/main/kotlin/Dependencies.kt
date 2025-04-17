@@ -11,6 +11,7 @@ object FirebaseLibrary {
     const val firestoreDB = "com.google.firebase:firebase-firestore-ktx"
     const val firestoreDatabase = "com.google.firebase:firebase-database-ktx"
     const val messaging = "com.google.firebase:firebase-messaging-ktx"
+    const val inappmessaging = "com.google.firebase:firebase-inappmessaging-display"
     const val firebaseAuthBom = "com.google.firebase:firebase-auth"
     const val authKTX = "com.google.firebase:firebase-auth-ktx:${Versions.authKTX}"
     const val locationn = "com.google.android.gms:play-services-location:${Versions.location}"

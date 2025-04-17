@@ -4,7 +4,8 @@ plugins {
 }
 
 android {
-    namespace = "com.oyetech.languageimp"
+    namespace = "com.oyetech.notificationmodule"
+
     compileSdk = Versions.compileSdk
 
     defaultConfig {
@@ -19,17 +20,10 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
-        freeCompilerArgs += "-Xcontext-receivers"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
     }
 }
 
 dependencies {
-
     implementation(AndroidLibraries.coreKtx)
 
 
@@ -44,4 +38,10 @@ dependencies {
     implementation("io.insert-koin:koin-core")
     implementation("io.insert-koin:koin-androidx-compose")
     implementation("io.insert-koin:koin-androidx-compose-navigation")
+
+
+    implementation(platform(FirebaseLibrary.firebaseBom))
+    implementation(FirebaseLibrary.messaging)
+    implementation(FirebaseLibrary.inappmessaging)
+    implementation("com.jakewharton.timber:timber:4.7.1")
 }

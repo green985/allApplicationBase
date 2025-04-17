@@ -43,6 +43,7 @@ object Modules {
     const val radioOperationModule = ":radioOperationModule"
     const val audioPlayerHelper = ":audioPlayerHelper"
     const val diModule = ":diModule"
+    const val notificationModule = ":notificationModule"
 
     const val contentPlayer = ":features:contentPlayer"
 

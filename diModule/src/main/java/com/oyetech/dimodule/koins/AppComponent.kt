@@ -14,6 +14,7 @@ import com.oyetech.glidemodule.GlideModuleDi
 import com.oyetech.googlelogin.di.GoogleSignInModule
 import com.oyetech.languageimp.LanguageImplModule
 import com.oyetech.local.di.RadioLocalModuleDi
+import com.oyetech.notificationmodule.di.FirebaseNotificationModule
 import com.oyetech.quotes.QuotesLocalModuleDi
 import com.oyetech.radiooperationmodule.di.RadioOperationModuleDi
 import com.oyetech.radioservice.di.RadioServiceModule
@@ -64,6 +65,7 @@ object AppComponent {
         GlideModuleDi.glideModule,
         GoogleAppReviewerModule.googlePlayReviewerModule,
         FirebaseDBModule.firebaseDBModulee,
+        FirebaseNotificationModule.module,
 
         QuotesImpModule.quoteImpModule,
         QuotesRemoteModule.createZenQuotesRemoteModule(),

@@ -48,6 +48,7 @@ dependencies {
     implementation(project(Modules.reviewer))
     implementation(project(Modules.googleLogin))
     implementation(project(Modules.languageimp))
+    implementation(project(Modules.notificationModule))
 
     // Firebase Libraries
     implementation(platform(FirebaseLibrary.firebaseBom))
