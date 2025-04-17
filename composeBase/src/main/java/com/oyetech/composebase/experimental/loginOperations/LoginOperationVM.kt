@@ -13,6 +13,7 @@ import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.OnCancel
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.OnSubmit
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.UsernameChanged
+import com.oyetech.composebase.helpers.general.GeneralSettings
 import com.oyetech.domain.repository.firebase.FirebaseTokenOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
@@ -52,10 +53,12 @@ class LoginOperationVM(
 
     init {
         Timber.d("LoginOperationVM init")
-        observeGoogleUserStateFlow()
-        observeUserProfileState()
-        googleLoginRepository.autoLoginOperation()
-        updateUserToken()
+        if (GeneralSettings.isLoginOperationEnable()) {
+            observeGoogleUserStateFlow()
+            observeUserProfileState()
+            googleLoginRepository.autoLoginOperation()
+            updateUserToken()
+        }
     }
 
     fun getLoginOperationSharedState(): SharedFlow<LoginOperationUiState> {

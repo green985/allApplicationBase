@@ -23,7 +23,7 @@ object GeneralSettings {
     }
 
     fun isLoginOperationEnable(): Boolean {
-        return true
+        return false
     }
 
     fun isAutoOperationEnable(): Boolean {
