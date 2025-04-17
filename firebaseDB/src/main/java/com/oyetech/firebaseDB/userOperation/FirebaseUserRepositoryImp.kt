@@ -152,7 +152,7 @@ class FirebaseUserRepositoryImp(
         val userDocRef =
             firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(userId)
 
-        userDocRef.update(notificationToken, notificationToken)
+        userDocRef.update("notificationToken", notificationToken)
             .addOnSuccessListener {
                 Timber.d("Notification token updated successfully")
             }
