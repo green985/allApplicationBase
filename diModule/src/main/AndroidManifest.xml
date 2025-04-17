@@ -3,4 +3,6 @@
     package="com.oyetech.dimodule">
 
     <uses-sdk android:minSdkVersion="24" />
+
+
 </manifest>
