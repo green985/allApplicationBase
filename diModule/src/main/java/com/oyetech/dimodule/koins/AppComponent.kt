@@ -21,6 +21,7 @@ import com.oyetech.radioservice.di.RadioServiceModule
 import com.oyetech.remote.di.RadioModuleDI
 import com.oyetech.remote.di.WallpaperRemoteModule
 import com.oyetech.remote.di.dataSourceModule
+import com.oyetech.remote.firebaseCloudRemote.FirebaseCloudRemoteModule
 import com.oyetech.remote.quotesRemote.QuotesRemoteModule
 import com.oyetech.repository.di.RadioRepositoryDI
 import com.oyetech.repository.di.RepositoryModule
@@ -56,6 +57,7 @@ object AppComponent {
         RadioDomainModule.module,
 //        RadioModuleDI.createRemoteModule(BaseUrlConfigHelper.BASE_DOMAIN_RADIO),
         RadioModuleDI.createRemoteModule("https://at1.api.radio-browser.info/json/"),
+        FirebaseCloudRemoteModule.createRemoteModule(),
         RadioRepositoryDI.repositoryModule,
         RepositoryModule.module,
         RadioLocalModuleDi.localModule,

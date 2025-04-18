@@ -4,6 +4,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.oyetech.domain.helper.ActivityProviderUseCase
+import com.oyetech.domain.repository.firebase.FirebaseCloudOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.firebase.realtime.FirebaseRealtimeHelperRepository
@@ -13,6 +14,7 @@ import com.oyetech.firebaseDB.firebaseDB.helper.runTransactionWithTimeout
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.errors.ErrorMessage
 import com.oyetech.models.errors.exceptionHelper.GeneralException
+import com.oyetech.models.firebaseModels.cloudFunction.FirebaseCloudNotificationBody
 import com.oyetech.models.firebaseModels.databaseKeys.FirebaseDatabaseKeys
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessageConversationData
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingLocalData
@@ -23,6 +25,7 @@ import com.oyetech.models.firebaseModels.messagingModels.MessageStatus.IDLE
 import com.oyetech.models.firebaseModels.messagingModels.MessageStatus.SENT
 import com.oyetech.models.firebaseModels.messagingModels.toLocalData
 import com.oyetech.models.firebaseModels.messagingModels.toRemoteData
+import com.oyetech.models.utils.moshi.serialize
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.CoroutineScope
@@ -54,6 +57,7 @@ class FirebaseMessagingRepositoryImpl(
     private val dispatcher: AppDispatchers,
     private val activityProviderUseCase: ActivityProviderUseCase,
     private val firebaseRealtimeHelperRepository: FirebaseRealtimeHelperRepository,
+    private val firebaseCloudOperationRepository: FirebaseCloudOperationRepository,
 ) : FirebaseMessagingRepository {
 
     private val conversationLimit = 100L
@@ -170,6 +174,7 @@ class FirebaseMessagingRepositoryImpl(
                 throw GeneralException("Message send error")
             }
         } catch (e: Exception) {
+            // todo will be add trigger canceller
             Timber.d("error send again ")
             delay(sendingDelay)
             sendMessageWithLocalTrigger(it)
@@ -245,6 +250,10 @@ class FirebaseMessagingRepositoryImpl(
                 firebaseRealtimeHelperRepository.sendMessageWithRealtime(newMessage.copy(status = SENT))
 
                 localMessage = newMessage.toLocalData()
+
+                sendNotification(localMessage)
+
+
                 messagesAllOperationRepository.insertMessage(localMessage)
                 emit(newMessage)
 
@@ -271,6 +280,21 @@ class FirebaseMessagingRepositoryImpl(
                 throw e
             }
         }
+
+    private suspend fun sendNotification(localMessage: FirebaseMessagingLocalData) {
+        try {
+            val notificationResult = firebaseCloudOperationRepository.sendNotification(
+                FirebaseCloudNotificationBody(
+                    notificationToken = "dCfaNx8nQQyV4S65l0iYmm:APA91bH_QTlKH4p5DwnDZYG8VEOLVLSR8nPRdiQBgzd_ElpOIJYWvKoszJqEIwGIxHFQTkdsfHguPhmSf-BDdbryfPWKsG6qQF0-9pxRmoH4grtTeE3M97I",
+                    payloadData = localMessage.serialize()
+                )
+            )
+            Timber.d("Notification result = $notificationResult")
+        } catch (e: Exception) {
+            Timber.d("Notification error = ${e.message}")
+        }
+
+    }
 
     override suspend fun getConversationDetailOrCreateFlow(receiverUserId: String): Flow<FirebaseMessageConversationData> =
         flow {
