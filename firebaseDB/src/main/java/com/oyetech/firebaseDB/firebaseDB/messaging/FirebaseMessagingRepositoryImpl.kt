@@ -283,12 +283,13 @@ class FirebaseMessagingRepositoryImpl(
 
     private suspend fun sendNotification(localMessage: FirebaseMessagingLocalData) {
         try {
-            val notificationResult = firebaseCloudOperationRepository.sendNotification(
-                FirebaseCloudNotificationBody(
-                    notificationToken = "dCfaNx8nQQyV4S65l0iYmm:APA91bH_QTlKH4p5DwnDZYG8VEOLVLSR8nPRdiQBgzd_ElpOIJYWvKoszJqEIwGIxHFQTkdsfHguPhmSf-BDdbryfPWKsG6qQF0-9pxRmoH4grtTeE3M97I",
-                    payloadData = localMessage.serialize()
+            val notificationResult =
+                firebaseCloudOperationRepository.sendNotificationWithPayloadWithDateChange(
+                    FirebaseCloudNotificationBody(
+                        notificationToken = "dCfaNx8nQQyV4S65l0iYmm:APA91bH_QTlKH4p5DwnDZYG8VEOLVLSR8nPRdiQBgzd_ElpOIJYWvKoszJqEIwGIxHFQTkdsfHguPhmSf-BDdbryfPWKsG6qQF0-9pxRmoH4grtTeE3M97I",
+                        payloadData = localMessage.copy(createdAt = 0L).serialize()
+                    )
                 )
-            )
             Timber.d("Notification result = $notificationResult")
         } catch (e: Exception) {
             Timber.d("Notification error = ${e.message}")

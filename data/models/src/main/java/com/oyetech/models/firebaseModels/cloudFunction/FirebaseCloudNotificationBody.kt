@@ -13,3 +13,11 @@ data class FirebaseCloudNotificationBody(
     val notificationToken: String,
     val payloadData: String,
 )
+
+@Keep
+enum class FirebaseNotificationType {
+    //    DEFAULT,
+    Message,  // firebaseMessagingLocalData
+//    CALL,
+//    OTHER
+}

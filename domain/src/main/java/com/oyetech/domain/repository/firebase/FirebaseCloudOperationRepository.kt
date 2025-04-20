@@ -11,4 +11,5 @@ Created by Erdi Özbek
 interface FirebaseCloudOperationRepository {
 
     suspend fun sendNotification(body: FirebaseCloudNotificationBody): Boolean
+    suspend fun sendNotificationWithPayloadWithDateChange(body: FirebaseCloudNotificationBody): Boolean
 }

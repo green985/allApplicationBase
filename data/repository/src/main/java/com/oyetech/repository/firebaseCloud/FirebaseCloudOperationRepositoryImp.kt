@@ -13,7 +13,11 @@ Created by Erdi Özbek
 class FirebaseCloudOperationRepositoryImp(private val firebaseCloudApi: FirebaseCloudApi) :
     FirebaseCloudOperationRepository {
 
+    override suspend fun sendNotificationWithPayloadWithDateChange(body: FirebaseCloudNotificationBody): Boolean {
+        return firebaseCloudApi.sendNotificationWithPayloadWithDateChange(body).isSuccessful
+    }
+
     override suspend fun sendNotification(body: FirebaseCloudNotificationBody): Boolean {
-        return firebaseCloudApi.sendNotification(body).isSuccessful
+        return firebaseCloudApi.sendNotificationWithPayload(body).isSuccessful
     }
 }

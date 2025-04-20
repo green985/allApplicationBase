@@ -2,6 +2,7 @@ package com.oyetech.notificationmodule.di
 
 import com.google.firebase.messaging.FirebaseMessaging
 import com.oyetech.domain.repository.firebase.FirebaseTokenOperationRepository
+import com.oyetech.notificationmodule.AppNotificationOperator
 import com.oyetech.notificationmodule.tokenOperation.FirebaseTokenOperationRepositoryImpl
 import org.koin.dsl.module
 
@@ -18,5 +19,6 @@ object FirebaseNotificationModule {
             firebaseMessaging
         }
         single<FirebaseTokenOperationRepository> { FirebaseTokenOperationRepositoryImpl(get()) }
+        single<AppNotificationOperator> { AppNotificationOperator(get()) }
     }
 }

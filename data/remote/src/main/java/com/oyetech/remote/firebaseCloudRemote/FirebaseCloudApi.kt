@@ -14,7 +14,10 @@ Created by Erdi Özbek
 
 interface FirebaseCloudApi {
 
+    @POST("/sendNotificationWithPayloadWithDateChange")
+    suspend fun sendNotificationWithPayloadWithDateChange(@Body body: FirebaseCloudNotificationBody): Response<List<QuoteResponseData>>
+
     @POST("/sendNotificationWithPayload")
-    suspend fun sendNotification(@Body body: FirebaseCloudNotificationBody): Response<List<QuoteResponseData>>
+    suspend fun sendNotificationWithPayload(@Body body: FirebaseCloudNotificationBody): Response<List<QuoteResponseData>>
 
 }
