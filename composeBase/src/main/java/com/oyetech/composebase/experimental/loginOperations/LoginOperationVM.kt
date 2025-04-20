@@ -134,8 +134,8 @@ class LoginOperationVM(
                 loginOperationState.value = LoginOperationUiState(isLoading = true)
                 viewModelScope.launch(getDispatcherIo()) {
                     try {
-                        googleLoginRepository.signInWithGoogle()
-//                        googleLoginRepository.signInWithGoogleAnonymous()
+//                        googleLoginRepository.signInWithGoogle()
+                        googleLoginRepository.signInWithGoogleAnonymous()
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }

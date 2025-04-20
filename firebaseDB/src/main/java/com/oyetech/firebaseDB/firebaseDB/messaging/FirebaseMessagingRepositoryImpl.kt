@@ -293,8 +293,8 @@ class FirebaseMessagingRepositoryImpl(
                 firebaseCloudOperationRepository.sendNotificationWithPayloadWithDateChange(
                     FirebaseCloudNotificationBody(
                         notificationToken =
-                        "dCfaNx8nQQyV4S65l0iYmm:APA91bH_QTlKH4p5DwnDZYG8VEOLVLSR8nPRdiQBgzd_ElpOIJYWvKoszJqEIwGIxHFQTkdsfHguPhmSf-BDdbryfPWKsG6qQF0-9pxRmoH4grtTeE3M97I",
-                        payloadData = localMessage.copy(createdAt = 0L).serialize(),
+                        "erJkj6FMQ9-ScqOLRHoEFo:APA91bEiyZccxlUIiuXxs6X9KPGGtqSUKyBFFn_tFwYwJcuCulqdtIkCaUbOwg19Ls_0pvwb25hNiVYODxmzY_hXtHg2--m28tkpEdB2fP4XYizst0mtfBA",
+                        payloadData = localMessage.copy(createdAt = 0L, status = SENT).serialize(),
                         notificationType = FirebaseNotificationTypeEnum.Message.toString()
                     )
                 )

@@ -105,7 +105,7 @@ class MessageDetailVm(
     private fun initMessageDetailOperation() {
         firebaseMessagingRepository.initLocalMessageSendOperation(viewModelScope)
         loadList()
-//        observeMessages()
+        observeMessages()
     }
 
     private fun observeMessages() {
@@ -116,10 +116,9 @@ class MessageDetailVm(
                 .collectLatest {
                     it.fold(
                         onSuccess = { messageList ->
-//                            Timber.d("Message list: $messageList")
                             messageList.mergeMessages(onSizeChanged = {
                                 viewModelScope.launch(getDispatcherIo()) {
-//                                    uiEvent.emit(MessageDetailUiEvent.OnNewMessage)
+                                    uiEvent.emit(MessageDetailUiEvent.OnNewMessage)
                                 }
                             }, listViewState = listViewState)
                         },

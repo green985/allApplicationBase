@@ -89,7 +89,7 @@ fun MessageDetailScreenSetup(
 
                 is OnNewMessage -> {
                     Timber.d("MessageDetailUiEvent.OnMessageSendSuccess " + event.toString())
-                    delay(200)
+                    delay(100)
                     safeScrollToItem(lazyColumnState.lazyListState, 0)
                 }
             }
