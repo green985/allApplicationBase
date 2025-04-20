@@ -72,14 +72,6 @@ data class FirebaseMessagingLocalData(
 
 @Parcelize
 @Keep
-data class FirebaseNotificationPostData(
-    @PrimaryKey
-    var type: String = "",
-    var dataString: String = "",
-) : Parcelable
-
-@Parcelize
-@Keep
 @JsonClass(generateAdapter = true)
 data class FirebaseParticipantData(
     var userId: String = "",

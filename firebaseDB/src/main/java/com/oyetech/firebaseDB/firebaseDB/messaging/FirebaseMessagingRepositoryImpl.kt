@@ -15,7 +15,7 @@ import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.errors.ErrorMessage
 import com.oyetech.models.errors.exceptionHelper.GeneralException
 import com.oyetech.models.firebaseModels.cloudFunction.FirebaseCloudNotificationBody
-import com.oyetech.models.firebaseModels.cloudFunction.FirebaseNotificationType
+import com.oyetech.models.firebaseModels.cloudFunction.FirebaseNotificationTypeEnum
 import com.oyetech.models.firebaseModels.databaseKeys.FirebaseDatabaseKeys
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessageConversationData
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingLocalData
@@ -63,7 +63,7 @@ class FirebaseMessagingRepositoryImpl(
 
     private val conversationLimit = 100L
     private val messageLimit = 20L
-    private val sendingDelay = 100L
+    private val sendingDelay = 1000L
     private val newMessageToSendOperationDelay = 25L
 
     private var lastVisibleMessageDocumentCreatedAt: Timestamp? = null
@@ -130,14 +130,19 @@ class FirebaseMessagingRepositoryImpl(
                     .limit(messageLimit)
 
                 val result = query.get().await().documents
-                lastVisibleMessageDocumentCreatedAt = result.last().get("createdAt") as Timestamp
-
-                val messageList = result.mapNotNull { doc ->
-                    val docc = doc.toObject(FirebaseMessagingResponseData::class.java)
-                    docc?.copy(messageId = doc.id)
+                if (result.isNotEmpty()) {
+                    lastVisibleMessageDocumentCreatedAt =
+                        result.last().get("createdAt") as Timestamp
+                    val messageList = result.mapNotNull { doc ->
+                        val docc = doc.toObject(FirebaseMessagingResponseData::class.java)
+                        docc?.copy(messageId = doc.id)
+                    }
+                    emit(messageList)
+                } else {
+                    // todo will be check
+                    Timber.d("No more messages")
+                    emit(emptyList())
                 }
-//                Timber.d("getMessageListWithConversationId: ${messageList.toString()}")
-                emit(messageList)
             }
         }
     }
@@ -252,7 +257,7 @@ class FirebaseMessagingRepositoryImpl(
 
                 localMessage = newMessage.toLocalData()
 
-                sendMessageNotificationNotification(localMessage)
+                sendMessageNotification(localMessage)
 
 
                 messagesAllOperationRepository.insertMessage(localMessage)
@@ -282,14 +287,15 @@ class FirebaseMessagingRepositoryImpl(
             }
         }
 
-    private suspend fun sendMessageNotificationNotification(localMessage: FirebaseMessagingLocalData) {
+    private suspend fun sendMessageNotification(localMessage: FirebaseMessagingLocalData) {
         try {
             val notificationResult =
                 firebaseCloudOperationRepository.sendNotificationWithPayloadWithDateChange(
                     FirebaseCloudNotificationBody(
-                        notificationToken = "dCfaNx8nQQyV4S65l0iYmm:APA91bH_QTlKH4p5DwnDZYG8VEOLVLSR8nPRdiQBgzd_ElpOIJYWvKoszJqEIwGIxHFQTkdsfHguPhmSf-BDdbryfPWKsG6qQF0-9pxRmoH4grtTeE3M97I",
+                        notificationToken =
+                        "dCfaNx8nQQyV4S65l0iYmm:APA91bH_QTlKH4p5DwnDZYG8VEOLVLSR8nPRdiQBgzd_ElpOIJYWvKoszJqEIwGIxHFQTkdsfHguPhmSf-BDdbryfPWKsG6qQF0-9pxRmoH4grtTeE3M97I",
                         payloadData = localMessage.copy(createdAt = 0L).serialize(),
-                        notificationType = FirebaseNotificationType.Message.toString()
+                        notificationType = FirebaseNotificationTypeEnum.Message.toString()
                     )
                 )
             Timber.d("Notification result = $notificationResult")

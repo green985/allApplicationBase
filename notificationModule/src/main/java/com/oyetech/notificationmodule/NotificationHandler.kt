@@ -1,7 +1,7 @@
 package com.oyetech.notificationmodule
 
-import com.oyetech.models.firebaseModels.cloudFunction.FirebaseCloudNotificationBody
-import com.oyetech.models.firebaseModels.cloudFunction.FirebaseNotificationType
+import com.oyetech.models.firebaseModels.cloudFunction.FirebaseCloudNotificationTypeWrapper
+import com.oyetech.models.firebaseModels.cloudFunction.FirebaseNotificationTypeEnum
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingLocalData
 import com.oyetech.models.utils.moshi.deserialize
 import timber.log.Timber
@@ -19,18 +19,20 @@ fun MyFirebaseMessagingService.handleNotification(notificationBody: String?) {
     }
 
     try {
-        val firebaseCloudNotificationBody =
-            notificationBody.deserialize<FirebaseCloudNotificationBody>()
+        val firebaseCloudNotificationTypeWrapper =
+            notificationBody.deserialize<FirebaseCloudNotificationTypeWrapper>()
 
 
-        when (firebaseCloudNotificationBody?.notificationType) {
-            FirebaseNotificationType.Message.name -> {
+        when (firebaseCloudNotificationTypeWrapper?.notificationType) {
+            FirebaseNotificationTypeEnum.Message.name -> {
                 Timber.d("Message notification type")
                 // Handle message notification
                 val messageNotificationBody =
                     notificationBody.deserialize<FirebaseMessagingLocalData>()
                 if (messageNotificationBody != null) {
-
+                    messagesAllOperationRepository.insertMessageWithGlobalScope(
+                        messageNotificationBody
+                    )
                     appNotificationOperator.showNotification(
                         messageNotificationBody?.senderId ?: " sender bos",
                         messageNotificationBody?.messageText ?: "message bos "
@@ -44,10 +46,6 @@ fun MyFirebaseMessagingService.handleNotification(notificationBody: String?) {
                 Timber.d("Unknown notification type")
             }
         }
-
-
-
-
 
 
     } catch (e: Exception) {

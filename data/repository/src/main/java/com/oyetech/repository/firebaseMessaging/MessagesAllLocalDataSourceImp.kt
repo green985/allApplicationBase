@@ -3,9 +3,16 @@ package com.oyetech.repository.firebaseMessaging
 import com.oyetech.dao.firebaseMessaging.MessagesAllDao
 import com.oyetech.domain.repository.messaging.local.MessagesAllLocalDataSourceRepository
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingLocalData
+import com.oyetech.tools.coroutineHelper.AppDispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
-class MessagesAllLocalDataSourceImp(private val messagesAllDao: MessagesAllDao) :
+@Suppress("TooManyFunctions")
+class MessagesAllLocalDataSourceImp(
+    private val messagesAllDao: MessagesAllDao,
+    private val dispatchers: AppDispatchers,
+) :
     MessagesAllLocalDataSourceRepository {
 
     override fun getMessageListFlow(conversationId: String): Flow<List<FirebaseMessagingLocalData>> {
@@ -45,6 +52,12 @@ class MessagesAllLocalDataSourceImp(private val messagesAllDao: MessagesAllDao) 
 
     override suspend fun insertMessage(message: FirebaseMessagingLocalData) {
         messagesAllDao.insert(message)
+    }
+
+    override fun insertMessageWithGlobalScope(message: FirebaseMessagingLocalData) {
+        GlobalScope.launch(dispatchers.io) {
+            messagesAllDao.insert(message)
+        }
     }
 
     override suspend fun getLastMessage(receiverId: String): FirebaseMessagingLocalData? {

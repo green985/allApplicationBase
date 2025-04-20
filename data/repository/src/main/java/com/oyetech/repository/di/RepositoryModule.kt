@@ -19,7 +19,7 @@ Created by Erdi Özbek
 object RepositoryModule {
     val module = module {
         single<MessagesSendingOperationRepository> { MessagesSendingOperationRepositoryImp(get()) }
-        single<MessagesAllLocalDataSourceRepository> { MessagesAllLocalDataSourceImp(get()) }
+        single<MessagesAllLocalDataSourceRepository> { MessagesAllLocalDataSourceImp(get(), get()) }
         single<ContentOperationLocalRepository> { ContentOperationLocalRepositoryImp(get()) }
 
         single<FirebaseCloudOperationRepository> { FirebaseCloudOperationRepositoryImp(get()) }

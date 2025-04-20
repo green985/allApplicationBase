@@ -2,6 +2,7 @@ package com.oyetech.composebase.sharedScreens.messaging
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
+import com.oyetech.composebase.helpers.general.GeneralSettings
 import com.oyetech.domain.repository.firebase.realtime.FirebaseRealtimeHelperRepository
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
@@ -30,14 +31,18 @@ class MessageOperationVM(
     }
 
     fun observeRealtimeOperation() {
-        return
+        if (GeneralSettings.isRealTimeOperationEnable().not()) {
+            Timber.d("Real time operation is disabled")
+            return
+        }
+
         observeMessageJob?.cancel()
         observeMessageJob = viewModelScope.launch(getDispatcherIo()) {
             firebaseRealtimeHelperRepository.observeUserMessagesRealtimeOperations().asResult()
                 .collectLatest {
                     it.fold(
                         onSuccess = {}, onFailure = {
-                            delay(100)
+                            delay(1000)
                             observeRealtimeOperation()
                         })
                 }

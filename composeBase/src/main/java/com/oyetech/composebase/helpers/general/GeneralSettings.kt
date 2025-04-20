@@ -22,6 +22,10 @@ object GeneralSettings {
         return false
     }
 
+    fun isRealTimeOperationEnable(): Boolean {
+        return false
+    }
+
     fun isLoginOperationEnable(): Boolean {
         return true
     }

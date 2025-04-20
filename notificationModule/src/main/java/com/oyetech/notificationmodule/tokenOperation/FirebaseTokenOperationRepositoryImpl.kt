@@ -29,6 +29,7 @@ class FirebaseTokenOperationRepositoryImpl(private val firebaseMessaging: Fireba
                 return@OnCompleteListener
             }
             val token = task.result
+            Timber.d("Firebase token: $token")
             firebaseTokenStateFlow.value = FirebaseTokenOperationModel(
                 notificationToken = token,
             )

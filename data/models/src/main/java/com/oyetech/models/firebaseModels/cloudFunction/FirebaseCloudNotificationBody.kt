@@ -16,7 +16,12 @@ data class FirebaseCloudNotificationBody(
 )
 
 @Keep
-enum class FirebaseNotificationType {
+data class FirebaseCloudNotificationTypeWrapper(
+    val notificationType: String,
+)
+
+@Keep
+enum class FirebaseNotificationTypeEnum {
     //    DEFAULT,
     Message,  // firebaseMessagingLocalData
 //    CALL,

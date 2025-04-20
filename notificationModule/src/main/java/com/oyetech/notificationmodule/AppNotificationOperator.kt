@@ -8,7 +8,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.Builder
-import com.oyetech.models.firebaseModels.cloudFunction.FirebaseNotificationType
+import com.oyetech.models.firebaseModels.cloudFunction.FirebaseNotificationTypeEnum
 
 /**
 Created by Erdi Özbek
@@ -34,7 +34,7 @@ class AppNotificationOperator(private val context: Context) {
         title: String,
         message: String,
         channelId: String = "default_channel_id",
-        notificationType: FirebaseNotificationType = FirebaseNotificationType.Message,
+        notificationType: FirebaseNotificationTypeEnum = FirebaseNotificationTypeEnum.Message,
         notificationId: Int = (System.currentTimeMillis() % Int.MAX_VALUE).toInt(),
     ) {
         val pendingIntent = getPendingIntent()
@@ -86,9 +86,9 @@ class AppNotificationOperator(private val context: Context) {
 
 }
 
-private fun Builder.setSmallIconWithNotificationType(notificationType: FirebaseNotificationType) {
+private fun Builder.setSmallIconWithNotificationType(notificationType: FirebaseNotificationTypeEnum) {
     when (notificationType) {
-        FirebaseNotificationType.Message -> {
+        FirebaseNotificationTypeEnum.Message -> {
             setSmallIcon(R.drawable.ic_notification_message_icon)
         }
     }
