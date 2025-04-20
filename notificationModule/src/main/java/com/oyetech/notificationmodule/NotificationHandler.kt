@@ -1,5 +1,7 @@
 package com.oyetech.notificationmodule
 
+import com.oyetech.models.firebaseModels.cloudFunction.FirebaseCloudNotificationBody
+import com.oyetech.models.firebaseModels.cloudFunction.FirebaseNotificationType
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingLocalData
 import com.oyetech.models.utils.moshi.deserialize
 import timber.log.Timber
@@ -17,16 +19,37 @@ fun MyFirebaseMessagingService.handleNotification(notificationBody: String?) {
     }
 
     try {
-        val messageNotificationBody = notificationBody.deserialize<FirebaseMessagingLocalData>()
-        if (messageNotificationBody != null) {
+        val firebaseCloudNotificationBody =
+            notificationBody.deserialize<FirebaseCloudNotificationBody>()
 
-            appNotificationOperator.showNotification(
-                messageNotificationBody?.senderId ?: " sender bos",
-                messageNotificationBody?.messageText ?: "message bos "
-            )
-        } else {
-            Timber.d("messageNotificationBody is null")
+
+        when (firebaseCloudNotificationBody?.notificationType) {
+            FirebaseNotificationType.Message.name -> {
+                Timber.d("Message notification type")
+                // Handle message notification
+                val messageNotificationBody =
+                    notificationBody.deserialize<FirebaseMessagingLocalData>()
+                if (messageNotificationBody != null) {
+
+                    appNotificationOperator.showNotification(
+                        messageNotificationBody?.senderId ?: " sender bos",
+                        messageNotificationBody?.messageText ?: "message bos "
+                    )
+                } else {
+                    Timber.d("messageNotificationBody is null")
+                }
+            }
+
+            else -> {
+                Timber.d("Unknown notification type")
+            }
         }
+
+
+
+
+
+
     } catch (e: Exception) {
         e.printStackTrace()
     }

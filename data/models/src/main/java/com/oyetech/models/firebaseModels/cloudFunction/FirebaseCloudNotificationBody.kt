@@ -12,6 +12,7 @@ Created by Erdi Özbek
 data class FirebaseCloudNotificationBody(
     val notificationToken: String,
     val payloadData: String,
+    val notificationType: String,
 )
 
 @Keep

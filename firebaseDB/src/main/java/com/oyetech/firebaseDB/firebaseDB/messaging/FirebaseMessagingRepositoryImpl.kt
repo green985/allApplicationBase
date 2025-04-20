@@ -15,6 +15,7 @@ import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.errors.ErrorMessage
 import com.oyetech.models.errors.exceptionHelper.GeneralException
 import com.oyetech.models.firebaseModels.cloudFunction.FirebaseCloudNotificationBody
+import com.oyetech.models.firebaseModels.cloudFunction.FirebaseNotificationType
 import com.oyetech.models.firebaseModels.databaseKeys.FirebaseDatabaseKeys
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessageConversationData
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingLocalData
@@ -251,7 +252,7 @@ class FirebaseMessagingRepositoryImpl(
 
                 localMessage = newMessage.toLocalData()
 
-                sendNotification(localMessage)
+                sendMessageNotificationNotification(localMessage)
 
 
                 messagesAllOperationRepository.insertMessage(localMessage)
@@ -281,13 +282,14 @@ class FirebaseMessagingRepositoryImpl(
             }
         }
 
-    private suspend fun sendNotification(localMessage: FirebaseMessagingLocalData) {
+    private suspend fun sendMessageNotificationNotification(localMessage: FirebaseMessagingLocalData) {
         try {
             val notificationResult =
                 firebaseCloudOperationRepository.sendNotificationWithPayloadWithDateChange(
                     FirebaseCloudNotificationBody(
                         notificationToken = "dCfaNx8nQQyV4S65l0iYmm:APA91bH_QTlKH4p5DwnDZYG8VEOLVLSR8nPRdiQBgzd_ElpOIJYWvKoszJqEIwGIxHFQTkdsfHguPhmSf-BDdbryfPWKsG6qQF0-9pxRmoH4grtTeE3M97I",
-                        payloadData = localMessage.copy(createdAt = 0L).serialize()
+                        payloadData = localMessage.copy(createdAt = 0L).serialize(),
+                        notificationType = FirebaseNotificationType.Message.toString()
                     )
                 )
             Timber.d("Notification result = $notificationResult")
