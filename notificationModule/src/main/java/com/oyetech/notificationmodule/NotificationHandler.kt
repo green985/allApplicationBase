@@ -33,6 +33,12 @@ fun MyFirebaseMessagingService.handleNotification(notificationBody: String?) {
                     messagesAllOperationRepository.insertMessageWithGlobalScope(
                         messageNotificationBody
                     )
+                    if (messagesAllOperationRepository.currentConversationId.value ==
+                        messageNotificationBody.conversationId
+                    ) {
+                        Timber.d("Current conversation id matches")
+                        return
+                    }
                     appNotificationOperator.showNotification(
                         messageNotificationBody?.senderId ?: " sender bos",
                         messageNotificationBody?.messageText ?: "message bos "

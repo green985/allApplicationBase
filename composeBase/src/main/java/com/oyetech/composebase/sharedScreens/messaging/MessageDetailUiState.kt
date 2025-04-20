@@ -57,7 +57,7 @@ data class MessageDetailUiState(
 sealed class MessageDetailUiEvent : BaseUIEvent() {
     data object OnMessageIdle : MessageDetailUiEvent()
     data object OnNewMessage : MessageDetailUiEvent()
-//    data object OnMessageReceive : MessageDetailUiEvent()
+    data object OnConversationCreated : MessageDetailUiEvent()
 }
 
 sealed class MessageDetailEvent : BaseEvent() {
@@ -65,6 +65,8 @@ sealed class MessageDetailEvent : BaseEvent() {
     data class OnMessageSend(val triggered: Boolean = false) : MessageDetailEvent()
     object OnRetry : MessageDetailEvent()
     object OnRefresh : MessageDetailEvent()
+
+    object OnScreenOut : MessageDetailEvent()
 }
 
 data class MessageConversationUiState(

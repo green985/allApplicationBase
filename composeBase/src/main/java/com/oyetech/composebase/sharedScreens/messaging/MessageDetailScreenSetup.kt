@@ -19,6 +19,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -34,6 +35,7 @@ import com.oyetech.composebase.base.baseGenericList.LoadableLazyColumnState
 import com.oyetech.composebase.base.baseGenericList.rememberLoadableLazyColumnState
 import com.oyetech.composebase.base.baseGenericList.safeScrollToItem
 import com.oyetech.composebase.projectRadioFeature.RadioDimensions
+import com.oyetech.composebase.sharedScreens.messaging.MessageDetailUiEvent.OnConversationCreated
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailUiEvent.OnMessageIdle
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailUiEvent.OnNewMessage
 import com.oyetech.languageModule.keyset.LanguageKey
@@ -92,7 +94,18 @@ fun MessageDetailScreenSetup(
                     delay(100)
                     safeScrollToItem(lazyColumnState.lazyListState, 0)
                 }
+
+                OnConversationCreated -> {
+                    vm.setCurrentConversation(false)
+                }
             }
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            Timber.d("MessageDetailScreenSetup onDispose")
+            vm.onEvent(MessageDetailEvent.OnScreenOut)
         }
     }
 }

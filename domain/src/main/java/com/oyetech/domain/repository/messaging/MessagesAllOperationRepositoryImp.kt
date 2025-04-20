@@ -6,19 +6,31 @@ import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessageConversa
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingLocalData
 import com.oyetech.models.firebaseModels.messagingModels.MessageStatus
 import com.oyetech.models.firebaseModels.messagingModels.toLocalDataWithStatus
+import com.oyetech.tools.coroutineHelper.AppDispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 class MessagesAllOperationRepositoryImp(
     private val messagesAllDao: MessagesAllLocalDataSourceRepository,
     private val firebaseMessagingRepository: FirebaseMessagingRepository,
-) :
-    MessagesAllOperationRepository {
+    private val dispatchers: AppDispatchers,
+) : MessagesAllOperationRepository {
+
+    override var currentConversationId: MutableStateFlow<String> = MutableStateFlow("")
 
     override fun getMessageListFlow(conversationId: String): Flow<List<FirebaseMessagingLocalData>> {
         return messagesAllDao.getMessageListFlow(conversationId)
+    }
+
+    override fun insertMessageWithGlobalScope(message: FirebaseMessagingLocalData) {
+        GlobalScope.launch(dispatchers.io) {
+            messagesAllDao.insertMessage(message)
+        }
     }
 
     override fun getMessageListWithLastMessageId(

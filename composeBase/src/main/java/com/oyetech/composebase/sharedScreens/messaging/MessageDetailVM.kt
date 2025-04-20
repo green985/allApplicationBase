@@ -9,6 +9,7 @@ import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnMess
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnMessageTextChange
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnRefresh
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnRetry
+import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnScreenOut
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.messaging.MessagesAllOperationRepository
@@ -103,6 +104,8 @@ class MessageDetailVm(
     }
 
     private fun initMessageDetailOperation() {
+        uiEvent.tryEmit(MessageDetailUiEvent.OnConversationCreated)
+        messagingAllOperationRepository.currentConversationId.value = conversationId
         firebaseMessagingRepository.initLocalMessageSendOperation(viewModelScope)
         loadList()
         observeMessages()
@@ -154,6 +157,10 @@ class MessageDetailVm(
             OnRetry -> {
                 Timber.d("OnRetry")
             }
+
+            OnScreenOut -> {
+                setCurrentConversation(true)
+            }
         }
     }
 
@@ -183,6 +190,19 @@ class MessageDetailVm(
             }
         }
 
+    }
+
+    fun setCurrentConversation(isExit: Boolean) {
+        if (isExit) {
+            messagingAllOperationRepository.currentConversationId.value = ""
+        } else {
+
+            messagingAllOperationRepository.currentConversationId.value = conversationId
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
     }
 
 }

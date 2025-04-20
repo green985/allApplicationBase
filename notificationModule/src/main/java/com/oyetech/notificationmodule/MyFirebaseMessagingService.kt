@@ -12,7 +12,7 @@ import androidx.core.graphics.drawable.IconCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.oyetech.domain.repository.messaging.local.MessagesAllLocalDataSourceRepository
+import com.oyetech.domain.repository.messaging.MessagesAllOperationRepository
 import com.oyetech.tools.contextHelper.getApplicationLogo
 import org.koin.java.KoinJavaComponent
 import timber.log.Timber
@@ -22,8 +22,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     val appNotificationOperator: AppNotificationOperator by KoinJavaComponent.inject(
         AppNotificationOperator::class.java
     )
-    val messagesAllOperationRepository: MessagesAllLocalDataSourceRepository by KoinJavaComponent.inject(
-        MessagesAllLocalDataSourceRepository::class.java
+    val messagesAllOperationRepository: MessagesAllOperationRepository by KoinJavaComponent.inject(
+        MessagesAllOperationRepository::class.java
     )
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {

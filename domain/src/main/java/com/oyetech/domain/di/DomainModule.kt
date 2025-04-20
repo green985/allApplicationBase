@@ -62,7 +62,13 @@ object RadioDomainModule {
 
 object QuoteDomainModule {
     val module = module {
-        single<MessagesAllOperationRepository> { MessagesAllOperationRepositoryImp(get(), get()) }
+        single<MessagesAllOperationRepository> {
+            MessagesAllOperationRepositoryImp(
+                get(),
+                get(),
+                get()
+            )
+        }
     }
 }
 

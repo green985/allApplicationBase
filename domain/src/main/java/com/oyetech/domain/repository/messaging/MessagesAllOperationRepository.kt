@@ -3,6 +3,7 @@ package com.oyetech.domain.repository.messaging
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessageConversationData
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingLocalData
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 
 interface MessagesAllOperationRepository {
     fun getMessageListFlow(conversationId: String): Flow<List<FirebaseMessagingLocalData>>
@@ -24,4 +25,6 @@ interface MessagesAllOperationRepository {
     fun getConversationList(): Flow<List<FirebaseMessageConversationData>>
     fun getMessagesFromRemoteAndInsertToLocal(conversationId: String): Flow<List<FirebaseMessagingLocalData>>
     fun getMessageListWithConversationIdWithMessageId(conversationId: String): Flow<List<FirebaseMessagingLocalData>>
+    var currentConversationId: MutableStateFlow<String>
+    fun insertMessageWithGlobalScope(message: FirebaseMessagingLocalData)
 }
