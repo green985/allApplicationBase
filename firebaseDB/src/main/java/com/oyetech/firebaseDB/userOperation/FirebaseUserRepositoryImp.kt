@@ -4,6 +4,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.firebaseDB.userOperation.databaseKey.FirebaseUserDatabaseKey
 import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.models.firebaseModels.databaseKeys.FirebaseDatabaseKeys
 import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -150,7 +151,9 @@ class FirebaseUserRepositoryImp(
     override fun updateUserNotificationToken(notificationToken: String) {
         val userId = getUserId()
         val userDocRef =
-            firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(userId)
+            firestore.collection(FirebaseDatabaseKeys.userList)
+                .document(FirebaseDatabaseKeys.generalUserList)
+                .collection("users").document(userId)
 
         userDocRef.update("notificationToken", notificationToken)
             .addOnSuccessListener {

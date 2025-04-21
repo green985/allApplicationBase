@@ -8,5 +8,6 @@ Created by Erdi Özbek
 
 object FirebaseUserDatabaseKey {
     const val USER_COLLECTION = "users"
+    const val general_USER_COLLECTION = "generalUserList"
     const val USER_NAME = "name"
 }
