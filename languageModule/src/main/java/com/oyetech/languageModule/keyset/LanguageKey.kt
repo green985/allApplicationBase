@@ -11,6 +11,10 @@ Created by Erdi Özbek
  **/
 
 object LanguageKey {
+    var profileCreatedAt set(value) {} get() = LocalLanguageHelper.getStringWithKey("profileCreatedAt")
+    var biographyInfoHint set(value) {} get() = LocalLanguageHelper.getStringWithKey("biographyInfoHint")
+    var save set(value) {} get() = LocalLanguageHelper.getStringWithKey("save")
+    var cancel set(value) {} get() = LocalLanguageHelper.getStringWithKey("cancel")
     var dismiss set(value) {} get() = LocalLanguageHelper.getStringWithKey("dismiss")
     var termsAndConditionText set(value) {} get() = LocalLanguageHelper.getStringWithKey("termsAndConditionText")
     var privacyPolicyText set(value) {} get() = LocalLanguageHelper.getStringWithKey("privacyPolicyText")

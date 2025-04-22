@@ -24,6 +24,7 @@ sealed class QuoteToolbarActionItems(private val resourceId: Int = R.drawable.ic
     // search action item key and drawable resource id
     data class Search(val resourceId: Int) : QuoteToolbarActionItems(resourceId)
     data class Timer(val resourceId: Int) : QuoteToolbarActionItems(resourceId)
+    data class EditProfile(val resourceId: Int) : QuoteToolbarActionItems(resourceId)
     data class Sort(val resourceId: Int) : QuoteToolbarActionItems(resourceId)
     data class DeleteList(val resourceId: Int) : QuoteToolbarActionItems(resourceId)
 }

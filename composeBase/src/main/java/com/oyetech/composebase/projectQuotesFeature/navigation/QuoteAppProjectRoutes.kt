@@ -21,6 +21,7 @@ Created by Erdi Özbek
 
 object QuoteAppProjectRoutes {
 
+    val EditProfile = Route("EditProfile")
     val FacSettings = Route("FacSettings")
     val QuoteAdviceScreen = Route("quoteAdviceScreen")
     val QuoteAppHomepage = Route("quoteAppHomepage")
