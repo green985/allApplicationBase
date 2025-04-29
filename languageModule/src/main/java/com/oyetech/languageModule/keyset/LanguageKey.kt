@@ -11,7 +11,6 @@ Created by Erdi Özbek
  **/
 
 object LanguageKey {
-    var profileCreatedAt1 set(value) {} get() = LocalLanguageHelper.getStringWithKey("profileCreatedAt")
     var profileCreatedAt set(value) {} get() = LocalLanguageHelper.getStringWithKey("profileCreatedAt")
     var biographyInfoHint set(value) {} get() = LocalLanguageHelper.getStringWithKey("biographyInfoHint")
     var save set(value) {} get() = LocalLanguageHelper.getStringWithKey("save")
