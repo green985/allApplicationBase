@@ -1,5 +1,9 @@
 package com.oyetech.composebase.helpers.viewProperties
 
+import android.app.Activity
+import android.content.Context
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.ime
 import androidx.compose.runtime.Composable
@@ -37,6 +41,14 @@ fun showKeyboard() {
                 focusRequester.requestFocus()
             }
         }
+    }
+}
+
+fun Context.hideKeyboard() {
+    this.apply {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        val view = (this as? Activity)?.currentFocus ?: View(this)
+        imm?.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }
 

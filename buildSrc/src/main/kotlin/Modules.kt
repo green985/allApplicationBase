@@ -1,4 +1,3 @@
-
 // all module names will be written in here.
 object Modules {
     const val app = ":app"
@@ -28,7 +27,6 @@ object Modules {
     const val featureWallpaperList = ":features:wallpaperList"
     const val featureSettings = ":features:settingss"
 
-
     const val imageViewer = ":features:imageViewer"
     const val languageSelect = ":features:languageSelect"
     const val splash = ":features:splash"
@@ -37,12 +35,15 @@ object Modules {
     const val filter = ":features:filter"
     const val analyticsModule = ":analyticsModule"
     const val reviewer = ":reviewer"
+    const val revenuecatOperationModule = ":revenuecatOperationModule"
     const val paymentModule = ":paymentModule"
     const val adsModule = ":adsModule"
     const val localNotifications = ":localNotifications"
     const val exoplayerModule = ":exoplayerModule"
     const val radioOperationModule = ":radioOperationModule"
     const val audioPlayerHelper = ":audioPlayerHelper"
+    const val diModule = ":diModule"
+    const val notificationModule = ":notificationModule"
 
     const val contentPlayer = ":features:contentPlayer"
 
@@ -64,6 +65,8 @@ object Modules {
     const val firebaseDB = ":firebaseDB"
     const val googleLogin = ":googleLogin"
     const val glideModule = ":glideModule"
+    const val languageimp = ":subImpl:languageImp"
+    const val tools = ":subImpl:tools"
 
 
 }

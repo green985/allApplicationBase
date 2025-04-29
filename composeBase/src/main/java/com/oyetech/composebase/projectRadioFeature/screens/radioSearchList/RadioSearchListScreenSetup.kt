@@ -21,11 +21,11 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.oyetech.composebase.base.baseList.ComplexItemListState
-import com.oyetech.composebase.base.baseList.ListUIEvent
-import com.oyetech.composebase.base.baseList.LoadableLazyColumn
-import com.oyetech.composebase.base.baseList.LoadableLazyColumnState
-import com.oyetech.composebase.base.baseList.rememberLoadableLazyColumnState
+import com.oyetech.composebase.base.baseGenericList.ComplexItemListState
+import com.oyetech.composebase.base.baseGenericList.ListUIEvent.LoadMore
+import com.oyetech.composebase.base.baseGenericList.LoadableLazyColumn
+import com.oyetech.composebase.base.baseGenericList.LoadableLazyColumnState
+import com.oyetech.composebase.base.baseGenericList.rememberLoadableLazyColumnState
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.RadioUIState
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.subs.ItemRadioView
 import com.oyetech.composebase.projectRadioFeature.screens.radioSearchList.RadioSearchListEvent.SearchQueryChanged
@@ -50,7 +50,7 @@ fun RadioSearchListScreenSetup(
 
     val lazyListState = rememberLoadableLazyColumnState(
         onLoadMore = {
-            viewModel.handleListEvent(ListUIEvent.LoadMore)
+            viewModel.handleListEvent(LoadMore)
         },
     )
     RadioSearchListScreenScreen(
@@ -114,7 +114,7 @@ fun RadioSearchListScreenScreen(
 
                 LoadableLazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    state = lazyListState,
+                    lazyColumnState = lazyListState,
                     isRefreshing = complexItemViewState.isRefreshing,
                     isErrorInitial = complexItemViewState.isErrorInitial,
                     isEmptyList = complexItemViewState.isEmptyList,

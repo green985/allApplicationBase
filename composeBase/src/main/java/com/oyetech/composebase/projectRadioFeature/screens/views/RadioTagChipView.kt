@@ -13,9 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.projectRadioFeature.RadioDimensions
-import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
-import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
-import com.oyetech.models.radioProject.enums.RadioListEnums.Tag
+import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.navigationToTagList
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -45,13 +43,7 @@ fun RadioTagChipView(
                     shape = RoundedCornerShape(RadioDimensions.radioTagCornerRadius),
                     onClick = {
                         onTagSelected(tag)
-                        navigationRoute.invoke(
-                            RadioAppProjectRoutes.RadioList.withArgs(
-                                ScreenKey.listType to Tag.name,
-                                ScreenKey.tagName to tag,
-                                ScreenKey.toolbarTitle to tag
-                            )
-                        )
+                        navigationToTagList(navigationRoute, tag)
                     }
                 )
             }

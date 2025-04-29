@@ -28,7 +28,7 @@ fun createRemoteModule(baseUrl: String, apiBibleServiceUrl: String) = module {
         Retrofit.Builder().apply {
             baseUrl(baseUrl)
             addCallAdapterFactory(CoroutineCallAdapterFactory())
-            addConverterFactory(MoshiConverterFactory.create(get()))
+            addConverterFactory(MoshiConverterFactory.create(get()).asLenient())
             // addConverterFactory(GsonConverterFactory.create(get()))
             client(get<OkHttpClient>())
         }.build()
@@ -54,7 +54,7 @@ fun createRemoteModule(baseUrl: String, apiBibleServiceUrl: String) = module {
         Retrofit.Builder().apply {
             baseUrl(baseUrl)
             addCallAdapterFactory(CoroutineCallAdapterFactory())
-            addConverterFactory(MoshiConverterFactory.create(get()))
+            addConverterFactory(MoshiConverterFactory.create(get()).asLenient())
             // addConverterFactory(GsonConverterFactory.create(get()))
             client(client)
         }.build()
@@ -79,7 +79,7 @@ fun createRemoteModule(baseUrl: String, apiBibleServiceUrl: String) = module {
         var service = Retrofit.Builder().apply {
             baseUrl(apiBibleServiceUrl)
             addCallAdapterFactory(CoroutineCallAdapterFactory())
-            addConverterFactory(MoshiConverterFactory.create(get()))
+            addConverterFactory(MoshiConverterFactory.create(get()).asLenient())
             // addConverterFactory(GsonConverterFactory.create(get()))
             client(client)
         }.build().create(ApiBibleService::class.java)

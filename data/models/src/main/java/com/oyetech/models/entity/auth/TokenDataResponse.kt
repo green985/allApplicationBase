@@ -14,3 +14,11 @@ data class TokenDataResponse(
     @Json(name = "issueAt") var issueAt: String = "",
     @Json(name = "token") var token: String = "",
 ) : Parcelable
+
+@Keep
+@JsonClass(generateAdapter = true)
+data class TokenDataResponse22(
+    @Json(name = "expires") var expires: String = "",
+    @Json(name = "issueAt") var issueAt: String = "",
+    @Json(name = "token") var token: String = "",
+)

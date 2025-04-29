@@ -18,6 +18,7 @@ output.json
 # IntelliJ
 *.iml
 .idea/
+.kotlin/
 misc.xml
 deploymentTargetDropDown.xml
 render.experimental.xml
@@ -32,13 +33,12 @@ google-services.json
 # Android Profiling
 *.hprof
 /buildSrc.zip
-/radioeveryonee/release/nac_1_0_0_1_14-12-2024-release.aab
-/radioeveryonee/release/radioEveryone_1_0_0_1_14-12-2024-release.aab
+/radioeveryonee/release
 /composeBase/src/main/java/com/oyetech/composebase/projectvibration.zip
-/radioeveryonee/release/baselineProfiles/0/radioEveryone_1_0_0_1_17-12-2024-release.dm
-/radioeveryonee/release/baselineProfiles/1/radioEveryone_1_0_0_1_17-12-2024-release.dm
-/radioeveryonee/release/output-metadata.json
-/radioeveryonee/release/radioEveryone_1_0_0_1_17-12-2024-release.aab
-/radioeveryonee/release/radioEveryone_1_0_0_2_17-12-2024-release.aab
-/radioeveryonee/release/radioEveryone_1_0_0_3_17-12-2024-release.aab
-/radioeveryonee/release/radioEveryone_1_0_0_4_17-12-2024-release.aab
+/radioeveryonee/benchmarkRelease
+/quoteapplication/release/baselineProfiles/0/quoteApplication_1_0_0_4_09-02-2025-release.dm
+/quoteapplication/release/baselineProfiles/1/quoteApplication_1_0_0_4_09-02-2025-release.dm
+/quoteapplication/release/output-metadata.json
+/quoteapplication/benchmarkRelease/quoteApplication_1_0_0_4_13-02-2025-benchmarkRelease.aab
+/quoteapplication/benchmarkRelease/quoteApplication_1_0_0_5_13-02-2025-benchmarkRelease.aab
+/quoteapplication/benchmarkRelease/quoteApplication_1_0_0_6_14-02-2025-benchmarkRelease.aab

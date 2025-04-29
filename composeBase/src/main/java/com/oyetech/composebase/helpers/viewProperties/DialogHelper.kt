@@ -7,9 +7,17 @@ Created by Erdi Özbek
 -13.10.2024-
 -22:50-
  **/
-
-val fullScreenDialogProperties = DialogProperties(
-    usePlatformDefaultWidth = false,
-    dismissOnBackPress = false,
-    dismissOnClickOutside = false
-)
+object DialogHelper {
+    val fullScreenDialogProperties = DialogProperties(
+        dismissOnBackPress = false,
+        dismissOnClickOutside = false,
+        usePlatformDefaultWidth = false,
+        decorFitsSystemWindows = true
+    )
+    val fullScreenDialogPropertiesCanDismiss = DialogProperties(
+        dismissOnBackPress = true,
+        dismissOnClickOutside = true,
+        usePlatformDefaultWidth = false,
+        decorFitsSystemWindows = true
+    )
+}

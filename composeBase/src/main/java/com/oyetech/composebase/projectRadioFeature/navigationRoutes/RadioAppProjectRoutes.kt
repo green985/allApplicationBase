@@ -11,6 +11,9 @@ Created by Erdi Özbek
  **/
 
 object RadioAppProjectRoutes {
+    val appStart: Route = Route("appStart")
+
+
     val TimerDialog: Route = Route("timerDialog")
     val TabRadioAllList = Route("tab/radioAllList")
     val RadioList = Route("radioList")
@@ -20,6 +23,11 @@ object RadioAppProjectRoutes {
     val TabCategories = Route("radioList/TabCategories")
     val TabSettings = Route("radioList/TabSettings")
     val ContactScreen = Route("radioList/ContactScreen")
+
+    val QuotesListScreen = Route("radioList/QuotesListScreen")
+    val CommentScreenWithContentId = Route("CommentScreenWithContentId")
+    val LoginOperationScreen = Route("LoginOperationScreen")
+    val CompleteProfileScreen = Route("LoginOperationScreen/CompleteProfileScreen")
 
     val radioApplicationBottomTabNavList = listOf(
         RadioAppNavItem.TabRadioAllList,

@@ -12,6 +12,7 @@ Created by Erdi Özbek
 
 object GoogleSignInModule {
     var googleSignInModulee = module {
-        single<GoogleLoginRepository> { GoogleLoginRepositoryImpl(get()) }
+        single<GoogleLoginRepository> { GoogleLoginRepositoryImpl(get(), get()) }
+//        single<GoogleLoginRepository> { FirebaseGoogleLoginRepositoryImpl(get(), get()) }
     }
 }

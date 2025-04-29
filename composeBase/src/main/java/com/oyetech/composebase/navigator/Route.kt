@@ -1,7 +1,11 @@
 package com.oyetech.composebase.navigator
 
+import androidx.annotation.Keep
+import kotlinx.serialization.Serializable
 import timber.log.Timber
 
+@Keep
+@Serializable
 data class Route(val route: String) {
     fun withArgs(vararg args: Pair<String, String?>): String {
         val buildString = buildString {

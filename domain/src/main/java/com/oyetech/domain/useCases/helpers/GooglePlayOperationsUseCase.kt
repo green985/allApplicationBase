@@ -1,9 +1,9 @@
 package com.oyetech.domain.useCases.helpers
 
 import android.app.Activity
+import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.domain.repository.helpers.GoogleSubscriptionOperationRepository
 import com.oyetech.domain.repository.helpers.GoogleSubscriptionUIOperationRepository
-import com.oyetech.domain.useCases.SharedOperationUseCase
 import com.oyetech.models.entity.googleBilling.GoogleProductDetailResponseData
 import com.oyetech.models.entity.messages.MessagesLimitInfoResponseData
 import com.oyetech.models.postBody.billings.GoogleSubsPurchaseInfo
@@ -25,7 +25,9 @@ class GooglePlayOperationsUseCase(private var repository: GoogleSubscriptionOper
 
     var isAppUsageSubscriptionDialogAlreadyShown = false
 
-    val sharedPrefUseCase: SharedOperationUseCase by KoinJavaComponent.inject(SharedOperationUseCase::class.java)
+    val sharedOperationRepository: SharedOperationRepository by KoinJavaComponent.inject(
+        SharedOperationRepository::class.java
+    )
 
     fun checkGooglePlayServicesAvailable(): Boolean {
         // todo will be fixed.
@@ -40,7 +42,7 @@ class GooglePlayOperationsUseCase(private var repository: GoogleSubscriptionOper
 
     fun onProductListShownWithAppUsageCount() {
         uiRepository?.onProductListShownWithAppUsageCount()
-        sharedPrefUseCase.putDateWhenSubsDialogShow()
+        sharedOperationRepository.putDateWhenSubsDialogShow()
     }
 
     fun onProductListShownWithFlag(
@@ -99,7 +101,7 @@ class GooglePlayOperationsUseCase(private var repository: GoogleSubscriptionOper
             Timber.d("totalAppCopunt is not premium userr.....")
         }
 
-        var totalAppOpenCount = sharedPrefUseCase.getTotalAppOpenCount()
+        var totalAppOpenCount = sharedOperationRepository.getTotalAppOpenCount()
 
         Timber.d("totalAppCopunt === " + totalAppOpenCount)
 
@@ -111,11 +113,11 @@ class GooglePlayOperationsUseCase(private var repository: GoogleSubscriptionOper
         if (totalAppOpenCount > HelperConstant.APP_SUBS_DIALOG_SHOW_THRESHOLD
         ) {
 
-            if (!sharedPrefUseCase.getIsDateWhenSubsDialogShow()) {
+            if (!sharedOperationRepository.getIsDateWhenSubsDialogShow()) {
 
                 onProductListShownWithAppUsageCount()
             } else {
-                var isSubsDialogCanShow = sharedPrefUseCase.isSubsDialogCanShow()
+                var isSubsDialogCanShow = sharedOperationRepository.isSubsDialogCanShow()
                 Timber.d("totalAppCopunt === " + isSubsDialogCanShow)
 
                 if (isSubsDialogCanShow) {

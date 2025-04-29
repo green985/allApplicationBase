@@ -2,9 +2,9 @@ package com.oyetech.composebase.projectRadioFeature.screens.radioListScreen
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.R
-import com.oyetech.composebase.base.baseList.BaseListViewModel
-import com.oyetech.composebase.base.baseList.ComplexItemListState
-import com.oyetech.composebase.base.baseList.changeSortType
+import com.oyetech.composebase.base.baseGenericList.ComplexItemListState
+import com.oyetech.composebase.base.baseGenericList.changeSortType
+import com.oyetech.composebase.base.baseList.BaseListViewModel2
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.projectRadioFeature.screens.radioPlayer.vm.mapToResponse
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarActionItems
@@ -12,8 +12,6 @@ import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioTo
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarState
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.IRadioFavViewModelSlice
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.IRadioPlayerViewModelSlice
-import com.oyetech.core.coroutineHelper.AppDispatchers
-import com.oyetech.core.coroutineHelper.asResult
 import com.oyetech.domain.radioOperationUseCases.remoteUseCase.RadioDataOperationUseCase
 import com.oyetech.domain.radioOperationUseCases.remoteUseCase.RadioStationListOperationUseCase
 import com.oyetech.domain.repository.helpers.logicRepositories.RadioListSortRepository
@@ -24,6 +22,7 @@ import com.oyetech.models.radioProject.enums.RadioListEnums.Favorites
 import com.oyetech.models.radioProject.enums.RadioListEnums.History
 import com.oyetech.models.radioProject.enums.RadioListEnums.Languages
 import com.oyetech.models.radioProject.enums.RadioListEnums.Tag
+import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -49,13 +48,13 @@ class RadioListVM(
     val languageName: String,
     val countryName: String,
     val toolbarTitle: String,
-    private val dispatchers: AppDispatchers,
+    private val dispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     val radioDataOperationUseCase: RadioDataOperationUseCase,
     val radioOperationUseCase: RadioOperationUseCase,
     val radioPlayerViewModelSlice: IRadioPlayerViewModelSlice,
     val radioFavViewModelSlice: IRadioFavViewModelSlice,
     val radioListSortRepository: RadioListSortRepository,
-) : BaseListViewModel<RadioUIState>(dispatchers) {
+) : BaseListViewModel2<RadioUIState>(dispatchers) {
     val radioToolbarState: MutableStateFlow<RadioToolbarState>
         get() {
             return if (listType == Favorites.name) {

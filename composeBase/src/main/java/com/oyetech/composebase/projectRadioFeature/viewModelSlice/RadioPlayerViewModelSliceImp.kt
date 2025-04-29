@@ -2,7 +2,7 @@ package com.oyetech.composebase.projectRadioFeature.viewModelSlice
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
-import com.oyetech.composebase.base.baseList.ComplexItemListState
+import com.oyetech.composebase.base.baseGenericList.ComplexItemListState
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.RadioPlayerEvent.Next
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.RadioPlayerEvent.Play
@@ -93,7 +93,6 @@ class RadioPlayerViewModelSliceImp(
     private fun playPauseSelectedRadio(
         selectedItem: RadioUIState,
     ) {
-        changeState()
         if (selectedItem.playerState == Playing) {
             radioOperationUseCase.stopPlayer()
             return

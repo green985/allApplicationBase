@@ -2,6 +2,7 @@ package com.oyetech.domain.repository
 
 import com.oyetech.models.entity.auth.AuthRequestResponse
 import com.oyetech.models.entity.language.TextResourcesDataResponse
+import com.oyetech.models.firebaseModels.language.FirebaseLanguageResponseDataWrapper
 import com.oyetech.models.radioProject.entity.radioEntity.station.RadioStationResponseData
 import com.oyetech.models.radioProject.helperModels.alarm.DataAlarmModel
 import com.oyetech.models.radioProject.helperModels.weekDay.WeekDaysModel
@@ -56,6 +57,23 @@ interface SharedOperationRepository {
 
     fun setLastUsageLocalNotificationTextIndex(lastNotificationIndex: Int)
     fun getLastUsageLocalNotificationTextIndex(): Int
+    fun getBaseLanguageCode(): String
+    fun getFirebaseLanguageValue(): FirebaseLanguageResponseDataWrapper?
+    fun saveFirebaseLanguageData(
+        it: FirebaseLanguageResponseDataWrapper,
+        withTimeMilis: Long? = null,
+    )
 
+    fun getTotalAppOpenCount(): Int
+    fun increaseAppOpenCount()
+    fun isReviewAlreadyShown(): Boolean
+    fun setReviewAlreadyShown(status: Boolean)
+    fun getUserDontWantSeeFlagTimeExpired(): Boolean
+    fun getReviewUserDontWantSee(): Boolean
+    fun setReviewUserDontWantSee(status: Boolean)
+    fun isSubsDialogCanShow(): Boolean
+    fun putDateWhenSubsDialogShow()
+    fun getIsDateWhenSubsDialogShow(): Boolean
+    fun getAlarmm(): DataAlarmModel?
 
 }

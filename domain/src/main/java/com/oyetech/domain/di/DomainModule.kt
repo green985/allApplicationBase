@@ -3,11 +3,14 @@ package com.oyetech.domain.di
 import com.oyetech.domain.helper.ActivityProviderUseCase
 import com.oyetech.domain.radioOperationUseCases.remoteUseCase.RadioDataOperationUseCase
 import com.oyetech.domain.radioOperationUseCases.remoteUseCase.RadioStationListOperationUseCase
+import com.oyetech.domain.repository.messaging.MessagesAllOperationRepository
+import com.oyetech.domain.repository.messaging.MessagesAllOperationRepositoryImp
+import com.oyetech.domain.repository.usernameGeneratorRepository.UsernameGeneratorImp
+import com.oyetech.domain.repository.usernameGeneratorRepository.UsernameGeneratorRepository
 import com.oyetech.domain.useCases.AdsHelperUseCase
 import com.oyetech.domain.useCases.AlarmOperationUseCase
 import com.oyetech.domain.useCases.AnalyticsOperationUseCase
 import com.oyetech.domain.useCases.GlideOperationUseCase
-import com.oyetech.domain.useCases.SharedOperationUseCase
 import com.oyetech.domain.useCases.TimerOperationUseCase
 import com.oyetech.domain.useCases.VolumeOperationUseCase
 import com.oyetech.domain.useCases.contentOperations.RadioOperationUseCase
@@ -30,11 +33,9 @@ object DomainModule {
         single { GlideOperationUseCase(get()) }
         singleOf(::AdsHelperUseCase)
         factory { WallpaperSearchOperationUseCase(get()) }
-        // singleOf(::LocationOperationUseCase)
-        // singleOf(::ExoPlayerOperationUseCase)
         // singleOf(::ContentOperationUseCase)
 
-        single { SharedOperationUseCase(get()) }
+//        single { SharedOperationUseCase(get()) }
 //
 //        single { AlarmOperationUseCase(get()) }
         single { TimerOperationUseCase(get()) }
@@ -44,19 +45,30 @@ object DomainModule {
 //        single { LocalNotificationUseCase(get()) }
 //        single { DynamicLinkOperationUseCase(get()) }
         single { AnalyticsOperationUseCase(get()) }
+        single<UsernameGeneratorRepository> { UsernameGeneratorImp() }
     }
 }
 
 object RadioDomainModule {
-    val radioDomainModule = module {
+    val module = module {
         single { RadioDataOperationUseCase(get()) }
         single { RadioOperationUseCase(get(), get(), get()) }
         single { RadioStationListOperationUseCase(get(), get()) }
         single { RadioCountryTagOperationUseCase(get()) }
-        // single { ExoPlayerOperationUseCase(get()) }
-        single { SharedOperationUseCase(get()) }
         single { VolumeOperationUseCase(get()) }
         single { AlarmOperationUseCase(get()) }
+    }
+}
+
+object QuoteDomainModule {
+    val module = module {
+        single<MessagesAllOperationRepository> {
+            MessagesAllOperationRepositoryImp(
+                get(),
+                get(),
+                get()
+            )
+        }
     }
 }
 

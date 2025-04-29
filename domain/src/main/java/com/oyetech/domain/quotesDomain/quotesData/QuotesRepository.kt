@@ -1,5 +1,6 @@
 package com.oyetech.domain.quotesDomain.quotesData
 
+import com.oyetech.models.quotes.responseModel.QuoteAuthorResponseData
 import com.oyetech.models.quotes.responseModel.QuoteResponseData
 import kotlinx.coroutines.flow.Flow
 
@@ -10,6 +11,10 @@ Created by Erdi Özbek
  **/
 
 interface QuotesRepository {
-    fun fetchRandomQuotes(): Flow<List<QuoteResponseData>>
-    fun fetchQuotes(): Flow<List<QuoteResponseData>>
+    fun getQuotes(): Flow<List<QuoteResponseData>>
+    fun getQuoteOfTheDay(): Flow<List<QuoteResponseData>>
+    suspend fun getQuotesByKeyword(keyword: String): Flow<List<QuoteResponseData>>
+    suspend fun getQuotesByAuthor(author: String): Flow<List<QuoteResponseData>>
+
+    suspend fun getAuthors(): Flow<List<QuoteAuthorResponseData>>
 }

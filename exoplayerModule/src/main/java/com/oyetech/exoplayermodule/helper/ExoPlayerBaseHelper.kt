@@ -10,7 +10,6 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Player.Listener
 import com.google.android.exoplayer2.audio.AudioAttributes.Builder
 import com.google.android.exoplayer2.source.MediaSource
-import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.domain.repository.contentOperation.ExoPlayerOperationRepository
 import com.oyetech.exoplayermodule.analytics.ExoplayerAnalyticsListener
 import com.oyetech.exoplayermodule.utils.urlIndicatesHlsStream
@@ -30,7 +29,7 @@ Created by Erdi Özbek
  **/
 
 abstract class ExoPlayerBaseHelper(
-    private var dispatchers: AppDispatchers,
+    private var dispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     private var exoPlayer: ExoPlayer,
 ) : ExoPlayerDiHelper(),
     ExoPlayerOperationRepository,

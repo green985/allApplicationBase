@@ -5,6 +5,7 @@ import androidx.annotation.StringRes
 
 open class BottomNavigationItem(
     val path: String,
-    @StringRes val title: Int,
+    @StringRes val title: Int = 0,
+    val titleText: String = "",
     @DrawableRes val icon: Int,
 )

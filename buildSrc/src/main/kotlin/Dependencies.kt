@@ -2,16 +2,16 @@
 
 
 object FirebaseLibrary {
-    const val firebaseBom = "com.google.firebase:firebase-bom:33.7.0"
+    const val firebaseBom = "com.google.firebase:firebase-bom:33.10.0"
     const val analytics = "com.google.firebase:firebase-analytics-ktx"
     const val admob = "com.google.android.gms:play-services-ads:${Versions.admob}"
     const val crashlytics = "com.google.firebase:firebase-crashlytics-ktx"
     const val googleServices = "com.google.gms:google-services"
     const val performance = "com.google.firebase:firebase-perf-ktx"
     const val firestoreDB = "com.google.firebase:firebase-firestore-ktx"
+    const val firestoreDatabase = "com.google.firebase:firebase-database-ktx"
     const val messaging = "com.google.firebase:firebase-messaging-ktx"
-    const val googleAuth = "com.google.android.gms:play-services-auth:${Versions.googleAuth}"
-    const val googleAuthBOM = "com.google.android.gms:play-services-auth"
+    const val inappmessaging = "com.google.firebase:firebase-inappmessaging-display"
     const val firebaseAuthBom = "com.google.firebase:firebase-auth"
     const val authKTX = "com.google.firebase:firebase-auth-ktx:${Versions.authKTX}"
     const val locationn = "com.google.android.gms:play-services-location:${Versions.location}"

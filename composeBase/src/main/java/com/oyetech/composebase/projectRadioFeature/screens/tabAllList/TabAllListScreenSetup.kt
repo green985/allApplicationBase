@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.base.BaseScaffold
+import com.oyetech.composebase.projectQuotesFeature.quotes.listScreen.QuoteListScreenSetup
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
 import com.oyetech.composebase.projectRadioFeature.screens.countryList.CountryListScreenSetup
 import com.oyetech.composebase.projectRadioFeature.screens.languageList.LanguageListScreenSetup
@@ -35,6 +36,7 @@ import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioTo
 import com.oyetech.models.radioProject.enums.RadioListEnums
 import com.oyetech.models.radioProject.enums.RadioListEnums.Country
 import com.oyetech.models.radioProject.enums.RadioListEnums.Languages
+import com.oyetech.models.radioProject.enums.RadioListEnums.Quotes
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -53,7 +55,8 @@ fun TabAllListScreenSetup(
 
     val radioToolbarState by viewModel.radioToolbarState.collectAsState()
 
-    val pagerState = rememberPagerState { uiState.tabEnumList.size }
+    val pagerState = rememberPagerState(initialPage = 1,
+        pageCount = { uiState.tabEnumList.size })
     BaseScaffold(
         showTopBar = true,
         topBarContent = {
@@ -82,7 +85,6 @@ fun TabAllListScreenSetup(
                 })
         }) { padding ->
         Column(modifier = Modifier.padding(padding)) {
-//            QuotesListViewSetup()
             Spacer(modifier = Modifier.height(8.dp))
             TabAllScreenView(
                 pagerState = pagerState,
@@ -146,6 +148,11 @@ private fun TabAllScreenView(
             Timber.d("page == $page")
             key(tabEnums[page]) {
                 when (tabEnums[page]) {
+                    Quotes -> {
+                        QuoteListScreenSetup(navigationRoute)
+                        Timber.d("Quotes")
+                    }
+
                     Languages -> {
                         LanguageListScreenSetup(navigationRoute)
                         Timber.d("Languages")

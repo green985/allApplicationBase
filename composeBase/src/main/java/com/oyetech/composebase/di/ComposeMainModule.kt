@@ -1,9 +1,16 @@
 package com.oyetech.composebase.di
 
+import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationDelegate
+import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
+import com.oyetech.composebase.experimental.commentWidget.CommentScreenWithContentIdVM
+import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
 import com.oyetech.composebase.helpers.adViewDelegate.AdViewOperationDelegate
 import com.oyetech.composebase.helpers.adViewDelegate.AdViewOperationDelegateImpl
 import com.oyetech.composebase.helpers.vibrationHelper.IVibrationHelper
 import com.oyetech.composebase.helpers.vibrationHelper.VibrationHelperImpl
+import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationVm
+import com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer.QuotesVM
+import com.oyetech.composebase.projectQuotesFeature.quotes.tagList.QuoteTagListVM
 import com.oyetech.composebase.projectRadioFeature.helper.RadioListSortRepositoryImp
 import com.oyetech.composebase.projectRadioFeature.screens.countryList.CountryVM
 import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.GeneralOperationVM
@@ -21,9 +28,13 @@ import com.oyetech.composebase.projectRadioFeature.viewModelSlice.IRadioFavViewM
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.IRadioPlayerViewModelSlice
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.RadioFavViewModelSliceImp
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.RadioPlayerViewModelSliceImp
-import com.oyetech.composebase.projectRadioFeature.views.randomQuotesViewer.QuotesVM
+import com.oyetech.composebase.sharedScreens.messaging.MessageDetailVm
+import com.oyetech.composebase.sharedScreens.messaging.MessageOperationVM
+import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListVm
+import com.oyetech.composebase.sharedScreens.userList.UserListVm
 import com.oyetech.domain.repository.helpers.logicRepositories.RadioListSortRepository
 import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 /**
@@ -36,11 +47,7 @@ object ComposeMainModule {
     val composeMainModule1 = module {
         single<IVibrationHelper> { VibrationHelperImpl(get()) }
         factory<AdViewOperationDelegate> { AdViewOperationDelegateImpl() }
-//        viewModelOf(::RadioListViewModel)
         viewModelOf(::RadioListVM)
-//        factory(::RadioListVM)
-//        factory(::RadioListVM)
-
         viewModelOf(::RadioAllListFragmentVM)
         viewModelOf(::LanguageVM)
         viewModelOf(::RadioPlayerVM)
@@ -50,17 +57,27 @@ object ComposeMainModule {
         viewModelOf(::TabSettingsVM)
         viewModelOf(::ContactViewModel)
         viewModelOf(::TagListVM)
-        viewModelOf(::GeneralOperationVM)
         viewModelOf(::GeneralPlaygroundVm)
 
         single<IRadioPlayerViewModelSlice> { RadioPlayerViewModelSliceImp(get(), get()) }
         single<IRadioFavViewModelSlice> { RadioFavViewModelSliceImp(get()) }
         single<RadioListSortRepository> { RadioListSortRepositoryImp() }
+        single<SnackbarDelegate> { SnackbarDelegate() }
+        single<BottomNavigationDelegate> { BottomNavigationDelegate() }
 
 
-
-
+        singleOf(::GeneralOperationVM)
+        singleOf(::LoginOperationVM)
 
         viewModelOf(::QuotesVM)
+        viewModelOf(::QuoteTagListVM)
+        viewModelOf(::ContentOperationVm)
+        viewModelOf(::CommentScreenWithContentIdVM)
+
+        // messaging
+        viewModelOf(::MessageDetailVm)
+        singleOf(::MessageOperationVM)
+        viewModelOf(::MessageConversationListVm)
+        viewModelOf(::UserListVm)
     }
 }

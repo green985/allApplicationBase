@@ -4,8 +4,8 @@ import android.app.Activity
 import com.oyetech.cripto.analyticsKeys.AnalyticsKeys
 import com.oyetech.domain.helper.ActivityProviderUseCase
 import com.oyetech.domain.repository.AnalyticsRepository
+import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.domain.repository.helpers.AppReviewResultRepository
-import com.oyetech.domain.repository.helpers.SharedHelperRepository
 import org.koin.java.KoinJavaComponent
 import timber.log.Timber
 
@@ -17,8 +17,8 @@ Created by Erdi Özbek
 
 class AppReviewResultRepositoryImp : AppReviewResultRepository {
 
-    val sharedPrefRepositoryHelper: SharedHelperRepository by KoinJavaComponent.inject(
-        SharedHelperRepository::class.java
+    val sharedOperationRepository: SharedOperationRepository by KoinJavaComponent.inject(
+        SharedOperationRepository::class.java
     )
 
     val activityProviderUseCase: ActivityProviderUseCase by KoinJavaComponent.inject(
@@ -31,7 +31,7 @@ class AppReviewResultRepositoryImp : AppReviewResultRepository {
 
     override fun onCompleteAppReviewOperation() {
         Timber.d("appREviewwww onCompleteAppReviewOperation== ")
-        sharedPrefRepositoryHelper.setReviewAlreadyShown(true)
+        sharedOperationRepository.setReviewAlreadyShown(true)
         analyticsOperationUseCase.logEventWithKey(AnalyticsKeys.reviewCompleteSection)
     }
 

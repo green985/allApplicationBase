@@ -1,7 +1,7 @@
 package com.oyetech.radioservice.broadcasts
 
 import android.content.BroadcastReceiver
-import com.oyetech.domain.useCases.SharedOperationUseCase
+import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.domain.useCases.contentOperations.RadioOperationUseCase
 import org.koin.java.KoinJavaComponent
 
@@ -17,8 +17,8 @@ abstract class BaseBroadcastReceiver : BroadcastReceiver() {
         RadioOperationUseCase::class.java
     )
 
-    val sharedOperationUseCase: SharedOperationUseCase by KoinJavaComponent.inject(
-        SharedOperationUseCase::class.java
+    val sharedOperationUseCase: SharedOperationRepository by KoinJavaComponent.inject(
+        SharedOperationRepository::class.java
     )
 
 

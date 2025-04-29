@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'org.lsposed.lsparanoid'
+apply plugin: 'kotlinx-serialization'
 
 android {
     namespace 'com.oyetech.models'
@@ -44,4 +45,5 @@ dependencies {
     implementation Libraries.moshi
     implementation Libraries.moshiKotlin
     implementation Libraries.roomRunTime
+    implementation 'com.google.firebase:firebase-firestore-ktx:25.1.1'
 }

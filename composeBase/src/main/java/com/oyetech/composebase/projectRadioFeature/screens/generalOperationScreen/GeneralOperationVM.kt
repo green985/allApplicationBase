@@ -2,11 +2,15 @@ package com.oyetech.composebase.projectRadioFeature.screens.generalOperationScre
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
-import com.oyetech.core.coroutineHelper.AppDispatchers
-import com.oyetech.domain.repository.helpers.SharedHelperRepository
+import com.oyetech.composebase.sharedScreens.messaging.MessageOperationVM
+import com.oyetech.domain.repository.SharedOperationRepository
+import com.oyetech.domain.repository.firebase.FirebaseUserListOperationRepository
 import com.oyetech.domain.useCases.helpers.AppReviewOperationUseCase
+import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 /**
 Created by Erdi Özbek
@@ -15,9 +19,11 @@ Created by Erdi Özbek
  **/
 
 class GeneralOperationVM(
-    appDispatchers: AppDispatchers,
+    appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     private val appReviewOperationUseCase: AppReviewOperationUseCase,
-    private val sharedHelperRepository: SharedHelperRepository,
+    private val sharedHelperRepository: SharedOperationRepository,
+    private val firebaseUserListOperationRepository: FirebaseUserListOperationRepository,
+    private val messageOperationVM: MessageOperationVM,
 ) : BaseViewModel(appDispatchers) {
 
     fun getReviewCanShowState() = appReviewOperationUseCase.getReviewCanShowState()
@@ -39,12 +45,25 @@ class GeneralOperationVM(
         sharedHelperRepository.setReviewAlreadyShown(true)
     }
 
+    fun observeRealtimeMessages() {}
+
+    private fun signToUserFeedList() {
+        viewModelScope.launch(getDispatcherIo()) {
+            firebaseUserListOperationRepository.addUserToUserList().asResult()
+                .collectLatest {
+                    Timber.d("User added to user list")
+                }
+        }
+    }
+
     init {
+        messageOperationVM.initFun()
         sharedHelperRepository.increaseAppOpenCount()
         viewModelScope.launch(getDispatcherIo()) {
             delay(1000)
             appReviewOperationUseCase.controlReviewCanShow()
         }
+        signToUserFeedList()
     }
 
 

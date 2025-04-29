@@ -3,13 +3,13 @@ package com.oyetech.radioservice.alarm
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.oyetech.core.appUtil.AppUtil
+import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.domain.useCases.AlarmOperationUseCase
-import com.oyetech.domain.useCases.SharedOperationUseCase
 import com.oyetech.domain.useCases.VolumeOperationUseCase
 import com.oyetech.domain.useCases.contentOperations.RadioOperationUseCase
 import com.oyetech.radioservice.serviceUtils.PlayerServiceUtils
 import com.oyetech.radioservice.serviceUtils.ServiceConst
+import com.oyetech.tools.AppUtil
 import org.koin.java.KoinJavaComponent
 import timber.log.Timber
 
@@ -21,8 +21,8 @@ Created by Erdi Özbek
 
 class AlarmReceiver : BroadcastReceiver() {
 
-    val sharedOperationUseCase: SharedOperationUseCase by KoinJavaComponent.inject(
-        SharedOperationUseCase::class.java
+    val sharedOperationUseCase: SharedOperationRepository by KoinJavaComponent.inject(
+        SharedOperationRepository::class.java
     )
 
     val radioOperationUseCase: RadioOperationUseCase by KoinJavaComponent.inject(

@@ -34,6 +34,7 @@ import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.Radio
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.RadioUIEvent.Share
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.RadioUIEvent.ToggleFavorite
 import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.RadioUIState
+import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.navigationToTagList
 import com.oyetech.composebase.projectRadioFeature.screens.views.RadioLogoView
 import com.oyetech.composebase.projectRadioFeature.screens.views.RadioTagChipView
 import kotlinx.collections.immutable.ImmutableList
@@ -67,7 +68,10 @@ fun ItemRadioView(
         onAlarmClick = { radioPlayerEvent(AddAlarm) },
         onShortcutClick = { radioPlayerEvent(CreateShortcut) },
         onShareClick = { radioPlayerEvent(Share) },
-        onTagSelected = { tag -> radioPlayerEvent.invoke(RadioUIEvent.TagSelected(tag)) },
+        onTagSelected = { tag ->
+            radioPlayerEvent.invoke(RadioUIEvent.TagSelected(tag))
+            navigationToTagList(navigationRoute, tag)
+        },
         navigationRoute = navigationRoute
     )
 

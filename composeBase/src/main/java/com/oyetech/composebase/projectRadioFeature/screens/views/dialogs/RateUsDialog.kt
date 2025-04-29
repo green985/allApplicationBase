@@ -40,7 +40,6 @@ fun RateUsDialog(
 
     BasicAlertDialog(onDismiss,
         modifier = Modifier
-
             .clip(MaterialTheme.shapes.large)
             .background(MaterialTheme.colorScheme.surface)
             .padding(16.dp),

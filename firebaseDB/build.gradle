@@ -13,4 +13,5 @@ dependencies {
 
 
     implementation FirebaseLibrary.firestoreDB
+    implementation FirebaseLibrary.firestoreDatabase
 }

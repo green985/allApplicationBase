@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination
@@ -21,21 +22,27 @@ import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProj
 
 @Composable
 fun BottomNavigationBar(
+    modifier: Modifier = Modifier,
+    isClickable: Boolean = true,
     navController: NavHostController = rememberNavController(),
     navItems: List<BottomNavigationItem> = RadioAppProjectRoutes.radioApplicationBottomTabNavList,
 ) {
     var selectedItem by rememberSaveable { mutableIntStateOf(0) }
 
 
-    NavigationBar(windowInsets = WindowInsets.navigationBars) {
+    NavigationBar(modifier = modifier, windowInsets = WindowInsets.navigationBars) {
         navItems.forEachIndexed { index, item ->
-            val title = stringResource(item.title)
+
+            val title = item.titleText.ifBlank {
+                stringResource(item.title)
+            }
 
             NavigationBarItem(
                 alwaysShowLabel = true,
                 icon = { Icon(painterResource(item.icon), contentDescription = title) },
                 label = { Text(title) },
                 selected = selectedItem == index,
+                enabled = isClickable,
                 onClick = {
                     selectedItem = index
                     navigateToBottomBarRoute(navController, item.path)

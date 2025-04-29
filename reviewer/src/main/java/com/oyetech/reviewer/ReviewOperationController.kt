@@ -1,7 +1,7 @@
 package com.oyetech.reviewer
 
+import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.domain.repository.helpers.AppReviewControllerRepository
-import com.oyetech.domain.repository.helpers.SharedHelperRepository
 import com.oyetech.models.utils.const.HelperConstant
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
@@ -18,22 +18,22 @@ Created by Erdi Özbek
 kullaniciya toplamda 10 mesaj gelmis olsun
  */
 class ReviewOperationController(
-    private var sharedPrefKey: SharedHelperRepository,
+    private var sharedOperationRepository: SharedOperationRepository,
     // private var messageOperationUseCase: MessagesOperationUseCase,
 ) : AppReviewControllerRepository {
 
     private var reviewCanShowStateFlow = MutableStateFlow<Boolean>(false)
 
     override fun controlReviewCanShow() {
-        if (sharedPrefKey.getReviewUserDontWantSee()) {
+        if (sharedOperationRepository.getReviewUserDontWantSee()) {
             return
         }
 
-        if (sharedPrefKey.isReviewAlreadyShown()) {
+        if (sharedOperationRepository.isReviewAlreadyShown()) {
             return
         }
 
-        val totalAppOpenCount = sharedPrefKey.getTotalAppOpenCount()
+        val totalAppOpenCount = sharedOperationRepository.getTotalAppOpenCount()
         if (totalAppOpenCount < HelperConstant.APP_FIRST_OPEN_COUNT_THRESHOLD) {
             Timber.d("first open thressholl " + totalAppOpenCount)
             return

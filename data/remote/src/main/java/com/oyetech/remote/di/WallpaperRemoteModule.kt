@@ -41,7 +41,7 @@ object WallpaperRemoteModule {
             var retrofit = Builder().apply {
                 baseUrl(baseUrl)
                 addCallAdapterFactory(CoroutineCallAdapterFactory())
-                addConverterFactory(MoshiConverterFactory.create(get()))
+                addConverterFactory(MoshiConverterFactory.create(get()).asLenient())
                 // addConverterFactory(GsonConverterFactory.create(get()))
                 client(client)
             }.build()

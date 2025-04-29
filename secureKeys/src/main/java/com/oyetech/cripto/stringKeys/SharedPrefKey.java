@@ -43,7 +43,7 @@ public class SharedPrefKey {
     @NonNull
     public static String Client_Secret = "Client_Secret";
     @NonNull
-    public static String TextResourcesDataResponse = "TextResourcesDataResponse";
+    public static String FirebaseTextResourcesDataResponse = "FirebaseTextResourcesDataResponse";
     @NonNull
     public static String TextResourcesDataResponseTimeMilis = "TextResourcesDataResponseTimeMilis";
     @NonNull

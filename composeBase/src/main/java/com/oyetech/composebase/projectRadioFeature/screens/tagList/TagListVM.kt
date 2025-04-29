@@ -3,19 +3,18 @@ package com.oyetech.composebase.projectRadioFeature.screens.tagList
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.R
-import com.oyetech.composebase.base.baseList.BaseListViewModel
-import com.oyetech.composebase.base.baseList.ComplexItemListState
-import com.oyetech.composebase.base.baseList.changeSortType
+import com.oyetech.composebase.base.baseGenericList.ComplexItemListState
+import com.oyetech.composebase.base.baseGenericList.changeSortType
+import com.oyetech.composebase.base.baseList.BaseListViewModel2
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarState
-import com.oyetech.core.coroutineHelper.AppDispatchers
-import com.oyetech.core.coroutineHelper.asResult
 import com.oyetech.domain.radioOperationUseCases.remoteUseCase.RadioStationListOperationUseCase
 import com.oyetech.domain.repository.helpers.logicRepositories.RadioListSortRepository
 import com.oyetech.domain.useCases.remoteUseCase.RadioCountryTagOperationUseCase
 import com.oyetech.models.radioEntity.tag.TagResponseData
 import com.oyetech.models.radioProject.entity.radioEntity.country.CountryResponseData
 import com.oyetech.models.radioProject.enums.RadioListEnums.Country
+import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -33,11 +32,11 @@ Created by Erdi Özbek
  **/
 
 class TagListVM(
-    appDispatchers: AppDispatchers,
+    appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     private val radioCountryTagOperationUseCase: RadioCountryTagOperationUseCase,
     private val radioListSortRepository: RadioListSortRepository,
     val radioStationListOperationUseCase: RadioStationListOperationUseCase,
-) : BaseListViewModel<TagListUiState>(appDispatchers) {
+) : BaseListViewModel2<TagListUiState>(appDispatchers) {
 
     val toolbarState = mutableStateOf(
         RadioToolbarState(

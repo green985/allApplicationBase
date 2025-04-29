@@ -9,7 +9,7 @@ import android.content.Intent
 import android.util.Log
 import com.oyetech.domain.helper.isDebug
 import com.oyetech.domain.repository.AlarmOperationRepository
-import com.oyetech.domain.useCases.SharedOperationUseCase
+import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.models.radioProject.entity.radioEntity.station.RadioStationResponseData
 import com.oyetech.models.radioProject.helperModels.alarm.DataAlarmModel
 import com.oyetech.models.radioProject.helperModels.weekDay.WeekDaysModel
@@ -27,7 +27,7 @@ Created by Erdi Özbek
 
 class AlarmManagerHelper(
     private var context: Context,
-    private var sharedOperationUseCase: SharedOperationUseCase,
+    private var sharedOperationUseCase: SharedOperationRepository,
 ) : AlarmOperationRepository {
 
     // will be fixed later...
