@@ -12,7 +12,7 @@ Created by Erdi Özbek
 
 object LanguageKey {
     var profileLastUpdatedAt set(value) {} get() = LocalLanguageHelper.getStringWithKey("profileLastUpdatedAt")
-    var profileUpdatedAt set(value) {} get() = LocalLanguageHelper.getStringWithKey("profileCreatedAt")
+    var profileUpdatedAt set(value) {} get() = LocalLanguageHelper.getStringWithKey("profileUpdatedAt")
     var profileCreatedAt set(value) {} get() = LocalLanguageHelper.getStringWithKey("profileCreatedAt")
     var biographyInfoHint set(value) {} get() = LocalLanguageHelper.getStringWithKey("biographyInfoHint")
     var save set(value) {} get() = LocalLanguageHelper.getStringWithKey("save")
