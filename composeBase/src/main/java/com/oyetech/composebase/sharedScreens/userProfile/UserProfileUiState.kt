@@ -17,8 +17,6 @@ data class UserProfileUiState(
 ) : BaseUIState()
 
 sealed class UserProfileEvent : BaseEvent() {
-    data class Idle(val data: Int) : UserProfileEvent()
-    object Idlee : UserProfileEvent()
     object OnEditProfile : UserProfileEvent()
 
 }
