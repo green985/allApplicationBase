@@ -37,6 +37,8 @@ object QuoteAppProjectRoutes {
     val MessageConversationList = Route("quote/MessageConversationList")
     val UserList = Route("quote/UserList")
     val UserProfile = Route("quote/UserProfile")
+    val User2ProfileScreenSetup = Route("User2ProfileScreenSetup")
+
 
     val quoteApplicationBottomTabNavList = listOf(
         TabQuoteAppHomepage, QuoteSettingsTab, QuoteMessageTab, QuoteUserListTab
