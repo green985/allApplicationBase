@@ -36,7 +36,7 @@ sealed class EditProfileEvent {
     object Idlee : EditProfileEvent()
     data class OnBiographyTextChange(val biographyText: String) : EditProfileEvent()
     data class OnImageSlotClick(val index: Int) : EditProfileEvent()
-
+    data class OnImageSelected(val imageUri: String) : EditProfileEvent()
     object OnCancelOperation : EditProfileEvent()
     object OnSubmit : EditProfileEvent()
 }

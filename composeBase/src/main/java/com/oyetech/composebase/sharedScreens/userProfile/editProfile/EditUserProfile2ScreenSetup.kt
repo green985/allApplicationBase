@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.oyetech.composebase.baseViews.customViews.FormAcceptOperationViewSetup
+import com.oyetech.composebase.helpers.viewProperties.ImagePickerHandler
 import com.oyetech.composebase.sharedScreens.userProfile.EditProfileEvent
 import com.oyetech.composebase.sharedScreens.userProfile.EditProfileEvent.OnImageSlotClick
 import com.oyetech.composebase.sharedScreens.userProfile.EditProfileUiState
@@ -43,6 +44,8 @@ fun EditUserProfile2ScreenSetup(
         navigationRoute = navigationRoute,
         uiState = getDefaultUiState(),
     )
+
+
 }
 
 fun getDefaultUiState(): EditProfileUiState {
@@ -58,6 +61,12 @@ fun EditUserProfile2Screen(
     uiState: EditProfileUiState = getDefaultUiState(),
     onEvent: EditProfileEvent.() -> Unit = { Timber.d("${this.toString()}") }, // Default empty event handler
 ) {
+
+    val launchPicker = ImagePickerHandler { uri ->
+        Timber.d("Image URI: $uri")
+        onEvent(EditProfileEvent.OnImageSelected(uri.toString()))
+    }
+
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -108,6 +117,7 @@ fun EditUserProfile2Screen(
                                     shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp)
                                 )
                                 .clickable {
+                                    launchPicker()
                                     onEvent(
                                         OnImageSlotClick(
                                             index
