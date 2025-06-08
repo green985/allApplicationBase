@@ -2,6 +2,7 @@ package com.oyetech.composebase.sharedScreens.userProfile.userProfileDesign
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,7 +35,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideSubcomposition
 import com.bumptech.glide.integration.compose.RequestState
 import com.bumptech.glide.integration.compose.placeholder
-import com.oyetech.composebase.baseViews.dotIndicator.DotsIndicator
+import com.oyetech.composebase.baseViews.dotIndicator.DotsIndicatorSmallAnim
 import com.oyetech.composebase.sharedScreens.userProfile.views.ProfileBiograpyhyInputArea
 import com.oyetech.tools.contextHelper.getApplicationLogo
 import kotlinx.collections.immutable.PersistentList
@@ -46,7 +47,7 @@ Created by Erdi Özbek
 -22:28-
  **/
 
-private const val boxHeightPercent = 0.4f
+private const val BoxHeightPercent = 0.4f
 
 @Composable
 fun User2ProfileScreenSetup(
@@ -61,22 +62,6 @@ fun User2ProfileScreenSetup(
     )
 }
 
-data class UserProfileUiState(
-    val username: String = "",
-    val biographyText: String = "",
-    val userImageList: PersistentList<FirebaseUserImageModel> = persistentListOf(),
-)
-
-data class FirebaseUserImageModel(
-    val imageUrl: String = "",
-    val imageId: String = "",
-)
-
-sealed class UserProfileUiEvent {
-    data class OnBiographyTextChange(val newText: String) : UserProfileUiEvent()
-    data class OnMessageUserClick(val receiverUserId: String) : UserProfileUiEvent()
-    data class OnImageClick(val imageModel: FirebaseUserImageModel) : UserProfileUiEvent()
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -100,7 +85,13 @@ fun User2ProfileScreen(
             Modifier
                 .padding(contentPadding)
         ) {
-            UserImageListView(imageList = uiState.userImageList)
+            UserImageListView(imageList = uiState.userImageList, onImageClick = {
+                onEvent.invoke(
+                    UserProfileUiEvent.OnImageClick(
+                        uiState.userImageList.firstOrNull() ?: FirebaseUserImageModel()
+                    )
+                )
+            })
 
             Row(
                 modifier = Modifier
@@ -145,12 +136,13 @@ fun User2ProfileScreen(
 private fun UserImageListView(
     modifier: Modifier = Modifier,
     imageList: PersistentList<FirebaseUserImageModel> = persistentListOf(),
+    onImageClick: (() -> Unit),
 ) {
     val pagerState = rememberPagerState { imageList.size }
     val context = LocalContext.current
     val boxModifier = modifier
         .fillMaxWidth()
-        .fillMaxHeight(boxHeightPercent)
+        .fillMaxHeight(BoxHeightPercent)
     Box() {
         if (imageList.isEmpty()) {
             Box(
@@ -195,8 +187,11 @@ private fun UserImageListView(
                                 }
                                 // painter also comes from GlideSubcompositionScope
                                 is RequestState.Success -> {
+
                                     Image(
-                                        modifier = Modifier.fillMaxSize(),
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .clickable { onImageClick() },
                                         painter = painter,
                                         contentDescription = null
                                     )
@@ -212,7 +207,7 @@ private fun UserImageListView(
             modifier = Modifier.align(Alignment.BottomCenter),
             horizontalArrangement = Arrangement.Center
         ) {
-            DotsIndicator(
+            DotsIndicatorSmallAnim(
                 totalDots = imageList.size,
                 selectedIndex = pagerState.currentPage,
                 modifier = Modifier
