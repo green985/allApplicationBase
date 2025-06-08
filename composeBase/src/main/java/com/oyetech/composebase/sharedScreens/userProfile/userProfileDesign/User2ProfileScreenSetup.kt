@@ -1,5 +1,6 @@
 package com.oyetech.composebase.sharedScreens.userProfile.userProfileDesign
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,7 +31,8 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.GlideSubcomposition
+import com.bumptech.glide.integration.compose.RequestState
 import com.bumptech.glide.integration.compose.placeholder
 import com.oyetech.composebase.baseViews.dotIndicator.DotsIndicator
 import com.oyetech.composebase.sharedScreens.userProfile.views.ProfileBiograpyhyInputArea
@@ -42,6 +45,8 @@ Created by Erdi Özbek
 -6.06.2025-
 -22:28-
  **/
+
+private const val boxHeightPercent = 0.4f
 
 @Composable
 fun User2ProfileScreenSetup(
@@ -143,54 +148,64 @@ private fun UserImageListView(
 ) {
     val pagerState = rememberPagerState { imageList.size }
     val context = LocalContext.current
+    val boxModifier = modifier
+        .fillMaxWidth()
+        .fillMaxHeight(boxHeightPercent)
     Box() {
-        Column(
-            modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.4f)
-        ) {
+        if (imageList.isEmpty()) {
+            Box(
+                modifier = boxModifier
+                    .background(MaterialTheme.colorScheme.onError)
+            )
+        } else {
+            Column(
+                boxModifier,
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier.fillMaxWidth(),
+                ) { pageIndex ->
+                    if (LocalInspectionMode.current) {
+                        Box(
+                            Modifier
+                                .fillMaxSize()
+                                .background(
+                                    MaterialTheme.colorScheme.onError
+                                )
+                        )
+                    } else {
+                        val imageUrl = imageList.get(pageIndex).imageUrl
+                        GlideSubcomposition(imageUrl, Modifier.fillMaxSize()) {
+                            // state comes from GlideSubcompositionScope
+                            when (state) {
+                                RequestState.Failure -> {
+                                    placeholder(context.getApplicationLogo())
+                                }
 
-            HorizontalPager(
-                state = pagerState,
-                modifier = Modifier.fillMaxWidth(),
-            ) { pageIndex ->
-                if (LocalInspectionMode.current) {
-                    Box(
-                        Modifier
-                            .fillMaxSize()
-                            .background(
-                                MaterialTheme.colorScheme.onError
-                            )
-                    )
-                } else {
-                    val imageUrl = imageList.get(pageIndex).imageUrl
-//                    GlideSubcomposition(imageUrl, modifier) {
-//                        // state comes from GlideSubcompositionScope
-//                        when (state) {
-//                            RequestState.Failure -> TODO()
-//                            RequestState.Loading -> {
-//                                Box(
-//                                    modifier = modifier
-//                                        .fillMaxSize(),
-//                                    contentAlignment = Alignment.Center
-//                                ) {
-//                                    CircularProgressIndicator(color = MaterialTheme.colorScheme.onBackground)
-//                                }
-//                            }
-//                            // painter also comes from GlideSubcompositionScope
-//                            is RequestState.Success -> Image(painter, contentDescription = null)
-//                        }
-//                    }
-//
-//
-
-                    GlideImage(
-                        model = imageUrl,
-                        contentDescription = "RadioImage",
-                        failure = placeholder(context.getApplicationLogo()),
-                        modifier = Modifier.fillMaxSize()
-                    )
+                                RequestState.Loading -> {
+                                    Box(
+                                        modifier = modifier
+                                            .fillMaxSize(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        CircularProgressIndicator(color = MaterialTheme.colorScheme.onBackground)
+                                    }
+                                }
+                                // painter also comes from GlideSubcompositionScope
+                                is RequestState.Success -> {
+                                    Image(
+                                        modifier = Modifier.fillMaxSize(),
+                                        painter = painter,
+                                        contentDescription = null
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
+
             }
         }
         Row(
@@ -221,7 +236,7 @@ private fun getDefaulUiState() = UserProfileUiState(
     username = "Erdi Özbeffffk",
     biographyText = "This is a sample biography text for preview purposes.",
     userImageList = persistentListOf(
-        FirebaseUserImageModel("https://picsum.photos/200", "image1"),
-        FirebaseUserImageModel("https://picsum.photos/300", "image2")
+        FirebaseUserImageModel("https://picsum.photos/2000", "image1"),
+        FirebaseUserImageModel("https://picsum.photos/3000", "image2")
     )
 )
