@@ -98,8 +98,7 @@ fun EditUserProfile2Screen(
                 androidx.compose.foundation.lazy.grid.LazyVerticalGrid(
                     columns = androidx.compose.foundation.lazy.grid.GridCells.Fixed(3),
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
+                        .fillMaxWidth(),
                     verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
                     horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(
                         8.dp
