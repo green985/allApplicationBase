@@ -26,8 +26,7 @@ fun FormAcceptOperationViewSetup(
     onAcceptOperation: (() -> Unit),
 ) {
 
-    Column {
-
+    Column(modifier) {
         Row(modifier = Modifier.fillMaxWidth()) {
             TextButton(onClick = onCancelOperation) {
                 Text(text = LanguageKey.cancel)

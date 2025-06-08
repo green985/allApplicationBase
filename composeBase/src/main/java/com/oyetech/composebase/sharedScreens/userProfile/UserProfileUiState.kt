@@ -2,6 +2,9 @@ package com.oyetech.composebase.sharedScreens.userProfile
 
 import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.base.BaseUIState
+import com.oyetech.composebase.sharedScreens.userProfile.userProfileDesign.FirebaseUserImageModel
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
 
 /**
 Created by Erdi Özbek
@@ -25,12 +28,15 @@ data class EditProfileUiState(
     val isLoading: Boolean = false,
     val errorText: String = "",
     val biographyText: String = "",
+    val imageList: PersistentList<FirebaseUserImageModel> = persistentListOf(),
 )
 
 sealed class EditProfileEvent {
     data class Idle(val data: Int) : EditProfileEvent()
     object Idlee : EditProfileEvent()
     data class OnBiographyTextChange(val biographyText: String) : EditProfileEvent()
+    data class OnImageSlotClick(val index: Int) : EditProfileEvent()
+
     object OnCancelOperation : EditProfileEvent()
     object OnSubmit : EditProfileEvent()
 }

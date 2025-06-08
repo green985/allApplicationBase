@@ -35,6 +35,7 @@ object AllScreenNavigator {
         // Quote App Routes
 //        QuoteAppProjectRoutes.MessagingList.route,
 
+        QuoteAppProjectRoutes.EditUserProfile2ScreenSetup.route,
         QuoteAppProjectRoutes.User2ProfileScreenSetup.route,
         QuoteAppProjectRoutes.FacSettings.route,
         QuoteAppProjectRoutes.MessageConversationList.route,

@@ -38,6 +38,7 @@ object QuoteAppProjectRoutes {
     val UserList = Route("quote/UserList")
     val UserProfile = Route("quote/UserProfile")
     val User2ProfileScreenSetup = Route("User2ProfileScreenSetup")
+    val EditUserProfile2ScreenSetup = Route("EditUserProfile2ScreenSetup")
 
 
     val quoteApplicationBottomTabNavList = listOf(
