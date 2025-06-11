@@ -1,16 +1,19 @@
 package com.oyetech.firebaseDB.di
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseContentLikeOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseLanguageOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuotesDebugOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuotesOperationRepository
+import com.oyetech.domain.repository.firebase.FirebaseStorageRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserListOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.firebase.RadioAnalyticsOperationRepository
 import com.oyetech.domain.repository.helpers.FirebaseContactWithMeOperationRepository
+import com.oyetech.firebaseDB.files.FirebaseStorageRepositoryImpl
 import com.oyetech.firebaseDB.firebaseDB.FirebaseContactWithMeOperationRepositoryImp
 import com.oyetech.firebaseDB.firebaseDB.comment.FirebaseCommentOperationRepositoryImp
 import com.oyetech.firebaseDB.firebaseDB.contentOperation.FirebaseContentLikeOperationRepositoryImpl
@@ -32,6 +35,18 @@ Created by Erdi Özbek
 object FirebaseDBModule {
 
     var firebaseDBModulee = module {
+
+        single<FirebaseStorage> {
+//            FirebaseFirestore.setLoggingEnabled(true)
+
+            val firestore = FirebaseStorage.getInstance()
+
+//            val settings = firestoreSettings {
+//                isPersistenceEnabled = false
+//            }
+//            firestore.firestoreSettings = settings
+            firestore
+        }
         single<FirebaseFirestore> {
 //            FirebaseFirestore.setLoggingEnabled(true)
 
@@ -93,6 +108,12 @@ object FirebaseDBModule {
         single<FirebaseUserListOperationRepository> {
             FirebaseUserListOperationRepositoryImpl(
                 get(), get()
+            )
+        }
+
+        single<FirebaseStorageRepository> {
+            FirebaseStorageRepositoryImpl(
+                get()
             )
         }
 

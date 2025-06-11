@@ -21,7 +21,7 @@ import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageC
 import com.oyetech.composebase.sharedScreens.settings.FacSettingsScreenSetup
 import com.oyetech.composebase.sharedScreens.userList.UserListScreenSetup
 import com.oyetech.composebase.sharedScreens.userProfile.UserProfileScreenSetup
-import com.oyetech.composebase.sharedScreens.userProfile.editProfile.EditUserProfile2ScreenSetup
+import com.oyetech.composebase.sharedScreens.userProfile.editProfile.EditUserProfileScreenSetup
 import com.oyetech.composebase.sharedScreens.userProfile.userProfileDesign.User2ProfileScreenSetup
 
 @Suppress("LongMethod")
@@ -150,7 +150,7 @@ fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
 
     // TabHistory Route
     composable(QuoteAppProjectRoutes.EditUserProfile2ScreenSetup.route) {
-        EditUserProfile2ScreenSetup(
+        EditUserProfileScreenSetup(
             navigationRoute = navigateRouteOperation(navController)
         )
     }

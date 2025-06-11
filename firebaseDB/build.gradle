@@ -14,4 +14,5 @@ dependencies {
 
     implementation FirebaseLibrary.firestoreDB
     implementation FirebaseLibrary.firestoreDatabase
+    implementation 'com.google.firebase:firebase-storage-ktx:21.0.2'
 }
