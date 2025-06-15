@@ -64,7 +64,6 @@ sealed class MessageDetailEvent : BaseEvent() {
     data class OnMessageTextChange(val messageText: String) : MessageDetailEvent()
     data class OnMessageSend(val triggered: Boolean = false) : MessageDetailEvent()
     object OnRetry : MessageDetailEvent()
-    object OnRefresh : MessageDetailEvent()
 
     object OnScreenOut : MessageDetailEvent()
 }

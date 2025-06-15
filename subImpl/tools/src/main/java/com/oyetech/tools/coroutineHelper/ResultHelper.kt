@@ -31,6 +31,16 @@ fun <T> Flow<T>.asResult(): Flow<Result<T>> = flow {
     }
 }
 
+fun <T> Flow<T>.asResultWithSuccessFailure(): Flow<Result<T>> = flow {
+    try {
+        collect { value ->
+            emit(Result.success(value)) // Emit success result
+        }
+    } catch (e: Throwable) {
+        emit(Result.failure(e)) // Emit failure result
+    }
+}
+
 fun <T> Flow<T>.asResultWithInitial(initial: T): Flow<Result<T>> = flow {
     emit(Result.success(initial)) // Emit initial value
     try {

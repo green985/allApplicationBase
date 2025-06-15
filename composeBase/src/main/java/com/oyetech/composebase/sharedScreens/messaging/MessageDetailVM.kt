@@ -1,13 +1,12 @@
 package com.oyetech.composebase.sharedScreens.messaging
 
 import androidx.lifecycle.viewModelScope
-import com.oyetech.composebase.base.baseGenericList.BaseListViewModel
+import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.base.baseGenericList.updateErrorInitial
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnMessageSend
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnMessageTextChange
-import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnRefresh
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnRetry
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnScreenOut
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
@@ -37,9 +36,9 @@ class MessageDetailVm(
     private val firebaseMessagingRepository: FirebaseMessagingRepository,
     private val messagingAllOperationRepository: MessagesAllOperationRepository,
     private val firebaseUserRepository: FirebaseUserRepository,
-) : BaseListViewModel<MessageDetailUiState>(appDispatchers) {
+) : BaseViewModel(appDispatchers) {
 
-    override val listViewState: MutableStateFlow<GenericListState<MessageDetailUiState>> =
+    val listViewState: MutableStateFlow<GenericListState<MessageDetailUiState>> =
         MutableStateFlow(
             GenericListState(
                 dataFlow = messagingAllOperationRepository.getMessagesFromRemoteAndInsertToLocal(
@@ -48,12 +47,13 @@ class MessageDetailVm(
                 loadMoreDataFlow = messagingAllOperationRepository.getMessageListWithConversationIdWithMessageId(
                     conversationId
                 ).mapFromLocalToUiState(),
-                triggerLoadMore = { loadMore() },
+                triggerLoadMore = { loadMessageConversation() },
                 skipInitialLoading = true
             )
         )
 
     var messagesJob: Job? = null
+    var loadJob: Job? = null
 
     val uiEvent = MutableSharedFlow<MessageDetailUiEvent>(
         replay = 0,
@@ -107,8 +107,17 @@ class MessageDetailVm(
         uiEvent.tryEmit(MessageDetailUiEvent.OnConversationCreated)
         messagingAllOperationRepository.currentConversationId.value = conversationId
         firebaseMessagingRepository.initLocalMessageSendOperation(viewModelScope)
-        loadList()
+        loadMessageConversation()
         observeMessages()
+    }
+
+    private fun loadMessageConversation() {
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch(getDispatcherIo()) {
+            listViewState.value.dataFlow?.asResult()?.collectLatest { result ->
+                Timber.d("ListResulttt== : ${result.isSuccess}")
+            }
+        }
     }
 
     private fun observeMessages() {
@@ -147,11 +156,6 @@ class MessageDetailVm(
 
             is OnMessageTextChange -> {
                 uiState.value = uiState.value.copy(messageText = event.messageText)
-            }
-
-            OnRefresh -> {
-                Timber.d("OnRefresh")
-                refreshList()
             }
 
             OnRetry -> {
@@ -196,7 +200,6 @@ class MessageDetailVm(
         if (isExit) {
             messagingAllOperationRepository.currentConversationId.value = ""
         } else {
-
             messagingAllOperationRepository.currentConversationId.value = conversationId
         }
     }
