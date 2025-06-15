@@ -1,15 +1,20 @@
 package com.oyetech.composebase.sharedScreens.messaging.conversationList;
 
 import androidx.lifecycle.viewModelScope
-import com.oyetech.composebase.base.baseGenericList.BaseListViewModel
+import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.baseGenericList.GenericListState
+import com.oyetech.composebase.base.baseGenericList.makeEmptyListState
+import com.oyetech.composebase.base.baseGenericList.setList
+import com.oyetech.composebase.base.baseGenericList.updateErrorInitial
 import com.oyetech.composebase.sharedScreens.messaging.MessageConversationUiState
 import com.oyetech.composebase.sharedScreens.messaging.mapFromLocalToUiState
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.messaging.MessagesAllOperationRepository
 import com.oyetech.tools.coroutineHelper.AppDispatchers
+import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 /**
 Created by Erdi Özbek
@@ -22,10 +27,10 @@ class MessageConversationListVm(
     private val firebaseUserRepository: FirebaseUserRepository,
     private val firebaseMessagingRepository: FirebaseMessagingRepository,
     private val messagesAllOperationRepository: MessagesAllOperationRepository,
-) : BaseListViewModel<MessageConversationUiState>(appDispatchers) {
+) : BaseViewModel(appDispatchers) {
     val uiState = MutableStateFlow(MessageConversationListUiState())
 
-    override val listViewState: MutableStateFlow<GenericListState<MessageConversationUiState>> =
+    val listViewState: MutableStateFlow<GenericListState<MessageConversationUiState>> =
         MutableStateFlow(
             GenericListState(
                 dataFlow = messagesAllOperationRepository.getConversationList()
@@ -37,6 +42,24 @@ class MessageConversationListVm(
 
     init {
         firebaseMessagingRepository.initLocalMessageSendOperation(viewModelScope)
+        getConversationList()
+    }
+
+    private fun getConversationList() {
+        viewModelScope.launch(getDispatcherIo()) {
+            listViewState.value.dataFlow?.asResult()?.collect { result ->
+                result.fold({ list ->
+                    if (list.isEmpty()) {
+                        listViewState.makeEmptyListState()
+                    } else {
+                        listViewState.setList(list)
+                    }
+                }, {
+                    listViewState.updateErrorInitial(it)
+                })
+
+            }
+        }
     }
 
     fun onEvent(event: Any) {

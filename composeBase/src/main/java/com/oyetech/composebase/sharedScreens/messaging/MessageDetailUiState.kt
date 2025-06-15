@@ -54,6 +54,24 @@ data class MessageDetailUiState(
     val conversationId: String = "",
 )
 
+fun getDummyMessageDetailUiState(): MessageDetailUiState {
+    return MessageDetailUiState(
+
+        isLoading = false,
+        errorText = "",
+        content = "This is a dummy message",
+        createdAt = Calendar.getInstance().timeInMillis,
+        createdAtString = TimeFunctions.getDateFromLongWithHour(Calendar.getInstance().timeInMillis)
+            ?: "",
+        senderId = "dummySenderId",
+        receiverId = "dummyReceiverId",
+        messageId = "dummyMessageId",
+        status = MessageStatus.SENT,
+        conversationId = "dummyConversationId",
+
+        )
+}
+
 sealed class MessageDetailUiEvent : BaseUIEvent() {
     data object OnMessageIdle : MessageDetailUiEvent()
     data object OnNewMessage : MessageDetailUiEvent()
@@ -78,7 +96,7 @@ data class MessageConversationUiState(
     val username: String = participantList.firstOrNull()?.username ?: "",
     val userId: String = "",
 
-    val lastMessageUiSate: MessageDetailUiState? = null,
+    val lastMessageUiState: MessageDetailUiState? = null,
 )
 
 sealed class MessageConversationEvent {
@@ -103,7 +121,7 @@ fun Flow<List<FirebaseMessageConversationData>>.mapFromLocalToUiState(clientUser
                     ?: "",
                 userId = data.participantList.firstOrNull { it.userId != clientUserId }?.userId
                     ?: "",
-                lastMessageUiSate = data.lastMessage?.toRemoteData()?.mapToUiState()
+                lastMessageUiState = data.lastMessage?.toRemoteData()?.mapToUiState()
             )
         }
     }

@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.sharedScreens.messaging.MessageConversationUiState
+import com.oyetech.composebase.sharedScreens.messaging.getDummyMessageDetailUiState
 
 /**
 Created by Erdi Özbek
@@ -55,11 +56,13 @@ fun MessageConversationItemView(
                     color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.size(8.dp))
-                Text(
-                    text = "".plus(uiState.lastMessageUiSate?.content),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.secondary
-                )
+                if (uiState.lastMessageUiState?.content?.isNotBlank() == true) {
+                    Text(
+                        text = "".plus(uiState.lastMessageUiState.content),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                }
             }
 
         }
@@ -82,13 +85,20 @@ fun MessageConversationItemView(
     }
 }
 
-@Preview
+private fun getDefaultUiState(): MessageConversationUiState {
+    return MessageConversationUiState(
+        username = "Erdi Özbek",
+        conversationId = "1234567890",
+        lastMessageUiState = getDummyMessageDetailUiState(),
+        createdAtString = "17.02.2025 22:01"
+
+    )
+}
+
+@Preview(showBackground = true)
 @Composable
-fun MessageConversationItemViewPreview() {
+private fun MessageConversationItemViewPreview() {
     MessageConversationItemView(
-        uiState = MessageConversationUiState(
-            username = "Erdi",
-            conversationId = "1234567890"
-        )
+        uiState = getDefaultUiState()
     )
 }
