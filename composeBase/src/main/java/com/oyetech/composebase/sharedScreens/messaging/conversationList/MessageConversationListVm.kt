@@ -6,7 +6,10 @@ import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.base.baseGenericList.makeEmptyListState
 import com.oyetech.composebase.base.baseGenericList.setList
 import com.oyetech.composebase.base.baseGenericList.updateErrorInitial
+import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.sharedScreens.messaging.MessageConversationUiState
+import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListEvent.OnConversationClick
+import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListEvent.Retry
 import com.oyetech.composebase.sharedScreens.messaging.mapFromLocalToUiState
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
@@ -15,6 +18,7 @@ import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 /**
 Created by Erdi Özbek
@@ -46,6 +50,7 @@ class MessageConversationListVm(
     }
 
     private fun getConversationList() {
+        listViewState.updateState { copy(isLoadingInitial = true, isRefreshing = false) }
         viewModelScope.launch(getDispatcherIo()) {
             listViewState.value.dataFlow?.asResult()?.collect { result ->
                 result.fold({ list ->
@@ -62,10 +67,15 @@ class MessageConversationListVm(
         }
     }
 
-    fun onEvent(event: Any) {
+    fun onEvent(event: MessageConversationListEvent) {
         when (event) {
+            is OnConversationClick -> {
+                Timber.d("Conversation Clicked: ${event.conversationId}")
+            }
 
-            else -> {}
+            Retry -> {
+                getConversationList()
+            }
         }
     }
 

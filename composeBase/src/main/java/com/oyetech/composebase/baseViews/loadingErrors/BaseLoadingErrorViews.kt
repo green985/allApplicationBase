@@ -171,7 +171,7 @@ fun ErrorDialogFullScreen(
     }
 }
 
-@Deprecated("Use ErrorDialogFullScreen instead")
+//@Deprecated("Use ErrorDialogFullScreen instead")
 @Suppress("FunctionName")
 @Composable
 fun ErrorScreenFullSize(

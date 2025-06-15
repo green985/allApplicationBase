@@ -16,11 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.baseGenericList.GenericListState
+import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
+import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import com.oyetech.composebase.sharedScreens.messaging.MessageConversationUiState
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListEvent.OnConversationClick
 import com.oyetech.composebase.sharedScreens.messaging.views.MessageConversationItemView
+import com.oyetech.languageModule.keyset.LanguageKey
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -66,6 +69,21 @@ fun MessageConversationListScreen(
     navigationRoute: (navigationRoute: String) -> Unit = {},
 ) {
     val lazyListState = rememberLazyListState()
+
+    if (listViewState.isLoadingInitial) {
+        LoadingScreenFullSize()
+    }
+
+    if (listViewState.isErrorInitial) {
+        ErrorScreenFullSize(
+            errorMessage = listViewState.errorMessage,
+        )
+    }
+    if (listViewState.isEmptyList) {
+        ErrorScreenFullSize(
+            errorMessage = LanguageKey.conversationNotFound,
+        )
+    }
 
     Column(modifier = Modifier.padding(contentPadding)) {
         Box(modifier = Modifier.weight(1f)) {
