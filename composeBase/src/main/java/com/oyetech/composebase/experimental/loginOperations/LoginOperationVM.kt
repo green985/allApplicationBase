@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
-import com.oyetech.composebase.experimental.loginOperationNew.mapToProfileValue
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.AgeChanged
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.DeleteAccountClick
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.ErrorDismiss

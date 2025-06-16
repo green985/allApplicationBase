@@ -84,6 +84,12 @@ fun CompleteProfileScreen(
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
+
+                LoginOperationQuickScreen() {
+                    Timber.d("LoginOperationQuickScreen clicked")
+                    // Handle quick screen click if needed
+                }
+//                    onEvent(LoginOperationEvent.OnCancel)
                 Spacer(modifier = Modifier.height(32.dp))
                 Text(
                     "Complete your profile",

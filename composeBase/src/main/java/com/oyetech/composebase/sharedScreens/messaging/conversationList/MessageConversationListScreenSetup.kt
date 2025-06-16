@@ -62,6 +62,7 @@ fun MessageConversationListScreenSetup(
             }
 
             if (listViewState.isErrorInitial) {
+
                 ErrorScreenFullSize(
                     errorMessage = listViewState.errorMessage,
                     withoutAlpha = true
