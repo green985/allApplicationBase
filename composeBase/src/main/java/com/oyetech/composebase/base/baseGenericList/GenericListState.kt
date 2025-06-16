@@ -98,6 +98,20 @@ fun <T> MutableStateFlow<GenericListState<T>>.updateErrorInitial(errorMessage: T
     return this.value
 }
 
+fun <T> MutableStateFlow<GenericListState<T>>.updateErrorInitial(errorMessage: String): GenericListState<T> {
+    this.updateState {
+        copy(
+            errorMessage = errorMessage,
+            isRefreshing = false,
+            isLoadingInitial = false,
+            isLoadingMore = false,
+            isErrorInitial = true,
+            isErrorMore = false,
+        )
+    }
+    return this.value
+}
+
 fun <T> MutableStateFlow<GenericListState<T>>.updateErrorMore(errorMessage: Throwable): GenericListState<T> {
     this.updateState {
         copy(

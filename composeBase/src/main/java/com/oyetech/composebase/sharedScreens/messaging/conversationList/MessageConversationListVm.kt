@@ -14,9 +14,11 @@ import com.oyetech.composebase.sharedScreens.messaging.mapFromLocalToUiState
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.messaging.MessagesAllOperationRepository
+import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -52,18 +54,30 @@ class MessageConversationListVm(
     private fun getConversationList() {
         listViewState.updateState { copy(isLoadingInitial = true, isRefreshing = false) }
         viewModelScope.launch(getDispatcherIo()) {
-            listViewState.value.dataFlow?.asResult()?.collect { result ->
-                result.fold({ list ->
-                    if (list.isEmpty()) {
-                        listViewState.makeEmptyListState()
+            firebaseUserRepository.userDataStateFlow.asResult().collectLatest { result ->
+                result.fold({
+                    if (!it.isProfileComplete()) {
+                        Timber.e("User ID is null or empty")
+                        listViewState.updateErrorInitial(errorMessage = LanguageKey.messageListErrorUserNotFound)
                     } else {
-                        listViewState.setList(list)
+                        listViewState.value.dataFlow?.asResult()?.collect { result ->
+                            result.fold({ list ->
+                                if (list.isEmpty()) {
+                                    listViewState.makeEmptyListState()
+                                } else {
+                                    listViewState.setList(list)
+                                }
+                            }, {
+                                listViewState.updateErrorInitial(it)
+                            })
+
+                        }
                     }
                 }, {
                     listViewState.updateErrorInitial(it)
                 })
-
             }
+
         }
     }
 

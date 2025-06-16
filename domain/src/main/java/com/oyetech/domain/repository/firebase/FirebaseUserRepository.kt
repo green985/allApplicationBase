@@ -10,7 +10,7 @@ Created by Erdi Özbek
  **/
 
 interface FirebaseUserRepository {
-    val userDataStateFlow: MutableStateFlow<FirebaseUserProfileModel?>
+    val userDataStateFlow: MutableStateFlow<FirebaseUserProfileModel>
 
     //    fun createProfile(user: FirebaseUserProfileModel)
 //    fun checkUsername(username: String): Boolean
@@ -30,6 +30,6 @@ interface FirebaseUserRepository {
     )
 
     suspend fun updateUserProperty(userData: FirebaseUserProfileModel)
-    fun getUserProfileModel(): MutableStateFlow<FirebaseUserProfileModel?>
+    fun getUserProfileModel(): MutableStateFlow<FirebaseUserProfileModel>
     fun updateUserNotificationToken(notificationToken: String)
 }

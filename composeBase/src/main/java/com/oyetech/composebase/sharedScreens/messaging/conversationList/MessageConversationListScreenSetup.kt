@@ -55,6 +55,24 @@ fun MessageConversationListScreenSetup(
                 listViewState = listViewState,
                 navigationRoute = navigationRoute,
             )
+
+
+            if (listViewState.isLoadingInitial) {
+                LoadingScreenFullSize()
+            }
+
+            if (listViewState.isErrorInitial) {
+                ErrorScreenFullSize(
+                    errorMessage = listViewState.errorMessage,
+                    withoutAlpha = true
+                )
+            }
+            if (listViewState.isEmptyList) {
+                ErrorScreenFullSize(
+                    errorMessage = LanguageKey.conversationNotFound,
+                    withoutAlpha = true
+                )
+            }
         })
 
 }
@@ -70,20 +88,6 @@ fun MessageConversationListScreen(
 ) {
     val lazyListState = rememberLazyListState()
 
-    if (listViewState.isLoadingInitial) {
-        LoadingScreenFullSize()
-    }
-
-    if (listViewState.isErrorInitial) {
-        ErrorScreenFullSize(
-            errorMessage = listViewState.errorMessage,
-        )
-    }
-    if (listViewState.isEmptyList) {
-        ErrorScreenFullSize(
-            errorMessage = LanguageKey.conversationNotFound,
-        )
-    }
 
     Column(modifier = Modifier.padding(contentPadding)) {
         Box(modifier = Modifier.weight(1f)) {

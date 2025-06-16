@@ -179,11 +179,16 @@ fun ErrorScreenFullSize(
     onDismiss: (() -> Unit)? = null,
     onRetry: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
+    withoutAlpha: Boolean = false,
 ) {
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background.copy(alpha = ProjectUtil.backgroudAlpha)),
+            .background(
+                MaterialTheme.colorScheme.background.copy(
+                    alpha = if (withoutAlpha) 1f else ProjectUtil.backgroudAlpha
+                )
+            ),
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

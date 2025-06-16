@@ -17,14 +17,15 @@ class FirebaseUserRepositoryImp(
     private val firestore: FirebaseFirestore,
 ) : FirebaseUserRepository {
 
-    override val userDataStateFlow = MutableStateFlow<FirebaseUserProfileModel?>(null)
+    override val userDataStateFlow =
+        MutableStateFlow<FirebaseUserProfileModel>(FirebaseUserProfileModel())
 
     override suspend fun updateUserProperty(userData: FirebaseUserProfileModel) {
         val isUsernameInUse = checkIsUsernameInUse(userData.username).firstOrNull() ?: false
         Timber.d("isUsernameInUse: $isUsernameInUse")
         if (isUsernameInUse) {
             userDataStateFlow.value =
-                userDataStateFlow.value?.copy(errorException = Exception("Username is already in use"))
+                FirebaseUserProfileModel(errorException = Exception("Username is already in use"))
             return
         }
 
@@ -36,7 +37,7 @@ class FirebaseUserRepositoryImp(
             newUserDataModel = newUserDataModel.copy(errorException = null)
             userDataStateFlow.value = newUserDataModel
         }.addOnFailureListener { exception ->
-            userDataStateFlow.value = userDataStateFlow.value?.copy(errorException = exception)
+            userDataStateFlow.value = FirebaseUserProfileModel(errorException = exception)
         }
 
     }
@@ -70,11 +71,11 @@ class FirebaseUserRepositoryImp(
                 .document(uid)
                 .delete()
                 .addOnSuccessListener {
-
+                    userDataStateFlow.value = FirebaseUserProfileModel()
                 }
                 .addOnFailureListener { exception ->
                     userDataStateFlow.value =
-                        userDataStateFlow.value?.copy(errorException = Exception(LanguageKey.deleteUserErrorMessage))
+                        FirebaseUserProfileModel(errorException = Exception(LanguageKey.deleteUserErrorMessage))
                 }
         } catch (e: Exception) {
 
@@ -139,7 +140,7 @@ class FirebaseUserRepositoryImp(
         return userDataStateFlow.value?.userId ?: ""
     }
 
-    override fun getUserProfileModel(): MutableStateFlow<FirebaseUserProfileModel?> {
+    override fun getUserProfileModel(): MutableStateFlow<FirebaseUserProfileModel> {
         return userDataStateFlow
     }
 
