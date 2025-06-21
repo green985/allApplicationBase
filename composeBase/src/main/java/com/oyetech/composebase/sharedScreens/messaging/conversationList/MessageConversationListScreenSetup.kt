@@ -18,6 +18,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
+import com.oyetech.composebase.helpers.viewProperties.OnResumeEffect
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import com.oyetech.composebase.sharedScreens.messaging.MessageConversationUiState
@@ -39,7 +40,9 @@ fun MessageConversationListScreenSetup(
     navigationRoute: (navigationRoute: String) -> Unit = {},
 ) {
     val vm = koinViewModel<MessageConversationListVm>()
-
+    OnResumeEffect {
+        vm.onEvent(MessageConversationListEvent.OnConversationScreenOpen)
+    }
     val uiState by vm.uiState.collectAsStateWithLifecycle()
 
     val listViewState by vm.listViewState.collectAsStateWithLifecycle()

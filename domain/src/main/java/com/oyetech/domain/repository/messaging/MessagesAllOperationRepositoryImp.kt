@@ -27,6 +27,10 @@ class MessagesAllOperationRepositoryImp(
         return messagesAllDao.getMessageListFlow(conversationId)
     }
 
+    override fun getMessageListWithReceiverId(receiverId: String): Flow<List<FirebaseMessagingLocalData>> {
+        return messagesAllDao.getMessageListWithReceiverId(receiverId)
+    }
+
     override fun insertMessageWithGlobalScope(message: FirebaseMessagingLocalData) {
         GlobalScope.launch(dispatchers.io) {
             messagesAllDao.insertMessage(message)
@@ -87,7 +91,7 @@ class MessagesAllOperationRepositoryImp(
         messagesAllDao.deleteAllMessages()
     }
 
-    override fun getMessageListWithMessageIdListFromLocal(messageIdList: List<String>): List<FirebaseMessagingLocalData> {
+    override suspend fun getMessageListWithMessageIdListFromLocal(messageIdList: List<String>): List<FirebaseMessagingLocalData> {
         return messagesAllDao.getMessageListWithMessageIdList(messageIdList)
     }
 

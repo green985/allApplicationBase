@@ -86,7 +86,6 @@ class FirebaseMessagingRepositoryImpl(
                 if (it == true) {
                     sendingOperationJob = observeAndSendMessageSingle(scope)
                 }
-
             }
         }
     }

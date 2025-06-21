@@ -46,6 +46,10 @@ class MessagesAllLocalDataSourceImp(
         return messagesAllDao.findMessageListWithMessageIdList(messageIdList)
     }
 
+    override fun getMessageListWithReceiverId(receiverId: String): Flow<List<FirebaseMessagingLocalData>> {
+        return messagesAllDao.getMessageListWithReceiverId(receiverId)
+    }
+
     override suspend fun insertLastList(list: List<FirebaseMessagingLocalData>) {
         messagesAllDao.insertLastList(list)
     }

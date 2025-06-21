@@ -15,7 +15,7 @@ interface MessagesAllOperationRepository {
     ): List<FirebaseMessagingLocalData>
 
     fun getMessageWithId(messageId: String): FirebaseMessagingLocalData?
-    fun getMessageListWithMessageIdListFromLocal(messageIdList: List<String>): List<FirebaseMessagingLocalData>
+    suspend fun getMessageListWithMessageIdListFromLocal(messageIdList: List<String>): List<FirebaseMessagingLocalData>
 
     suspend fun insertLastList(list: List<FirebaseMessagingLocalData>)
     suspend fun insertMessage(message: FirebaseMessagingLocalData)
@@ -27,4 +27,5 @@ interface MessagesAllOperationRepository {
     fun getMessageListWithConversationIdWithMessageId(conversationId: String): Flow<List<FirebaseMessagingLocalData>>
     var currentConversationId: MutableStateFlow<String>
     fun insertMessageWithGlobalScope(message: FirebaseMessagingLocalData)
+    fun getMessageListWithReceiverId(receiverId: String): Flow<List<FirebaseMessagingLocalData>>
 }

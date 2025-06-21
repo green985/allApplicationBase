@@ -14,6 +14,7 @@ interface MessagesAllLocalDataSourceRepository {
     fun deleteLastList(idList: List<String>): Int
     fun deleteAllMessages()
     fun getMessageListWithMessageIdList(messageIdList: List<String>): List<FirebaseMessagingLocalData>
+    fun getMessageListWithReceiverId(receiverId: String): Flow<List<FirebaseMessagingLocalData>>
 
     suspend fun insertLastList(list: List<FirebaseMessagingLocalData>)
 
