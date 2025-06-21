@@ -305,7 +305,8 @@ class FirebaseMessagingRepositoryImpl(
 
     }
 
-    override suspend fun getConversationDetailOrCreateFlow(receiverUserId: String): Flow<FirebaseMessageConversationData> =
+    override suspend fun getConversationDetailOrCreateFlow(receiverUserId: String)
+            : Flow<FirebaseMessageConversationData> =
         flow {
             val userId = userRepository.getUserId()
 
@@ -325,15 +326,17 @@ class FirebaseMessagingRepositoryImpl(
                     .get().await()
 
                 if (result.isEmpty) {
+                    val userDataList = createUserDataList(userId, receiverUserId)
+                    if (userDataList.isEmpty()) {
+                        throw GeneralException(LanguageKey.userProfileNotFound)
+                    }
                     Timber.d("No conversation found, creating new conversation")
+                    Timber.d("userDataList = $userDataList")
                     val resultt = firestore.runTransactionWithTimeout { transaction ->
                         val newConversationId = conversationRef.document().id
                         val newConversation = FirebaseMessageConversationData(
                             conversationId = newConversationId,
-                            participantList = listOf(
-                                FirebaseParticipantData(userId = userId),
-                                FirebaseParticipantData(userId = receiverUserId)
-                            ),
+                            participantList = userDataList,
                             lastMessageId = "",
                             createdAt = null
                         )
@@ -356,10 +359,50 @@ class FirebaseMessagingRepositoryImpl(
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                throw e
+                throw GeneralException("getConversationDetailOrCreateFlow error: ${e.message}")
             }
 
         }
+
+    private suspend fun createUserDataList(
+        userId: String,
+        conversationReceiverId: String,
+    ): List<FirebaseParticipantData> {
+        val it = userRepository.getUserProfileModel().value
+        if (it.userId.isNotBlank()) {
+            val userParticipantDataModel = FirebaseParticipantData(
+                userId = it.userId,
+                username = it.username,
+            )
+
+            val recipientParticipantDataModel =
+                userRepository.getUserProfileWithUserId(conversationReceiverId).firstOrNull()
+
+            if (recipientParticipantDataModel != null) {
+                val receiverUserId = recipientParticipantDataModel.userId
+                if (receiverUserId.isBlank()) {
+                    throw GeneralException(LanguageKey.messageListErrorUserNotFound)
+                }
+                val receiverUsername = recipientParticipantDataModel.username ?: ""
+
+                val receiverParticipantDataModel = FirebaseParticipantData(
+                    userId = receiverUserId,
+                    username = receiverUsername,
+                )
+
+                return listOf(
+                    userParticipantDataModel,
+                    receiverParticipantDataModel
+                )
+
+            }
+        } else {
+            throw GeneralException(LanguageKey.userIdNotFound)
+        }
+
+        return emptyList()
+
+    }
 
     override fun getConversationList() = flow {
         val userId = userRepository.getUserId() //

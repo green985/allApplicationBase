@@ -107,7 +107,7 @@ class LoginOperationVM(
                         if (googleUserResponseData.isUserHasUID()) {
                             val firebaseProfileUserModel =
                                 googleUserResponseData.toFirebaseUserProfileModel()
-                            firebaseUserRepository.getUserProfileWithUid(firebaseProfileUserModel)
+                            firebaseUserRepository.getUserProfile(firebaseProfileUserModel)
                         } else if (googleUserResponseData.errorException != null) {
                             loginOperationState.value = LoginOperationUiState(
                                 isError = true,

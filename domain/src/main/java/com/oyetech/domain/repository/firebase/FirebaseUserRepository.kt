@@ -1,6 +1,7 @@
 package com.oyetech.domain.repository.firebase
 
 import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
@@ -17,7 +18,7 @@ interface FirebaseUserRepository {
     fun deleteUser(uid: String)
 
     //    fun updateLastLogin(uid: String)
-    fun getUserProfileWithUid(firebaseProfileUserModel: FirebaseUserProfileModel)
+    fun getUserProfile(firebaseProfileUserModel: FirebaseUserProfileModel)
 
 //    suspend fun updateUserName(username: String)
 
@@ -32,4 +33,5 @@ interface FirebaseUserRepository {
     suspend fun updateUserProperty(userData: FirebaseUserProfileModel)
     fun getUserProfileModel(): MutableStateFlow<FirebaseUserProfileModel>
     fun updateUserNotificationToken(notificationToken: String)
+    fun getUserProfileWithUserId(userId: String): Flow<FirebaseUserProfileModel>
 }

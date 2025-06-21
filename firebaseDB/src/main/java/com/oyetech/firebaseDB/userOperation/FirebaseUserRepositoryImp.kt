@@ -4,11 +4,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.firebaseDB.userOperation.databaseKey.FirebaseUserDatabaseKey
 import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.models.errors.exceptionHelper.GeneralException
 import com.oyetech.models.firebaseModels.databaseKeys.FirebaseDatabaseKeys
 import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
@@ -83,7 +85,7 @@ class FirebaseUserRepositoryImp(
 
     }
 
-    override fun getUserProfileWithUid(firebaseProfileUserModel: FirebaseUserProfileModel) {
+    override fun getUserProfile(firebaseProfileUserModel: FirebaseUserProfileModel) {
         val uid = firebaseProfileUserModel.userId
         firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(uid).get()
             .addOnSuccessListener {
@@ -165,4 +167,17 @@ class FirebaseUserRepositoryImp(
             }
     }
 
+    override fun getUserProfileWithUserId(userId: String): Flow<FirebaseUserProfileModel> {
+        return flow {
+            val userDoc = firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION)
+                .document(userId).get().await()
+
+            val userProfile = userDoc.toObject(FirebaseUserProfileModel::class.java)
+            if (userProfile != null) {
+                emit(userProfile)
+            } else {
+                throw GeneralException("User profile not found for userId: $userId")
+            }
+        }
+    }
 }
