@@ -32,8 +32,10 @@ import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
@@ -427,5 +429,36 @@ class FirebaseMessagingRepositoryImpl(
         }
     }
 
+    override fun getConversationListUpdated() = callbackFlow {
+        val userId = userRepository.getUserId()
+        require(userId.isNotBlank()) { "User not logged in" }
+
+        val queryConversation = firestore.collection("conversations")
+            .whereArrayContains("participantUserIdList", userId)
+            .orderBy("createdAt", Query.Direction.DESCENDING)
+            .limit(conversationLimit)
+
+        val listenerRegistration = queryConversation.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                Timber.e("Error getting conversation list: ${error.message}")
+                close(error) // Hata varsa flow'u kapat
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null && !snapshot.isEmpty) {
+                val conversationList = snapshot.documents.mapNotNull { doc ->
+                    doc.toObject(FirebaseMessageConversationData::class.java)
+                        ?.copy(conversationId = doc.id)
+                }
+                Timber.d("Conversation list updated, size: ${conversationList.size}")
+                trySend(conversationList) // Flow'a yeni verileri gönder
+            }
+        }
+
+        // Flow iptal edilirse listener'ı kaldır
+        awaitClose {
+            listenerRegistration.remove()
+        }
+    }
 
 }

@@ -42,7 +42,7 @@ class MessageConversationListVm(
     val listViewState: MutableStateFlow<GenericListState<MessageConversationUiState>> =
         MutableStateFlow(
             GenericListState(
-                dataFlow = messagesAllOperationRepository.getConversationList()
+                dataFlow = messagesAllOperationRepository.getConversationListUpdated()
                     .mapFromLocalToUiState(clientUserId = firebaseUserRepository.getUserId()),
                 refreshDataFlow = messagesAllOperationRepository.getConversationList()
                     .mapFromLocalToUiState(clientUserId = firebaseUserRepository.getUserId())

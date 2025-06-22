@@ -9,6 +9,7 @@ interface FirebaseMessagingRepository {
     fun idlee()
     suspend fun getConversationDetailOrCreateFlow(receiverUserId: String): Flow<FirebaseMessageConversationData>
     fun getConversationList(): Flow<List<FirebaseMessageConversationData>>
+    fun getConversationListUpdated(): Flow<List<FirebaseMessageConversationData>>
 
     suspend fun sendMessage(
         messageText: String,

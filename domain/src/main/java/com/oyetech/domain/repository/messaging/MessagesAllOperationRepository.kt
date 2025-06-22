@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 interface MessagesAllOperationRepository {
     fun getMessageListFlow(conversationId: String): Flow<List<FirebaseMessagingLocalData>>
+    fun getConversationListUpdated(): Flow<List<FirebaseMessageConversationData>>
 
     //    fun getMessageListWithUserIdFlow(userId:String): Flow<List<FirebaseMessagingLocalData>>
     fun getMessageListWithLastMessageId(

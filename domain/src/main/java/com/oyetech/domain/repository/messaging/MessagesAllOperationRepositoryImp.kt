@@ -115,6 +115,18 @@ class MessagesAllOperationRepositoryImp(
         }
     }
 
+    override fun getConversationListUpdated(): Flow<List<FirebaseMessageConversationData>> {
+        return firebaseMessagingRepository.getConversationListUpdated().onEach {
+            val messageIdList = it.map { it.lastMessageId }
+            val messageList = getMessageListWithMessageIdListFromLocal(messageIdList)
+            it.forEach { conversation ->
+                conversation.lastMessage =
+                    messageList.find { it.messageId == conversation.lastMessageId }
+            }
+            it
+        }
+    }
+
     private suspend fun getLastMessage(): FirebaseMessagingLocalData? {
         return messagesAllDao.getLastMessage("")
     }
