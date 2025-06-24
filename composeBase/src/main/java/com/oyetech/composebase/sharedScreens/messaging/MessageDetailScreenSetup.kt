@@ -17,11 +17,14 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons.AutoMirrored.Filled
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -113,6 +116,7 @@ fun MessageDetailScreenSetup(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Suppress("FunctionName", "LongParameterList")
 @Composable
 fun MessageDetailScreen(
@@ -124,6 +128,9 @@ fun MessageDetailScreen(
 ) {
     val items = listViewState.items
     Scaffold(
+        topBar = {
+            MessageDetailToolbar(uiState)
+        },
         modifier = Modifier.fillMaxSize(),
         content = { innerPadding ->
             MessageDetailContentView(
@@ -135,6 +142,30 @@ fun MessageDetailScreen(
             )
         })
 
+
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun MessageDetailToolbar(messageDetailUiState: MessageDetailScreenUiState) {
+    TopAppBar(
+        title = {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = messageDetailUiState.toolbarTitleText,
+                style = MaterialTheme.typography.headlineSmall
+            )
+        }
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MessageDetailToolbarPreview() {
+    MessageDetailToolbar(
+        messageDetailUiState =
+        MessageDetailScreenUiState(toolbarTitleText = "deneme texttt")
+    )
 
 }
 

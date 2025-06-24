@@ -32,9 +32,10 @@ data class MessageDetailScreenUiState(
     val onMessageSendTriggered: Boolean = false,
     val errorText: String = "",
     val messageText: String = "",
+    val toolbarTitleText: String = "",
 
     val createdAt: Date? = Calendar.getInstance().time,
-    val createdAtString: String,
+    val createdAtString: String = "",
     val senderId: String = "",
     val receiverId: String = "",
     val currentUserId: String = "",

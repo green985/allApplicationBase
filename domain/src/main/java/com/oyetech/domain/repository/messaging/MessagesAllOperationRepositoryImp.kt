@@ -22,6 +22,7 @@ class MessagesAllOperationRepositoryImp(
 ) : MessagesAllOperationRepository {
 
     override var currentConversationId: MutableStateFlow<String> = MutableStateFlow("")
+    override var currentUsername: String = ""
 
     override fun getMessageListFlow(conversationId: String): Flow<List<FirebaseMessagingLocalData>> {
         return messagesAllDao.getMessageListFlow(conversationId)

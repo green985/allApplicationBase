@@ -146,6 +146,10 @@ class MessageConversationListVm(
         when (event) {
             is OnConversationClick -> {
                 Timber.d("Conversation Clicked: ${event.conversationId}")
+                messagesAllOperationRepository.currentUsername =
+                    listViewState.value.items.find { it.conversationId == event.conversationId }?.username
+                        ?: ""
+
             }
 
             OnConversationScreenOpen -> {

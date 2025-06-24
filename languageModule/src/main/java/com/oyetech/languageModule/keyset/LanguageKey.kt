@@ -11,6 +11,8 @@ Created by Erdi Özbek
  **/
 
 object LanguageKey {
+    var messageDetailTitle set(value) {} get() = LocalLanguageHelper.getStringWithKey("messageDetailTitle")
+    var messageConversationTitle set(value) {} get() = LocalLanguageHelper.getStringWithKey("messageConversationTitle")
     var userNotFound set(value) {} get() = LocalLanguageHelper.getStringWithKey("userNotFound")
     var userProfileNotFound set(value) {} get() = LocalLanguageHelper.getStringWithKey("userProfileNotFound")
     var userIdNotFound set(value) {} get() = LocalLanguageHelper.getStringWithKey("userIdNotFound")

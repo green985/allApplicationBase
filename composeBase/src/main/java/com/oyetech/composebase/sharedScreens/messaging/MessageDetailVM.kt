@@ -71,7 +71,8 @@ class MessageDetailVm(
             senderId = firebaseUserRepository.getUserId(),
             receiverId = receiverUserId,
             conversationId = conversationId,
-            currentUserId = firebaseUserRepository.getUserId()
+            currentUserId = firebaseUserRepository.getUserId(),
+            toolbarTitleText = getToolbarTitle(),
         )
     )
 
@@ -101,6 +102,11 @@ class MessageDetailVm(
                     )
                 }
         }
+    }
+
+    private fun getToolbarTitle(): String {
+        return messagingAllOperationRepository.currentUsername
+
     }
 
     private fun initMessageDetailOperation() {
