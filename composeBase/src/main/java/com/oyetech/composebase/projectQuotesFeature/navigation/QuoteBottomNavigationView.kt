@@ -12,6 +12,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.navigation.NavHostController
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationBar
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationDelegate
+import com.oyetech.composebase.helpers.viewProperties.keyboardAsState
 import org.koin.compose.koinInject
 
 /**
@@ -33,6 +34,10 @@ fun QuoteBottomNavigationView(
         targetValue = if (bottomNavigationVisibility) 1f else 0f,
         animationSpec = tween(durationMillis = 300)
     )
+
+    val isKeyboardOpen by keyboardAsState()
+
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -40,11 +45,12 @@ fun QuoteBottomNavigationView(
     )
 
     {
-        BottomNavigationBar(
-            isClickable = bottomNavigationVisibility,
-            navController = navController,
-            navItems = QuoteAppProjectRoutes.quoteApplicationBottomTabNavList
-        )
+        if (!isKeyboardOpen)
+            BottomNavigationBar(
+                isClickable = bottomNavigationVisibility,
+                navController = navController,
+                navItems = QuoteAppProjectRoutes.quoteApplicationBottomTabNavList
+            )
 
     }
 }

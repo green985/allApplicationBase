@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -22,7 +21,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -34,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.base.baseGenericList.LoadableLazyColumnState
 import com.oyetech.composebase.base.baseGenericList.rememberLoadableLazyColumnState
@@ -127,7 +126,7 @@ fun MessageDetailScreen(
     listViewState: GenericListState<MessageDetailUiState>,
 ) {
     val items = listViewState.items
-    Scaffold(
+    BaseScaffold(
         topBar = {
             MessageDetailToolbar(uiState)
         },
@@ -206,7 +205,7 @@ private fun MessageDetailContentView(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .consumeWindowInsets(contentPadding)
+//                .consumeWindowInsets(contentPadding)
                 .imePadding(),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -246,6 +245,7 @@ private fun MessageDetailPreview() {
         createdAtString = "",
         senderId = "",
         receiverId = "",
+        toolbarTitleText = "deneme user",
         currentUserId = "",
         conversationId = ""
     ), onMessageTextChanged = {}, onMessageSend = {}, listViewState = GenericListState(

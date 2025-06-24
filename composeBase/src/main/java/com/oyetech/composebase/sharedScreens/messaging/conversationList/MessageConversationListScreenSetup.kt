@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -21,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
@@ -55,7 +55,7 @@ fun MessageConversationListScreenSetup(
     val listViewState by vm.listViewState.collectAsStateWithLifecycle()
 
 
-    Scaffold(
+    BaseScaffold(
         topBar = {
             MessageConversationToolbar()
         },
@@ -124,7 +124,11 @@ fun MessageConversationListScreen(
     val lazyListState = rememberLazyListState()
 
 
-    Column(modifier = Modifier.padding(contentPadding)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(contentPadding)
+    ) {
         Box(modifier = Modifier.weight(1f)) {
             LazyColumn(
                 modifier = Modifier.padding(4.dp),
