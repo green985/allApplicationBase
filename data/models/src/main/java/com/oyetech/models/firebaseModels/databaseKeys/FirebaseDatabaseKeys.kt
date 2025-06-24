@@ -7,6 +7,7 @@ Created by Erdi Özbek
  **/
 
 object FirebaseDatabaseKeys {
+    const val lastMessageCreatedAt: String = "lastMessageCreatedAt"
     const val lastMessageId: String = "lastMessageId"
     const val userList: String = "userList"
     const val generalUserList: String = "generalUserList"

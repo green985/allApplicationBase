@@ -71,7 +71,7 @@ fun MessageConversationItemView(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(8.dp),
-            text = uiState.createdAtString,
+            text = uiState.lastMessageCreatedAtString,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.secondary
         )
@@ -90,7 +90,7 @@ private fun getDefaultUiState(): MessageConversationUiState {
         username = "Erdi Özbek",
         conversationId = "1234567890",
         lastMessageUiState = getDummyMessageDetailUiState(),
-        createdAtString = "17.02.2025 22:01"
+        lastMessageCreatedAtString = "17.02.2025 22:01"
 
     )
 }

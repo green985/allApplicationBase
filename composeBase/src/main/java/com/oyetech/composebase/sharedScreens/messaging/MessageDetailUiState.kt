@@ -91,7 +91,11 @@ data class MessageConversationUiState(
     val participantList: List<FirebaseParticipantData> = emptyList(),
     val lastMessageId: String = "",
     val createdAt: Date? = null,
+    val lastMessageCreatedAt: Date? = null,
     val createdAtString: String = TimeFunctions.getDateFromLongWithHour(createdAt?.time ?: 0) ?: "",
+    val lastMessageCreatedAtString: String = TimeFunctions.getDateFromLongWithHour(
+        lastMessageCreatedAt?.time ?: 0
+    ) ?: "",
     val participantUserIdList: List<String> = participantList.map { it.userId }.sorted(),
     val username: String = participantList.firstOrNull()?.username ?: "",
     val userId: String = "",
@@ -116,6 +120,7 @@ fun Flow<List<FirebaseMessageConversationData>>.mapFromLocalToUiState(clientUser
                 participantList = data.participantList,
                 lastMessageId = data.lastMessageId,
                 createdAt = data.createdAt,
+                lastMessageCreatedAt = data.lastMessageCreatedAt,
                 participantUserIdList = data.participantList.map { it.userId }.sorted(),
                 username = data.participantList.firstOrNull { it.userId != clientUserId }?.username
                     ?: "",

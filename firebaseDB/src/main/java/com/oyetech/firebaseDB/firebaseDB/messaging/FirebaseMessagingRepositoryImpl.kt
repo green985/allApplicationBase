@@ -272,6 +272,11 @@ class FirebaseMessagingRepositoryImpl(
                         FirebaseDatabaseKeys.lastMessageId,
                         conversationRef.id
                     )
+                    it.update(
+                        messageLastMessageIdRef,
+                        FirebaseDatabaseKeys.lastMessageCreatedAt,
+                        Date() // Use current date for last message created at
+                    )
                     dbMessage
                 }
 //                Timber.d("Sending message document ID result =" + result.messageId)
@@ -435,6 +440,7 @@ class FirebaseMessagingRepositoryImpl(
 
         val queryConversation = firestore.collection("conversations")
             .whereArrayContains("participantUserIdList", userId)
+            .whereGreaterThan("lastMessageId", "")
             .orderBy("createdAt", Query.Direction.DESCENDING)
             .limit(conversationLimit)
 

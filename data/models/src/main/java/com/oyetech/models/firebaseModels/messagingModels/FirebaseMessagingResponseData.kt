@@ -28,6 +28,8 @@ data class FirebaseMessageConversationData(
     var lastMessageId: String = "",
     @ServerTimestamp
     var createdAt: Date? = null,
+    @ServerTimestamp
+    var lastMessageCreatedAt: Date? = null,
     var participantUserIdList: List<String> = participantList.map { it.userId }.sorted(),
 
     @Ignore
