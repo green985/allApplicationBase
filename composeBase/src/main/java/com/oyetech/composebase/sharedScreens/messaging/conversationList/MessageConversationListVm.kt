@@ -146,7 +146,8 @@ class MessageConversationListVm(
         }
     }
 
-    fun onEvent(event: MessageConversationListEvent) {
+    override fun onEvent(event: Any) {
+        event as MessageConversationListEvent
         when (event) {
             is OnConversationClick -> {
                 Timber.d("Conversation Clicked: ${event.conversationId}")

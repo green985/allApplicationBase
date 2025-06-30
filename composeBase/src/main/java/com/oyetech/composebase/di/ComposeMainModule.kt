@@ -28,6 +28,7 @@ import com.oyetech.composebase.projectRadioFeature.viewModelSlice.IRadioFavViewM
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.IRadioPlayerViewModelSlice
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.RadioFavViewModelSliceImp
 import com.oyetech.composebase.projectRadioFeature.viewModelSlice.RadioPlayerViewModelSliceImp
+import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigatorVM
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailVm
 import com.oyetech.composebase.sharedScreens.messaging.MessageOperationVM
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListVm
@@ -81,5 +82,6 @@ object ComposeMainModule {
         viewModelOf(::MessageConversationListVm)
         viewModelOf(::UserListVm)
         viewModelOf(::UserProfileVm)
+        viewModelOf(::AllScreenNavigatorVM)
     }
 }

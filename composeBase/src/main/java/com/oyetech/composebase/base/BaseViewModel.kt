@@ -18,4 +18,9 @@ open class BaseViewModel(private val dispatcher: AppDispatchers) : ViewModel() {
         super.onCleared()
         Timber.d("onCleared == " + this.javaClass.name)
     }
+
+    open fun onEvent(event: Any) {
+        Timber.d("onEvent == " + event.toString())
+        // Handle events here
+    }
 }

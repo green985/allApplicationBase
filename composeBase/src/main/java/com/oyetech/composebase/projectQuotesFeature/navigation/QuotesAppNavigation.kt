@@ -67,7 +67,6 @@ fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
     // TabHistory Route
     composable(QuoteAppProjectRoutes.LoginOperationScreen.route) {
         LoginOperationScreenSetup(
-            navigationRoute = navigateRouteOperation(navController)
         )
     }
     // TabHistory Route
@@ -85,7 +84,6 @@ fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
 
     composable(QuoteAppProjectRoutes.MessageConversationList.route) {
         MessageConversationListScreenSetup(
-            navigationRoute = navigateRouteOperation(navController)
         )
     }
 
@@ -109,7 +107,6 @@ fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
         MessageDetailScreenSetup(
             conversationId = conversationId,
             receiverUserId = receiverUserId,
-            navigationRoute = navigateRouteOperation(navController)
         )
     }
     composable(

@@ -13,13 +13,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.helpers.viewProperties.gridItems
 import kotlinx.collections.immutable.toImmutableList
+import org.koin.androidx.compose.koinViewModel
 
 /**
 Created by Erdi Özbek
@@ -32,9 +35,9 @@ fun AllScreenNavigatorScreenSetup(
     modifier: Modifier = Modifier,
     navigationRoute: (navigationRoute: String) -> Unit = {},
 ) {
-//    val vm = koinViewModel<AllScreenNavigatorVM>()
-
-//    val uiState by vm.uiState.collectAsStateWithLifecycle()
+    val viewModel = koinViewModel<AllScreenNavigatorVM>()
+//
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val routeList = AllScreenNavigator.generalListOfScreen.toImmutableList()
 
@@ -59,7 +62,7 @@ fun AllScreenNavigatorScreenSetup(
                 horizontalArrangement = Arrangement.Center
             ) {
                 Button(onClick = {
-                    navigationRoute.invoke(AllScreenNavigator.radioStart)
+                    viewModel.onEvent(AllScreenNavigatorEvent.OnNavigateToRadioStart)
                 }) {
                     Text(text = "Radio Startttt", style = MaterialTheme.typography.titleLarge)
                 }
@@ -74,7 +77,7 @@ fun AllScreenNavigatorScreenSetup(
                 horizontalArrangement = Arrangement.Center
             ) {
                 Button(onClick = {
-                    navigationRoute.invoke(AllScreenNavigator.quoteStart)
+                    viewModel.onEvent(AllScreenNavigatorEvent.OnNavigateToQuoteStart)
                 }) {
                     Text(
                         text = "Quote Application Start",
@@ -89,7 +92,7 @@ fun AllScreenNavigatorScreenSetup(
                 gridItems(routeList, 2, itemContent = { model ->
 
                     Button(modifier = Modifier.padding(2.dp), onClick = {
-                        navigationRoute.invoke(model)
+                        viewModel.onEvent(AllScreenNavigatorEvent.NavigateListItemClicked(model))
                     }) {
                         Text(text = model)
                     }

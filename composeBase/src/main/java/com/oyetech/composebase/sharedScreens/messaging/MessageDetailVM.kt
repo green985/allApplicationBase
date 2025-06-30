@@ -148,7 +148,8 @@ class MessageDetailVm(
         }
     }
 
-    fun onEvent(event: MessageDetailEvent) {
+    override fun onEvent(event: Any) {
+        event as MessageDetailEvent
         when (event) {
             is OnMessageSend -> {
                 if (!event.triggered) {

@@ -1,5 +1,7 @@
 package com.oyetech.composebase.sharedScreens.allScreenNavigator
 
+import com.oyetech.composebase.base.BaseEvent
+
 /**
 Created by Erdi Özbek
 -18.01.2025-
@@ -8,7 +10,9 @@ Created by Erdi Özbek
 
 data class AllScreenNavigatorUiState(val isLoading: Boolean = false)
 
-sealed class AllScreenNavigatorEvent {
-    data class Idle(val data: Int) : AllScreenNavigatorEvent()
-    object Idlee : AllScreenNavigatorEvent()
+sealed class AllScreenNavigatorEvent : BaseEvent() {
+    sealed class NavigateListItemClicked(val navigationRoute: String) : AllScreenNavigatorEvent()
+
+    object OnNavigateToRadioStart : AllScreenNavigatorEvent()
+    object OnNavigateToQuoteStart : AllScreenNavigatorEvent()
 }
