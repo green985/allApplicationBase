@@ -1,5 +1,6 @@
 package com.oyetech.composebase.experimental.commentWidget
 
+import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.models.newPackages.helpers.OperationState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -34,7 +35,7 @@ data class CommentItemUiState(
     val isDeleted: Boolean = false,
 )
 
-sealed class CommentScreenEvent {
+sealed class CommentScreenEvent : BaseEvent() {
     data class OnCommentInputChanged(val commentInput: String) : CommentScreenEvent()
     data class CommentOperationClicked(val commentId: String) : CommentScreenEvent()
 
