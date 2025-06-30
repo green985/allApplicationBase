@@ -6,6 +6,7 @@ import com.oyetech.composebase.experimental.commentWidget.CommentScreenWithConte
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
 import com.oyetech.composebase.helpers.adViewDelegate.AdViewOperationDelegate
 import com.oyetech.composebase.helpers.adViewDelegate.AdViewOperationDelegateImpl
+import com.oyetech.composebase.helpers.eventNavigator.TestEventNavigator
 import com.oyetech.composebase.helpers.vibrationHelper.IVibrationHelper
 import com.oyetech.composebase.helpers.vibrationHelper.VibrationHelperImpl
 import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationVm
@@ -47,6 +48,7 @@ Created by Erdi Özbek
 
 object ComposeMainModule {
     val composeMainModule1 = module {
+        singleOf(::TestEventNavigator)
         single<IVibrationHelper> { VibrationHelperImpl(get()) }
         factory<AdViewOperationDelegate> { AdViewOperationDelegateImpl() }
         viewModelOf(::RadioListVM)

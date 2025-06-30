@@ -24,21 +24,22 @@ class AllScreenNavigatorVM(
     }
 
     override fun onEvent(event: Any) {
-        event as AllScreenNavigatorEvent
-        when (event) {
-            is OnNavigateToRadioStart -> {
-                // Handle idle event if needed
-                navigationUseCase.navigate(AllScreenNavigator.radioStart)
-            }
+        if (event is AllScreenNavigatorEvent) {
+            when (event) {
+                is OnNavigateToRadioStart -> {
+                    // Handle idle event if needed
+                    navigationUseCase.navigate(AllScreenNavigator.radioStart)
+                }
 
-            is OnNavigateToQuoteStart -> {
-                // Handle idle event if needed
-                navigationUseCase.navigate(AllScreenNavigator.quoteStart)
-            }
+                is OnNavigateToQuoteStart -> {
+                    // Handle idle event if needed
+                    navigationUseCase.navigate(AllScreenNavigator.quoteStart)
+                }
 
-            is NavigateListItemClicked -> {
-                // Handle item click event
-                navigationUseCase.navigate(event.navigationRoute)
+                is NavigateListItemClicked -> {
+                    // Handle item click event
+                    navigationUseCase.navigate(event.navigationRoute)
+                }
             }
         }
     }

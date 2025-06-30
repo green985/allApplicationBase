@@ -149,28 +149,29 @@ class MessageDetailVm(
     }
 
     override fun onEvent(event: Any) {
-        event as MessageDetailEvent
-        when (event) {
-            is OnMessageSend -> {
-                if (!event.triggered) {
-                    uiState.updateState {
-                        copy(onMessageSendTriggered = false)
+        if (event is MessageDetailEvent) {
+            when (event) {
+                is OnMessageSend -> {
+                    if (!event.triggered) {
+                        uiState.updateState {
+                            copy(onMessageSendTriggered = false)
+                        }
+                        return
                     }
-                    return
+                    sendMessage()
                 }
-                sendMessage()
-            }
 
-            is OnMessageTextChange -> {
-                uiState.value = uiState.value.copy(messageText = event.messageText)
-            }
+                is OnMessageTextChange -> {
+                    uiState.value = uiState.value.copy(messageText = event.messageText)
+                }
 
-            OnRetry -> {
-                Timber.d("OnRetry")
-            }
+                OnRetry -> {
+                    Timber.d("OnRetry")
+                }
 
-            OnScreenOut -> {
-                setCurrentConversation(true)
+                OnScreenOut -> {
+                    setCurrentConversation(true)
+                }
             }
         }
     }

@@ -31,7 +31,7 @@ fun GeneralOperationScreenSetup(
     generalPlaygroundVm.initNavigation(navController::navigate)
 
 
-    LoginOperationScreenSetup(navigationRoute = { navController.navigate(it) })
+    LoginOperationScreenSetup()
     GeneralOperationScreen {
         content()
     }

@@ -1,5 +1,7 @@
 package com.oyetech.composebase.sharedScreens.messaging.conversationList
 
+import com.oyetech.composebase.base.BaseEvent
+
 /**
 Created by Erdi Özbek
 -17.02.2025-
@@ -11,8 +13,11 @@ data class MessageConversationListUiState(
     val errorText: String = "",
 )
 
-sealed class MessageConversationListEvent {
+sealed class MessageConversationListEvent : BaseEvent() {
     data class OnConversationClick(val conversationId: String, val userId: String) :
+        MessageConversationListEvent()
+
+    data class OnConversationClickWithPosition(val conversationPosition: Int) :
         MessageConversationListEvent()
 
     object Retry : MessageConversationListEvent()

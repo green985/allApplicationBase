@@ -11,7 +11,7 @@ Created by Erdi Özbek
 data class AllScreenNavigatorUiState(val isLoading: Boolean = false)
 
 sealed class AllScreenNavigatorEvent : BaseEvent() {
-    sealed class NavigateListItemClicked(val navigationRoute: String) : AllScreenNavigatorEvent()
+    data class NavigateListItemClicked(val navigationRoute: String) : AllScreenNavigatorEvent()
 
     object OnNavigateToRadioStart : AllScreenNavigatorEvent()
     object OnNavigateToQuoteStart : AllScreenNavigatorEvent()

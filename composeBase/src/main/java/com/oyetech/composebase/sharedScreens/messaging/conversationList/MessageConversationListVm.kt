@@ -11,6 +11,7 @@ import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRo
 import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import com.oyetech.composebase.sharedScreens.messaging.MessageConversationUiState
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListEvent.OnConversationClick
+import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListEvent.OnConversationClickWithPosition
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListEvent.OnConversationScreenOpen
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListEvent.Retry
 import com.oyetech.composebase.sharedScreens.messaging.mapFromLocalToUiState
@@ -147,33 +148,55 @@ class MessageConversationListVm(
     }
 
     override fun onEvent(event: Any) {
-        event as MessageConversationListEvent
-        when (event) {
-            is OnConversationClick -> {
-                Timber.d("Conversation Clicked: ${event.conversationId}")
-                messagesAllOperationRepository.currentUsername =
-                    listViewState.value.items.find { it.conversationId == event.conversationId }?.username
-                        ?: ""
+        if (event is MessageConversationListEvent) {
+            when (event) {
+                is OnConversationClick -> {
+                    Timber.d("Conversation Clicked: ${event.conversationId}")
+                    messagesAllOperationRepository.currentUsername =
+                        listViewState.value.items.find { it.conversationId == event.conversationId }?.username
+                            ?: ""
 
-                navigationUseCase.navigate(
-                    QuoteAppProjectRoutes.MessageDetail.withArgs(
-                        ScreenKey.conversationId to event.conversationId,
-                        ScreenKey.receiverUserId to event.userId,
+                    navigationUseCase.navigate(
+                        QuoteAppProjectRoutes.MessageDetail.withArgs(
+                            ScreenKey.conversationId to event.conversationId,
+                            ScreenKey.receiverUserId to event.userId,
+                        )
                     )
-                )
 
-            }
-
-            OnConversationScreenOpen -> {
-                viewModelScope.launch(getDispatcherIo()) {
-                    refreshLastMessages()
                 }
-            }
 
-            Retry -> {
-                controlUserStatus()
+                is OnConversationClickWithPosition -> {
+                    val conversationId =
+                        listViewState.value.items.getOrNull(event.conversationPosition)?.conversationId
+                            ?: return@onEvent
+                    val userId =
+                        listViewState.value.items.getOrNull(event.conversationPosition)?.userId
+                            ?: return@onEvent
+
+                    Timber.d("Conversation Clicked: ${conversationId}")
+                    messagesAllOperationRepository.currentUsername =
+                        listViewState.value.items.find { it.conversationId == conversationId }?.username
+                            ?: ""
+
+                    navigationUseCase.navigate(
+                        QuoteAppProjectRoutes.MessageDetail.withArgs(
+                            ScreenKey.conversationId to conversationId,
+                            ScreenKey.receiverUserId to userId,
+                        )
+                    )
+
+                }
+
+                OnConversationScreenOpen -> {
+                    viewModelScope.launch(getDispatcherIo()) {
+                        refreshLastMessages()
+                    }
+                }
+
+                Retry -> {
+                    controlUserStatus()
+                }
             }
         }
     }
-
 }

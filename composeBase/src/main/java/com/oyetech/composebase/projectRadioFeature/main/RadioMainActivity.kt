@@ -1,5 +1,6 @@
 package com.oyetech.composebase.projectRadioFeature.main
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.view.ViewTreeObserver
@@ -41,6 +42,7 @@ class RadioMainActivity : ComponentActivity() {
         PlayerServiceUtils.startService()
     }
 
+    @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PlayerServiceUtils.startService()
@@ -58,7 +60,6 @@ class RadioMainActivity : ComponentActivity() {
                     quotesAppNavigation(navController)
                 }
             }
-
             Timber.d("onCreate Error texttttt: $errorText")
 
             // todo will be check later for auto login things looks like a block general navigator screen

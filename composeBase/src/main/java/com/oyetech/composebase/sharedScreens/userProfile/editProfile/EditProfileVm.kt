@@ -17,7 +17,7 @@ class EditProfileVm(appDispatchers: AppDispatchers) : BaseViewModel(appDispatche
     init {
     }
 
-    fun onEvent(event: Any) {
+    override fun onEvent(event: Any) {
         when (event) {
 
             else -> {}
