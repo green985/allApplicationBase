@@ -12,7 +12,9 @@ data class MessageConversationListUiState(
 )
 
 sealed class MessageConversationListEvent {
-    data class OnConversationClick(val conversationId: String) : MessageConversationListEvent()
+    data class OnConversationClick(val conversationId: String, val userId: String) :
+        MessageConversationListEvent()
+
     object Retry : MessageConversationListEvent()
     object OnConversationScreenOpen : MessageConversationListEvent()
 }

@@ -62,7 +62,6 @@ Created by Erdi Özbek
 @Composable
 fun MessageDetailScreenSetup(
     modifier: Modifier = Modifier,
-    navigationRoute: (navigationRoute: String) -> Unit = {},
     conversationId: String,
     receiverUserId: String,
 ) {

@@ -16,6 +16,7 @@ import com.oyetech.composebase.helpers.general.GeneralSettings
 import com.oyetech.domain.repository.firebase.FirebaseTokenOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
+import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.firebaseModels.googleAuth.isUserHasUID
 import com.oyetech.tools.coroutineHelper.AppDispatchers
@@ -40,6 +41,7 @@ Created by Erdi Özbek
 class LoginOperationVM(
     appDispatchers: AppDispatchers,
     private val googleLoginRepository: GoogleLoginRepository,
+    val navigationUseCase: NavigationUseCase,
     private val firebaseUserRepository: FirebaseUserRepository,
     private val firebaseTokenOperationRepository: FirebaseTokenOperationRepository,
     private val snackbarDelegate: SnackbarDelegate,

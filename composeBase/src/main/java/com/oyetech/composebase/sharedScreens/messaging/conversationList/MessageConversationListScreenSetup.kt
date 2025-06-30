@@ -25,8 +25,6 @@ import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.helpers.viewProperties.OnResumeEffect
-import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
-import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import com.oyetech.composebase.sharedScreens.messaging.MessageConversationUiState
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListEvent.OnConversationClick
 import com.oyetech.composebase.sharedScreens.messaging.views.MessageConversationItemView
@@ -44,7 +42,6 @@ Created by Erdi Özbek
 @Composable
 fun MessageConversationListScreenSetup(
     modifier: Modifier = Modifier,
-    navigationRoute: (navigationRoute: String) -> Unit = {},
 ) {
     val vm = koinViewModel<MessageConversationListVm>()
     OnResumeEffect {
@@ -66,7 +63,6 @@ fun MessageConversationListScreenSetup(
                 contentPadding = innerPadding,
                 onEvent = { vm.onEvent(it) },
                 listViewState = listViewState,
-                navigationRoute = navigationRoute,
             )
 
 
@@ -119,7 +115,6 @@ fun MessageConversationListScreen(
     uiState: MessageConversationListUiState,
     onEvent: (MessageConversationListEvent) -> (Unit),
     listViewState: GenericListState<MessageConversationUiState>,
-    navigationRoute: (navigationRoute: String) -> Unit = {},
 ) {
     val lazyListState = rememberLazyListState()
 
@@ -141,11 +136,10 @@ fun MessageConversationListScreen(
                         itemContent = { itemDetail ->
                             MessageConversationItemView(
                                 modifier = Modifier.clickable {
-                                    onEvent(OnConversationClick(itemDetail.conversationId))
-                                    navigationRoute.invoke(
-                                        QuoteAppProjectRoutes.MessageDetail.withArgs(
-                                            ScreenKey.conversationId to itemDetail.conversationId,
-                                            ScreenKey.receiverUserId to itemDetail.userId,
+                                    onEvent(
+                                        OnConversationClick(
+                                            conversationId = itemDetail.conversationId,
+                                            userId = itemDetail.userId
                                         )
                                     )
                                 },

@@ -5,6 +5,7 @@ import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.domain.quotesDomain.quotesData.QuotesRepository
 import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
+import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -19,12 +20,13 @@ Created by Erdi Özbek
 class GeneralPlaygroundVm(
     appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     private val quotesRepository: QuotesRepository,
+    private val navigationUseCase: NavigationUseCase,
     private val googleLoginRepository: GoogleLoginRepository,
     private val firebaseCommentOperationRepository: FirebaseCommentOperationRepository,
 ) : BaseViewModel(appDispatchers) {
 
     init {
-        fetchRandomQuotes()
+//        fetchRandomQuotes()
 //        firebaseCommentOperationRepository.getCommentsWithId("commentId")
     }
 
@@ -47,6 +49,10 @@ class GeneralPlaygroundVm(
                 )
             }
         }
+    }
+
+    fun initNavigation(action: (String) -> Unit) {
+        navigationUseCase.setNavigator { action(it) }
     }
 
 }

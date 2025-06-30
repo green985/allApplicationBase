@@ -11,6 +11,7 @@ import com.oyetech.domain.useCases.AdsHelperUseCase
 import com.oyetech.domain.useCases.AlarmOperationUseCase
 import com.oyetech.domain.useCases.AnalyticsOperationUseCase
 import com.oyetech.domain.useCases.GlideOperationUseCase
+import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.domain.useCases.TimerOperationUseCase
 import com.oyetech.domain.useCases.VolumeOperationUseCase
 import com.oyetech.domain.useCases.contentOperations.RadioOperationUseCase
@@ -69,6 +70,7 @@ object QuoteDomainModule {
                 get()
             )
         }
+        single { NavigationUseCase() }
     }
 }
 

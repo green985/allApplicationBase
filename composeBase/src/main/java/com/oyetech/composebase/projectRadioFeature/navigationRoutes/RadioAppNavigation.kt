@@ -78,7 +78,6 @@ fun NavGraphBuilder.radioAppNavigation(navController: NavController) {
     // TabHistory Route
     composable(RadioAppProjectRoutes.LoginOperationScreen.route) {
         LoginOperationScreenSetup(
-            navigationRoute = navigateRouteOperation(navController)
         )
     }
     // TabHistory Route

@@ -7,6 +7,8 @@ import com.oyetech.composebase.base.baseGenericList.makeEmptyListState
 import com.oyetech.composebase.base.baseGenericList.setList
 import com.oyetech.composebase.base.baseGenericList.updateErrorInitial
 import com.oyetech.composebase.base.updateState
+import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
+import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import com.oyetech.composebase.sharedScreens.messaging.MessageConversationUiState
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListEvent.OnConversationClick
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListEvent.OnConversationScreenOpen
@@ -16,6 +18,7 @@ import com.oyetech.composebase.sharedScreens.messaging.mapToUiState
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.messaging.MessagesAllOperationRepository
+import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
@@ -34,6 +37,7 @@ Created by Erdi Özbek
 class MessageConversationListVm(
     appDispatchers: AppDispatchers,
     private val firebaseUserRepository: FirebaseUserRepository,
+    private val navigationUseCase: NavigationUseCase,
     private val firebaseMessagingRepository: FirebaseMessagingRepository,
     private val messagesAllOperationRepository: MessagesAllOperationRepository,
 ) : BaseViewModel(appDispatchers) {
@@ -149,6 +153,13 @@ class MessageConversationListVm(
                 messagesAllOperationRepository.currentUsername =
                     listViewState.value.items.find { it.conversationId == event.conversationId }?.username
                         ?: ""
+
+                navigationUseCase.navigate(
+                    QuoteAppProjectRoutes.MessageDetail.withArgs(
+                        ScreenKey.conversationId to event.conversationId,
+                        ScreenKey.receiverUserId to event.userId,
+                    )
+                )
 
             }
 
