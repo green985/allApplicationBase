@@ -1,8 +1,12 @@
 package com.oyetech.composebase.sharedScreens.userList;
 
 import androidx.lifecycle.viewModelScope
-import com.oyetech.composebase.base.baseGenericList.BaseListViewModel
+import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.baseGenericList.GenericListState
+import com.oyetech.composebase.base.baseGenericList.makeEmptyListState
+import com.oyetech.composebase.base.baseGenericList.setList
+import com.oyetech.composebase.base.baseGenericList.updateErrorInitial
+import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.sharedScreens.userList.UserListEvent.RegisterToUserList
 import com.oyetech.composebase.sharedScreens.userList.UserListEvent.RemoveUserFromList
 import com.oyetech.composebase.sharedScreens.userList.item.UserListItemUiState
@@ -24,10 +28,10 @@ Created by Erdi Özbek
 class UserListVm(
     appDispatchers: AppDispatchers,
     private val firebaseUserListOperationRepository: FirebaseUserListOperationRepository,
-) : BaseListViewModel<UserListItemUiState>(appDispatchers) {
+) : BaseViewModel(appDispatchers) {
     val uiState = MutableStateFlow(UserListUiState())
 
-    override val listViewState: MutableStateFlow<GenericListState<UserListItemUiState>> =
+    val listViewState: MutableStateFlow<GenericListState<UserListItemUiState>> =
         MutableStateFlow(
             GenericListState<UserListItemUiState>(
                 isRefreshEnable = true,
@@ -38,6 +42,32 @@ class UserListVm(
         )
 
     init {
+    }
+
+    fun refreshList() {
+        listViewState.updateState { copy(isRefreshing = true) }
+        loadList(isFromRefresh = true)
+    }
+
+    private fun loadList(isFromRefresh: Boolean = false) {
+        if (!isFromRefresh) {
+            listViewState.updateState { copy(isLoadingInitial = true) }
+        }
+
+        viewModelScope.launch(getDispatcherIo()) {
+            listViewState.value.dataFlow?.asResult()?.collectLatest { result ->
+                Timber.d("ListResulttt== : ${result.isSuccess}")
+                result.fold({ list ->
+                    if (list.isEmpty()) {
+                        listViewState.makeEmptyListState()
+                    } else {
+                        listViewState.setList(list)
+                    }
+                }, {
+                    listViewState.updateErrorInitial(it)
+                })
+            }
+        }
     }
 
     fun onEvent(event: UserListEvent) {
