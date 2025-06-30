@@ -28,7 +28,6 @@ fun GeneralOperationScreenSetup(
     val generalPlaygroundVm = koinViewModel<GeneralPlaygroundVm>()
 
     generalPlaygroundVm.initt()
-    generalPlaygroundVm.initNavigation(navController::navigate)
 
 
     LoginOperationScreenSetup()

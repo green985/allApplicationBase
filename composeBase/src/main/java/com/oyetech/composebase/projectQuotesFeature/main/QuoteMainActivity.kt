@@ -31,6 +31,7 @@ import com.oyetech.composebase.projectRadioFeature.theme.RadioAppTheme
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator.navHostScreenSetup
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
+import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey.errorText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,6 +54,9 @@ class QuoteMainActivity : ComponentActivity() {
 
     val testEventNavigator: TestEventNavigator by KoinJavaComponent.inject(
         TestEventNavigator::class.java
+    )
+    val navigationUseCase: NavigationUseCase by KoinJavaComponent.inject(
+        com.oyetech.domain.useCases.NavigationUseCase::class.java
     )
 
     private val requestPermissionLauncher = registerForActivityResult(
@@ -79,6 +83,9 @@ class QuoteMainActivity : ComponentActivity() {
 
                 RadioAppTheme {
                     val navController = rememberNavController()
+                    navigationUseCase.setNavigator { action ->
+                        navController.navigate(action)
+                    }
                     NavHost(
                         navController = navController,
                         startDestination = AllScreenNavigator.startApp,

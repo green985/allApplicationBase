@@ -15,8 +15,8 @@ Created by Erdi Özbek
 
 class TestEventNavigator() {
 
-    private val delayMillis: Long = 1000 // Delay in milliseconds between events
-    private val initialDelayMillis: Long = 5000 // Initial delay before starting to emit events
+    private val delayMillis: Long = 3000 // Delay in milliseconds between events
+    private val initialDelayMillis: Long = 3000 // Initial delay before starting to emit events
 
     private val _eventFlow =
         MutableSharedFlow<BaseEvent>(replay = 0)

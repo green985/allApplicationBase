@@ -50,9 +50,4 @@ class GeneralPlaygroundVm(
             }
         }
     }
-
-    fun initNavigation(action: (String) -> Unit) {
-        navigationUseCase.setNavigator { action(it) }
-    }
-
 }

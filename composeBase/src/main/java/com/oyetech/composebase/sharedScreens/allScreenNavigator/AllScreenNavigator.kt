@@ -115,7 +115,7 @@ object AllScreenNavigator {
                         ) {
                             NavHost(
                                 navController = navHostControllerQuote,
-                                startDestination = QuoteAppProjectRoutes.QuoteAppHomepage.route,
+                                startDestination = QuoteAppProjectRoutes.quoteApplicationBottomTabNavList.first().path,
                             ) {
 //                                radioAppNavigation(navHostControllerQuote)
                                 quotesAppNavigation(navHostControllerQuote)
