@@ -1,11 +1,14 @@
 package com.oyetech.composebase.helpers.eventNavigator
 
+import androidx.lifecycle.LifecycleCoroutineScope
 import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigatorEvent
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListEvent
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
 
 /**
 Created by Erdi Özbek
@@ -28,6 +31,13 @@ class TestEventNavigator() {
             _eventFlow.emit(event)
             delay(delayMillis)
         }
+    }
+
+    fun triggerTestEvents(lifecycleScope: LifecycleCoroutineScope) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            triggerEvents(TestEventNavigator.getDummyEventList())
+        }
+
     }
 
     companion object {
