@@ -109,12 +109,11 @@ sealed class MessageConversationEvent {
 //    object OnMessageSend : MessageDetailEvent()
 }
 
-fun Flow<List<FirebaseMessageConversationData>>.mapFromLocalToUiState(clientUserId: String): Flow<List<MessageConversationUiState>> {
-    if (clientUserId.isEmpty()) return this.map {
-        Timber.d("clientUserId is empty")
-        emptyList()
-    }
+fun Flow<List<FirebaseMessageConversationData>>.mapFromLocalToUiState(clientUserIdAction: (() -> String)): Flow<List<MessageConversationUiState>> {
+
     return this.map {
+        val clientUserId = clientUserIdAction.invoke()
+
         it.map { data ->
             MessageConversationUiState(
                 conversationId = data.conversationId,

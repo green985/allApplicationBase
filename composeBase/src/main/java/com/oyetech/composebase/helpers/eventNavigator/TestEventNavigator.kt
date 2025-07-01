@@ -34,6 +34,7 @@ class TestEventNavigator() {
     }
 
     fun triggerTestEvents(lifecycleScope: LifecycleCoroutineScope) {
+        return
         lifecycleScope.launch(Dispatchers.IO) {
             triggerEvents(TestEventNavigator.getDummyEventList())
         }

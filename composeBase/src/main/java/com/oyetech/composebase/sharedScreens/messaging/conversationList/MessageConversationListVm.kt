@@ -48,9 +48,9 @@ class MessageConversationListVm(
         MutableStateFlow(
             GenericListState(
                 dataFlow = messagesAllOperationRepository.getConversationListUpdated()
-                    .mapFromLocalToUiState(clientUserId = firebaseUserRepository.getUserId()),
+                    .mapFromLocalToUiState(clientUserIdAction = { firebaseUserRepository.getUserId() }),
                 refreshDataFlow = messagesAllOperationRepository.getConversationList()
-                    .mapFromLocalToUiState(clientUserId = firebaseUserRepository.getUserId())
+                    .mapFromLocalToUiState(clientUserIdAction = { firebaseUserRepository.getUserId() })
             )
         )
 
@@ -166,24 +166,7 @@ class MessageConversationListVm(
                 }
 
                 is OnConversationClickWithPosition -> {
-                    val conversationId =
-                        listViewState.value.items.getOrNull(event.conversationPosition)?.conversationId
-                            ?: return@onEvent
-                    val userId =
-                        listViewState.value.items.getOrNull(event.conversationPosition)?.userId
-                            ?: return@onEvent
-
-                    Timber.d("Conversation Clicked: ${conversationId}")
-                    messagesAllOperationRepository.currentUsername =
-                        listViewState.value.items.find { it.conversationId == conversationId }?.username
-                            ?: ""
-
-                    navigationUseCase.navigate(
-                        QuoteAppProjectRoutes.MessageDetail.withArgs(
-                            ScreenKey.conversationId to conversationId,
-                            ScreenKey.receiverUserId to userId,
-                        )
-                    )
+                    onConversationClickWithPosition(event)
 
                 }
 
@@ -198,5 +181,26 @@ class MessageConversationListVm(
                 }
             }
         }
+    }
+
+    private fun onConversationClickWithPosition(event: OnConversationClickWithPosition) {
+        val conversationId =
+            listViewState.value.items.getOrNull(event.conversationPosition)?.conversationId
+                ?: return
+        val userId =
+            listViewState.value.items.getOrNull(event.conversationPosition)?.userId
+                ?: return
+
+        Timber.d("Conversation Clicked: ${conversationId}")
+        messagesAllOperationRepository.currentUsername =
+            listViewState.value.items.find { it.conversationId == conversationId }?.username
+                ?: ""
+
+        navigationUseCase.navigate(
+            QuoteAppProjectRoutes.MessageDetail.withArgs(
+                ScreenKey.conversationId to conversationId,
+                ScreenKey.receiverUserId to userId,
+            )
+        )
     }
 }

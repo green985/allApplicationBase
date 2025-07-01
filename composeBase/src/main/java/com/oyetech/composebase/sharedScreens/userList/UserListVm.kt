@@ -42,6 +42,7 @@ class UserListVm(
         )
 
     init {
+        loadList()
     }
 
     fun refreshList() {
