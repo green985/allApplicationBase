@@ -11,6 +11,7 @@ Created by Erdi Özbek
  **/
 
 object LanguageKey {
+    var userFeedListTitle set(value) {} get() = LocalLanguageHelper.getStringWithKey("userFeedListTitle")
     var messageDetailTitle set(value) {} get() = LocalLanguageHelper.getStringWithKey("messageDetailTitle")
     var messageConversationTitle set(value) {} get() = LocalLanguageHelper.getStringWithKey("messageConversationTitle")
     var userNotFound set(value) {} get() = LocalLanguageHelper.getStringWithKey("userNotFound")

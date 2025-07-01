@@ -1,13 +1,18 @@
 package com.oyetech.composebase.sharedScreens.userList
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -15,12 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.base.baseGenericList.GenericListState
-import com.oyetech.composebase.base.baseGenericList.LoadableLazyColumnState
-import com.oyetech.composebase.base.baseGenericList.rememberLoadableLazyColumnState
-import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
-import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
+import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
+import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.sharedScreens.userList.item.UserListItemUiState
 import com.oyetech.composebase.sharedScreens.userList.item.UserListItemView
+import com.oyetech.languageModule.keyset.LanguageKey
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -40,10 +44,6 @@ fun UserListScreenSetup(
 
     val uiState by vm.uiState.collectAsStateWithLifecycle()
     val listViewState by vm.listViewState.collectAsStateWithLifecycle()
-
-    val lazyColumnState: LoadableLazyColumnState =
-        rememberLoadableLazyColumnState(onLoadMore = {})
-
 
     UserListScreen(
         modifier = modifier,
@@ -68,90 +68,69 @@ fun UserListScreen(
 ) {
     val lazyListState = rememberLazyListState()
 
-    BaseScaffold(content = {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it)
-        ) {
-            // Content can be added here if needed
-            PullToRefreshBox(
-                modifier = modifier,
-                isRefreshing = listViewState.isRefreshing,
-                onRefresh = { listViewState.triggerRefresh?.invoke() },
-            ) {
-                LazyColumn(
-                    state = lazyListState,
-                    content = {
-                        items(
-                            items = listViewState.items,
-                            key = { it.userId },
-                            itemContent = { itemDetail ->
-                                UserListItemView(modifier = Modifier.clickable {
-//                                navigationRoute.invoke(
-//                                    QuoteAppProjectRoutes.UserProfile.withArgs(
-//                                        ScreenKey.receiverUserId to itemDetail.userId,
-//                                    )
-//                                )
-                                    navigationRoute.invoke(
-                                        QuoteAppProjectRoutes.MessageDetail.withArgs(
-                                            ScreenKey.receiverUserId to itemDetail.userId,
-                                        )
-                                    )
-                                }, uiState = itemDetail)
-                            })
-//
-//                        if (isLoadingMore) {
-//                            Timber.d("LoadableLazyColumn: isLoadingMore")
-//                            loadMoreLoadingContent?.invoke()
-//                        }
-//                        if (isErrorMore) {
-//                            Timber.d("LoadableLazyColumn: isErrorMore")
-//                            ErrorOnMoreContent(onRetry = onRetry)
-//                        }
-                    },
-                )
-            }
-        }
-    })
 
-//
-//BaseScaffold(topBarContent = {
-//    RadioToolbarSetup(
-//        uiState = RadioToolbarState(title = LanguageKey.connectWithPeople),
-//    )
-//}) {
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .padding(it)
-//    ) {
-//
-//        GenericListScreenSetup2(
-//            lazyColumnState = lazyColumnState,
-//            modifier = Modifier
-//                .fillMaxSize(),
-//            viewModel = baseListViewModel,
-//            content = {
-//                items(
-//                    items = listViewState.items,
-//                    key = { it.userId },
-//                    itemContent = { itemDetail ->
-//                        UserListItemView(modifier = Modifier.clickable {
-////                                navigationRoute.invoke(
-////                                    QuoteAppProjectRoutes.UserProfile.withArgs(
-////                                        ScreenKey.receiverUserId to itemDetail.userId,
-////                                    )
-////                                )
-//                            navigationRoute.invoke(
-//                                QuoteAppProjectRoutes.MessageDetail.withArgs(
-//                                    ScreenKey.receiverUserId to itemDetail.userId,
-//                                )
-//                            )
-//                        }, uiState = itemDetail)
-//                    })
-//            })
-//    }
-//}
+    BaseScaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = LanguageKey.userFeedListTitle,
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                }
+            )
+        },
+        modifier = Modifier.fillMaxSize(),
+        content = { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                Box(modifier = Modifier.weight(1f)) {
+                    // Content can be added here if needed
+                    PullToRefreshBox(
+                        modifier = modifier,
+                        isRefreshing = listViewState.isRefreshing,
+                        onRefresh = { listViewState.triggerRefresh?.invoke() },
+                    ) {
+                        LazyColumn(
+                            state = lazyListState,
+                            content = {
+                                itemsIndexed(
+                                    items = listViewState.items,
+                                    itemContent = { index, itemDetail ->
+                                        UserListItemView(modifier = Modifier.clickable {
+                                            onEvent.invoke(UserListEvent.OnUserClick(index))
+
+                                        }, uiState = itemDetail)
+                                    })
+                            },
+                        )
+
+
+
+                        if (listViewState.isLoadingInitial) {
+                            LoadingScreenFullSize()
+                        }
+
+                        if (listViewState.isErrorInitial) {
+
+                            ErrorScreenFullSize(
+                                errorMessage = listViewState.errorMessage,
+                                withoutAlpha = true
+                            )
+                        }
+                        if (listViewState.isEmptyList) {
+                            ErrorScreenFullSize(
+                                errorMessage = LanguageKey.conversationNotFound,
+                                withoutAlpha = true
+                            )
+                        }
+                    }
+                }
+            }
+        })
 
 }

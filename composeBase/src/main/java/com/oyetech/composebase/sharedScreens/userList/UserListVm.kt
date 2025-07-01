@@ -7,13 +7,18 @@ import com.oyetech.composebase.base.baseGenericList.makeEmptyListState
 import com.oyetech.composebase.base.baseGenericList.setList
 import com.oyetech.composebase.base.baseGenericList.updateErrorInitial
 import com.oyetech.composebase.base.updateState
+import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
+import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
+import com.oyetech.composebase.sharedScreens.userList.UserListEvent.OnUserClick
 import com.oyetech.composebase.sharedScreens.userList.UserListEvent.RegisterToUserList
 import com.oyetech.composebase.sharedScreens.userList.UserListEvent.RemoveUserFromList
 import com.oyetech.composebase.sharedScreens.userList.item.UserListItemUiState
 import com.oyetech.composebase.sharedScreens.userList.item.mapToUiState
 import com.oyetech.domain.repository.firebase.FirebaseUserListOperationRepository
+import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -27,6 +32,7 @@ Created by Erdi Özbek
 
 class UserListVm(
     appDispatchers: AppDispatchers,
+    private val navigationUseCase: NavigationUseCase,
     private val firebaseUserListOperationRepository: FirebaseUserListOperationRepository,
 ) : BaseViewModel(appDispatchers) {
     val uiState = MutableStateFlow(UserListUiState())
@@ -56,6 +62,7 @@ class UserListVm(
         }
 
         viewModelScope.launch(getDispatcherIo()) {
+            delay(2000)
             listViewState.value.dataFlow?.asResult()?.collectLatest { result ->
                 Timber.d("ListResulttt== : ${result.isSuccess}")
                 result.fold({ list ->
@@ -91,6 +98,16 @@ class UserListVm(
                             refreshList()
                         }
                 }
+            }
+
+            is OnUserClick -> {
+                val itemDetail = listViewState.value.items[event.index]
+                navigationUseCase.navigate(
+                    QuoteAppProjectRoutes.MessageDetail.withArgs(
+                        ScreenKey.receiverUserId to itemDetail.userId,
+                    )
+                )
+
             }
         }
     }
