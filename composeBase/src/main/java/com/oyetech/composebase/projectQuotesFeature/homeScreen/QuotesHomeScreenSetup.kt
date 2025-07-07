@@ -12,7 +12,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.oyetech.composebase.base.BaseScaffold
+import com.oyetech.composebase.base.BaseScaffoldDeprecated
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectQuotesFeature.quotes.listScreen.QuoteListScreenSetup
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarActionItems
@@ -41,7 +41,7 @@ fun QuotesHomeScreenSetup(
 
     val pagerState = rememberPagerState(
         pageCount = { uiState.tabEnumList.size })
-    BaseScaffold(
+    BaseScaffoldDeprecated(
         showTopBar = true,
         topBarContent = {
             QuoteToolbarSetup(

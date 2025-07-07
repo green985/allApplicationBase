@@ -132,6 +132,12 @@ fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
         )
     }
 
+    composable(QuoteAppProjectRoutes.MoonOperation.route) {
+        FacSettingsScreenSetup(
+            navigationRoute = navigateRouteOperation(navController)
+        )
+    }
+
     composable(QuoteAppProjectRoutes.UserList.route) {
         UserListScreenSetup(
             navigationRoute = navigateRouteOperation(navController)

@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.R
-import com.oyetech.composebase.base.BaseScaffold
+import com.oyetech.composebase.base.BaseScaffoldDeprecated
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarActionItems
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarEvent
@@ -142,7 +142,7 @@ fun UserProfileScreen(
     navigationRoute: (navigationRoute: String) -> Unit = {},
     onEvent: (UserProfileEvent) -> (Unit),
 ) {
-    BaseScaffold(showTopBar = true, topBarContent = {
+    BaseScaffoldDeprecated(showTopBar = true, topBarContent = {
         QuoteToolbarSetup(uiState = QuoteToolbarState(
             title = uiState.username,
             showBackButton = uiState.isOwner,

@@ -7,6 +7,7 @@ import com.oyetech.composebase.base.baseGenericList.makeEmptyListState
 import com.oyetech.composebase.base.baseGenericList.setList
 import com.oyetech.composebase.base.baseGenericList.updateErrorInitial
 import com.oyetech.composebase.base.updateState
+import com.oyetech.composebase.experimental.moonOperation.MoonOperationVm
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import com.oyetech.composebase.sharedScreens.messaging.MessageConversationUiState
@@ -41,6 +42,7 @@ class MessageConversationListVm(
     private val navigationUseCase: NavigationUseCase,
     private val firebaseMessagingRepository: FirebaseMessagingRepository,
     private val messagesAllOperationRepository: MessagesAllOperationRepository,
+    private val MoonOperationVm: MoonOperationVm,
 ) : BaseViewModel(appDispatchers) {
     val uiState = MutableStateFlow(MessageConversationListUiState())
 
@@ -57,6 +59,7 @@ class MessageConversationListVm(
     init {
         firebaseMessagingRepository.initLocalMessageSendOperation(viewModelScope)
         controlUserStatus()
+        MoonOperationVm.getMoonOperationData() // Initialize MoonOperation data
     }
 
     private fun controlUserStatus() {

@@ -9,7 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.oyetech.composebase.base.BaseScaffold
+import com.oyetech.composebase.base.BaseScaffoldDeprecated
 import com.oyetech.composebase.base.baseGenericList.ListUIEvent.LoadMore
 import com.oyetech.composebase.base.baseGenericList.ListUIEvent.Refresh
 import com.oyetech.composebase.base.baseGenericList.ListUIEvent.Retry
@@ -58,7 +58,7 @@ fun TagListScreenSetup(
 
     Timber.d("itemmmm == " + items.size)
 
-    BaseScaffold(
+    BaseScaffoldDeprecated(
         showTopBar = true,
         topBarContent = {
             RadioToolbarSetup(uiState = radioToolbarState)

@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.oyetech.composebase.base.BaseScaffold
+import com.oyetech.composebase.base.BaseScaffoldDeprecated
 import com.oyetech.composebase.helpers.general.GeneralSettings
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectQuotesFeature.quotes.views.AppInfoViewProperty
@@ -78,7 +78,7 @@ fun FacSettingsScreen(
     toolbarState: QuoteToolbarState,
     startReviewOperation: () -> Unit = {},
 ) {
-    BaseScaffold(topBarContent = {
+    BaseScaffoldDeprecated(topBarContent = {
         QuoteToolbarSetup(
             uiState = toolbarState,
             onEvent = {

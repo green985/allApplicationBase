@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.oyetech.composebase.base.BaseScaffold
+import com.oyetech.composebase.base.BaseScaffoldDeprecated
 import com.oyetech.composebase.baseViews.basePagingList.BasePagingListScreen
 import com.oyetech.tools.stringHelper.StringHelper.toUniqString
 import org.koin.androidx.compose.koinViewModel
@@ -48,7 +48,7 @@ fun AdviceQuoteDebugScreen(
     lazyPagingItems: LazyPagingItems<ItemAdviceQuoteDebugUiState>,
 ) {
 
-    BaseScaffold {
+    BaseScaffoldDeprecated {
         Column(modifier = Modifier.padding()) {
             BasePagingListScreen(
                 items = lazyPagingItems, // This parameter is abstracted, not used here

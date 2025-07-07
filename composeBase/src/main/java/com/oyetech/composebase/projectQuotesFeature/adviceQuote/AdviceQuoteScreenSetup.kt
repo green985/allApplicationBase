@@ -29,7 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.BuildConfig
-import com.oyetech.composebase.base.BaseScaffold
+import com.oyetech.composebase.base.BaseScaffoldDeprecated
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorDialogFullScreen
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.projectQuotesFeature.QuotesDimensions
@@ -58,7 +58,7 @@ fun AdviceQuoteScreenSetup(
     val toolbarState by vm.toolbarUiState.collectAsStateWithLifecycle()
     val onEvent = { event: AdviceQuoteEvent -> vm.onEvent(event) }
 
-    BaseScaffold(topBarContent = {
+    BaseScaffoldDeprecated(topBarContent = {
         QuoteToolbarSetup(toolbarState) {
             when (it) {
                 is QuoteToolbarEvent.BackButtonClick -> {

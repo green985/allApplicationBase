@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.oyetech.composebase.base.BaseScaffold
+import com.oyetech.composebase.base.BaseScaffoldDeprecated
 import com.oyetech.composebase.baseViews.basePagingList.BasePagingListScreen
 import com.oyetech.composebase.projectQuotesFeature.views.ItemAuthorView
 import org.koin.androidx.compose.koinViewModel
@@ -25,7 +25,7 @@ fun AuthorListScreen(
     val vm = koinViewModel<AuthorListVM>()
     val lazyPagingItems = vm.authorPage.collectAsLazyPagingItems()
 
-    BaseScaffold {
+    BaseScaffoldDeprecated {
         Column(modifier = Modifier.padding()) {
             BasePagingListScreen(
                 items = lazyPagingItems, // This parameter is abstracted, not used here

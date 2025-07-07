@@ -19,7 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.oyetech.composebase.base.BaseScaffold
+import com.oyetech.composebase.base.BaseScaffoldDeprecated
 import com.oyetech.composebase.base.baseGenericList.ListUIEvent.LoadMore
 import com.oyetech.composebase.base.baseGenericList.ListUIEvent.Refresh
 import com.oyetech.composebase.base.baseGenericList.ListUIEvent.Retry
@@ -104,7 +104,7 @@ fun RadioListScreenSetup(
         )
     }
 
-    BaseScaffold(
+    BaseScaffoldDeprecated(
         topBarContent = {
             val viewHasToolbar = setOf(
                 RadioListEnums.Favorites.name,

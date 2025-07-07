@@ -55,7 +55,7 @@ fun BaseScaffold(
 
 @Composable
 @Suppress("LongParameterList")
-fun BaseScaffold(
+fun BaseScaffoldDeprecated(
     showTopBar: Boolean = true,
     showBottomBar: Boolean = false,
     showFAB: Boolean = false,
@@ -105,7 +105,7 @@ fun BaseScaffold(
 
 @Composable
 fun SampleScreen() {
-    BaseScaffold(
+    BaseScaffoldDeprecated(
         showTopBar = true,
         showBottomBar = true,
         showFAB = true,

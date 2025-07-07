@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.oyetech.composebase.base.BaseScaffold
+import com.oyetech.composebase.base.BaseScaffoldDeprecated
 import com.oyetech.composebase.base.baseGenericList.ListUIEvent.LoadMore
 import com.oyetech.composebase.base.baseGenericList.ListUIEvent.Refresh
 import com.oyetech.composebase.base.baseGenericList.ListUIEvent.Retry
@@ -65,7 +65,7 @@ fun CountryListScreenSetup(
     }
 
     val items = complexItemViewState.items
-    BaseScaffold() { paddingValues ->
+    BaseScaffoldDeprecated() { paddingValues ->
         Column(modifier = Modifier.padding()) {
             LoadableLazyColumn(
                 modifier = Modifier.fillMaxSize(),

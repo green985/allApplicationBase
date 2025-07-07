@@ -24,7 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.oyetech.composebase.base.BaseScaffold
+import com.oyetech.composebase.base.BaseScaffoldDeprecated
 import com.oyetech.composebase.projectQuotesFeature.quotes.listScreen.QuoteListScreenSetup
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
 import com.oyetech.composebase.projectRadioFeature.screens.countryList.CountryListScreenSetup
@@ -57,7 +57,7 @@ fun TabAllListScreenSetup(
 
     val pagerState = rememberPagerState(initialPage = 1,
         pageCount = { uiState.tabEnumList.size })
-    BaseScaffold(
+    BaseScaffoldDeprecated(
         showTopBar = true,
         topBarContent = {
             RadioToolbarSetup(

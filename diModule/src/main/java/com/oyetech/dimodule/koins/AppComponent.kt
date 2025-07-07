@@ -19,6 +19,7 @@ import com.oyetech.quotes.QuotesLocalModuleDi
 import com.oyetech.radiooperationmodule.di.RadioOperationModuleDi
 import com.oyetech.radioservice.di.RadioServiceModule
 import com.oyetech.remote.di.RadioModuleDI
+import com.oyetech.remote.di.RandomOperationModuleDI
 import com.oyetech.remote.di.WallpaperRemoteModule
 import com.oyetech.remote.di.dataSourceModule
 import com.oyetech.remote.firebaseCloudRemote.FirebaseCloudRemoteModule
@@ -57,6 +58,7 @@ object AppComponent {
         RadioDomainModule.module,
 //        RadioModuleDI.createRemoteModule(BaseUrlConfigHelper.BASE_DOMAIN_RADIO),
         RadioModuleDI.createRemoteModule("https://at1.api.radio-browser.info/json/"),
+        RandomOperationModuleDI.createRemoteModuleForRandomOperation("https://at1.api.radio-browser.info/json/"),
         FirebaseCloudRemoteModule.createRemoteModule(),
         RadioRepositoryDI.repositoryModule,
         RepositoryModule.module,

@@ -4,6 +4,8 @@ import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterF
 import com.oyetech.remote.RadioApiService
 import com.oyetech.remote.radioRemote.dataSourcee.CountryTagDataSource
 import com.oyetech.remote.radioRemote.dataSourcee.StationListDataSource
+import com.oyetech.remote.randomOperationRemote.RandomOperationApiService
+import com.oyetech.remote.randomOperationRemote.RandomOperationDataSource
 import okhttp3.OkHttpClient
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -37,5 +39,26 @@ object RadioModuleDI {
 
         single { StationListDataSource(get()) }
         single { CountryTagDataSource(get()) }
+    }
+}
+
+object RandomOperationModuleDI {
+
+    fun createRemoteModuleForRandomOperation(baseUrl: String) = module {
+
+        single {
+            Retrofit.Builder().apply {
+                client(get<OkHttpClient>())
+                Timber.d("dnsssssss   retroffiifif == ")
+                baseUrl(baseUrl)
+                addCallAdapterFactory(CoroutineCallAdapterFactory())
+                addConverterFactory(MoshiConverterFactory.create(get()).asLenient())
+                // addConverterFactory(GsonConverterFactory.create(get()))
+            }.build()
+        }
+
+        single { get<Retrofit>().create(RandomOperationApiService::class.java) }
+
+        single { RandomOperationDataSource(get()) }
     }
 }

@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.oyetech.composebase.base.BaseScaffold
+import com.oyetech.composebase.base.BaseScaffoldDeprecated
 import com.oyetech.composebase.base.baseGenericList.ListUIEvent.LoadMore
 import com.oyetech.composebase.base.baseGenericList.ListUIEvent.Refresh
 import com.oyetech.composebase.base.baseGenericList.ListUIEvent.Retry
@@ -37,7 +37,7 @@ fun QuoteTagListSetup(
             viewModel.handleListEvent(LoadMore)
         },
     )
-    BaseScaffold(
+    BaseScaffoldDeprecated(
         showTopBar = true,
         topBarContent = {
             RadioToolbarSetup(uiState = radioToolbarState)
