@@ -1,6 +1,7 @@
 package com.oyetech.composebase.di
 
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationDelegate
+import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationVm
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenWithContentIdVM
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
@@ -87,5 +88,6 @@ object ComposeMainModule {
         viewModelOf(::UserProfileVm)
         viewModelOf(::AllScreenNavigatorVM)
         viewModelOf(::MoonOperationVm)
+        viewModelOf(::BottomNavigationVm)
     }
 }

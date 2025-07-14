@@ -2,8 +2,8 @@ package com.oyetech.composebase.helpers.eventNavigator
 
 import androidx.lifecycle.LifecycleCoroutineScope
 import com.oyetech.composebase.base.BaseEvent
+import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationEvent
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigatorEvent
-import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -34,18 +34,24 @@ class TestEventNavigator {
     }
 
     fun triggerTestEvents(lifecycleScope: LifecycleCoroutineScope) {
-        return
         lifecycleScope.launch(Dispatchers.IO) {
-            triggerEvents(getDummyEventList())
+            triggerEvents(bottomNavigationTest())
         }
 
     }
 
     companion object {
+        fun bottomNavigationTest(): List<BaseEvent> {
+            return buildList {
+                add(AllScreenNavigatorEvent.OnNavigateToQuoteStart)
+                add(BottomNavigationEvent.NavigateToSelectedItem(1))
+            }
+        }
+
         fun getDummyEventList(): List<BaseEvent> {
             return buildList {
                 add(AllScreenNavigatorEvent.OnNavigateToQuoteStart)
-                add(MessageConversationListEvent.OnConversationClickWithPosition(1))
+                add(BottomNavigationEvent.NavigateToSelectedItem(1))
             }
         }
 

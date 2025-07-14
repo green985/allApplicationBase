@@ -25,7 +25,7 @@ open class BaseViewModel(private val dispatcher: AppDispatchers) : ViewModel() {
     init {
         viewModelScope.launch {
             testEventNavigator.eventFlow.collectLatest {
-                Timber.d("Event received: $it")
+                Timber.d("Event received from class ${this@BaseViewModel.javaClass.name}: $it")
                 onEvent(it)
             }
         }
