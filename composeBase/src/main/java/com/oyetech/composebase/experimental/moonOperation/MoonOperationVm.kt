@@ -2,6 +2,7 @@ package com.oyetech.composebase.experimental.moonOperation;
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
+import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.experimental.moonOperation.MoonOperationEvent.Moon
 import com.oyetech.domain.repository.randomOperation.RandomOperationRepository
 import com.oyetech.tools.coroutineHelper.AppDispatchers
@@ -9,7 +10,6 @@ import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 /**
 Created by Erdi Özbek
@@ -33,33 +33,30 @@ class MoonOperationVm(
             }
         }
     }
-
     fun getMoonOperationData() {
         viewModelScope.launch {
-            val unixTime = System.currentTimeMillis() / 1000
-            val response =
-                randomOperationRepository.getMoonPhase(unixTime).asResult().collectLatest {
-                    it.fold(
-                        onSuccess = { moonPhase ->
-                            Timber.d("Fetched moon phase: $moonPhase")
-//                        uiState.updateState { currentState ->
-//                            currentState.copy(
-//                                moonPhase = moonPhase,
-//                                error = null
-//                            )
-//                        }
-                        },
-                        onFailure = { error ->
-//                        Timber.e(error, "Error fetching moon phase")
-//                        uiState.updateState { currentState ->
-//                            currentState.copy(
-//                                error = error.message ?: "Unknown error"
-//                            )
-//                        }
+            val unix = System.currentTimeMillis() / 1000
+            val result = randomOperationRepository.getMoonPhase(unix).asResult().collectLatest {
+                it.fold(
+                    onSuccess = { dtoList ->
+                        val dto = dtoList.firstOrNull()
+                        if (dto != null) {
+                            uiState.updateState {
+                                copy(
+                                    phaseName = dto.phase,
+//                                fraction = dto.fraction,
+                                    error = null
+                                )
+                            }
+                        } else {
+                            uiState.updateState { copy(error = "No moon data") }
                         }
-                    )
-                }
-            Timber.d("mooooooonnn======= " + response.toString())
+                    },
+                    onFailure = { ex ->
+                        uiState.updateState { copy(error = ex.localizedMessage ?: "Unknown error") }
+                    }
+                )
+            }
         }
     }
 }
