@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,11 +20,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.base.BaseScaffold
 import org.koin.androidx.compose.koinViewModel
+import kotlin.math.abs
 
 /**
 Created by Erdi Özbek
@@ -67,7 +71,8 @@ fun MoonOperationScreen(
                     val normalized = it / 100.0
                     Text("Aydınlanma: $it%")
                     Spacer(Modifier.height(8.dp))
-                    MoonPhaseVisual(illumination = normalized)
+//                    RealisticMoonPhaseVisual(illumination = normalized.toFloat())
+                    RealisticMoonPhaseVisual(illumination = 0.4f)
                 }
 
 
@@ -147,8 +152,39 @@ fun MoonPhaseVisual(illumination: Double, modifier: Modifier = Modifier) {
 }
 
 @Composable
+fun RealisticMoonPhaseVisual(
+    illumination: Float, // 0f to 1f
+    modifier: Modifier = Modifier,
+    moonColor: Color = Color.White,
+    shadowColor: Color = Color.Black,
+) {
+    Canvas(modifier = modifier.aspectRatio(1f)) {
+        val illum = illumination.coerceIn(0f, 1f)
+        val radius = size.minDimension / 2f
+        val center = size.center
+
+        // Ay'ın gövdesi (tam daire - siyah gölge)
+        drawCircle(
+            color = shadowColor,
+            radius = radius,
+            center = center
+        )
+
+        // Aydınlık kısmı için offsetli oval
+        val ellipseWidth = 2 * radius * abs(1f - 2 * illum)
+        val offsetX = if (illum < 0.5f) radius - ellipseWidth else radius
+
+        drawOval(
+            color = moonColor,
+            topLeft = Offset(center.x - radius + offsetX, center.y - radius),
+            size = Size(ellipseWidth, radius * 2f)
+        )
+    }
+}
+
+@Composable
 @Preview(showSystemUi = true)
-fun MoonOperationScreenPreview() {
+private fun MoonOperationScreenPreview() {
     MoonOperationScreen(
         uiState = MoonOperationUiState(
             phaseName = "Waxing Gibbous",
