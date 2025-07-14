@@ -40,8 +40,8 @@ fun MyFirebaseMessagingService.handleNotification(notificationBody: String?) {
                         return
                     }
                     appNotificationOperator.showNotification(
-                        messageNotificationBody?.senderId ?: " sender bos",
-                        messageNotificationBody?.messageText ?: "message bos "
+                        messageNotificationBody.senderId ?: " sender bos",
+                        messageNotificationBody.messageText ?: "message bos "
                     )
                 } else {
                     Timber.d("messageNotificationBody is null")

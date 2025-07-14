@@ -33,7 +33,7 @@ abstract class ExoPlayerBaseHelper(
     private var exoPlayer: ExoPlayer,
 ) : ExoPlayerDiHelper(),
     ExoPlayerOperationRepository,
-    Player.Listener {
+    Listener {
 
     val exoplayerAnalyticsListener: ExoplayerAnalyticsListener by KoinJavaComponent.inject(
         ExoplayerAnalyticsListener::class.java
@@ -111,7 +111,7 @@ abstract class ExoPlayerBaseHelper(
     }
 
     override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
-        super<Listener>.onMediaMetadataChanged(mediaMetadata)
+        super.onMediaMetadataChanged(mediaMetadata)
         var radioTitle = mediaMetadata.title.toString()
         Timber.d("media dataaa === " + radioTitle)
 
@@ -133,7 +133,7 @@ abstract class ExoPlayerBaseHelper(
             }
 
             Player.STATE_BUFFERING -> {
-                changeRadioState(PlayState.PrePlaying)
+                changeRadioState(PrePlaying)
             }
         }
         /*

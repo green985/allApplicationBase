@@ -90,6 +90,6 @@ fun createRemoteModule(baseUrl: String, apiBibleServiceUrl: String) = module {
 }
 
 fun Context.isDebug(): Boolean {
-    return this.getApplicationInfo().flags and
+    return this.applicationInfo.flags and
             ApplicationInfo.FLAG_DEBUGGABLE !== 0
 }

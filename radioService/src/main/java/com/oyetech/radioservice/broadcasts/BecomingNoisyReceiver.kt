@@ -13,7 +13,7 @@ class BecomingNoisyReceiver : BaseBroadcastReceiver() {
             if (sharedOperationUseCase.autoResumeOnBluetoothA2dpConnection()) {
                 Log.d("BecomingNoisyReceiver", "onReceive: BECAME_NOISY")
 
-                radioOperationUseCase.pausePlayer(PauseReason.BECAME_NOISY);
+                radioOperationUseCase.pausePlayer(PauseReason.BECAME_NOISY)
             }
         }
 

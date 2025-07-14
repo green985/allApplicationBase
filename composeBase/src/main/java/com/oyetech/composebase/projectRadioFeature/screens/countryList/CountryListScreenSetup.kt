@@ -65,7 +65,7 @@ fun CountryListScreenSetup(
     }
 
     val items = complexItemViewState.items
-    BaseScaffoldDeprecated() { paddingValues ->
+    BaseScaffoldDeprecated { paddingValues ->
         Column(modifier = Modifier.padding()) {
             LoadableLazyColumn(
                 modifier = Modifier.fillMaxSize(),

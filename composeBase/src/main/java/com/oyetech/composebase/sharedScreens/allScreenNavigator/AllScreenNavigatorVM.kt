@@ -1,4 +1,4 @@
-package com.oyetech.composebase.sharedScreens.allScreenNavigator;
+package com.oyetech.composebase.sharedScreens.allScreenNavigator
 
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigatorEvent.NavigateListItemClicked

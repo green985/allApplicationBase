@@ -1,4 +1,4 @@
-package com.oyetech.composebase.projectQuotesFeature.debug.adviceQuote;
+package com.oyetech.composebase.projectQuotesFeature.debug.adviceQuote
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -44,7 +44,7 @@ class AdviceQuoteDebugVm(
 
     fun onEvent(event: AdviceQuoteDebugEvent) {
         when (event) {
-            is AdviceQuoteDebugEvent.ApproveQuote -> {
+            is ApproveQuote -> {
                 approveQuoteEvent(event)
             }
 

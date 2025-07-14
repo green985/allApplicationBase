@@ -263,7 +263,7 @@ object TimeFunctions {
 
         var unlockTimeDate = date
 
-        var unlockTimeMilis = unlockTimeDate?.time ?: return listOf()
+        var unlockTimeMilis = unlockTimeDate.time ?: return listOf()
 
         var currentTimeMilisUTC0 = Calendar.getInstance().timeInMillis
 

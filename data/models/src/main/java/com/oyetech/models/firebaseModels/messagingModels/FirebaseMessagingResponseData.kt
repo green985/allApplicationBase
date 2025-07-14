@@ -46,7 +46,7 @@ data class FirebaseMessagingResponseData(
     var senderId: String = "",
     var receiverId: String = "",
     var messageText: String = "",
-    var status: MessageStatus = MessageStatus.IDLE,
+    var status: MessageStatus = IDLE,
     @ServerTimestamp
     var createdAt: Date? = null,
 
@@ -65,7 +65,7 @@ data class FirebaseMessagingLocalData(
     var senderId: String = "",
     var receiverId: String = "",
     var messageText: String = "",
-    var status: MessageStatus = MessageStatus.IDLE,
+    var status: MessageStatus = IDLE,
     var createdAt: Long? = System.currentTimeMillis(),
 
 //    var mediaType: String? = null,

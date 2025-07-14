@@ -102,7 +102,7 @@ fun LoginOperationQuickScreen(
             if (state.isError) {
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = state.errorMessage ?: "Bir hata oluştu.",
+                    text = state.errorMessage,
                     color = Color.Red,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()

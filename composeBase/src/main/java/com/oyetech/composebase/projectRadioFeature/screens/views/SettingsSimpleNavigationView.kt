@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.Icons.AutoMirrored.Filled
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -45,7 +45,7 @@ fun SettingsSimpleNavigationView(
         Spacer(modifier = Modifier.weight(1f))
 
         Icon(
-            imageVector = Icons.Default.KeyboardArrowRight,
+            imageVector = Filled.KeyboardArrowRight,
             tint = MaterialTheme.colorScheme.onSurface,
             contentDescription = "Settings",
             modifier = Modifier.clickable { onClick.invoke() }

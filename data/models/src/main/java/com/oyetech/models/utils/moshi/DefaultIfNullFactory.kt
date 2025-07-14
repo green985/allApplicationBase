@@ -13,7 +13,7 @@ class DefaultIfNullFactory : JsonAdapter.Factory {
         type: Type,
         annotations: MutableSet<out Annotation>,
         moshi: Moshi,
-    ): JsonAdapter<*>? {
+    ): JsonAdapter<*> {
         val delegate = moshi.nextAdapter<Any>(this, type, annotations)
         return object : JsonAdapter<Any>() {
             override fun fromJson(reader: JsonReader): Any? {

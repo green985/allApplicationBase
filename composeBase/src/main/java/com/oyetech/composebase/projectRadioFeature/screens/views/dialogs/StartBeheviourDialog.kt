@@ -50,7 +50,7 @@ fun StartBehaviourSelectionDialog(
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit = {},
     onSuccess: () -> Unit = {},
-    selectedSetting: StartBehaviourDialogSelection = StartBehaviourDialogSelection.All_Stations,
+    selectedSetting: StartBehaviourDialogSelection = All_Stations,
     onSettingSelected: (StartBehaviourDialogSelection) -> Unit = {},
 ) {
 

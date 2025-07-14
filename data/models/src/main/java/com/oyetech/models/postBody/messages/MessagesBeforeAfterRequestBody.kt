@@ -23,9 +23,6 @@ data class MessagesBeforeAfterRequestBody(
 ) : Parcelable {
 
     fun isEmpty(): Boolean {
-        if (messageId == 0L && conversationId == 0L) {
-            return true
-        }
-        return false
+        return messageId == 0L && conversationId == 0L
     }
 }

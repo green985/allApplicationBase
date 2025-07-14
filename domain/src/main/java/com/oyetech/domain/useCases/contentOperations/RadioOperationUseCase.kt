@@ -38,7 +38,7 @@ class RadioOperationUseCase(
 
     var radioErrorStateMutableStateFlow = MutableStateFlow("")
 
-    val radioPauseReasonMutableStateFlow = MutableStateFlow(PauseReason.NONE)
+    val radioPauseReasonMutableStateFlow = MutableStateFlow(NONE)
 
     init {
         Timber.d("radio operation initttt")

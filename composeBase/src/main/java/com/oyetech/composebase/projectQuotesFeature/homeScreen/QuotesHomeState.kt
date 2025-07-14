@@ -11,6 +11,4 @@ data class QuotesHomeState(
         persistentListOf(QuoteListEnum.All, QuoteListEnum.Random)
 }
 
-object QuotesHomeEvent {
-
-}
+object QuotesHomeEvent

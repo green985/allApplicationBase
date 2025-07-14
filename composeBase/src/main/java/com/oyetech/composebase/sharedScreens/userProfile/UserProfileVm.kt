@@ -1,4 +1,4 @@
-package com.oyetech.composebase.sharedScreens.userProfile;
+package com.oyetech.composebase.sharedScreens.userProfile
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel

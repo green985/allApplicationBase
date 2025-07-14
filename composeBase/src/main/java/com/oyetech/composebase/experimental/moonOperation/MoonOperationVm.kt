@@ -1,4 +1,4 @@
-package com.oyetech.composebase.experimental.moonOperation;
+package com.oyetech.composebase.experimental.moonOperation
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel

@@ -117,7 +117,7 @@ class FirebaseUserListOperationRepositoryImpl(
         return flow<Unit> {
             firebaseUserRepository.getUserProfileModel().collectLatest { userProfileModel ->
                 Timber.d("User profile model: $userProfileModel")
-                if (userProfileModel?.userId?.isNotBlank() == true && userProfileModel.username.isNotBlank()) {
+                if (userProfileModel.userId?.isNotBlank() == true && userProfileModel.username.isNotBlank()) {
                     val userId = userProfileModel.userId
                     val username = firebaseUserRepository.getUsername()
                     if (userId.isBlank() || username.isBlank()) {

@@ -135,12 +135,12 @@ fun List<MessageConversationDataResponse>.containsWithId(messageConversationData
 fun UserDetailDataResponse.mapFromUserDataToMessageConversation(userData: UserDetailDataResponse): MessageConversationDataResponse {
     var profileUrl = ""
     if (!userData.profileImages.isNullOrEmpty()) {
-        profileUrl = userData?.profileImages?.get(0)?.largeImageUrl ?: ""
+        profileUrl = userData.profileImages?.get(0)?.largeImageUrl ?: ""
     }
     var messageConversationDataResponse =
         MessageConversationDataResponse(
-            userId = userData?.userId ?: 0L,
-            nick = userData?.nick ?: "",
+            userId = userData.userId,
+            nick = userData.nick,
             profilePhoto = profileUrl,
             isOnline = userData.isOnlineView,
             isPremiumMember = userData.isPremiumMember
@@ -153,11 +153,11 @@ fun FeedDataResponse.feedDataToMessageConversationMapper(): MessageConversationD
     var itemData = this
     var messageConversationDataResponse =
         MessageConversationDataResponse(
-            userId = itemData?.userId ?: 0L,
-            nick = itemData?.nick ?: "",
-            profilePhoto = itemData?.profilePhoto ?: "",
-            isOnline = itemData?.isOnline ?: false,
-            isPremiumMember = itemData?.isPremiumMember ?: false
+            userId = itemData.userId,
+            nick = itemData.nick,
+            profilePhoto = itemData.profilePhoto,
+            isOnline = itemData.isOnline,
+            isPremiumMember = itemData.isPremiumMember
         )
     return messageConversationDataResponse
 }

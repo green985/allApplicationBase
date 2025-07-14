@@ -107,7 +107,7 @@ fun UserProfileScreen2(
 
         // Biography Hint (non-editable in this case)
         OutlinedTextField(
-            value = uiState.biographyText ?: "",
+            value = uiState.biographyText,
             onValueChange = {},
             label = { Text("Biography") },
             enabled = false,

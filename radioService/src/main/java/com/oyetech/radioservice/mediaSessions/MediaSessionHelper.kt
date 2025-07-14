@@ -25,7 +25,6 @@ import com.oyetech.models.radioProject.radioModels.PlayState.Playing
 import com.oyetech.models.radioProject.radioModels.PlayState.PrePlaying
 import com.oyetech.models.radioProject.radioModels.RadioViewStateNew
 import com.oyetech.models.utils.const.NotificationConst.NOTIFY_ID
-import com.oyetech.radioservice.R
 import com.oyetech.radioservice.R.string
 import com.oyetech.radioservice.notificationHelper.RadioNotificationHelper
 import com.oyetech.radioservice.serviceUtils.PlayerServiceUtils
@@ -139,10 +138,10 @@ class MediaSessionHelper(private var service: Service) : PlayerBroadcastHelper(s
             var error = ""
 
             val currentPlayerState: PlayState = radioOperationUseCase.getPlayerState()
-            if ((currentPlayerState === PlayState.Paused || currentPlayerState === PlayState.Idle)
+            if ((currentPlayerState === Paused || currentPlayerState === Idle)
                 && pauseReason === PauseReason.METERED_CONNECTION
             ) {
-                error = context.getResources().getString(R.string.notify_metered_connection)
+                error = context.resources.getString(string.notify_metered_connection)
             } else {
                 try {
                     error = "ERROR"
@@ -172,7 +171,7 @@ class MediaSessionHelper(private var service: Service) : PlayerBroadcastHelper(s
             Timber.e("Radio model cannot be nullllll")
             return
         }
-        var currentStationName = radioDataModel.radioName ?: ""
+        var currentStationName = radioDataModel.radioName
 
         when (playState) {
             Idle -> {
@@ -184,8 +183,8 @@ class MediaSessionHelper(private var service: Service) : PlayerBroadcastHelper(s
             PrePlaying -> {
                 notificationHelper.sendMessage(
                     theTitle = currentStationName,
-                    theMessage = context.getResources().getString(string.notify_pre_play),
-                    theTicker = context.getResources().getString(
+                    theMessage = context.resources.getString(string.notify_pre_play),
+                    theTicker = context.resources.getString(
                         string.notify_pre_play
                     ),
                     radioLogo = radioDataModel.favicon
@@ -208,7 +207,7 @@ class MediaSessionHelper(private var service: Service) : PlayerBroadcastHelper(s
                 } else {
                     notificationHelper.sendMessage(
                         theTitle = currentStationName,
-                        theMessage = context.getResources().getString(string.notify_play),
+                        theMessage = context.resources.getString(string.notify_play),
                         theTicker = currentStationName,
                         radioLogo = radioDataModel.favicon
                     )
@@ -257,7 +256,7 @@ class MediaSessionHelper(private var service: Service) : PlayerBroadcastHelper(s
             Paused -> {
                 notificationHelper.sendMessage(
                     theTitle = currentStationName,
-                    theMessage = context.getResources().getString(string.notify_paused),
+                    theMessage = context.resources.getString(string.notify_paused),
                     theTicker = currentStationName,
                     radioDataModel.favicon
                 )

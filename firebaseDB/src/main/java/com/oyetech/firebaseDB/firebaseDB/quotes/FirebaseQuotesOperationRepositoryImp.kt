@@ -42,14 +42,14 @@ class FirebaseQuotesOperationRepositoryImp(
 
     @Suppress("TooGenericExceptionThrown")
     override suspend fun submitAdviceQuote(quote: AdviceQuoteResponseData) = flow {
-        val username = userRepository.getUsername() ?: ""
+        val username = userRepository.getUsername()
 
         if (username.isBlank()) {
             throw Exception(LanguageKey.usernameIsEmpty)
         }
 
         val documentReference =
-            firestore.runTransactionWithTimeout() { transaction ->
+            firestore.runTransactionWithTimeout { transaction ->
                 val commentRef =
                     firestore.collection(FirebaseDatabaseKeys.adviceQuoteCollection)
                         .document()
@@ -65,7 +65,7 @@ class FirebaseQuotesOperationRepositoryImp(
     @Suppress("TooGenericExceptionThrown")
     override fun approveAdviceQuote(documentId: String) = flow {
         val documentReference =
-            firestore.runTransactionWithTimeout() { transaction ->
+            firestore.runTransactionWithTimeout { transaction ->
                 val commentRef =
                     firestore.collection(FirebaseDatabaseKeys.adviceQuoteCollection)
                         .document(documentId)

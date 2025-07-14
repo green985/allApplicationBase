@@ -19,7 +19,7 @@ Created by Erdi Özbek
 
 object StringHelper {
 
-    fun getApplicationName(context: Context): String? {
+    fun getApplicationName(context: Context): String {
         val stringId = context.applicationInfo.labelRes
         return context.getString(stringId)
     }
@@ -77,7 +77,7 @@ object StringHelper {
         return queryText ?: ""
     }
 
-    private fun removeSpan(s: Spannable): String? {
+    private fun removeSpan(s: Spannable): String {
         s.setSpan(StyleSpan(Typeface.NORMAL), 0, s.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         return s.toString()
     }

@@ -15,7 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -77,7 +78,7 @@ fun User2ProfileScreen(
             Text(
                 text = uiState.username,
                 modifier = Modifier.padding(start = 16.dp),
-                style = androidx.compose.material3.MaterialTheme.typography.headlineSmall
+                style = MaterialTheme.typography.headlineSmall
             )
         })
     }) { contentPadding ->
@@ -102,7 +103,7 @@ fun User2ProfileScreen(
                 // biography or other user details
                 ProfileBiograpyhyInputArea(
                     isEditMode = false,
-                    biographyText = uiState.biographyText ?: "",
+                    biographyText = uiState.biographyText,
                     onBiographyTextChange = {
                         onEvent(UserProfileUiEvent.OnBiographyTextChange(it))
                     })
@@ -120,7 +121,7 @@ fun User2ProfileScreen(
                     onEvent.invoke(UserProfileUiEvent.OnMessageUserClick(receiverUserId))
                 }) {
                     Icon(
-                        imageVector = androidx.compose.material.icons.Icons.Default.Send,
+                        imageVector = Icons.AutoMirrored.Filled.Send,
                         contentDescription = "Message User",
                         modifier = Modifier.size(60.dp)
                     )
@@ -143,7 +144,7 @@ private fun UserImageListView(
     val boxModifier = modifier
         .fillMaxWidth()
         .fillMaxHeight(BoxHeightPercent)
-    Box() {
+    Box {
         if (imageList.isEmpty()) {
             Box(
                 modifier = boxModifier

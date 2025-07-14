@@ -185,7 +185,7 @@ class LanguageOperationHelper(
     }
 
     private fun generateLanguageHashMap(translations: List<FirebaseLanguageResponseData>) {
-        LocalLanguageHelper.languageHashMap.clear()
+        languageHashMap.clear()
         translations.forEach {
             languageHashMap[it.key] = it.value
         }

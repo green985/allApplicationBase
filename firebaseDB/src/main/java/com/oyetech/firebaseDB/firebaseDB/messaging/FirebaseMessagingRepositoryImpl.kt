@@ -389,7 +389,7 @@ class FirebaseMessagingRepositoryImpl(
                 if (receiverUserId.isBlank()) {
                     throw GeneralException(LanguageKey.messageListErrorUserNotFound)
                 }
-                val receiverUsername = recipientParticipantDataModel.username ?: ""
+                val receiverUsername = recipientParticipantDataModel.username
 
                 val receiverParticipantDataModel = FirebaseParticipantData(
                     userId = receiverUserId,

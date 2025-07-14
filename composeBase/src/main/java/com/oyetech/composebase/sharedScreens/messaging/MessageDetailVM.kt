@@ -212,8 +212,4 @@ class MessageDetailVm(
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-    }
-
 }

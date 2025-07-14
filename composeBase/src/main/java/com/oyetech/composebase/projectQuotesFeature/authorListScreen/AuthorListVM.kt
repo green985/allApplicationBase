@@ -1,4 +1,4 @@
-package com.oyetech.composebase.projectQuotesFeature.authorListScreen;
+package com.oyetech.composebase.projectQuotesFeature.authorListScreen
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager

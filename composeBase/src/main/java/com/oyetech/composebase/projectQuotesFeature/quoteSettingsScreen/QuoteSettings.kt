@@ -11,8 +11,7 @@ data class QuoteSettingsUiState(
     val isDeleteDialogShown: Boolean = false,
     val isUserLoggedIn: Boolean = false,
     val username: String = "",
-) {
-}
+)
 
 sealed class QuoteSettingsEvent {
     object DeleteAccountConfirm : QuoteSettingsEvent()

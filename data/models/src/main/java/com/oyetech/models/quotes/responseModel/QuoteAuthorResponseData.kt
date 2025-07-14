@@ -22,5 +22,4 @@ data class QuoteAuthorResponseData(
     @Json(name = "i")
     var authorImage: String = "",
 
-    ) {
-}
+    )

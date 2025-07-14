@@ -71,7 +71,7 @@ class FirebaseRealtimeHelperRepositoryImpl(
         return flow<Unit> {
             try {
                 firebaseUserRepository.getUserProfileModel().collectLatest {
-                    val userId = it?.userId ?: ""
+                    val userId = it.userId
 
                     if (userId.isBlank()) {
                         throw GeneralException("User id is null or blank")

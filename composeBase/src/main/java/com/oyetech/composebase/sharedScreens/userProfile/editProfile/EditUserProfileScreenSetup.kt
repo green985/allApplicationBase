@@ -61,7 +61,7 @@ fun EditUserProfileScreen(
     modifier: Modifier = Modifier,
     navigationRoute: (navigationRoute: String) -> Unit = {},
     uiState: EditProfileUiState = getDefaultUiState(),
-    onEvent: EditProfileEvent.() -> Unit = { Timber.d("${this.toString()}") }, // Default empty event handler
+    onEvent: EditProfileEvent.() -> Unit = { Timber.d("${this}") }, // Default empty event handler
 ) {
 
     val firebaseStorageRepository = koinInject<FirebaseStorageRepository>()

@@ -51,6 +51,6 @@ object ErrorMessage {
     }
 
     fun throwError(errorMessage: String?): String {
-        return ErrorMessage.fetchErrorMessage(errorMessage)
+        return fetchErrorMessage(errorMessage)
     }
 }

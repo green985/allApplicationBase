@@ -16,7 +16,7 @@ Created by Erdi Özbek
 -00:03-
  **/
 
-class TestEventNavigator() {
+class TestEventNavigator {
 
     private val delayMillis: Long = 3000 // Delay in milliseconds between events
     private val initialDelayMillis: Long = 3000 // Initial delay before starting to emit events
@@ -36,7 +36,7 @@ class TestEventNavigator() {
     fun triggerTestEvents(lifecycleScope: LifecycleCoroutineScope) {
         return
         lifecycleScope.launch(Dispatchers.IO) {
-            triggerEvents(TestEventNavigator.getDummyEventList())
+            triggerEvents(getDummyEventList())
         }
 
     }

@@ -28,10 +28,8 @@ data class RadioDataModel(
     var stationUUID: String = "",
     var votes: Int = 0,
 
-    var radioTitle: String = ""
-) : Parcelable, Any() {
-
-}
+    var radioTitle: String = "",
+) : Parcelable, Any()
 
 object RadioDataModelMapper {
     fun mapFromStation(mapper: (() -> RadioDataModel)): RadioDataModel {

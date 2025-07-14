@@ -42,7 +42,7 @@ class AdsHelperRepositoryImp : AdsHelperBase(), AdsHelperRepository {
         setAdViewHashMapWithLogg(adViewHashMap)
     }
 
-    override fun adsLoadedStateFlow(): MutableStateFlow<Boolean>? {
+    override fun adsLoadedStateFlow(): MutableStateFlow<Boolean> {
         return admobBannerCreator.adsLoadedStateFlow
     }
 

@@ -73,7 +73,7 @@ class GooglePlayReviewerHelperImp(
         reviewInfo: ReviewInfo?,
     ) {
         if (reviewInfo == null) {
-            reviewOperationStatusFlow.value = ReviewStatus.Error
+            reviewOperationStatusFlow.value = Error
             Timber.d("reviewInfoNulll")
             return
         }
@@ -95,7 +95,7 @@ class GooglePlayReviewerHelperImp(
     ) {
         if (reviewInfo == null) {
             Timber.d("reviewInfoNulll")
-            reviewOperationStatusFlow.value = ReviewStatus.Error
+            reviewOperationStatusFlow.value = Error
             return
         }
         if (activityProviderUseCase.getCurrentActivity() == null) return

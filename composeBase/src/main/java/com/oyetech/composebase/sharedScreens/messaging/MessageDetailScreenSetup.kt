@@ -253,7 +253,7 @@ private fun MessageDetailPreview() {
                 isLoading = false,
                 content = "asdasdasd",
                 createdAt = 21451251525124,
-                createdAtString = TimeFunctions.getDateFromLongWithHour(21451251525124 ?: 0),
+                createdAtString = TimeFunctions.getDateFromLongWithHour(21451251525124),
                 senderId = "esse",
                 receiverId = "salutatus",
                 messageId = "mi",

@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.os.Build;
 
+import androidx.annotation.NonNull;
+
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -14,7 +16,8 @@ public class ExifUtil {
     /**
      *
      */
-    public static Bitmap rotateBitmap(String src, Bitmap bitmap) {
+    @NonNull
+    public static Bitmap rotateBitmap(String src, @NonNull Bitmap bitmap) {
         try {
             int orientation = getExifOrientation(src);
 
@@ -78,9 +81,9 @@ public class ExifUtil {
              */
             if (Build.VERSION.SDK_INT >= 5) {
                 Class<?> exifClass = Class.forName("android.media.ExifInterface");
-                Constructor<?> exifConstructor = exifClass.getConstructor(new Class[]{String.class});
-                Object exifInstance = exifConstructor.newInstance(new Object[]{src});
-                Method getAttributeInt = exifClass.getMethod("getAttributeInt", new Class[]{String.class, int.class});
+                Constructor<?> exifConstructor = exifClass.getConstructor(String.class);
+                Object exifInstance = exifConstructor.newInstance(src);
+                Method getAttributeInt = exifClass.getMethod("getAttributeInt", String.class, int.class);
                 Field tagOrientationField = exifClass.getField("TAG_ORIENTATION");
                 String tagOrientation = (String) tagOrientationField.get(null);
                 orientation = (Integer) getAttributeInt.invoke(exifInstance, new Object[]{tagOrientation, 1});

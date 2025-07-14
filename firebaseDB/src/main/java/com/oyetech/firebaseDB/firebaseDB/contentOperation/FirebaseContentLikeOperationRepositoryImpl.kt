@@ -49,7 +49,7 @@ class FirebaseContentLikeOperationRepositoryImpl(
 
     override suspend fun getInitialStateOfContent(contentId: String): Flow<LikeOperationModel> {
         return flow<LikeOperationModel> {
-            val username = userRepository.getUsername() ?: ""
+            val username = userRepository.getUsername()
 
             if (username.isBlank()) {
                 emit(
@@ -83,7 +83,7 @@ class FirebaseContentLikeOperationRepositoryImpl(
     override suspend fun likeOperation(
         contentId: String,
     ): Flow<LikeOperationModel> = flow {
-        val username = userRepository.getUsername() ?: ""
+        val username = userRepository.getUsername()
 
         if (username.isBlank()) {
             throw Exception(LanguageKey.usernameIsEmpty)
@@ -101,7 +101,7 @@ class FirebaseContentLikeOperationRepositoryImpl(
             userOldInputResult =
                 LikeOperationModel(contentId = contentId, username = username, like = true)
             val documentReference =
-                firestore.runTransactionWithTimeout() { transaction ->
+                firestore.runTransactionWithTimeout { transaction ->
                     val commentRef =
                         firestore.collection(FirebaseDatabaseKeys.likeOperationTable)
                             .document(contentId)
@@ -118,7 +118,7 @@ class FirebaseContentLikeOperationRepositoryImpl(
             userOldInputResult = userOldInputResult.copy(like = !userOldInputResult.like)
 
             val documentReference =
-                firestore.runTransactionWithTimeout() { transaction ->
+                firestore.runTransactionWithTimeout { transaction ->
                     val commentRef =
                         firestore.collection(FirebaseDatabaseKeys.likeOperationTable)
                             .document(contentId)

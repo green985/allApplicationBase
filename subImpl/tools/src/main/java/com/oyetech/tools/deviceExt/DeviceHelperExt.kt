@@ -14,11 +14,11 @@ object DeviceHelperExt {
     fun getDeviceName(): String {
         var deviceName = ""
         try {
-            deviceName = if (MODEL.startsWith(MANUFACTURER, ignoreCase = true)) {
+            deviceName = (if (MODEL.startsWith(MANUFACTURER, ignoreCase = true)) {
                 MODEL
             } else {
                 "$MANUFACTURER $MODEL"
-            }.capitalize(Locale.ROOT)
+            }).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
         } catch (e: Exception) {
             Log.e("DeviceHelperExt", "getDeviceName: ", e)
         }
@@ -27,8 +27,8 @@ object DeviceHelperExt {
 
     fun printHashKey(context: Context): String {
         try {
-            val info: PackageInfo = context.getPackageManager()
-                .getPackageInfo(context.getPackageName(), PackageManager.GET_SIGNATURES)
+            val info: PackageInfo = context.packageManager
+                .getPackageInfo(context.packageName, PackageManager.GET_SIGNATURES)
             for (signature in info.signatures) {
                 val md: MessageDigest = MessageDigest.getInstance("SHA")
                 md.update(signature.toByteArray())

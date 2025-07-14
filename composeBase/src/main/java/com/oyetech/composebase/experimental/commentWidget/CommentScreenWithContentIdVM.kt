@@ -1,4 +1,4 @@
-package com.oyetech.composebase.experimental.commentWidget;
+package com.oyetech.composebase.experimental.commentWidget
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager

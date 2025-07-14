@@ -8,6 +8,4 @@ Created by Erdi Özbek
 -16:50-
  **/
 
-class LocalBinder : Binder() {
-
-}
+class LocalBinder : Binder()

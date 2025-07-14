@@ -42,19 +42,19 @@ fun LoginOperationVM.mapToProfileValue(userData: FirebaseUserProfileModel?) {
         // google tarafindan token aldik lakin user daha kayitli degil...
 
         if (userData.isProfileComplete()) {
-            Timber.d("LoginOperationVM mapToProfileValue user profile complete${userData.toString()}")
+            Timber.d("LoginOperationVM mapToProfileValue user profile complete$userData")
 
             viewModelScope.launch(getDispatcherIo()) {
                 uiEvent.emit(LoginOperationUiEvent.OnLoginSuccess)
             }
             loginOperationState.value = LoginOperationUiState(
-                displayNameRemote = userData.username ?: "",
+                displayNameRemote = userData.username,
                 uid = userData.userId,
                 isAnonymous = userData.isAnonymous,
                 lastSignInTimestamp = userData.lastSignInTimestamp,
             )
         } else {
-            Timber.d("LoginOperationVM mapToProfileValue fail${userData.toString()}")
+            Timber.d("LoginOperationVM mapToProfileValue fail$userData")
             navigationUseCase.navigate(RadioAppProjectRoutes.CompleteProfileScreen.route)
             loginOperationState.value =
                 LoginOperationUiState(isRegistrationCompleteNeeded = true)

@@ -10,6 +10,6 @@ Created by Erdi Özbek
  **/
 
 fun Context.isDebug(): Boolean {
-    return this.getApplicationInfo().flags and
+    return this.applicationInfo.flags and
             ApplicationInfo.FLAG_DEBUGGABLE !== 0
 }

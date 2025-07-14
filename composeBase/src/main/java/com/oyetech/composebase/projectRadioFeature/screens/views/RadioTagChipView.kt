@@ -26,7 +26,7 @@ fun RadioTagChipView(
 ) {
 
     if (tags.isNotEmpty() && !tags.firstOrNull().equals("")) {
-        FlowRow() {
+        FlowRow {
             tags.forEach { tag ->
                 SuggestionChip(
                     modifier = Modifier

@@ -18,6 +18,4 @@ Created by Erdi Özbek
 data class ExoPlayerDuration(
     @Json(name = "totalDuration") var totalDuration: Long = 0L,
     @Json(name = "currentDuration") var currentDuration: Long = 0L,
-) : Parcelable {
-
-}
+) : Parcelable

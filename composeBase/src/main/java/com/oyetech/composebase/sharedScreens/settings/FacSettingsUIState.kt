@@ -18,8 +18,7 @@ data class FacSettingsUiState(
     val username: String = "",
     val isDeleteAccountShown: Boolean = false,
     val isDebug: Boolean = BuildConfig.DEBUG,
-) : BaseUIState() {
-}
+) : BaseUIState()
 
 sealed class FacSettingsUiEvent : BaseEvent() {
     data object ContactClicked : FacSettingsUiEvent()

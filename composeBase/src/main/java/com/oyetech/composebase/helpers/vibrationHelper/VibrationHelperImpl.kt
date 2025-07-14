@@ -67,7 +67,7 @@ class VibrationHelperImpl(private val context: Context) : IVibrationHelper {
         vibrationIntensity = value
     }
 
-    private fun getVibrationAmplitudesPatternWithIntensity(vibrationType: VibrationType): IntArray? {
+    private fun getVibrationAmplitudesPatternWithIntensity(vibrationType: VibrationType): IntArray {
         val intensity = if (vibrationIntensity == 0) 1 else vibrationIntensity
         val amplitudes = vibrationType.pattern.map {
             (intensity * 2.5).toInt()

@@ -62,9 +62,7 @@ data class SearchParameters(
 
     var systemResolution: Pair<Int, Int>? = null,
 
-    ) : Parcelable {
-
-}
+    ) : Parcelable
 
 fun SearchParameters.toSearchMap(): HashMap<String, Any> {
     val map = HashMap<String, Any>()

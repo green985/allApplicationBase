@@ -122,6 +122,6 @@ enum class CategoryTags {
     GENERAL, PEOPLE, ANIME
 }
 
-enum class PurityTags() {
+enum class PurityTags {
     SFW, SKETCHY, NSFW
 }

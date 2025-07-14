@@ -62,8 +62,7 @@ fun getDummyMessageDetailUiState(): MessageDetailUiState {
         errorText = "",
         content = "This is a dummy message",
         createdAt = Calendar.getInstance().timeInMillis,
-        createdAtString = TimeFunctions.getDateFromLongWithHour(Calendar.getInstance().timeInMillis)
-            ?: "",
+        createdAtString = TimeFunctions.getDateFromLongWithHour(Calendar.getInstance().timeInMillis),
         senderId = "dummySenderId",
         receiverId = "dummyReceiverId",
         messageId = "dummyMessageId",
@@ -93,10 +92,10 @@ data class MessageConversationUiState(
     val lastMessageId: String = "",
     val createdAt: Date? = null,
     val lastMessageCreatedAt: Date? = null,
-    val createdAtString: String = TimeFunctions.getDateFromLongWithHour(createdAt?.time ?: 0) ?: "",
+    val createdAtString: String = TimeFunctions.getDateFromLongWithHour(createdAt?.time ?: 0),
     val lastMessageCreatedAtString: String = TimeFunctions.getDateFromLongWithHour(
         lastMessageCreatedAt?.time ?: 0
-    ) ?: "",
+    ),
     val participantUserIdList: List<String> = participantList.map { it.userId }.sorted(),
     val username: String = participantList.firstOrNull()?.username ?: "",
     val userId: String = "",
@@ -136,7 +135,7 @@ fun FirebaseMessagingLocalData.mapToUiState(): MessageDetailUiState {
     return MessageDetailUiState(
         content = this.messageText,
         createdAt = this.createdAt,
-        createdAtString = TimeFunctions.getDateFromLongWithHour(this.createdAt ?: 0) ?: "",
+        createdAtString = TimeFunctions.getDateFromLongWithHour(this.createdAt ?: 0),
         senderId = this.senderId,
         receiverId = this.receiverId,
         messageId = this.messageId,
@@ -149,7 +148,7 @@ fun FirebaseMessagingResponseData.mapToUiState(): MessageDetailUiState {
     return MessageDetailUiState(
         content = this.messageText,
         createdAt = this.createdAt?.time,
-        createdAtString = TimeFunctions.getDateFromLongWithHour(this.createdAt?.time ?: 0) ?: "",
+        createdAtString = TimeFunctions.getDateFromLongWithHour(this.createdAt?.time ?: 0),
         senderId = this.senderId,
         receiverId = this.receiverId,
         messageId = this.messageId,
@@ -164,8 +163,7 @@ fun Flow<List<FirebaseMessagingResponseData>>.mapFromFirebaseToUiState(): Flow<L
             MessageDetailUiState(
                 content = data.messageText,
                 createdAt = data.createdAt?.time,
-                createdAtString = TimeFunctions.getDateFromLongWithHour(data.createdAt?.time ?: 0)
-                    ?: "",
+                createdAtString = TimeFunctions.getDateFromLongWithHour(data.createdAt?.time ?: 0),
                 senderId = data.senderId,
                 receiverId = data.receiverId,
                 messageId = data.messageId,
@@ -213,8 +211,7 @@ fun Flow<List<FirebaseMessagingLocalData>>.mapFromLocalToUiState(): Flow<List<Me
 //                errorText = data.errorText,
                 content = data.messageText,
                 createdAt = data.createdAt,
-                createdAtString = TimeFunctions.getDateFromLongWithHour(data.createdAt ?: 0)
-                    ?: "",
+                createdAtString = TimeFunctions.getDateFromLongWithHour(data.createdAt ?: 0),
                 senderId = data.senderId,
                 receiverId = data.receiverId,
                 messageId = data.messageId,

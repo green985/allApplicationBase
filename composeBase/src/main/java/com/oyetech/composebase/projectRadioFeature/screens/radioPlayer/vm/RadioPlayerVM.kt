@@ -62,7 +62,7 @@ class RadioPlayerVM(
     private fun getPlayerFavoriteOperationFlow() {
         viewModelScope.launch(dispatchers.io) {
             radioDataOperationUseCase.getRadioFavListFlow().onEach {
-                val isFav = radioUIState.value.stationuuid?.let { it1 ->
+                val isFav = radioUIState.value.stationuuid.let { it1 ->
                     radioDataOperationUseCase.getRadioFavWithStationUuid(it1)
                 } != null
                 radioUIState.updateState { copy(isFavorite = isFav) }

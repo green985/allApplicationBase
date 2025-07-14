@@ -93,7 +93,7 @@ fun LoadableLazyColumn(
         )
     }
 
-    Column() {
+    Column {
         if (!isRefreshEnable) {
             Column(modifier = modifier) {
                 initLazyColumn(

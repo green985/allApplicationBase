@@ -14,9 +14,7 @@ data class UserListUiState(
 )
 
 sealed class UserListEvent : BaseEvent() {
-    data class OnUserClick(val index: Int) : UserListEvent() {
-
-    }
+    data class OnUserClick(val index: Int) : UserListEvent()
 
     //    data class Idle(val data: Int) : UserListEvent()
 //    object Idlee : UserListEvent()

@@ -61,8 +61,8 @@ class RadioAllListFragmentVM(
             showBackButton = false,
             actionButtonState = persistentListOf(
                 RadioToolbarActionItems.Search(R.drawable.ic_search),
-                RadioToolbarActionItems.Timer(R.drawable.ic_timer),
-                RadioToolbarActionItems.Sort(R.drawable.ic_sort),
+                Timer(R.drawable.ic_timer),
+                Sort(R.drawable.ic_sort),
             )
         )
     )

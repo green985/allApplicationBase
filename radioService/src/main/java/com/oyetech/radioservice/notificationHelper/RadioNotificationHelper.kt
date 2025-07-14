@@ -24,7 +24,6 @@ import com.oyetech.models.radioProject.radioModels.PlayState.Paused
 import com.oyetech.models.radioProject.radioModels.PlayState.Playing
 import com.oyetech.models.radioProject.radioModels.PlayState.PrePlaying
 import com.oyetech.models.utils.const.NotificationConst
-import com.oyetech.radioservice.serviceUtils.PlayerServiceUtils
 import com.oyetech.radioservice.serviceUtils.PlayerServiceUtils.getIntentFlagUpdateWithInMutable
 import com.oyetech.radioservice.serviceUtils.ServiceConst
 import com.oyetech.radioservice.serviceUtils.ServiceConst.ACTION_RESUME
@@ -120,7 +119,7 @@ class RadioNotificationHelper(
         theTitle: String, theMessage: String, theTicker: String, radioLogo: String,
     ) {
         val itsContext = service as Context
-        var theMessagee: String = theMessage ?: ""
+        var theMessagee: String = theMessage
         val notificationIntent = itsContext.getMainActivityStartIntent()
         prepareBitmapp(radioLogo)
 
@@ -148,11 +147,11 @@ class RadioNotificationHelper(
         if ((currentPlayerState === Paused || currentPlayerState === Idle)
             && pauseReason === PauseReason.METERED_CONNECTION
         ) {
-            theMessagee = itsContext.getResources()
+            theMessagee = itsContext.resources
                 .getString(com.oyetech.radioservice.R.string.notify_metered_connection)
         } else if (lastErrorFromPlayer != -1) {
             try {
-                theMessagee = itsContext.getResources().getString(lastErrorFromPlayer)
+                theMessagee = itsContext.resources.getString(lastErrorFromPlayer)
             } catch (ex: NotFoundException) {
                 Timber.d("Unknown play error: " + lastErrorFromPlayer + " == " + ex.message)
             }
@@ -161,7 +160,7 @@ class RadioNotificationHelper(
             itsContext,
             0,
             notificationIntent,
-            PlayerServiceUtils.getIntentFlagUpdateWithInMutable()
+            getIntentFlagUpdateWithInMutable()
         )
         val notificationBuilder: Builder = Builder(
             itsContext,

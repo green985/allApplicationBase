@@ -1,4 +1,4 @@
-package com.oyetech.composebase.sharedScreens.userProfile.editProfile;
+package com.oyetech.composebase.sharedScreens.userProfile.editProfile
 
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.sharedScreens.userProfile.EditProfileUiState

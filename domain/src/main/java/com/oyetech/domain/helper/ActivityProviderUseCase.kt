@@ -30,7 +30,7 @@ class ActivityProviderUseCase(application: Application) {
 
             override fun onActivityCreated(activity: Activity, p1: Bundle?) {
                 if (isLoggingActive) {
-                    Timber.d("activityName = " + activity?.localClassName + "  status == onActivityCreated")
+                    Timber.d("activityName = " + activity.localClassName + "  status == onActivityCreated")
                 }
                 runBlocking {
                     activityMutableStateFlow.emit(activity)
@@ -39,13 +39,13 @@ class ActivityProviderUseCase(application: Application) {
 
             override fun onActivityStarted(activity: Activity) {
                 if (isLoggingActive) {
-                    Timber.d("activityName = " + activity?.localClassName + "  status == onActivityStarted")
+                    Timber.d("activityName = " + activity.localClassName + "  status == onActivityStarted")
                 }
             }
 
             override fun onActivityResumed(activity: Activity) {
                 if (isLoggingActive) {
-                    Timber.d("activityName = " + activity?.localClassName + "  status == onActivityResumed")
+                    Timber.d("activityName = " + activity.localClassName + "  status == onActivityResumed")
                 }
                 activityOnResumeMutableStateFlow.tryEmit(true)
                 activeActivity = activity
@@ -53,7 +53,7 @@ class ActivityProviderUseCase(application: Application) {
 
             override fun onActivityPaused(activity: Activity) {
                 if (isLoggingActive) {
-                    Timber.d("activityName = " + activity?.localClassName + "  status == onActivityPaused")
+                    Timber.d("activityName = " + activity.localClassName + "  status == onActivityPaused")
                 }
                 activityOnResumeMutableStateFlow.tryEmit(false)
                 activeActivity = null
@@ -61,19 +61,19 @@ class ActivityProviderUseCase(application: Application) {
 
             override fun onActivityStopped(activity: Activity) {
                 if (isLoggingActive) {
-                    Timber.d("activityName = " + activity?.localClassName + "  status == onActivityStopped")
+                    Timber.d("activityName = " + activity.localClassName + "  status == onActivityStopped")
                 }
             }
 
             override fun onActivitySaveInstanceState(activity: Activity, p1: Bundle) {
                 if (isLoggingActive) {
-                    Timber.d("activityName = " + activity?.localClassName + "  status == onActivitySaveInstanceState")
+                    Timber.d("activityName = " + activity.localClassName + "  status == onActivitySaveInstanceState")
                 }
             }
 
             override fun onActivityDestroyed(activity: Activity) {
                 if (isLoggingActive) {
-                    Timber.d("activityName = " + activity?.localClassName + "  status == onActivityDestroyed")
+                    Timber.d("activityName = " + activity.localClassName + "  status == onActivityDestroyed")
                 }
                 runBlocking {
                     activityMutableStateFlow.emit(activity)

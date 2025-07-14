@@ -1,4 +1,4 @@
-package com.oyetech.composebase.projectQuotesFeature.quoteSettingsScreen;
+package com.oyetech.composebase.projectQuotesFeature.quoteSettingsScreen
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel

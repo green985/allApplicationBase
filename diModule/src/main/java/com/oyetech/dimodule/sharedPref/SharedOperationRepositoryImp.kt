@@ -109,7 +109,7 @@ class SharedOperationRepositoryImp(
     }
 
     override fun getLanguageTimeValue(): Long {
-        return sharedHelper.getLongData(SharedPrefKey.TextResourcesDataResponseTimeMilis, 0L) ?: 0L
+        return sharedHelper.getLongData(SharedPrefKey.TextResourcesDataResponseTimeMilis, 0L)
     }
 
     override fun getLastClientUniqId(): String {

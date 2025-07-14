@@ -22,17 +22,11 @@ data class LocationRequestBody(
 }
 
 fun LocationRequestBody.isValidLocation(): Boolean {
-    if (this.latitude == 0.0 && this.longitude == 0.0) {
-        return false
-    }
-    return true
+    return !(this.latitude == 0.0 && this.longitude == 0.0)
 }
 
 fun LocationRequestBody.isError(): Boolean {
-    if (locationException != null) {
-        return false
-    }
-    return true
+    return locationException == null
 }
 
 fun LocationRequestBody.getErrorMessage(): String {

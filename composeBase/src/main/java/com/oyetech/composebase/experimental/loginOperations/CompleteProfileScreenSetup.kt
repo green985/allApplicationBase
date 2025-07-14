@@ -85,7 +85,7 @@ fun CompleteProfileScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
 
-                LoginOperationQuickScreen() {
+                LoginOperationQuickScreen {
                     Timber.d("LoginOperationQuickScreen clicked")
                     // Handle quick screen click if needed
                 }

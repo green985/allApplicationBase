@@ -56,7 +56,7 @@ class QuoteMainActivity : ComponentActivity() {
         TestEventNavigator::class.java
     )
     val navigationUseCase: NavigationUseCase by KoinJavaComponent.inject(
-        com.oyetech.domain.useCases.NavigationUseCase::class.java
+        NavigationUseCase::class.java
     )
 
     private val requestPermissionLauncher = registerForActivityResult(

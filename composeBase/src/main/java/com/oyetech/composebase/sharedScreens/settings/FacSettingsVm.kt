@@ -1,4 +1,4 @@
-package com.oyetech.composebase.sharedScreens.settings;
+package com.oyetech.composebase.sharedScreens.settings
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel

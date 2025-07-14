@@ -55,7 +55,7 @@ class FirebaseCommentOperationRepositoryImp(
     ): Flow<OperationState<Boolean>> = flow {
         emit(OperationState.Loading)
         try {
-            val username = userRepository.getUsername() ?: ""
+            val username = userRepository.getUsername()
 
             if (username.isBlank()) {
                 throw Exception(LanguageKey.usernameIsEmpty)
@@ -65,7 +65,7 @@ class FirebaseCommentOperationRepositoryImp(
                 CommentResponseData(contentId = contentId, content = content, username = username)
 
             val documentReference =
-                firestore.runTransactionWithTimeout() { transaction ->
+                firestore.runTransactionWithTimeout { transaction ->
                     val commentRef = firestore.collection(FirebaseDatabaseKeys.commentTable)
                         .document(contentId)
                         .collection("comments")
@@ -87,14 +87,14 @@ class FirebaseCommentOperationRepositoryImp(
         flow {
             emit(OperationState.Loading)
             try {
-                val username = userRepository.getUsername() ?: ""
+                val username = userRepository.getUsername()
 
                 if (username.isBlank()) {
                     throw Exception(LanguageKey.usernameIsEmpty)
                 }
 
                 val documentReference =
-                    firestore.runTransactionWithTimeout() { transaction ->
+                    firestore.runTransactionWithTimeout { transaction ->
                         val commentRef = firestore.collection(FirebaseDatabaseKeys.commentTable)
                             .document(contentId)
                             .collection("comments")

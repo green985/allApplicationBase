@@ -74,7 +74,6 @@ fun <T : Any> BasePagingListScreen(
 
             else -> {
                 Timber.d("Else")
-                Unit
             }
 
         }

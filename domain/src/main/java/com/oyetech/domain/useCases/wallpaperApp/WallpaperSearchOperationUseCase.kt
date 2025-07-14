@@ -198,11 +198,7 @@ class WallpaperSearchOperationUseCase(private var repository: WallpaperSearchOpe
         Timber.d("isSearchParametersChanged lastSerchREsult == " + currentSearchRequest.toString())
 
 
-        if (lastSearchRequest == currentSearchRequest) {
-            return false
-        } else {
-            return true
-        }
+        return lastSearchRequest != currentSearchRequest
     }
 
     fun setSpecialQuery(queryString: String?) {

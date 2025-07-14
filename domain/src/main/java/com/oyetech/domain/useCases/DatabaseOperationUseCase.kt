@@ -209,14 +209,14 @@ class DatabaseOperationUseCase(private var messagesRepository: MessagesRepositor
 
     suspend fun onTypingTrigger(eventString: String) {
         Timber.d("typingg =" + eventString)
-        var userId = eventString.toLong() ?: 0L
+        var userId = eventString.toLong()
         var operationData = UserTypingSendingOperationStatusData(userId, SocketUserOperation.TYPING)
         userTypingSendingOperationChannel.send(operationData)
     }
 
     suspend fun onRecordingTrigger(eventString: String) {
         Timber.d("recording RECORDING_VOICE=" + eventString)
-        var userId = eventString.toLong() ?: 0L
+        var userId = eventString.toLong()
         var operationData =
             UserTypingSendingOperationStatusData(userId, SocketUserOperation.RECORDING_VOICE)
         userTypingSendingOperationChannel.send(operationData)
@@ -224,7 +224,7 @@ class DatabaseOperationUseCase(private var messagesRepository: MessagesRepositor
 
     suspend fun onSendAudioTrigger(eventString: String) {
         Timber.d("onSendAudioTrigger =" + eventString)
-        var userId = eventString.toLong() ?: 0L
+        var userId = eventString.toLong()
         var operationData =
             UserTypingSendingOperationStatusData(userId, SocketUserOperation.SENDING_AUDIO)
         userTypingSendingOperationChannel.send(operationData)
@@ -232,7 +232,7 @@ class DatabaseOperationUseCase(private var messagesRepository: MessagesRepositor
 
     suspend fun onSendImageTrigger(eventString: String) {
         Timber.d("recording SENDING_IMAGE =" + eventString)
-        var userId = eventString.toLong() ?: 0L
+        var userId = eventString.toLong()
         var operationData =
             UserTypingSendingOperationStatusData(userId, SocketUserOperation.SENDING_IMAGE)
         userTypingSendingOperationChannel.send(operationData)

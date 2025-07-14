@@ -15,7 +15,6 @@ import android.content.pm.PackageManager
 import android.content.pm.PackageManager.NameNotFoundException
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Build
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.VibrationEffect
@@ -69,7 +68,7 @@ fun Context.finishApp() {
 // Vibrate for 150 milliseconds
 @SuppressLint("MissingPermission")
 fun Context.shakePhone() {
-    if (Build.VERSION.SDK_INT >= 26) {
+    if (VERSION.SDK_INT >= 26) {
         (this.getSystemService(VIBRATOR_SERVICE) as Vibrator)
             .vibrate(
                 VibrationEffect.createOneShot(
@@ -99,11 +98,11 @@ fun Context.getMainActivityStartIntent(): Intent {
 
 fun Context.getAppName(): String {
     var context = this
-    val pm: PackageManager = context.getPackageManager()
+    val pm: PackageManager = context.packageManager
     val ai: ApplicationInfo?
     ai = try {
-        pm.getApplicationInfo(context.getPackageName(), 0)
-    } catch (e: PackageManager.NameNotFoundException) {
+        pm.getApplicationInfo(context.packageName, 0)
+    } catch (e: NameNotFoundException) {
         null
     }
     val applicationName = (if (ai != null) pm.getApplicationLabel(ai) else "(unknown)") as String
@@ -113,8 +112,8 @@ fun Context.getAppName(): String {
 fun Context.getVersionName(): String {
     val context = this
     try {
-        val versionName: String = context.getPackageManager()
-            .getPackageInfo(context.getPackageName(), 0).versionName
+        val versionName: String = context.packageManager
+            .getPackageInfo(context.packageName, 0).versionName
         return versionName
     } catch (e: NameNotFoundException) {
         e.printStackTrace()
@@ -135,7 +134,7 @@ fun Context.getVersionCode(): String {
     var version = ""
     try {
         version = getPackageInfo().versionCode.toString()
-    } catch (e: PackageManager.NameNotFoundException) {
+    } catch (e: NameNotFoundException) {
         e.printStackTrace()
     }
     return version
@@ -146,12 +145,12 @@ fun getPlatform(): String {
 }
 
 fun getOSVersion(): String {
-    return Build.VERSION.SDK_INT.toString()
+    return VERSION.SDK_INT.toString()
 }
 
 fun Context.getPackageInfo(): PackageInfo {
     val pInfo: PackageInfo =
-        this.getPackageManager().getPackageInfo(this.getPackageName(), 0)
+        this.packageManager.getPackageInfo(this.packageName, 0)
     return pInfo
 }
 

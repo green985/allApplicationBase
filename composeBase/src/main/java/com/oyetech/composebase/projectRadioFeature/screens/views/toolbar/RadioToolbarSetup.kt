@@ -3,8 +3,8 @@ package com.oyetech.composebase.projectRadioFeature.screens.views.toolbar
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.Icons.AutoMirrored.Filled
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -59,7 +59,7 @@ fun RadioToolbarSetup(
                             )
                         )
                     }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             },
@@ -68,7 +68,7 @@ fun RadioToolbarSetup(
                     BadgedBox(
                         badge = {
                             if (button is Timer && uiState.timeLeftBadge > 0) {
-                                Badge() { Text(uiState.timeLeftBadge.toString()) }
+                                Badge { Text(uiState.timeLeftBadge.toString()) }
                             }
                         }
                     ) {
@@ -98,7 +98,7 @@ private fun RadioToolbarPreview() {
             title = "Radio Everyone",
             showBackButton = false,
             actionButtonState = persistentListOf(
-                RadioToolbarActionItems.Timer(R.drawable.ic_timer),
+                Timer(R.drawable.ic_timer),
             )
         )
     )

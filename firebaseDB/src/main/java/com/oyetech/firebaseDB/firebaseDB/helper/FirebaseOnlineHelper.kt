@@ -9,7 +9,7 @@ Created by Erdi Özbek
 -18:03-
  **/
 
-class FirebaseOnlineHelper() {
+class FirebaseOnlineHelper {
     private val firebaseFirestore: FirebaseFirestore =
         FirebaseFirestore.getInstance()
 

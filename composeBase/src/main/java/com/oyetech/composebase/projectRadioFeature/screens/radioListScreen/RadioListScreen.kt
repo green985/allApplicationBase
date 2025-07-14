@@ -107,9 +107,9 @@ fun RadioListScreenSetup(
     BaseScaffoldDeprecated(
         topBarContent = {
             val viewHasToolbar = setOf(
-                RadioListEnums.Favorites.name,
-                RadioListEnums.Tag.name,
-                RadioListEnums.History.name,
+                Favorites.name,
+                Tag.name,
+                History.name,
                 RadioListEnums.Country.name,
                 RadioListEnums.Languages.name
             )
@@ -157,7 +157,7 @@ fun RadioListScreenSetup(
     ) { paddingValues ->
         Column(
             modifier = Modifier.then(
-                if (listType == Favorites.name || listType == Tag.name || listType == RadioListEnums.History.name) {
+                if (listType == Favorites.name || listType == Tag.name || listType == History.name) {
                     Modifier.padding(paddingValues)
                 } else {
                     Modifier

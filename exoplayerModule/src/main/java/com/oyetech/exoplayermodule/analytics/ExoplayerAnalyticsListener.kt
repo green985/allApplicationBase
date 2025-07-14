@@ -21,7 +21,7 @@ class ExoplayerAnalyticsListener(private val radioAnalyticsOperationRepository: 
     override fun onIsPlayingChanged(eventTime: EventTime, isPlaying: Boolean) {
         super.onIsPlayingChanged(eventTime, isPlaying)
         Timber.d(" onIsPlayingChanged $isPlaying")
-        Timber.d(" lastStationResponseData ${lastStationResponseData.toString()}")
+        Timber.d(" lastStationResponseData $lastStationResponseData")
         if (!isPlaying) {
             radioAnalyticsOperationRepository.sendRadioPlayingAnalytics(
                 RadioPlayingAnalyticsData(

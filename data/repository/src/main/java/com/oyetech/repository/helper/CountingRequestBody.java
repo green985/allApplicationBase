@@ -1,5 +1,7 @@
 package com.oyetech.repository.helper;
 
+import androidx.annotation.NonNull;
+
 import java.io.IOException;
 
 import okhttp3.MediaType;
@@ -45,7 +47,7 @@ public class CountingRequestBody extends RequestBody {
     }
 
     @Override
-    public void writeTo(BufferedSink sink) throws IOException {
+    public void writeTo(@NonNull BufferedSink sink) throws IOException {
 
         countingSink = new CountingSink(sink);
         BufferedSink bufferedSink = Okio.buffer(countingSink);
@@ -55,8 +57,8 @@ public class CountingRequestBody extends RequestBody {
         bufferedSink.flush();
     }
 
-    public static interface Listener {
-        public void onRequestProgress(long bytesWritten, long contentLength);
+    public interface Listener {
+        void onRequestProgress(long bytesWritten, long contentLength);
     }
 
     protected final class CountingSink extends ForwardingSink {
@@ -65,12 +67,12 @@ public class CountingRequestBody extends RequestBody {
         private long bytesWritten = 0;
 
 
-        public CountingSink(Sink delegate) {
+        public CountingSink(@NonNull Sink delegate) {
             super(delegate);
         }
 
         @Override
-        public void write(Buffer source, long byteCount) throws IOException {
+        public void write(@NonNull Buffer source, long byteCount) throws IOException {
             super.write(source, byteCount);
 
             bytesWritten += byteCount;

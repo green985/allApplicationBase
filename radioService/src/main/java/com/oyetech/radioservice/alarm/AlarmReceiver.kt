@@ -57,7 +57,7 @@ class AlarmReceiver : BroadcastReceiver() {
             Timber.d("alarm model null")
             return
         }
-        var radioModel = alarm?.selectedRadioStation
+        var radioModel = alarm.selectedRadioStation
         if (radioModel == null) {
             Timber.d("radio moldel null")
             return

@@ -119,7 +119,7 @@ abstract class PlayerServiceHelper : ScopeService() {
     fun prepareServiceInit() {
         mediaSessionHelper = MediaSessionHelper(this)
         audioManager =
-            (this.getSystemService(AUDIO_SERVICE) as AudioManager)!!
+            (this.getSystemService(AUDIO_SERVICE) as AudioManager)
     }
 
     fun releaseAudioFocus() {
@@ -146,7 +146,7 @@ abstract class PlayerServiceHelper : ScopeService() {
         Timber.d("service resume called")
         val key = intent.getParcelableExtra<Parcelable>(Intent.EXTRA_KEY_EVENT) as KeyEvent?
         if (key!!.action == KeyEvent.ACTION_UP) {
-            val keycode = key!!.keyCode
+            val keycode = key.keyCode
             when (keycode) {
                 KeyEvent.KEYCODE_MEDIA_PLAY -> resume()
                 KeyEvent.KEYCODE_MEDIA_NEXT -> radioOperationUseCase.nextStationRadioChannel()
@@ -255,19 +255,19 @@ abstract class PlayerServiceHelper : ScopeService() {
         if (wakeLock == null) {
             wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "PlayerService:")
         }
-        if (!wakeLock!!.isHeld()) {
+        if (!wakeLock!!.isHeld) {
             wakeLock.acquire(60 * 60 * 1000L /*60 minutes*/)
         } else {
             if (context.isDebug()) Log.d(TAG, "wake lock is already acquired.")
         }
 
-        val wm = context.getApplicationContext().getSystemService(WIFI_SERVICE) as WifiManager?
+        val wm = context.applicationContext.getSystemService(WIFI_SERVICE) as WifiManager?
         if (wm != null) {
             if (wifiLock == null) {
                 wifiLock =
                     wm.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "PlayerService")
             }
-            if (!wifiLock!!.isHeld()) {
+            if (!wifiLock!!.isHeld) {
                 com.oyetech.tools.ext.doInTryCatch {
                     wifiLock.acquire()
                 }

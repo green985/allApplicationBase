@@ -1,4 +1,4 @@
-package com.oyetech.composebase.projectQuotesFeature.searchScreen;
+package com.oyetech.composebase.projectQuotesFeature.searchScreen
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager

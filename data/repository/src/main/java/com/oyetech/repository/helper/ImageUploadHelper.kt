@@ -13,6 +13,7 @@ import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.util.Locale
 
 /**
 Created by Erdi Özbek
@@ -24,7 +25,7 @@ fun bitmatCompres(image: File): File {
     var newImageFile = image
     if (!newImageFile.extension.equals("gif")) {
         try {
-            val imagePath: String = image.getAbsolutePath() // photoFile is a File class.
+            val imagePath: String = image.absolutePath // photoFile is a File class.
 
             val myBitmap = BitmapFactory.decodeFile(imagePath)
 
@@ -47,7 +48,9 @@ fun bitmatCompres(image: File): File {
 
 fun File.getMimeType(fallback: String = "image/*"): String {
     return MimeTypeMap.getFileExtensionFromUrl(toString())
-        ?.run { MimeTypeMap.getSingleton().getMimeTypeFromExtension(toLowerCase()) }
+        ?.run {
+            MimeTypeMap.getSingleton().getMimeTypeFromExtension(lowercase(Locale.getDefault()))
+        }
         ?: fallback // You might set it to */*
 }
 

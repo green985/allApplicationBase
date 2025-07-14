@@ -25,13 +25,13 @@ object PermissionConstant {
     const val postNotification = Manifest.permission.POST_NOTIFICATIONS
 
     private var sendImagePermissionList =
-        arrayOf(PermissionConstant.cameraPermission, PermissionConstant.writeExternalPermission)
+        arrayOf(cameraPermission, writeExternalPermission)
 
     fun getSendImagePermissionListNewApi(): Array<String> {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             arrayOf(
-                PermissionConstant.cameraPermission,
-                PermissionConstant.readImagePermissionApi33
+                cameraPermission,
+                readImagePermissionApi33
             )
         } else {
             sendImagePermissionList
@@ -50,7 +50,7 @@ object PermissionConstant {
 
     private var sendAudioPermissionList =
         arrayOf(
-            PermissionConstant.recordVoicePermission,
+            recordVoicePermission,
             // PermissionConstant.writeExternalPermission
         )
 }

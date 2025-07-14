@@ -38,7 +38,7 @@ object PlayerServiceUtils {
         anIntent.putExtra(ServiceConst.PLAYER_SERVICE_NO_NOTIFICATION_EXTRA, true)
         serviceConnection = getServiceConnectionn()
 
-        context?.bindService(
+        context.bindService(
             anIntent,
             serviceConnection!!,
             Context.BIND_AUTO_CREATE

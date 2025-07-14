@@ -26,8 +26,8 @@ fun VibrationTypeGridView(
     LazyVerticalGrid(
         columns = GridCells.Fixed(3), // Her satırda 3 öğe olacak şekilde
         modifier = Modifier.padding(16.dp), // Grid etrafına 16 dp padding
-        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
-        verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(types) { type ->
             OutlinedCard(

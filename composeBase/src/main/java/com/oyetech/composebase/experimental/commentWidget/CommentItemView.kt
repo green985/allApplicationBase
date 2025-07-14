@@ -107,8 +107,8 @@ fun CommentItemView(uiState: CommentItemUiState, onEvent: (CommentScreenEvent) -
 
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                    Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
 
                         Icon( // todo will be changed
                             imageVector = Icons.Default.Person,

@@ -37,7 +37,7 @@ fun RadioAppNavigationWrapperWithPlayerSetup(
                 .weight(1f)
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            RadioPlayerSetup() {
+            RadioPlayerSetup {
                 Column(
                     verticalArrangement = Arrangement.Bottom,
                     modifier = Modifier

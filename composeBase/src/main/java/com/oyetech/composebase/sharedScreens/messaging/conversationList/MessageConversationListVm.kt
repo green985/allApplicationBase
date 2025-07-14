@@ -1,4 +1,4 @@
-package com.oyetech.composebase.sharedScreens.messaging.conversationList;
+package com.oyetech.composebase.sharedScreens.messaging.conversationList
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel

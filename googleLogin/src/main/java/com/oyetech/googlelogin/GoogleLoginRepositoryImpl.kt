@@ -130,9 +130,7 @@ class GoogleLoginRepositoryImpl(
     ) {
 
         // Handle the successfully returned credential.
-        val credential = result.credential
-
-        when (credential) {
+        when (val credential = result.credential) {
 
             // Passkey credential
             is PublicKeyCredential -> {
@@ -258,7 +256,7 @@ class GoogleLoginRepositoryImpl(
             providerId = this.providerId,
             tenantId = this.tenantId,
             isAnonymous = this.isAnonymous,
-            metadata = this.getMetadata()?.let {
+            metadata = this.metadata?.let {
                 UserMetadata(
                     creationTimestamp = it.creationTimestamp,
                     lastSignInTimestamp = it.lastSignInTimestamp
