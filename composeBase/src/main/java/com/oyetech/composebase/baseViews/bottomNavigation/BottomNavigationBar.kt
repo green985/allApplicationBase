@@ -20,16 +20,17 @@ import androidx.navigation.compose.rememberNavController
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationUiEvent.NavigateToSelectedItemWithTest
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
 import kotlinx.coroutines.flow.collectLatest
-import org.koin.compose.koinInject
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun BottomNavigationBar(
     modifier: Modifier = Modifier,
+    vm: BottomNavigationVm = koinViewModel(),
     isClickable: Boolean = true,
     navController: NavHostController = rememberNavController(),
     navItems: List<BottomNavigationItem> = RadioAppProjectRoutes.radioApplicationBottomTabNavList,
 ) {
-    val vm = koinInject<BottomNavigationVm>()
+
     val selectedItem by vm.selectedItem.collectAsState()
 
 

@@ -39,7 +39,7 @@ class TestEventNavigator {
 
     fun triggerTestEvents(lifecycleScope: LifecycleCoroutineScope) {
         lifecycleScope.launch(Dispatchers.IO) {
-            triggerEvents(EventNavigatorList.contactWithUsFullScopeOperation)
+//            triggerEvents(EventNavigatorList.contactWithUsFullScopeOperation)
         }
 
     }

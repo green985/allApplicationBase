@@ -12,6 +12,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.navigation.NavHostController
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationBar
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationDelegate
+import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationVm
 import com.oyetech.composebase.helpers.viewProperties.keyboardAsState
 import org.koin.compose.koinInject
 
@@ -36,7 +37,7 @@ fun QuoteBottomNavigationView(
     )
 
     val isKeyboardOpen by keyboardAsState()
-
+    val bottomNavigationVm = koinInject<BottomNavigationVm>()
 
     Row(
         modifier = Modifier
@@ -48,6 +49,7 @@ fun QuoteBottomNavigationView(
         if (!isKeyboardOpen)
             BottomNavigationBar(
                 isClickable = bottomNavigationVisibility,
+                vm = bottomNavigationVm,
                 navController = navController,
                 navItems = QuoteAppProjectRoutes.quoteApplicationBottomTabNavList
             )
