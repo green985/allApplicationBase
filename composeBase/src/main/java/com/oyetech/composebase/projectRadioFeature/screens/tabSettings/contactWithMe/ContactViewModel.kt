@@ -20,32 +20,34 @@ class ContactViewModel(
     private val _uiState = MutableStateFlow(ContactUIState())
     val uiState: StateFlow<ContactUIState> = _uiState
 
-    fun onEvent(event: ContactUIEvent) {
-        when (event) {
-            is ContactUIEvent.UpdateName -> {
-                _uiState.updateState { copy(name = event.name) }
-            }
-
-            is ContactUIEvent.UpdateEmail -> {
-                val isValid =
-                    event.email.isEmpty() || android.util.Patterns.EMAIL_ADDRESS.matcher(event.email)
-                        .matches()
-                _uiState.updateState { copy(email = event.email, isEmailValid = isValid) }
-            }
-
-            is ContactUIEvent.UpdateMessage -> {
-                _uiState.updateState {
-                    copy(
-                        message = event.message,
-                        isDescriptionEmpty = event.message.isEmpty()
-                    )
+    override fun onEvent(event: Any) {
+        if (event is ContactUIEvent) {
+            when (event) {
+                is ContactUIEvent.UpdateName -> {
+                    _uiState.updateState { copy(name = event.name) }
                 }
-            }
 
-            ContactUIEvent.Submit -> {
-                val data = uiState.value
-                if (data.isEmailValid && !data.isDescriptionEmpty) {
-                    sendContactWithMeData(data)
+                is ContactUIEvent.UpdateEmail -> {
+                    val isValid =
+                        event.email.isEmpty() || android.util.Patterns.EMAIL_ADDRESS.matcher(event.email)
+                            .matches()
+                    _uiState.updateState { copy(email = event.email, isEmailValid = isValid) }
+                }
+
+                is ContactUIEvent.UpdateMessage -> {
+                    _uiState.updateState {
+                        copy(
+                            message = event.message,
+                            isDescriptionEmpty = event.message.isEmpty()
+                        )
+                    }
+                }
+
+                ContactUIEvent.Submit -> {
+                    val data = uiState.value
+                    if (data.isEmailValid && !data.isDescriptionEmpty) {
+                        sendContactWithMeData(data)
+                    }
                 }
             }
         }

@@ -5,6 +5,7 @@ import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
+import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarState
 import com.oyetech.cripto.stringKeys.WebSiteUrls
 import com.oyetech.languageModule.keyset.LanguageKey
@@ -23,6 +24,7 @@ Created by Erdi Özbek
 class FacSettingsVm(
     appDispatchers: AppDispatchers,
     private val loginOperationVM: LoginOperationVM,
+    private val navigationUseCase: com.oyetech.domain.useCases.NavigationUseCase,
 ) : BaseViewModel(appDispatchers) {
 
     val toolbarState = MutableStateFlow(QuoteToolbarState(LanguageKey.settings))
@@ -39,56 +41,58 @@ class FacSettingsVm(
         }
     }
 
-    fun onEvent(event: FacSettingsUiEvent) {
-        when (event) {
-            FacSettingsUiEvent.ContactClicked -> {
-
-            }
-
-            FacSettingsUiEvent.InfoClicked -> {
-                uiState.updateState {
-                    copy(isInfoDialogShown = true)
+    override fun onEvent(event: Any) {
+        if (event is FacSettingsUiEvent) {
+            when (event) {
+                FacSettingsUiEvent.ContactClicked -> {
+                    navigationUseCase.navigate(QuoteAppProjectRoutes.ContactScreen.route)
                 }
-            }
 
-            FacSettingsUiEvent.InfoDialogDismissed -> {
-                uiState.updateState {
-                    copy(isInfoDialogShown = false)
+                FacSettingsUiEvent.InfoClicked -> {
+                    uiState.updateState {
+                        copy(isInfoDialogShown = true)
+                    }
                 }
-            }
 
-            FacSettingsUiEvent.PrivacyPolicyClicked -> {
-                UrlHelper.openUrl(context, WebSiteUrls.Fac_Privacy_Policy_URL)
-            }
+                FacSettingsUiEvent.InfoDialogDismissed -> {
+                    uiState.updateState {
+                        copy(isInfoDialogShown = false)
+                    }
+                }
 
-            FacSettingsUiEvent.TermsAndConditionsClicked -> {
-                UrlHelper.openUrl(context, WebSiteUrls.Fac_Terms_Conditions_URL)
+                FacSettingsUiEvent.PrivacyPolicyClicked -> {
+                    UrlHelper.openUrl(context, WebSiteUrls.Fac_Privacy_Policy_URL)
+                }
 
-            }
+                FacSettingsUiEvent.TermsAndConditionsClicked -> {
+                    UrlHelper.openUrl(context, WebSiteUrls.Fac_Terms_Conditions_URL)
 
-            FacSettingsUiEvent.LogoutClicked -> {
+                }
+
+                FacSettingsUiEvent.LogoutClicked -> {
 //                logoutUseCase()
-                uiState.updateState {
-                    copy(isUserLoggedIn = false, username = "")
+                    uiState.updateState {
+                        copy(isUserLoggedIn = false, username = "")
+                    }
                 }
-            }
 
-            FacSettingsUiEvent.DeleteAccountClicked -> {
-                uiState.updateState {
-                    copy(isDeleteAccountShown = true)
+                FacSettingsUiEvent.DeleteAccountClicked -> {
+                    uiState.updateState {
+                        copy(isDeleteAccountShown = true)
+                    }
                 }
-            }
 
-            FacSettingsUiEvent.DeleteAccountConfirmed -> {
-                loginOperationVM.onEvent(LoginOperationEvent.DeleteAccountClick)
-                uiState.updateState {
-                    copy(isDeleteAccountShown = false)
+                FacSettingsUiEvent.DeleteAccountConfirmed -> {
+                    loginOperationVM.onEvent(LoginOperationEvent.DeleteAccountClick)
+                    uiState.updateState {
+                        copy(isDeleteAccountShown = false)
+                    }
                 }
-            }
 
-            FacSettingsUiEvent.DeleteAccountDismissed -> {
-                uiState.updateState {
-                    copy(isDeleteAccountShown = false)
+                FacSettingsUiEvent.DeleteAccountDismissed -> {
+                    uiState.updateState {
+                        copy(isDeleteAccountShown = false)
+                    }
                 }
             }
         }

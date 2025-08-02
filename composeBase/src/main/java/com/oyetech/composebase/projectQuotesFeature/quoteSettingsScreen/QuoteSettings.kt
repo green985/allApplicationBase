@@ -1,5 +1,7 @@
 package com.oyetech.composebase.projectQuotesFeature.quoteSettingsScreen
 
+import com.oyetech.composebase.base.BaseEvent
+
 /**
 Created by Erdi Özbek
 -25.01.2025-
@@ -13,10 +15,12 @@ data class QuoteSettingsUiState(
     val username: String = "",
 )
 
-sealed class QuoteSettingsEvent {
+sealed class QuoteSettingsEvent : BaseEvent() {
+    object OnQuoteAdviceScreenClicked : QuoteSettingsEvent()
     object DeleteAccountConfirm : QuoteSettingsEvent()
     object DeleteAccountClick : QuoteSettingsEvent()
     object DismissDialog : QuoteSettingsEvent()
+    object OnContactWithMeClicked : QuoteSettingsEvent()
 //    data class Idle(val data: Int) : QuoteSettingsEvent()
 //    object Idlee : QuoteSettingsEvent()
 }

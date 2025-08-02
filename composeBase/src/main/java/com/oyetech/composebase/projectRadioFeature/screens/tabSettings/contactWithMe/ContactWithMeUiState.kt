@@ -1,5 +1,7 @@
 package com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactWithMe
 
+import com.oyetech.composebase.base.BaseEvent
+
 /**
 Created by Erdi Özbek
 -13.12.2024-
@@ -15,7 +17,7 @@ data class ContactUIState(
     val isContactWasSent: Boolean = false,
 )
 
-sealed class ContactUIEvent {
+sealed class ContactUIEvent : BaseEvent() {
     data class UpdateName(val name: String) : ContactUIEvent()
     data class UpdateEmail(val email: String) : ContactUIEvent()
     data class UpdateMessage(val message: String) : ContactUIEvent()

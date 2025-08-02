@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffoldDeprecated
 import com.oyetech.composebase.helpers.general.GeneralSettings
-import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectQuotesFeature.quotes.views.AppInfoViewProperty
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarSetup
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarState
@@ -82,7 +81,7 @@ fun QuoteSettingsScreen(
         Column(modifier = Modifier.padding(it)) {
 
             SimpleSettingsInfoViewSetup(
-                onClick = { navigationRoute.invoke(QuoteAppProjectRoutes.ContactScreen.route) },
+                onClick = { onEvent.invoke(QuoteSettingsEvent.OnContactWithMeClicked) },
                 text = LanguageKey.contactWithUs
             )
             if (GeneralSettings.isRatingEnable()) {
@@ -102,7 +101,7 @@ fun QuoteSettingsScreen(
                     )
                     SimpleSettingsInfoViewSetup(
                         onClick = {
-                            navigationRoute.invoke(QuoteAppProjectRoutes.QuoteAdviceScreen.route)
+                            onEvent.invoke(QuoteSettingsEvent.OnQuoteAdviceScreenClicked)
                         },
                         text = LanguageKey.adviceQuote
                     )
