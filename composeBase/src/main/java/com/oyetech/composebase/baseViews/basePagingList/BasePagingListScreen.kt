@@ -25,6 +25,7 @@ fun <T : Any> BasePagingListScreen(
     items: LazyPagingItems<T>,
     itemKey: ((T) -> Any)? = null,
     onBindItem: @Composable (T) -> Unit,
+    onBindItemWithIndexed: @Composable ((T, Int) -> Unit)? = null,
     onItemVisible: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
     reverseLayout: Boolean = false,
@@ -90,6 +91,7 @@ fun <T : Any> BasePagingListScreen(
                     val item = items[index]
                     if (item != null) {
                         onBindItem(item)
+                        onBindItemWithIndexed?.let { it(item, index) }
                     }
                 }
             )

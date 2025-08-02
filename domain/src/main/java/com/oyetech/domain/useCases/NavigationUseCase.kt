@@ -1,5 +1,7 @@
 package com.oyetech.domain.useCases
 
+import androidx.annotation.MainThread
+
 class NavigationUseCase {
 
     private var navigateToInternal: ((String) -> Unit)? = null
@@ -8,6 +10,7 @@ class NavigationUseCase {
         this.navigateToInternal = navigateTo
     }
 
+    @MainThread
     fun navigate(route: String) {
         navigateToInternal?.invoke(route)
     }

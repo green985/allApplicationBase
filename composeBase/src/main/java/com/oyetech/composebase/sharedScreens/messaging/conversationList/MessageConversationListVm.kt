@@ -59,7 +59,6 @@ class MessageConversationListVm(
     init {
         firebaseMessagingRepository.initLocalMessageSendOperation(viewModelScope)
         controlUserStatus()
-        MoonOperationVm.getMoonOperationData() // Initialize MoonOperation data
     }
 
     private fun controlUserStatus() {
@@ -75,6 +74,7 @@ class MessageConversationListVm(
                         observeUserReceivedMessages()
                     }
                 }, {
+                    Timber.e("User ID is null or empty")
                     listViewState.updateErrorInitial(it)
                 })
             }

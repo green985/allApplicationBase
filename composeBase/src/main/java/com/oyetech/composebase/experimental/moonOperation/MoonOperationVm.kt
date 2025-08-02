@@ -33,8 +33,9 @@ class MoonOperationVm(
             }
         }
     }
+
     fun getMoonOperationData() {
-        viewModelScope.launch {
+        viewModelScope.launch(getDispatcherIo()) {
             val unix = System.currentTimeMillis() / 1000
             val result = randomOperationRepository.getMoonPhase(unix).asResult().collectLatest {
                 it.fold(

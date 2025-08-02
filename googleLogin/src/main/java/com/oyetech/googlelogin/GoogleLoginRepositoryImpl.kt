@@ -33,7 +33,8 @@ class GoogleLoginRepositoryImpl(
     private val activityProviderUseCase: ActivityProviderUseCase,
     private val firebaseUserRepository: FirebaseUserRepository,
 ) : GoogleLoginRepository {
-    override val googleUserStateFlow =
+    override val
+            googleUserStateFlow =
         MutableStateFlow(GoogleUserResponseData())
     override val userAutoLoginStateFlow =
         MutableStateFlow(false)

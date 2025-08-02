@@ -1,6 +1,7 @@
 package com.oyetech.composebase.projectQuotesFeature.quotes.uiState
 
 import androidx.compose.ui.text.AnnotatedString
+import com.oyetech.composebase.base.BaseEvent
 
 /**
 Created by Erdi Özbek
@@ -24,7 +25,8 @@ data class QuoteUiState(
 
 )
 
-sealed class QuoteListUiEvent {
+sealed class QuoteListUiEvent : BaseEvent() {
     data class QuoteSeen(val index: Int) : QuoteListUiEvent()
+    data class QuoteListItemClicked(val index: Int) : QuoteListUiEvent()
 //    object Refresh : QutoeListUiEvent()
 }

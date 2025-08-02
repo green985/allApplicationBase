@@ -10,11 +10,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.oyetech.composebase.base.BaseScaffoldDeprecated
 import com.oyetech.composebase.baseViews.basePagingList.BasePagingListScreen
-import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer.QuotesVM
 import com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer.RandomQuotesSmallView
+import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteListUiEvent
 import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteListUiEvent.QuoteSeen
-import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -29,22 +28,21 @@ fun QuoteListScreenSetup(navigationRoute: (navigationRoute: String) -> Unit) {
     val lazyPagingItems = vm.quotesPage.collectAsLazyPagingItems()
 
     val contentOperationVm = vm.contentOperationVm
-
+    val onEvent = { event: QuoteListUiEvent ->
+        vm.onEvent(event)
+    }
     BaseScaffoldDeprecated {
         Column(modifier = Modifier.padding()) {
             BasePagingListScreen(
                 items = lazyPagingItems, // This parameter is abstracted, not used here
                 itemKey = { quote -> quote.quoteId },
-                onBindItem = { quote ->
+                onBindItem = {},
+                onBindItemWithIndexed = { quote, index ->
                     val contentOperationState by contentOperationVm.getContentStateFlow(quote.quoteId)
                         .collectAsStateWithLifecycle()
                     RandomQuotesSmallView(
                         modifier = Modifier.clickable {
-                            navigationRoute(
-                                QuoteAppProjectRoutes.QuoteDetailRoute.withArgs(
-                                    ScreenKey.quoteId to quote.quoteId,
-                                )
-                            )
+                            onEvent(QuoteListUiEvent.QuoteListItemClicked(index = index))
                         },
                         uiState = quote, navigationRoute = navigationRoute,
                         contentOperationUiState = contentOperationState,

@@ -27,6 +27,7 @@ fun <T> Flow<T>.asResult(): Flow<Result<T>> = flow {
             emit(Result.success(value)) // Emit success result
         }
     } catch (e: Throwable) {
+        e.printStackTrace()
         emit(Result.failure(e)) // Emit failure result
     }
 }

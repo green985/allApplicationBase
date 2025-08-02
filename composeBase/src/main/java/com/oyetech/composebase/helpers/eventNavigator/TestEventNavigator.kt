@@ -3,6 +3,8 @@ package com.oyetech.composebase.helpers.eventNavigator
 import androidx.lifecycle.LifecycleCoroutineScope
 import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationEvent
+import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent
+import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteListUiEvent
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigatorEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -35,7 +37,7 @@ class TestEventNavigator {
 
     fun triggerTestEvents(lifecycleScope: LifecycleCoroutineScope) {
         lifecycleScope.launch(Dispatchers.IO) {
-            triggerEvents(bottomNavigationTest())
+//            triggerEvents(EventNavigatorList.cancelUserRegistrationOperation)
         }
 
     }
@@ -59,4 +61,17 @@ class TestEventNavigator {
             return object : BaseEvent() {}
         }
     }
+}
+
+object EventNavigatorList {
+
+    val cancelUserRegistrationOperation = buildList<BaseEvent> {
+        add(AllScreenNavigatorEvent.OnNavigateToQuoteStart)
+        add(BottomNavigationEvent.NavigateToSelectedItem(1))
+        add(QuoteListUiEvent.QuoteListItemClicked(1))
+        add(LoginOperationEvent.LoginClicked)
+        add(LoginOperationEvent.OnCancel)
+
+    }
+
 }

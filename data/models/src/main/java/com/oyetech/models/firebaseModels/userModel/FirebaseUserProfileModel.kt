@@ -14,8 +14,6 @@ data class FirebaseUserProfileModel(
     @get:Exclude
     val errorException: Exception? = null, // Added field
 
-    @get:Exclude
-    val isUserDeleted: Boolean = false,
 
     val isAnonymous: Boolean = false,
     val notificationToken: String = "",
@@ -29,6 +27,10 @@ data class FirebaseUserProfileModel(
     val age: String = "",
 
     ) {
+    fun isUserDeleted(): Boolean {
+        return userId != "" && username == ""
+    }
+
     fun isProfileComplete(): Boolean {
         return username.isNotBlank()
                 && userId.isNotBlank()

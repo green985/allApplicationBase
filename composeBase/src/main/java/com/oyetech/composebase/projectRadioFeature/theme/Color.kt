@@ -1,6 +1,15 @@
 package com.oyetech.composebase.projectRadioFeature.theme
 import androidx.compose.ui.graphics.Color
 
+val BrandPrimary = Color(0xFFFFB300) // amber düz
+val BrandOnPrimary = Color(0xFF000000) // metin için siyah
+
+val BrandBackground = Color(0xFFFFFCF6) // açık krem
+val BrandOnBackground = Color(0xFF1C1B1B) // koyu gri-siyah
+
+val BrandSurface = BrandBackground
+val BrandOnSurface = BrandOnBackground
+
 val primaryLight = Color(0xFF825500)
 val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFFECA73B)

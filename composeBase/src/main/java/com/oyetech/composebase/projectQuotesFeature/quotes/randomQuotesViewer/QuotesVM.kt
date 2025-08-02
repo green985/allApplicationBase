@@ -8,11 +8,15 @@ import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.baseGenericList.ComplexItemListState
 import com.oyetech.composebase.mappers.mapToUi.QuotesMappers.mapToQuoteUiState
 import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationVm
+import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectQuotesFeature.quotes.listScreen.QuotePagingSource
 import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteListUiEvent
+import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteListUiEvent.QuoteListItemClicked
 import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteListUiEvent.QuoteSeen
 import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteUiState
+import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
+import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.models.quotes.responseModel.QuoteResponseData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +35,7 @@ class QuotesVM(
     private val appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     private val quoteDataOperationRepository: QuoteDataOperationRepository,
     val contentOperationVm: ContentOperationVm,
+    private val navigationUseCase: NavigationUseCase,
 ) : BaseViewModel(appDispatchers) {
 
     val quotesPage =
@@ -56,11 +61,23 @@ class QuotesVM(
         Timber.d("QuotesVM init")
     }
 
-    fun onEvent(event: QuoteListUiEvent) {
-        when (event) {
-            is QuoteSeen -> {
-                itemVisible(event.index)
+    override fun onEvent(event: Any) {
+        if (event is QuoteListUiEvent) {
+            when (event) {
+                is QuoteSeen -> {
+                    itemVisible(event.index)
+                }
+
+                is QuoteListItemClicked -> {
+                    val quoteId = complexItemViewState.value.items.getOrNull(event.index)?.quoteId
+                    navigationUseCase.navigate(
+                        QuoteAppProjectRoutes.QuoteDetailRoute.withArgs(
+                            ScreenKey.quoteId to quoteId,
+                        )
+                    )
+                }
             }
+        } else {
         }
     }
 

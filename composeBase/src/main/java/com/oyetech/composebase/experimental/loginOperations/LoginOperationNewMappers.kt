@@ -5,6 +5,7 @@ import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -18,21 +19,26 @@ fun LoginOperationVM.mapToProfileValue(userData: FirebaseUserProfileModel?) {
     if (userData == null) {
         return
     }
-
-    if (userData.isUserDeleted) {
-        loginOperationState.value =
-            LoginOperationUiState(isUserDeleted = true)
-        return
-    }
+//
+//    if (userData.isUserDeleted()) {
+//        viewModelScope.launch(Dispatchers.Main) {
+//            loginOperationState.updateState {
+//                LoginOperationUiState(isUserDeleted = true)
+//            }
+//        }
+//        return
+//    }
 
 
     if (userData.errorException != null) {
-        loginOperationState.updateState {
-            copy(
-                isLoading = false,
-                isError = true,
-                errorMessage = userData.errorException?.message ?: LanguageKey.generalErrorText
-            )
+        viewModelScope.launch(Dispatchers.Main) {
+            loginOperationState.updateState {
+                copy(
+                    isLoading = false,
+                    isError = true,
+                    errorMessage = userData.errorException?.message ?: LanguageKey.generalErrorText
+                )
+            }
         }
         return
     }
@@ -47,17 +53,25 @@ fun LoginOperationVM.mapToProfileValue(userData: FirebaseUserProfileModel?) {
             viewModelScope.launch(getDispatcherIo()) {
                 uiEvent.emit(LoginOperationUiEvent.OnLoginSuccess)
             }
-            loginOperationState.value = LoginOperationUiState(
-                displayNameRemote = userData.username,
-                uid = userData.userId,
-                isAnonymous = userData.isAnonymous,
-                lastSignInTimestamp = userData.lastSignInTimestamp,
-            )
+
+            viewModelScope.launch(Dispatchers.Main) {
+                loginOperationState.updateState {
+                    LoginOperationUiState(
+                        displayNameRemote = userData.username,
+                        uid = userData.userId,
+                        isAnonymous = userData.isAnonymous,
+                        lastSignInTimestamp = userData.lastSignInTimestamp,
+                    )
+                }
+            }
         } else {
             Timber.d("LoginOperationVM mapToProfileValue fail$userData")
-            navigationUseCase.navigate(RadioAppProjectRoutes.CompleteProfileScreen.route)
-            loginOperationState.value =
-                LoginOperationUiState(isRegistrationCompleteNeeded = true)
+            viewModelScope.launch(Dispatchers.Main) {
+                navigationUseCase.navigate(RadioAppProjectRoutes.CompleteProfileScreen.route)
+                loginOperationState.updateState {
+                    LoginOperationUiState(isRegistrationCompleteNeeded = true)
+                }
+            }
         }
 
 

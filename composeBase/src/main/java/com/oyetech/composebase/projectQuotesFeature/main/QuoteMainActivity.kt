@@ -111,7 +111,7 @@ class QuoteMainActivity : ComponentActivity() {
             )
 
             lifecycleScope.launch(Dispatchers.IO) {
-//                testEventNavigator.triggerEvents(TestEventNavigator.getDummyEventList())
+//                testEventNavigator.triggerEvents(EventNavigatorList.cancelUserRegistrationOperation)
             }
             Timber.d("onCreate Error texttttt: $errorText")
 
