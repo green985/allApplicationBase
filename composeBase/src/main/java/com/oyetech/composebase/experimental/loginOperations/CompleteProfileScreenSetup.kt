@@ -54,7 +54,7 @@ fun CompleteProfileScreenSetup(navigationRoute: (navigationRoute: String) -> Uni
         }
     }
 
-    CompleteProfileScreen(uiState = uiState, onEvent = { vm.handleEvent(it) })
+    CompleteProfileScreen(uiState = uiState, onEvent = { vm.onEvent(it) })
 
 
     BackHandler {

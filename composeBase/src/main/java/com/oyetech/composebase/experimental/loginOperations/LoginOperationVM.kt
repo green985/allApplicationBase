@@ -129,69 +129,71 @@ class LoginOperationVM(
         }
     }
 
-    fun handleEvent(event: LoginOperationEvent) {
-        when (event) {
-            LoginClicked -> {
-                loginOperationState.updateState {
-                    LoginOperationUiState(isLoading = true)
-                }
-                viewModelScope.launch(getDispatcherIo()) {
-                    try {
+    override fun onEvent(event: Any) {
+        if (event is LoginOperationEvent) {
+            when (event) {
+                LoginClicked -> {
+                    loginOperationState.updateState {
+                        LoginOperationUiState(isLoading = true)
+                    }
+                    viewModelScope.launch(getDispatcherIo()) {
+                        try {
 //                        googleLoginRepository.signInWithGoogle()
-                        googleLoginRepository.signInWithGoogleAnonymous()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
+                            googleLoginRepository.signInWithGoogleAnonymous()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
-            }
 
-            ErrorDismiss -> {
-                loginOperationState.updateState {
-                    copy(
-                        isError = false,
-                        errorMessage = ""
-                    )
+                ErrorDismiss -> {
+                    loginOperationState.updateState {
+                        copy(
+                            isError = false,
+                            errorMessage = ""
+                        )
+                    }
                 }
-            }
 
-            DeleteAccountClick -> {
-                loginOperationState.updateState {
-                    copy(isLoading = true)
+                DeleteAccountClick -> {
+                    loginOperationState.updateState {
+                        copy(isLoading = true)
+                    }
+                    deleteUserOperation()
                 }
-                deleteUserOperation()
-            }
 
-            is UsernameChanged -> {
-                loginOperationState.updateState {
-                    copy(
-                        displayName = event.username,
-                        isUsernameEmpty = event.username.isBlank()
-                    )
+                is UsernameChanged -> {
+                    loginOperationState.updateState {
+                        copy(
+                            displayName = event.username,
+                            isUsernameEmpty = event.username.isBlank()
+                        )
+                    }
                 }
-            }
 
-            OnSubmit -> {
-                if (onSubmitOperation()) return
-            }
-
-            OnCancel -> {
-                viewModelScope.launch(getDispatcherIo()) {
-                    googleLoginRepository.removeUser(googleLoginRepository.getUserUid())
-                    uiEvent.emit(LoginOperationUiEvent.OnCancelUserCreation)
+                OnSubmit -> {
+                    if (onSubmitOperation()) return
                 }
-            }
 
-            is AgeChanged -> {
-                loginOperationState.updateState {
-                    copy(
-                        age = event.age.toString()
-                    )
+                OnCancel -> {
+                    viewModelScope.launch(getDispatcherIo()) {
+                        googleLoginRepository.removeUser(googleLoginRepository.getUserUid())
+                        uiEvent.emit(LoginOperationUiEvent.OnCancelUserCreation)
+                    }
                 }
-            }
 
-            is GenderChanged -> {
-                loginOperationState.updateState {
-                    copy(gender = event.gender)
+                is AgeChanged -> {
+                    loginOperationState.updateState {
+                        copy(
+                            age = event.age.toString()
+                        )
+                    }
+                }
+
+                is GenderChanged -> {
+                    loginOperationState.updateState {
+                        copy(gender = event.gender)
+                    }
                 }
             }
         }

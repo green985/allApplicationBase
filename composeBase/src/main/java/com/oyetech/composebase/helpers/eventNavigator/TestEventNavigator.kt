@@ -37,7 +37,7 @@ class TestEventNavigator {
 
     fun triggerTestEvents(lifecycleScope: LifecycleCoroutineScope) {
         lifecycleScope.launch(Dispatchers.IO) {
-//            triggerEvents(EventNavigatorList.cancelUserRegistrationOperation)
+            triggerEvents(EventNavigatorList.cancelUserRegistrationOperation)
         }
 
     }
@@ -67,7 +67,7 @@ object EventNavigatorList {
 
     val cancelUserRegistrationOperation = buildList<BaseEvent> {
         add(AllScreenNavigatorEvent.OnNavigateToQuoteStart)
-        add(BottomNavigationEvent.NavigateToSelectedItem(1))
+//        add(BottomNavigationEvent.NavigateToSelectedItem(1))
         add(QuoteListUiEvent.QuoteListItemClicked(1))
         add(LoginOperationEvent.LoginClicked)
         add(LoginOperationEvent.OnCancel)

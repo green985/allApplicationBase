@@ -85,7 +85,7 @@ fun LoginOperationQuickScreen(
                         )
                     }
                     scope.launch {
-                        loginOperationVM.handleEvent(LoginOperationEvent.OnSubmit)
+                        loginOperationVM.onEvent(LoginOperationEvent.OnSubmit)
                     }
                 },
                 shape = RoundedCornerShape(12.dp),

@@ -109,7 +109,7 @@ fun CommentScreenWithContentScreenSetup(
             },
             userUiState = loginOperationState,
             onUserEvent = { event ->
-                loginOperationVM.handleEvent(event)
+                loginOperationVM.onEvent(event)
             }
         )
 

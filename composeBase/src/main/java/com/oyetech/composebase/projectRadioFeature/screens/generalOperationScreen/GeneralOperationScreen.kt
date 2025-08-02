@@ -40,7 +40,7 @@ fun GeneralOperationScreenSetup(
 
     LoginOperationScreenSetup(
         uiState = loginUiState,
-        onErrorDismiss = { loginOperationVM.handleEvent(LoginOperationEvent.ErrorDismiss) }
+        onErrorDismiss = { loginOperationVM.onEvent(LoginOperationEvent.ErrorDismiss) }
     ) {
         GeneralOperationScreen {
             content()

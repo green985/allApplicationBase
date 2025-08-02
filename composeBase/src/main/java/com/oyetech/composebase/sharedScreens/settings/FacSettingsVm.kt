@@ -80,7 +80,7 @@ class FacSettingsVm(
             }
 
             FacSettingsUiEvent.DeleteAccountConfirmed -> {
-                loginOperationVM.handleEvent(LoginOperationEvent.DeleteAccountClick)
+                loginOperationVM.onEvent(LoginOperationEvent.DeleteAccountClick)
                 uiState.updateState {
                     copy(isDeleteAccountShown = false)
                 }

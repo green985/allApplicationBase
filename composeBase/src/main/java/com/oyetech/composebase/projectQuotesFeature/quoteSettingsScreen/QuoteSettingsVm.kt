@@ -53,7 +53,7 @@ class QuoteSettingsVm(
             }
 
             DeleteAccountConfirm -> {
-                loginOperationVM.handleEvent(LoginOperationEvent.DeleteAccountClick)
+                loginOperationVM.onEvent(LoginOperationEvent.DeleteAccountClick)
                 uiState.updateState {
                     copy(isDeleteDialogShown = false)
                 }
