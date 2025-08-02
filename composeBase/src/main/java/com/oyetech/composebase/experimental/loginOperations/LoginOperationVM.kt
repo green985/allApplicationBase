@@ -135,14 +135,14 @@ class LoginOperationVM(
                 loginOperationState.updateState {
                     LoginOperationUiState(isLoading = true)
                 }
-//                viewModelScope.launch(getDispatcherIo()) {
-//                    try {
-////                        googleLoginRepository.signInWithGoogle()
-//                        googleLoginRepository.signInWithGoogleAnonymous()
-//                    } catch (e: Exception) {
-//                        e.printStackTrace()
-//                    }
-//                }
+                viewModelScope.launch(getDispatcherIo()) {
+                    try {
+//                        googleLoginRepository.signInWithGoogle()
+                        googleLoginRepository.signInWithGoogleAnonymous()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
             }
 
             ErrorDismiss -> {
