@@ -19,7 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.R
-import com.oyetech.composebase.base.BaseScaffoldDeprecated
+import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenWithContentScreenSetup
 import com.oyetech.composebase.helpers.general.GeneralSettings
@@ -106,8 +106,7 @@ fun QuoteDetailScreen(
     contentOperationEvent: (ContentOperationEvent) -> Unit,
     contentOperationActive: Boolean,
 ) {
-
-    BaseScaffoldDeprecated {
+    BaseScaffold {
         Column {
 
             Column(
@@ -171,10 +170,7 @@ fun QuoteDetailScreen(
 
             }
         }
-
     }
-
-
 }
 
 sealed class QuoteDetailEvent {

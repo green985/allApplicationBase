@@ -32,7 +32,6 @@ import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigat
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator.navHostScreenSetup
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.domain.useCases.NavigationUseCase
-import com.oyetech.languageModule.keyset.LanguageKey.errorText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
@@ -90,7 +89,7 @@ class QuoteMainActivity : ComponentActivity() {
                         navController = navController,
                         startDestination = AllScreenNavigator.startApp,
                     ) {
-                        navHostScreenSetup(navController)
+                        navHostScreenSetup(navController, navigationUseCase)
                         quotesAppNavigation(navController)
                     }
                 }
@@ -101,7 +100,7 @@ class QuoteMainActivity : ComponentActivity() {
                         navController = navController,
                         startDestination = AllScreenNavigator.quoteStart,
                     ) {
-                        navHostScreenSetup(navController)
+                        navHostScreenSetup(navController, navigationUseCase)
                         quotesAppNavigation(navController)
                     }
                 }
@@ -113,7 +112,6 @@ class QuoteMainActivity : ComponentActivity() {
             lifecycleScope.launch(Dispatchers.IO) {
 //                testEventNavigator.triggerEvents(EventNavigatorList.cancelUserRegistrationOperation)
             }
-            Timber.d("onCreate Error texttttt: $errorText")
 
             // todo will be check later for auto login things looks like a block general navigator screen
             val content: View = findViewById(android.R.id.content)

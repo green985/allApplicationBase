@@ -19,12 +19,9 @@ import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProj
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.radioAppNavigation
 import com.oyetech.composebase.projectRadioFeature.theme.RadioAppTheme
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator
-import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator.navHostScreenSetup
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
-import com.oyetech.languageModule.keyset.LanguageKey.errorText
 import com.oyetech.radioservice.serviceUtils.PlayerServiceUtils
 import org.koin.java.KoinJavaComponent
-import timber.log.Timber
 
 /**
 Created by Erdi Özbek
@@ -55,12 +52,11 @@ class RadioMainActivity : ComponentActivity() {
                     navController = navController,
                     startDestination = AllScreenNavigator.startApp,
                 ) {
-                    navHostScreenSetup(navController)
+//                    navHostScreenSetup(navController, navigationUseCase)
                     radioAppNavigation(navController)
                     quotesAppNavigation(navController)
                 }
             }
-            Timber.d("onCreate Error texttttt: $errorText")
 
             // todo will be check later for auto login things looks like a block general navigator screen
             if (!GeneralSettings.isDebug()) {

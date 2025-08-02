@@ -12,7 +12,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.oyetech.composebase.base.BaseScaffoldDeprecated
+import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectQuotesFeature.quotes.listScreen.QuoteListScreenSetup
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarActionItems
@@ -41,9 +41,8 @@ fun QuotesHomeScreenSetup(
 
     val pagerState = rememberPagerState(
         pageCount = { uiState.tabEnumList.size })
-    BaseScaffoldDeprecated(
-        showTopBar = true,
-        topBarContent = {
+    BaseScaffold(
+        topBar = {
             QuoteToolbarSetup(
                 radioToolbarState,
                 onEvent = {
@@ -64,20 +63,19 @@ fun QuotesHomeScreenSetup(
                         }
                     }
                 })
+        },
+        content = {
+            Column(modifier = Modifier.padding(it)) {
+                QuotesHomeView(
+                    pagerState = pagerState,
+                    tabEnums = uiState.tabEnumList.toImmutableList(),
+                    tabNameList = uiState.tabEnumList.map { it.name }.toImmutableList(),
+                    navigationRoute = navigationRoute
+                )
+            }
         }
-    )
-    { padding ->
-        Column(modifier = Modifier.padding(padding)) {
-//            Spacer(modifier = Modifier.height(8.dp))
 
-            QuotesHomeView(
-                pagerState = pagerState,
-                tabEnums = uiState.tabEnumList.toImmutableList(),
-                tabNameList = uiState.tabEnumList.map { it.name }.toImmutableList(),
-                navigationRoute = navigationRoute
-            )
-        }
-    }
+    )
 
 
 }

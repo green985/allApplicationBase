@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -17,6 +18,7 @@ import com.oyetech.composebase.projectQuotesFeature.navigation.quotesAppNavigati
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppNavigationWrapperWithPlayerSetup
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
 import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.GeneralOperationScreenSetup
+import com.oyetech.domain.useCases.NavigationUseCase
 
 /**
 Created by Erdi Özbek
@@ -65,7 +67,10 @@ object AllScreenNavigator {
 
         )
 
-    fun NavGraphBuilder.navHostScreenSetup(navHostController: NavHostController) {
+    fun NavGraphBuilder.navHostScreenSetup(
+        navHostController: NavHostController,
+        navigationUseCase: NavigationUseCase,
+    ) {
         composable(startApp) {
             AllScreenNavigatorScreenSetup(
                 navigationRoute = { route ->
@@ -98,6 +103,11 @@ object AllScreenNavigator {
         // TabRadioAllList Route
         composable(quoteStart) {
             val navHostControllerQuote = rememberNavController()
+            LaunchedEffect(Unit) {
+                navigationUseCase.setNavigator { action ->
+                    navHostControllerQuote.navigate(action)
+                }
+            }
             GeneralOperationScreenSetup(
                 content =
                 {

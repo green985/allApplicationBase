@@ -17,7 +17,6 @@ import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
 import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.generalPlayground.GeneralPlaygroundVm
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
-import timber.log.Timber
 
 /**
 Created by Erdi Özbek
@@ -38,10 +37,6 @@ fun GeneralOperationScreenSetup(
     val loginOperationVM = koinInject<LoginOperationVM>()
 
     val loginUiState by loginOperationVM.loginOperationState.collectAsState()
-
-    if (loginUiState.isLoading) {
-        Timber.d("GeneralOperationScreenSetup: Login is loading")
-    }
 
     LoginOperationScreenSetup(
         uiState = loginUiState,
