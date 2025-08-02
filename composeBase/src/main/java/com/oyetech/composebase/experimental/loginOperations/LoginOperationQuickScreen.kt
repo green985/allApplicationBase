@@ -29,12 +29,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.base.updateState
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import kotlin.random.Random
 
 @Composable
 fun LoginOperationQuickScreen(
-    loginOperationVM: LoginOperationVM = koinViewModel(),
+    loginOperationVM: LoginOperationVM = koinInject(),
     onDismiss: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()

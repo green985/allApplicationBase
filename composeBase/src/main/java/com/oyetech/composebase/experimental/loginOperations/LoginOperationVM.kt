@@ -132,15 +132,17 @@ class LoginOperationVM(
     fun handleEvent(event: LoginOperationEvent) {
         when (event) {
             LoginClicked -> {
-                loginOperationState.value = LoginOperationUiState(isLoading = true)
-                viewModelScope.launch(getDispatcherIo()) {
-                    try {
-//                        googleLoginRepository.signInWithGoogle()
-                        googleLoginRepository.signInWithGoogleAnonymous()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                loginOperationState.updateState {
+                    LoginOperationUiState(isLoading = true)
                 }
+//                viewModelScope.launch(getDispatcherIo()) {
+//                    try {
+////                        googleLoginRepository.signInWithGoogle()
+//                        googleLoginRepository.signInWithGoogleAnonymous()
+//                    } catch (e: Exception) {
+//                        e.printStackTrace()
+//                    }
+//                }
             }
 
             ErrorDismiss -> {
@@ -173,7 +175,10 @@ class LoginOperationVM(
             }
 
             OnCancel -> {
-                if (deleteUserOperation()) return
+                viewModelScope.launch(getDispatcherIo()) {
+                    googleLoginRepository.removeUser(googleLoginRepository.getUserUid())
+                    uiEvent.emit(LoginOperationUiEvent.OnCancelUserCreation)
+                }
             }
 
             is AgeChanged -> {

@@ -5,13 +5,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.oyetech.composebase.baseViews.snackbar.SnacbarScreenSetup
+import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationScreenSetup
+import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
 import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.generalPlayground.GeneralPlaygroundVm
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
+import timber.log.Timber
 
 /**
 Created by Erdi Özbek
@@ -29,10 +35,21 @@ fun GeneralOperationScreenSetup(
 
     generalPlaygroundVm.initt()
 
+    val loginOperationVM = koinInject<LoginOperationVM>()
 
-    LoginOperationScreenSetup()
-    GeneralOperationScreen {
-        content()
+    val loginUiState by loginOperationVM.loginOperationState.collectAsState()
+
+    if (loginUiState.isLoading) {
+        Timber.d("GeneralOperationScreenSetup: Login is loading")
+    }
+
+    LoginOperationScreenSetup(
+        uiState = loginUiState,
+        onErrorDismiss = { loginOperationVM.handleEvent(LoginOperationEvent.ErrorDismiss) }
+    ) {
+        GeneralOperationScreen {
+            content()
+        }
     }
 }
 
