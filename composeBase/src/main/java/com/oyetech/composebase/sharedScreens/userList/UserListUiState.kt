@@ -20,4 +20,5 @@ sealed class UserListEvent : BaseEvent() {
 //    object Idlee : UserListEvent()
     object RegisterToUserList : UserListEvent()
     object RemoveUserFromList : UserListEvent()
+    object RefreshUserList : UserListEvent()
 }

@@ -78,36 +78,42 @@ class UserListVm(
         }
     }
 
-    fun onEvent(event: UserListEvent) {
-        when (event) {
-            RegisterToUserList -> {
-                viewModelScope.launch(getDispatcherIo()) {
-                    firebaseUserListOperationRepository.addUserToUserList().asResult()
-                        .collectLatest {
-                            Timber.d("User added to user list")
-                        }
+    override fun onEvent(event: Any) {
+        if (event is UserListEvent) {
+            when (event) {
+                RegisterToUserList -> {
+                    viewModelScope.launch(getDispatcherIo()) {
+                        firebaseUserListOperationRepository.addUserToUserList().asResult()
+                            .collectLatest {
+                                Timber.d("User added to user list")
+                            }
+                    }
+
                 }
 
-            }
-
-            RemoveUserFromList -> {
-                viewModelScope.launch(getDispatcherIo()) {
-                    firebaseUserListOperationRepository.removeUserFromUserList().asResult()
-                        .collectLatest {
-                            Timber.d("User removed from user list")
-                            refreshList()
-                        }
+                UserListEvent.RefreshUserList -> {
+                    refreshList()
                 }
-            }
 
-            is OnUserClick -> {
-                val itemDetail = listViewState.value.items[event.index]
-                navigationUseCase.navigate(
-                    QuoteAppProjectRoutes.MessageDetail.withArgs(
-                        ScreenKey.receiverUserId to itemDetail.userId,
+                RemoveUserFromList -> {
+                    viewModelScope.launch(getDispatcherIo()) {
+                        firebaseUserListOperationRepository.removeUserFromUserList().asResult()
+                            .collectLatest {
+                                Timber.d("User removed from user list")
+                                refreshList()
+                            }
+                    }
+                }
+
+                is OnUserClick -> {
+                    val itemDetail = listViewState.value.items[event.index]
+                    navigationUseCase.navigate(
+                        QuoteAppProjectRoutes.MessageDetail.withArgs(
+                            ScreenKey.receiverUserId to itemDetail.userId,
+                        )
                     )
-                )
 
+                }
             }
         }
     }

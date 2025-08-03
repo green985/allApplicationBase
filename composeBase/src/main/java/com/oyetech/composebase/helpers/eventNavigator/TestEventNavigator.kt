@@ -8,6 +8,7 @@ import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteListUiEv
 import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactWithMe.ContactUIEvent
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigatorEvent
 import com.oyetech.composebase.sharedScreens.settings.FacSettingsUiEvent
+import com.oyetech.composebase.sharedScreens.userList.UserListEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -39,7 +40,7 @@ class TestEventNavigator {
 
     fun triggerTestEvents(lifecycleScope: LifecycleCoroutineScope) {
         lifecycleScope.launch(Dispatchers.IO) {
-//            triggerEvents(EventNavigatorList.contactWithUsFullScopeOperation)
+            triggerEvents(EventNavigatorList.userListStartConversationOperation)
         }
 
     }
@@ -83,6 +84,12 @@ object EventNavigatorList {
         add(ContactUIEvent.UpdateMessage(""))
         add(ContactUIEvent.UpdateMessage("Test"))
         add(ContactUIEvent.Submit)
+    }
+
+    val userListStartConversationOperation = buildList<BaseEvent> {
+        add(AllScreenNavigatorEvent.OnNavigateToQuoteStart)
+        add(BottomNavigationEvent.NavigateToSelectedItem(2))
+        add(UserListEvent.OnUserClick(1))
     }
 
 }

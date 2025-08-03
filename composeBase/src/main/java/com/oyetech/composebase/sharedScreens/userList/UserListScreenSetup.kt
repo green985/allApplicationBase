@@ -93,7 +93,9 @@ fun UserListScreen(
                     PullToRefreshBox(
                         modifier = modifier,
                         isRefreshing = listViewState.isRefreshing,
-                        onRefresh = { listViewState.triggerRefresh?.invoke() },
+                        onRefresh = {
+                            onEvent.invoke(UserListEvent.RefreshUserList)
+                        },
                     ) {
                         LazyColumn(
                             state = lazyListState,
@@ -103,7 +105,6 @@ fun UserListScreen(
                                     itemContent = { index, itemDetail ->
                                         UserListItemView(modifier = Modifier.clickable {
                                             onEvent.invoke(UserListEvent.OnUserClick(index))
-
                                         }, uiState = itemDetail)
                                     })
                             },
