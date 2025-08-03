@@ -40,6 +40,7 @@ data class MessageDetailScreenUiState(
     val receiverId: String = "",
     val currentUserId: String = "",
     val conversationId: String = "",
+    val isConversationReady: Boolean = false,
 )
 
 data class MessageDetailUiState(

@@ -12,6 +12,8 @@ import com.oyetech.composebase.sharedScreens.messaging.MessageDetailEvent.OnScre
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.messaging.MessagesAllOperationRepository
+import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessageConversationData
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.Job
@@ -72,7 +74,7 @@ class MessageDetailVm(
             receiverId = receiverUserId,
             conversationId = conversationId,
             currentUserId = firebaseUserRepository.getUserId(),
-            toolbarTitleText = getToolbarTitle(),
+            toolbarTitleText = "",
         )
     )
 
@@ -93,20 +95,46 @@ class MessageDetailVm(
                         onSuccess = { conversationData ->
                             Timber.d("Conversation data: $conversationData")
                             conversationId = conversationData.conversationId
-
+                            uiState.updateState {
+                                copy(isConversationReady = true)
+                            }
+                            initToolbarTitleText(conversationData)
                             initMessageDetailOperation()
                         },
                         onFailure = {
                             listViewState.updateErrorInitial(it)
+                            uiState.updateState {
+                                copy(isConversationReady = false)
+                            }
+                            initToolbarTitleText(null, isError = true)
                         }
                     )
                 }
         }
     }
 
-    private fun getToolbarTitle(): String {
-        return messagingAllOperationRepository.currentUsername
-
+    private fun initToolbarTitleText(
+        conversationData: FirebaseMessageConversationData?,
+        isError: Boolean = false,
+    ) {
+        if (isError) {
+            uiState.updateState {
+                copy(
+                    toolbarTitleText = LanguageKey.unknownUserText,
+                )
+            }
+            return
+        }
+        if (conversationData != null) {
+            uiState.updateState {
+                Timber.d("initToolbarTitleText: ${conversationData.participantList}")
+                copy(
+                    toolbarTitleText = conversationData.participantList.filterNot {
+                        it.userId == firebaseUserRepository.getUserId()
+                    }.firstOrNull()?.username ?: LanguageKey.unknownUserText,
+                )
+            }
+        }
     }
 
     private fun initMessageDetailOperation() {
@@ -152,6 +180,9 @@ class MessageDetailVm(
         if (event is MessageDetailEvent) {
             when (event) {
                 is OnMessageSend -> {
+                    if (uiState.value.isConversationReady.not()) {
+                        return
+                    }
                     if (!event.triggered) {
                         uiState.updateState {
                             copy(onMessageSendTriggered = false)
