@@ -83,7 +83,6 @@ object EventNavigatorList {
         add(ContactUIEvent.UpdateMessage(""))
         add(ContactUIEvent.UpdateMessage("Test"))
         add(ContactUIEvent.Submit)
-
     }
 
 }
