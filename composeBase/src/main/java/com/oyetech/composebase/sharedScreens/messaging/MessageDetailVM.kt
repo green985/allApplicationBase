@@ -139,6 +139,7 @@ class MessageDetailVm(
 
     private fun initMessageDetailOperation() {
         uiEvent.tryEmit(MessageDetailUiEvent.OnConversationCreated)
+        setCurrentConversation(false)
         messagingAllOperationRepository.currentConversationId.value = conversationId
         firebaseMessagingRepository.initLocalMessageSendOperation(viewModelScope)
         loadMessageConversation()
@@ -235,7 +236,7 @@ class MessageDetailVm(
 
     }
 
-    fun setCurrentConversation(isExit: Boolean) {
+    private fun setCurrentConversation(isExit: Boolean) {
         if (isExit) {
             messagingAllOperationRepository.currentConversationId.value = ""
         } else {

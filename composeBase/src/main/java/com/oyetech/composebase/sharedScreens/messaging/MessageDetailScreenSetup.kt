@@ -100,7 +100,7 @@ fun MessageDetailScreenSetup(
                 }
 
                 OnConversationCreated -> {
-                    vm.setCurrentConversation(false)
+                    // todo will be maybe...
                 }
             }
         }
