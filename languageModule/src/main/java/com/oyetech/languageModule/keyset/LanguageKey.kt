@@ -11,6 +11,11 @@ Created by Erdi Özbek
  **/
 
 object LanguageKey {
+    var recordingStatusOff set(value) {} get() = LocalLanguageHelper.getStringWithKey("recordingStatusOff")
+    var voiceRecorderTitle set(value) {} get() = LocalLanguageHelper.getStringWithKey("voiceRecorderTitle")
+    var startRecording set(value) {} get() = LocalLanguageHelper.getStringWithKey("startRecording")
+    var stopRecording set(value) {} get() = LocalLanguageHelper.getStringWithKey("stopRecording")
+    var recordingStatusOn set(value) {} get() = LocalLanguageHelper.getStringWithKey("recordingStatusOn")
     var unknownUserText set(value) {} get() = LocalLanguageHelper.getStringWithKey("unknownUserText")
     var userFeedListTitle set(value) {} get() = LocalLanguageHelper.getStringWithKey("userFeedListTitle")
     var messageDetailTitle set(value) {} get() = LocalLanguageHelper.getStringWithKey("messageDetailTitle")

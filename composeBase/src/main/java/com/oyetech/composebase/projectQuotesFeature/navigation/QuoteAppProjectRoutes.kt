@@ -21,6 +21,7 @@ Created by Erdi Özbek
 
 object QuoteAppProjectRoutes {
 
+    val RecordSoundPage = Route("RecordSoundPage")
     val MoonOperation = Route("MoonOperationVm")
     val EditProfile = Route("EditProfile")
     val FacSettings = Route("FacSettings")

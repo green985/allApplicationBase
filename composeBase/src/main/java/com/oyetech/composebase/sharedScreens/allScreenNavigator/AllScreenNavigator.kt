@@ -32,40 +32,41 @@ object AllScreenNavigator {
     const val radioStart = "radioStart"
     const val quoteStart = "quoteStart"
 
-    val generalListOfScreen = listOf(
+    val generalListOfScreen =
+        QuoteAppProjectRoutes.javaClass.fields.map { it.toGenericString() }.toMutableList().apply {
+            addAll(
+                listOf(
+                    QuoteAppProjectRoutes.EditUserProfile2ScreenSetup.route,
+                    QuoteAppProjectRoutes.User2ProfileScreenSetup.route,
+                    QuoteAppProjectRoutes.FacSettings.route,
+                    QuoteAppProjectRoutes.MessageConversationList.route,
+                    QuoteAppProjectRoutes.MessageDetail.route,
 
-        // Quote App Routes
-//        QuoteAppProjectRoutes.MessagingList.route,
+                    QuoteAppProjectRoutes.AdviceQuoteDebug.route,
+                    QuoteAppProjectRoutes.QuoteAdviceScreen.route,
+                    QuoteAppProjectRoutes.QuoteSettings.route,
+                    QuoteAppProjectRoutes.QuoteAppHomepage.route,
+                    QuoteAppProjectRoutes.QuoteDetailRoute.route,
+                    QuoteAppProjectRoutes.QuoteAuthorList.route,
 
-        QuoteAppProjectRoutes.EditUserProfile2ScreenSetup.route,
-        QuoteAppProjectRoutes.User2ProfileScreenSetup.route,
-        QuoteAppProjectRoutes.FacSettings.route,
-        QuoteAppProjectRoutes.MessageConversationList.route,
-        QuoteAppProjectRoutes.MessageDetail.route,
+                    // Radio App Routes
+                    RadioAppProjectRoutes.TimerDialog.route,
+                    RadioAppProjectRoutes.TabRadioAllList.route,
+                    RadioAppProjectRoutes.RadioList.route,
+                    RadioAppProjectRoutes.RadioSearchList.route,
+                    RadioAppProjectRoutes.TabFav.route,
+                    RadioAppProjectRoutes.TabHistory.route,
+                    RadioAppProjectRoutes.TabCategories.route,
+                    RadioAppProjectRoutes.TabSettings.route,
+                    RadioAppProjectRoutes.ContactScreen.route,
+                    RadioAppProjectRoutes.QuotesListScreen.route,
+                    RadioAppProjectRoutes.CommentScreenWithContentId.route,
+                    RadioAppProjectRoutes.LoginOperationScreen.route,
+                    RadioAppProjectRoutes.CompleteProfileScreen.route,
 
-        QuoteAppProjectRoutes.AdviceQuoteDebug.route,
-        QuoteAppProjectRoutes.QuoteAdviceScreen.route,
-        QuoteAppProjectRoutes.QuoteSettings.route,
-        QuoteAppProjectRoutes.QuoteAppHomepage.route,
-        QuoteAppProjectRoutes.QuoteDetailRoute.route,
-        QuoteAppProjectRoutes.QuoteAuthorList.route,
-
-        // Radio App Routes
-        RadioAppProjectRoutes.TimerDialog.route,
-        RadioAppProjectRoutes.TabRadioAllList.route,
-        RadioAppProjectRoutes.RadioList.route,
-        RadioAppProjectRoutes.RadioSearchList.route,
-        RadioAppProjectRoutes.TabFav.route,
-        RadioAppProjectRoutes.TabHistory.route,
-        RadioAppProjectRoutes.TabCategories.route,
-        RadioAppProjectRoutes.TabSettings.route,
-        RadioAppProjectRoutes.ContactScreen.route,
-        RadioAppProjectRoutes.QuotesListScreen.route,
-        RadioAppProjectRoutes.CommentScreenWithContentId.route,
-        RadioAppProjectRoutes.LoginOperationScreen.route,
-        RadioAppProjectRoutes.CompleteProfileScreen.route,
-
-        )
+                    )
+            )
+        }
 
     fun NavGraphBuilder.navHostScreenSetup(
         navHostController: NavHostController,

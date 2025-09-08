@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.oyetech.composebase.experimental.loginOperations.CompleteProfileScreenSetup
+import com.oyetech.composebase.experimental.moonOperation.MoonOperationScreenSetup
 import com.oyetech.composebase.projectQuotesFeature.adviceQuote.AdviceQuoteScreenSetup
 import com.oyetech.composebase.projectQuotesFeature.authorListScreen.AuthorListScreen
 import com.oyetech.composebase.projectQuotesFeature.debug.adviceQuote.AdviceQuoteDebugScreenSetup
@@ -128,9 +129,7 @@ fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
     }
 
     composable(QuoteAppProjectRoutes.MoonOperation.route) {
-        FacSettingsScreenSetup(
-            navigationRoute = navigateRouteOperation(navController)
-        )
+        MoonOperationScreenSetup()
     }
 
     composable(QuoteAppProjectRoutes.UserList.route) {
