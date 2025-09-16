@@ -30,9 +30,12 @@ import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProj
 import com.oyetech.composebase.projectRadioFeature.theme.RadioAppTheme
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator.navHostScreenSetup
+import com.oyetech.composebase.sharedScreens.voiceRecord.service.DigitalNoteServiceStarter
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.domain.useCases.NavigationUseCase
+import com.oyetech.tools.contextHelper.requestNotificationPermission
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
 import timber.log.Timber
@@ -77,6 +80,15 @@ class QuoteMainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        Timber.d("QuoteMainActivity started")
+        requestNotificationPermission(this)
+        lifecycleScope.launch {
+            delay(3000)
+            DigitalNoteServiceStarter.start(
+                context = this@QuoteMainActivity,
+                mainActivityClass = QuoteMainActivity::class.java
+            )
+        }
         setContent {
             if (GeneralSettings.isDebug()) {
 
@@ -105,9 +117,9 @@ class QuoteMainActivity : ComponentActivity() {
                     }
                 }
             }
-            testEventNavigator.triggerTestEvents(
-                lifecycleScope,
-            )
+//            testEventNavigator.triggerTestEvents(
+//                lifecycleScope,
+//            )
 
             lifecycleScope.launch(Dispatchers.IO) {
 //                testEventNavigator.triggerEvents(EventNavigatorList.cancelUserRegistrationOperation)
@@ -170,6 +182,11 @@ class QuoteMainActivity : ComponentActivity() {
             }
         }
         askNotificationPermission()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        DigitalNoteServiceStarter.stop(this)
     }
 
     private fun askNotificationPermission() {

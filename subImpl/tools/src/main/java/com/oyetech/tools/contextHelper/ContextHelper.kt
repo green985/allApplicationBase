@@ -1,5 +1,6 @@
 package com.oyetech.tools.contextHelper
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.PendingIntent
@@ -15,10 +16,12 @@ import android.content.pm.PackageManager
 import android.content.pm.PackageManager.NameNotFoundException
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.VibrationEffect
 import android.os.Vibrator
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import com.oyetech.models.utils.const.ActivityNameConst
 import com.oyetech.models.utils.const.HelperConstant
@@ -158,4 +161,18 @@ fun Context.copyToClipboard(text: String) {
     val clipboardManager = this.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     val clip = ClipData.newPlainText("Copied Text", text)
     clipboardManager.setPrimaryClip(clip)
+}
+
+fun requestNotificationPermission(activity: Activity, requestCode: Int = 1001) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                activity,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                requestCode
+            )
+        }
+    }
 }

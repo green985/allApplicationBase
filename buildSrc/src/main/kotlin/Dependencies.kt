@@ -31,7 +31,7 @@ object Versions {
     const val kotlin = "2.0.20"
     const val kotlinReflect = "2.0.20"
     const val gradle = "4.1.0"
-    const val minSdk = 24
+    const val minSdk = 26
     const val targetSdk = 34
     const val compileSdk = 34
     const val appCompat = "1.2.0"

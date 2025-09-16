@@ -1,6 +1,3 @@
-import Versions.compileSdk
-import Versions.minSdk
-
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
@@ -90,5 +87,6 @@ dependencies {
 
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3") // En güncel sürümü kullanabilirsin
+    implementation("androidx.media:media:1.7.1")
 
 }
