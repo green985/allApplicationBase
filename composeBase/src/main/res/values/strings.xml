@@ -350,5 +350,7 @@
     <string name="context_menu_add_alarm">@string/action_alarm</string>
     <string name="context_menu_create_shortcut">@string/detail_create_shortcut</string>
     <string name="context_menu_delete">@string/action_delete</string>
+    <string name="acc_service_desc">Deneme acc service desc</string>
+    <string name="acc_service_summary">Deneme acc service summaryyyyy</string>
 
 </resources>

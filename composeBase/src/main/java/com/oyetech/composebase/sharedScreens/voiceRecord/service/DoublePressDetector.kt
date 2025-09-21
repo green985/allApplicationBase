@@ -2,7 +2,7 @@ package com.oyetech.composebase.sharedScreens.voiceRecord.service
 
 import android.os.SystemClock
 
-class DoublePressDetector(private val intervalMs: Long = 500L) {
+class DoublePressDetector(private val intervalMs: Long = 1000L) {
     private var lastUp = 0L
     private var lastDown = 0L
 

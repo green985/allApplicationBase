@@ -186,7 +186,7 @@ class QuoteMainActivity : ComponentActivity() {
 
     override fun onStop() {
         super.onStop()
-        DigitalNoteServiceStarter.stop(this)
+//        DigitalNoteServiceStarter.stop(this)
     }
 
     private fun askNotificationPermission() {
