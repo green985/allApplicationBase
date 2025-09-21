@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "227468642418",
+    "project_id": "frendly-anonymous-chat",
+    "storage_bucket": "frendly-anonymous-chat.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:227468642418:android:6d8a2560dc2ccf892e9aeb",
+        "android_client_info": {
+          "package_name": "com.oyetech.fac"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiPkbXdwsF7lISjXI5mASCpxPQjeHSIbA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
