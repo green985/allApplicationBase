@@ -1,47 +1,51 @@
-buildscript {
-    extra.apply {
-        set("kotlinVersion", libs.versions.kotlin)
-    }
-
-    dependencies {
-        classpath("com.android.tools.build:gradle:8.7.0")
-
-//         classpath("com.android.tools:r8:8.5.10")
-
-        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.nav}")
-        classpath(libs.kotlin.gradle.plugin)
-        classpath("org.jetbrains.kotlinx:kover:0.5.0")
-        classpath("com.google.gms:google-services:4.4.2")
-        classpath("com.google.firebase:firebase-crashlytics-gradle:3.0.2")
-
-    }
-
-}
-
-ksp {
-
-    arg("moshi.generateProguardRules", "false")
-}
 plugins {
-    id("com.android.application") version "8.7.0" apply false
-    id("com.android.library") version "8.7.0" apply false
-    id("org.jetbrains.kotlin.plugin.compose") version "2.2.20" apply false
-    id("org.jetbrains.kotlin.android") version "2.2.20" apply false
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.2.20" apply false
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.kotlin.compose) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.serialization) apply false
+
+    alias(libs.plugins.ktlint)              // genelde root’ta apply true
+    alias(libs.plugins.lsparanoid) apply false
+    alias(libs.plugins.detekt)
+    alias(libs.plugins.ksp) apply false
 
 
-    id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
-    id("org.lsposed.lsparanoid") version "0.5.2" apply false
-    id("io.gitlab.arturbosch.detekt").version("1.20.0-RC2")
-    id("com.android.test") version "8.7.0" apply false
-    id("androidx.baselineprofile") version "1.2.4" apply false
-    id("com.google.devtools.ksp") version "2.2.20-2.0.3"
-
+    alias(libs.plugins.google.services) apply false
+    alias(libs.plugins.crashlytics) apply false
+    alias(libs.plugins.kover)               // genelde root’ta apply true
+    alias(libs.plugins.safe.args) apply false
 }
-apply(plugin = "kover")
 
+subprojects {
+    // Kotlin için toolchain
+    plugins.withId("org.jetbrains.kotlin.android") {
+        extensions.configure<org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension> {
+            jvmToolchain(17)
+        }
+    }
+    plugins.withId("org.jetbrains.kotlin.jvm") {
+        extensions.configure<org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension> {
+            jvmToolchain(17)
+        }
+    }
 
-tasks.register("clean", Delete::class) {
-    delete(rootProject.buildDir)
+    // Android modülleri için Java 17
+    plugins.withId("com.android.application") {
+        extensions.configure<com.android.build.gradle.BaseExtension>("android") {
+            compileOptions {
+                sourceCompatibility = JavaVersion.VERSION_17
+                targetCompatibility = JavaVersion.VERSION_17
+            }
+        }
+    }
+    plugins.withId("com.android.library") {
+        extensions.configure<com.android.build.gradle.BaseExtension>("android") {
+            compileOptions {
+                sourceCompatibility = JavaVersion.VERSION_17
+                targetCompatibility = JavaVersion.VERSION_17
+            }
+        }
+    }
 }
 

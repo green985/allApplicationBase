@@ -19,8 +19,16 @@ glide-compose = "1.0.0-beta01"
 kotlinx-collections-immutable = "0.3.8"
 kotlinx-serialization-json = "1.6.3"
 timber = "4.7.1"
+ksp = "2.2.20-2.0.3"
+ktlint = "10.2.1"
+detekt = "1.20.0-RC2"
+lsparanoid = "0.5.2"
+google-services = "4.4.2"
+crashlytics-gradle = "3.0.2"
+kover = "0.5.0"
 
 [libraries]
+
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
 
@@ -55,4 +63,18 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-test = { id = "com.android.test", version.ref = "agp" }
+
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize" }
+
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+lsparanoid = { id = "org.lsposed.lsparanoid", version.ref = "lsparanoid" }
+google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
+crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics-gradle" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+safe-args = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation" }
+fooJayResolver = { id = "org.gradle.toolchains.foojay-resolver-convention", version = "0.9.0" }

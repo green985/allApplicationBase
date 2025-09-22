@@ -11,14 +11,6 @@ android {
 
     compileSdk = libs.versions.compile.sdk.get().toInt()
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-
-    }
     buildFeatures {
         compose = true
     }
@@ -57,7 +49,6 @@ dependencies {
     implementation(libs.timber)
 
     implementation(project(":subImpl:tools"))
-    implementation(project(":subImpl:denemeModule"))
     implementation(project(Modules.domain))
     implementation(project(Modules.glideModule))
     implementation(project(Modules.model))

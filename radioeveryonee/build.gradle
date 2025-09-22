@@ -10,7 +10,6 @@ plugins {
     id 'org.lsposed.lsparanoid'
     id 'com.google.firebase.crashlytics'
     id 'org.jetbrains.kotlin.plugin.compose'
-    id 'androidx.baselineprofile'
 }
 ext.getArtifactNameRadio = {
     defaultConfig ->
