@@ -10,7 +10,6 @@ plugins {
     id 'org.lsposed.lsparanoid'
     id 'com.google.firebase.crashlytics'
     id 'org.jetbrains.kotlin.plugin.compose'
-    id 'androidx.baselineprofile'
     id 'kotlinx-serialization'
 }
 ext.getArtifactNameRadio = {
@@ -106,8 +105,6 @@ android {
 dependencies {
     implementation project(Modules.diModule)
     implementation project(Modules.composeBase)
-    implementation 'androidx.profileinstaller:profileinstaller:1.4.1'
-    baselineProfile project(':quoteBaseline')
 }
 
 
