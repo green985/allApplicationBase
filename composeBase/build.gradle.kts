@@ -9,6 +9,7 @@ plugins {
 android {
 
 namespace = "com.oyetech.composebase"
+    dd
 
     compileSdk = libs.versions.compile.sdk.get().toInt()
 
