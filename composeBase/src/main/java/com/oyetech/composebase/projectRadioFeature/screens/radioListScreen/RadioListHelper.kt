@@ -103,7 +103,11 @@ fun RadioListVM.setFlowableWithListType() {
     when (radioListType) {
         Favorites.name -> {
             radioUIStateFlow =
-                flowable.mapToResponse(radioDataOperationUseCase, radioOperationUseCase)
+                flowable.mapToResponse(
+                    baseViewModel = this,
+                    radioDataOperationUseCase,
+                    radioOperationUseCase
+                )
                     .map { favList ->
                         val itemLists = if (complexItemViewState.value.isRefreshing) {
                             favList.toImmutableList()
@@ -118,7 +122,11 @@ fun RadioListVM.setFlowableWithListType() {
 
         else -> {
             radioUIStateFlow =
-                flowable.mapToResponse(radioDataOperationUseCase, radioOperationUseCase)
+                flowable.mapToResponse(
+                    baseViewModel = this,
+                    radioDataOperationUseCase,
+                    radioOperationUseCase
+                )
         }
     }
 }

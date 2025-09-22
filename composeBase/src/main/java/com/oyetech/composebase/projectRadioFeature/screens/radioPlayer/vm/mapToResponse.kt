@@ -15,15 +15,15 @@ import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.withContext
 
-context(BaseViewModel)
 @OptIn(ExperimentalCoroutinesApi::class)
 fun Flow<List<RadioStationResponseData>>.mapToResponse(
+    baseViewModel: BaseViewModel,
     radioDataOperationUseCase: RadioDataOperationUseCase,
     radioOperationUseCase: RadioOperationUseCase,
 ): Flow<ImmutableList<RadioUIState>> {
     return this.flatMapConcat {
         // map too radioResponse...
-        withContext(getDispatcherIo()) {
+        withContext(baseViewModel.getDispatcherIo()) {
 
             val latestRadioData = radioDataOperationUseCase.getLastRadioData()
             val latestRadioState = radioOperationUseCase.getPlayerState()

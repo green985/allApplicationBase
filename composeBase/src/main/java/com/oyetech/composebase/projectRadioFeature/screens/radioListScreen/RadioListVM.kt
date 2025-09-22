@@ -156,6 +156,7 @@ class RadioListVM(
 
         viewModelScope.launch(getDispatcherIo()) {
             flowOf(sortedList as List<RadioStationResponseData>).mapToResponse(
+                baseViewModel = this@RadioListVM,
                 radioDataOperationUseCase,
                 radioOperationUseCase
             ).collect {
@@ -171,7 +172,7 @@ class RadioListVM(
         it: RadioUIEvent,
         complexItemViewState: MutableStateFlow<ComplexItemListState<RadioUIState>>?,
     ) {
-        radioPlayerViewModelSlice.handleRadioEvent(it, complexItemViewState)
+        radioPlayerViewModelSlice.handleRadioEvent(baseViewModel = this, it, complexItemViewState)
     }
 
     fun deleteList() {

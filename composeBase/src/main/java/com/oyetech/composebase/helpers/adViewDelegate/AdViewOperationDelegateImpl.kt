@@ -20,8 +20,10 @@ Created by Erdi Özbek
 class AdViewOperationDelegateImpl : AdViewOperationDelegate {
     override val adUiState = MutableStateFlow<ImmutableList<View>>(persistentListOf())
 
-    context(BaseViewModel)
-    override fun getAdViewWithIdList(adsHelperUseCase: AdsHelperUseCase, vararg ids: String) {
+    override fun BaseViewModel.getAdViewWithIdList(
+        adsHelperUseCase: AdsHelperUseCase,
+        vararg ids: String,
+    ) {
         viewModelScope.launch(getDispatcherIo()) {
             adsHelperUseCase.getAdViewWithIdListWithStateFlow(*ids).collectLatest {
                 val x = it.toImmutableList()

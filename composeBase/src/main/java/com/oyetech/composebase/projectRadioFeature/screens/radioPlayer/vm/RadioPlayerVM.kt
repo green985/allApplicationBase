@@ -89,7 +89,7 @@ class RadioPlayerVM(
         it: RadioUIEvent,
         complexItemViewState: MutableStateFlow<ComplexItemListState<RadioUIState>>?,
     ) {
-        radioPlayerViewModelSlice.handleRadioEvent(it, complexItemViewState)
+        radioPlayerViewModelSlice.handleRadioEvent(baseViewModel = this, it, complexItemViewState)
     }
 
 }

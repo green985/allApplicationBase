@@ -16,8 +16,7 @@ interface AdViewOperationDelegate {
     val adUiState: MutableStateFlow<ImmutableList<View>>
 //    fun getAdViewWithIdList(adsHelperUseCase : AdsHelperUseCase,vararg ids: String)
 
-    context(BaseViewModel)
-    fun getAdViewWithIdList(
+    fun BaseViewModel.getAdViewWithIdList(
         adsHelperUseCase: AdsHelperUseCase,
         vararg ids: String,
     )

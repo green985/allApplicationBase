@@ -26,8 +26,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 interface IRadioPlayerViewModelSlice {
-    context(BaseViewModel)
     fun handleRadioEvent(
+        baseViewModel: BaseViewModel,
         it: RadioUIEvent,
         complexItemViewState: MutableStateFlow<ComplexItemListState<RadioUIState>>?,
     )
@@ -44,8 +44,8 @@ class RadioPlayerViewModelSliceImp(
     private val radioDataOperationUseCase: RadioDataOperationUseCase,
 ) : IRadioPlayerViewModelSlice {
 
-    context(BaseViewModel)
     override fun handleRadioEvent(
+        baseViewModel: BaseViewModel,
         it: RadioUIEvent,
         complexItemViewState: MutableStateFlow<ComplexItemListState<RadioUIState>>?,
     ) {
@@ -60,7 +60,7 @@ class RadioPlayerViewModelSliceImp(
             }
 
             is ToggleFavorite -> {
-                handleFavEvent(it.state)
+                handleFavEvent(baseViewModel, it.state)
             }
 
             is ExpandItem -> {
@@ -68,7 +68,7 @@ class RadioPlayerViewModelSliceImp(
             }
 
             is Play -> {
-                playPauseSelectedRadio(it.state)
+                playPauseSelectedRadio(baseViewModel, it.state)
             }
 
             is Next -> {
@@ -80,7 +80,7 @@ class RadioPlayerViewModelSliceImp(
             }
 
             is AddFavorite -> {
-                favOperation(it.state)
+                favOperation(baseViewModel, it.state)
             }
         }
     }
@@ -89,8 +89,8 @@ class RadioPlayerViewModelSliceImp(
         // make analytics operation later...
     }
 
-    context(BaseViewModel)
     private fun playPauseSelectedRadio(
+        baseViewModel: BaseViewModel,
         selectedItem: RadioUIState,
     ) {
         if (selectedItem.playerState == Playing) {
@@ -98,22 +98,21 @@ class RadioPlayerViewModelSliceImp(
             return
         }
 
-        viewModelScope.launch(getDispatcherIo()) {
+        baseViewModel.viewModelScope.launch(baseViewModel.getDispatcherIo()) {
             val selectedRadioStation =
                 radioOperationUseCase.findStation(selectedItem.stationuuid)
             radioOperationUseCase.startPlayer(selectedRadioStation)
         }
     }
 
-    context(BaseViewModel)
     private fun handleFavEvent(
+        baseViewModel: BaseViewModel,
         state: RadioUIState,
     ) {
-        favOperation(state)
+        favOperation(baseViewModel, state)
     }
 
-    context(BaseViewModel)
-    fun favOperation(itemData: RadioUIState?) {
+    fun favOperation(baseViewModel: BaseViewModel, itemData: RadioUIState?) {
 
         val radioStationId = if (itemData == null) {
             radioDataOperationUseCase.getLastRadioData()?.stationuuid
@@ -122,7 +121,7 @@ class RadioPlayerViewModelSliceImp(
         }
 
 
-        viewModelScope.launch(getDispatcherIo()) {
+        baseViewModel.viewModelScope.launch(baseViewModel.getDispatcherIo()) {
             val radioModel =
                 radioStationId?.let { radioOperationUseCase.findStation(it) } ?: return@launch
 
@@ -133,25 +132,23 @@ class RadioPlayerViewModelSliceImp(
             }
 
             if (model != null) {
-                removeFavList(radioModel)
+                removeFavList(baseViewModel, radioModel)
             } else {
-                putFavList(radioModel)
+                putFavList(baseViewModel, radioModel)
             }
         }
 
         return
     }
 
-    context(BaseViewModel)
-    fun putFavList(itemData: RadioStationResponseData) {
-        GlobalScope.launch(getDispatcherIo()) {
+    fun putFavList(baseViewModel: BaseViewModel, itemData: RadioStationResponseData) {
+        GlobalScope.launch(baseViewModel.getDispatcherIo()) {
             radioDataOperationUseCase.addToFavList(itemData)
         }
     }
 
-    context(BaseViewModel)
-    fun removeFavList(itemData: RadioStationResponseData) {
-        GlobalScope.launch(getDispatcherIo()) {
+    fun removeFavList(baseViewModel: BaseViewModel, itemData: RadioStationResponseData) {
+        GlobalScope.launch(baseViewModel.getDispatcherIo()) {
             radioDataOperationUseCase.removeToFavList(itemData)
         }
     }

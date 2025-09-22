@@ -84,6 +84,7 @@ class RadioSearchVM(
                 }
                 radioStationListOperationUseCase.getStationListWithSearchParams(query)
                     .mapToResponse(
+                        baseViewModel = this@RadioSearchVM,
                         radioDataOperationUseCase,
                         radioOperationUseCase
                     ).asResult().collectLatest {
