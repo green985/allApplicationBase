@@ -10,16 +10,6 @@ android {
     namespace = "com.oyetech.composebase"
     compileSdk = Versions.compileSdk
 
-    defaultConfig {
-        minSdk = Versions.minSdk
-
-//        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-        vectorDrawables {
-            useSupportLibrary = true
-        }
-    }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -30,12 +20,6 @@ android {
     }
     buildFeatures {
         compose = true
-    }
-
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
     }
     lint {
         disable.add("UnusedMaterial3ScaffoldPaddingParameter")
