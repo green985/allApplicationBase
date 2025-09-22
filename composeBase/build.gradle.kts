@@ -1,14 +1,15 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
     id("org.jetbrains.kotlin.plugin.compose")
-    id("kotlinx-serialization")
-    id("kotlin-parcelize")
+    id("org.jetbrains.kotlin.plugin.serialization")
+    id("org.jetbrains.kotlin.plugin.parcelize")
 }
 
 android {
     namespace = "com.oyetech.composebase"
-    compileSdk = Versions.compileSdk
+
+    compileSdk = libs.versions.compile.sdk.get().toInt()
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -27,33 +28,33 @@ android {
 }
 
 dependencies {
-    implementation(platform("androidx.compose:compose-bom:2024.09.02"))
-    implementation(platform("io.insert-koin:koin-bom:3.5.0"))
+    implementation(platform(libs.compose.bom))
+    implementation(platform(libs.koin.bom))
 
-    implementation("androidx.core:core-ktx:1.2.0")
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    implementation("androidx.media:media:1.7.1")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.media)
 
-    implementation("androidx.activity:activity-compose:1.9.2")
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3:1.3.0")
-    implementation("androidx.compose.runtime:runtime:1.7.7")
-    implementation("androidx.compose.foundation:foundation:1.7.7")
-    implementation("androidx.paging:paging-compose:3.3.5")
-    implementation("androidx.navigation:navigation-compose:2.8.6")
-    implementation("androidx.navigation:navigation-runtime-ktx:2.8.6")
+    implementation(libs.activity.compose)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.graphics)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.runtime)
+    implementation(libs.compose.foundation)
+    implementation(libs.paging.compose)
+    implementation(libs.navigation.compose)
+    implementation(libs.navigation.runtime.ktx)
 
-    implementation("io.insert-koin:koin-core")
-    implementation("io.insert-koin:koin-androidx-compose")
-    implementation("io.insert-koin:koin-androidx-compose-navigation")
+    implementation(libs.koin.core)
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.androidx.compose.navigation)
 
-    implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
-    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.8")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
-    implementation("com.jakewharton.timber:timber:4.7.1")
+    implementation(libs.glide.compose)
+    implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.timber)
 
     implementation(project(":subImpl:tools"))
     implementation(project(":subImpl:denemeModule"))
@@ -62,7 +63,4 @@ dependencies {
     implementation(project(Modules.model))
     implementation(project(Modules.radioService))
     implementation(project(Modules.languageModule))
-
-
-
 }
