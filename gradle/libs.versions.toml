@@ -1,11 +1,12 @@
 [versions]
 compile-sdk = "36"
-kotlin = "2.0.20"
+kotlin = "2.2.20"
 agp = "8.7.0"
 compose-bom = "2024.09.02"
 koin-bom = "3.5.0"
 appcompat = "1.7.0"
 core-ktx = "1.13.1"
+kotlin-gradle-plugin = "2.2.20"
 lifecycle = "2.7.0"
 media = "1.7.1"
 activity-compose = "1.9.2"
@@ -35,6 +36,7 @@ compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview"
 compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "foundation" }
 compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "runtime" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin-gradle-plugin" }
 navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
 navigation-runtime-ktx = { module = "androidx.navigation:navigation-runtime-ktx", version.ref = "navigation" }
 paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
