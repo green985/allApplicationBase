@@ -26,7 +26,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
-        freeCompilerArgs += "-Xcontext-receivers"
+
     }
     buildFeatures {
         compose = true
@@ -68,6 +68,7 @@ dependencies {
     implementation(project(Modules.model))
     implementation(project(Modules.radioService))
     implementation(project(Modules.languageModule))
+    implementation(project(":subImpl:denemeModule"))
 
     implementation(Libraries.timber)
     api(Libraries.koin)

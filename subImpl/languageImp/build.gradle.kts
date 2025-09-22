@@ -19,7 +19,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
-        freeCompilerArgs += "-Xcontext-receivers"
+
     }
     packaging {
         resources {
