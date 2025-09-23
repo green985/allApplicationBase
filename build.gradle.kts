@@ -18,7 +18,6 @@ plugins {
 }
 
 subprojects {
-    // Kotlin için toolchain
     plugins.withId("org.jetbrains.kotlin.android") {
         extensions.configure<org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension> {
             jvmToolchain(17)
@@ -30,7 +29,6 @@ subprojects {
         }
     }
 
-    // Android modülleri için Java 17
     plugins.withId("com.android.application") {
         extensions.configure<com.android.build.gradle.BaseExtension>("android") {
             compileOptions {

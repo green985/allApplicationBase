@@ -117,7 +117,6 @@ fun NavGraphBuilder.quotesAppNavigation(navController: NavController) {
         val receiverUserId = it.arguments?.getString(ScreenKey.receiverUserId) ?: ""
         UserProfileScreenSetup(
             receiverUserId = receiverUserId,
-            navigationRoute = navigateRouteOperation(navController)
         )
     }
 

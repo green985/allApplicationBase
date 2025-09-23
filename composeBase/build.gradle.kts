@@ -55,4 +55,5 @@ dependencies {
     implementation(project(Modules.model))
     implementation(project(Modules.radioService))
     implementation(project(Modules.languageModule))
+    debugImplementation(libs.androidx.ui.tooling)
 }
