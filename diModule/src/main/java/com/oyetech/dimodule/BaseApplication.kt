@@ -82,7 +82,7 @@ class BaseApplication : Application(), VolumeDoublePressListener {
     }
 
     // CONFIGURATION ---
-    open fun configureDi() = startKoin {
+    fun configureDi() = startKoin {
         androidContext(this@BaseApplication)
         // androidLogger(Level.DEBUG)
         modules(AppComponent.appComponentt)

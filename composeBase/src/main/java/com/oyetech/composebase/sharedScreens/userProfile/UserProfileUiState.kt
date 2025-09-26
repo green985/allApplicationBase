@@ -32,8 +32,6 @@ data class EditProfileUiState(
 )
 
 sealed class EditProfileEvent {
-    data class Idle(val data: Int) : EditProfileEvent()
-    object Idlee : EditProfileEvent()
     data class OnBiographyTextChange(val biographyText: String) : EditProfileEvent()
     data class OnImageSlotClick(val index: Int) : EditProfileEvent()
     data class OnImageSelected(val imageUri: String) : EditProfileEvent()
