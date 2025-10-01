@@ -3,7 +3,6 @@ package com.oyetech.composebase.projectQuestionsFeature.adminApprove
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.base.BaseUIEvent
-import com.oyetech.composebase.base.BaseUIState
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.domain.useCases.NavigationUseCase
@@ -15,10 +14,10 @@ import kotlinx.coroutines.launch
 
 // UI state for Admin Approve Questions
 data class AdminApproveQuestionUiState(
-    val isLoading: Boolean = false,
     val errorText: String = "",
+    val isLoading: Boolean = false,
     val pendingCountText: String = "0 pending",
-) : BaseUIState()
+)
 
 // UI events
 sealed class AdminApproveQuestionUiEvent : BaseUIEvent() {

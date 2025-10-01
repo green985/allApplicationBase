@@ -19,8 +19,6 @@ abstract class BaseEvent {
 }
 
 abstract class BaseUIState(
-    open val isLoading: Boolean = false,
-    open val errorMessage: String? = null,
 )
 
 inline fun <T> MutableStateFlow<T>.updateState(update: T.() -> T) {
