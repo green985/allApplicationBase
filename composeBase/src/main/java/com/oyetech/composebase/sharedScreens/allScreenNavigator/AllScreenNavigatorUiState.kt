@@ -15,4 +15,5 @@ sealed class AllScreenNavigatorEvent : BaseEvent() {
 
     object OnNavigateToRadioStart : AllScreenNavigatorEvent()
     object OnNavigateToQuoteStart : AllScreenNavigatorEvent()
+    object OnNavigateToQuestionStart : AllScreenNavigatorEvent()
 }

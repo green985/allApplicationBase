@@ -62,29 +62,31 @@ fun AllScreenNavigatorScreenSetup(
                 horizontalArrangement = Arrangement.Center
             ) {
                 Button(onClick = {
-                    viewModel.onEvent(AllScreenNavigatorEvent.OnNavigateToRadioStart)
-                }) {
-                    Text(text = "Radio Startttt", style = MaterialTheme.typography.titleLarge)
-                }
-            }
-
-            Spacer(modifier = Modifier.padding(16.dp))
-            Row(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Button(onClick = {
-                    viewModel.onEvent(AllScreenNavigatorEvent.OnNavigateToQuoteStart)
+                    viewModel.onEvent(AllScreenNavigatorEvent.OnNavigateToQuestionStart)
                 }) {
                     Text(
-                        text = "Quote Application Start",
+                        text = "Question Application Start",
                         style = MaterialTheme.typography.titleLarge
                     )
                 }
             }
+//            Spacer(modifier = Modifier.padding(16.dp))
+//            Row(
+//                modifier = Modifier
+//                    .padding(8.dp)
+//                    .fillMaxWidth(),
+//                verticalAlignment = Alignment.CenterVertically,
+//                horizontalArrangement = Arrangement.Center
+//            ) {
+//                Button(onClick = {
+//                    viewModel.onEvent(AllScreenNavigatorEvent.OnNavigateToQuoteStart)
+//                }) {
+//                    Text(
+//                        text = "Quote Application Start",
+//                        style = MaterialTheme.typography.titleLarge
+//                    )
+//                }
+//            }
 
             LazyColumn(
                 state = rememberLazyListState(),

@@ -12,6 +12,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.oyetech.composebase.projectQuestionsFeature.main.QuestionMainScreen
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteBottomNavigationView
 import com.oyetech.composebase.projectQuotesFeature.navigation.quotesAppNavigation
@@ -81,25 +82,31 @@ object AllScreenNavigator {
             )
         }
 
+        composable(questionAppStart) {
+            QuestionMainScreen(
+                navHostController, navigationUseCase
+            )
+        }
+
         // TabRadioAllList Route
         composable(radioStart) {
             val navHostControllerRadio = rememberNavController()
             GeneralOperationScreenSetup(
                 content =
-                {
-                    Column(
-                        verticalArrangement = Arrangement.Bottom,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background)
-                    ) {
-                        RadioAppNavigationWrapperWithPlayerSetup(
-                            navController = navHostControllerRadio,
-                            startDestination = RadioAppProjectRoutes.TabRadioAllList.route
-                        )
+                    {
+                        Column(
+                            verticalArrangement = Arrangement.Bottom,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.background)
+                        ) {
+                            RadioAppNavigationWrapperWithPlayerSetup(
+                                navController = navHostControllerRadio,
+                                startDestination = RadioAppProjectRoutes.TabRadioAllList.route
+                            )
 
-                    }
-                }, navController = navHostControllerRadio
+                        }
+                    }, navController = navHostControllerRadio
             )
         }
         // TabRadioAllList Route
@@ -112,32 +119,32 @@ object AllScreenNavigator {
             }
             GeneralOperationScreenSetup(
                 content =
-                {
-                    Column(
-                        verticalArrangement = Arrangement.Bottom,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background)
-                    ) {
+                    {
                         Column(
                             verticalArrangement = Arrangement.Bottom,
                             modifier = Modifier
                                 .fillMaxSize()
-                                .weight(1f)
+                                .background(MaterialTheme.colorScheme.background)
                         ) {
-                            NavHost(
-                                navController = navHostControllerQuote,
-                                startDestination = QuoteAppProjectRoutes.quoteApplicationBottomTabNavList.first().path,
+                            Column(
+                                verticalArrangement = Arrangement.Bottom,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .weight(1f)
                             ) {
+                                NavHost(
+                                    navController = navHostControllerQuote,
+                                    startDestination = QuoteAppProjectRoutes.quoteApplicationBottomTabNavList.first().path,
+                                ) {
 //                                radioAppNavigation(navHostControllerQuote)
-                                quotesAppNavigation(navHostControllerQuote)
+                                    quotesAppNavigation(navHostControllerQuote)
+                                }
                             }
+                            QuoteBottomNavigationView(
+                                navController = navHostControllerQuote
+                            )
                         }
-                        QuoteBottomNavigationView(
-                            navController = navHostControllerQuote
-                        )
-                    }
-                }, navController = navHostControllerQuote
+                    }, navController = navHostControllerQuote
             )
         }
     }

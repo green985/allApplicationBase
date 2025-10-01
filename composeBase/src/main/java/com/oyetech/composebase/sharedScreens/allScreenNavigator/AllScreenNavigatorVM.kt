@@ -36,6 +36,11 @@ class AllScreenNavigatorVM(
                     navigationUseCase.navigate(AllScreenNavigator.quoteStart)
                 }
 
+                is AllScreenNavigatorEvent.OnNavigateToQuestionStart -> {
+                    // Handle idle event if needed
+                    navigationUseCase.navigate(AllScreenNavigator.questionAppStart)
+                }
+
                 is NavigateListItemClicked -> {
                     // Handle item click event
                     navigationUseCase.navigate(event.navigationRoute)
