@@ -1,4 +1,4 @@
-package com.oyetech.composebase.projectRadioFeature.theme
+package com.oyetech.composebase.projectQuestionsFeature.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -31,28 +31,3 @@ fun RadioAppTheme(
         content = content
     )
 }
-
-@Composable
-fun QuoteAppTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
-    content: @Composable() () -> Unit,
-) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> mediumContrastDarkColorScheme
-        else -> mediumContrastLightColorScheme
-    }
-
-    MaterialTheme(
-        colorScheme = darkScheme,
-        typography = AppTypography,
-        content = content
-    )
-}
-

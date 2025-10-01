@@ -1,4 +1,4 @@
-package com.oyetech.composebase.projectRadioFeature.theme
+package com.oyetech.composebase.projectQuestionsFeature.theme
 import androidx.compose.ui.graphics.Color
 
 val BrandPrimary = Color(0xFFFFB300) // amber düz

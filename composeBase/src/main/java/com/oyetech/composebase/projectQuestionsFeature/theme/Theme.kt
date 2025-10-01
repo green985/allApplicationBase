@@ -1,4 +1,4 @@
-package com.oyetech.composebase.projectRadioFeature.theme
+package com.oyetech.composebase.projectQuestionsFeature.theme
 
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
