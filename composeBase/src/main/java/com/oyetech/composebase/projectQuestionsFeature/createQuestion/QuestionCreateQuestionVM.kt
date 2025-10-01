@@ -3,6 +3,8 @@ package com.oyetech.composebase.projectQuestionsFeature.createQuestion
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
+import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
+import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -11,6 +13,7 @@ import kotlinx.coroutines.launch
 
 class QuestionCreateQuestionVm(
     appDispatchers: AppDispatchers,
+    private val navigationUseCase: NavigationUseCase,
 ) : BaseViewModel(appDispatchers) {
 
     val uiState = MutableStateFlow(QuestionCreateQuestionScreenUiState())
@@ -56,6 +59,7 @@ class QuestionCreateQuestionVm(
             // TODO: integrate with repository when available
             // Simulate success
             uiState.updateState { copy(isLoading = false, isSubmitted = true) }
+            navigationUseCase.navigate(QuestionAppProjectRoutes.QuestionAppHomepage.route)
             uiEvent.tryEmit(QuestionCreateQuestionUiEvent.OnSubmitSuccess)
         }
     }

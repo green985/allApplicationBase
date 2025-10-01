@@ -2,7 +2,6 @@ package com.oyetech.composebase.projectQuestionsFeature.createQuestion
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -34,15 +33,14 @@ fun QuestionCreateQuestionScreenSetup(
 
     QuestionCreateQuestionScreen(
         uiState = uiState,
-        onEvent = vm::onEvent,
-        contentPadding = PaddingValues(0.dp)
+        onEvent = { event: QuestionCreateQuestionEvent -> vm.onEvent(event) },
     )
 
     LaunchedEffect(Unit) {
         vm.uiEvent.collectLatest { event ->
             when (event) {
                 is QuestionCreateQuestionUiEvent.OnSubmitSuccess -> {
-                    // navigate back or show toast in future
+                    // Navigation is handled inside ViewModel via NavigationUseCase
                 }
 
                 is QuestionCreateQuestionUiEvent.OnSubmitError -> {
@@ -75,14 +73,12 @@ private fun QuestionCreateQuestionToolbar(title: String) {
 @Composable
 private fun QuestionCreateQuestionContent(
     uiState: QuestionCreateQuestionScreenUiState,
-    onEvent: (Any) -> Unit,
-    contentPadding: PaddingValues,
+    onEvent: (QuestionCreateQuestionEvent) -> Unit,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier
             .fillMaxSize()
-            .padding(contentPadding)
             .padding(12.dp)
     ) {
         OutlinedTextField(
@@ -112,17 +108,22 @@ private fun QuestionCreateQuestionContent(
 @Composable
 private fun QuestionCreateQuestionScreen(
     uiState: QuestionCreateQuestionScreenUiState,
-    onEvent: (Any) -> Unit,
-    contentPadding: PaddingValues,
+    onEvent: (QuestionCreateQuestionEvent) -> Unit,
 ) {
     BaseScaffold(
         topBar = { QuestionCreateQuestionToolbar(uiState.toolbarTitleText) },
-        content = {
-            QuestionCreateQuestionContent(
-                uiState = uiState,
-                onEvent = onEvent,
-                contentPadding = it
-            )
+        content = { innerPadding ->
+            // Apply only top padding from BaseScaffold
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = innerPadding.calculateTopPadding())
+            ) {
+                QuestionCreateQuestionContent(
+                    uiState = uiState,
+                    onEvent = onEvent,
+                )
+            }
         }
     )
 }
@@ -136,6 +137,5 @@ private fun QuestionCreateQuestionPreview() {
             descriptionText = "Body"
         ),
         onEvent = {},
-        contentPadding = PaddingValues(0.dp)
     )
 }
