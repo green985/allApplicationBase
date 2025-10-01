@@ -4,7 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.oyetech.composebase.projectQuestionsFeature.adminApprove.AdminApproveQuestionScreenSetup
-import com.oyetech.composebase.projectQuestionsFeature.createQuestion.QuestionCreateQuestionScreenSetup
+import com.oyetech.composebase.projectQuestionsFeature.createQuestion.QuestionCreateScreenSetup
 import com.oyetech.composebase.projectQuestionsFeature.homeScreen.QuestionsHomeScreenSetup
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.navigateRouteOperation
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListScreenSetup
@@ -14,7 +14,7 @@ import com.oyetech.composebase.sharedScreens.userList.UserListScreenSetup
 @Suppress("LongMethod")
 fun NavGraphBuilder.questionAppNavigation(navController: NavController) {
     composable(QuestionAppProjectRoutes.QuestionAppHomepage.route) {
-        QuestionsHomeScreenSetup(navigationRoute = navigateRouteOperation(navController))
+        QuestionsHomeScreenSetup()
     }
 
     composable(QuestionAppProjectRoutes.QuestionAppSettings.route) {
@@ -30,7 +30,7 @@ fun NavGraphBuilder.questionAppNavigation(navController: NavController) {
     }
 
     composable(QuestionAppProjectRoutes.QuestionCreateQuestionPage.route) {
-        QuestionCreateQuestionScreenSetup()
+        QuestionCreateScreenSetup()
     }
 
     composable(QuestionAppProjectRoutes.AdminApproveQuestion.route) {

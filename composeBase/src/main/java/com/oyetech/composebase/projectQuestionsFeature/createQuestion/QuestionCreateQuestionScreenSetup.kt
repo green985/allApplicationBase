@@ -25,13 +25,13 @@ import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun QuestionCreateQuestionScreenSetup(
+fun QuestionCreateScreenSetup(
     modifier: Modifier = Modifier,
 ) {
     val vm = koinViewModel<QuestionCreateQuestionVm>()
     val uiState by vm.uiState.collectAsStateWithLifecycle()
 
-    QuestionCreateQuestionScreen(
+    QuestionCreateScreen(
         uiState = uiState,
         onEvent = { event: QuestionCreateQuestionEvent -> vm.onEvent(event) },
     )
@@ -59,7 +59,7 @@ fun QuestionCreateQuestionScreenSetup(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun QuestionCreateQuestionToolbar(title: String) {
+private fun QuestionCreateToolbar(title: String) {
     TopAppBar(title = {
         Text(
             modifier = Modifier.fillMaxWidth(),
@@ -71,7 +71,7 @@ private fun QuestionCreateQuestionToolbar(title: String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun QuestionCreateQuestionContent(
+private fun QuestionCreateContent(
     uiState: QuestionCreateQuestionScreenUiState,
     onEvent: (QuestionCreateQuestionEvent) -> Unit,
 ) {
@@ -106,12 +106,12 @@ private fun QuestionCreateQuestionContent(
 }
 
 @Composable
-private fun QuestionCreateQuestionScreen(
+private fun QuestionCreateScreen(
     uiState: QuestionCreateQuestionScreenUiState,
     onEvent: (QuestionCreateQuestionEvent) -> Unit,
 ) {
     BaseScaffold(
-        topBar = { QuestionCreateQuestionToolbar(uiState.toolbarTitleText) },
+        topBar = { QuestionCreateToolbar(uiState.toolbarTitleText) },
         content = { innerPadding ->
             // Apply only top padding from BaseScaffold
             Column(
@@ -119,7 +119,7 @@ private fun QuestionCreateQuestionScreen(
                     .fillMaxSize()
                     .padding(top = innerPadding.calculateTopPadding())
             ) {
-                QuestionCreateQuestionContent(
+                QuestionCreateContent(
                     uiState = uiState,
                     onEvent = onEvent,
                 )
@@ -130,8 +130,8 @@ private fun QuestionCreateQuestionScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun QuestionCreateQuestionPreview() {
-    QuestionCreateQuestionScreen(
+private fun QuestionCreatePreview() {
+    QuestionCreateScreen(
         uiState = QuestionCreateQuestionScreenUiState(
             titleText = "Sample",
             descriptionText = "Body"

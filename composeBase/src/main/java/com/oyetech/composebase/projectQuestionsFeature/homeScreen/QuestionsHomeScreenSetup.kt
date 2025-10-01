@@ -17,7 +17,6 @@ import org.koin.java.KoinJavaComponent
 @Composable
 fun QuestionsHomeScreenSetup(
     modifier: Modifier = Modifier,
-    navigationRoute: (navigationRoute: String) -> Unit = {},
 ) {
     val navigationUseCase: NavigationUseCase by KoinJavaComponent.inject(NavigationUseCase::class.java)
 
