@@ -2,6 +2,7 @@ package com.oyetech.dimodule.koins
 
 import com.oyetech.adshelper.di.AdsHelperModule
 import com.oyetech.composebase.di.ComposeMainModule
+import com.oyetech.composebase.projectQuestionsFeature.QuestionProjectModule
 import com.oyetech.composebase.projectQuotesFeature.QuotesProjectModule
 import com.oyetech.cripto.privateKeys.WallpaperAppFragmentArgs
 import com.oyetech.domain.di.DomainModule
@@ -80,6 +81,7 @@ object AppComponent {
         QuoteDomainModule.module,
 
         QuotesProjectModule.module,
+        QuestionProjectModule.module,
 
         )
 }

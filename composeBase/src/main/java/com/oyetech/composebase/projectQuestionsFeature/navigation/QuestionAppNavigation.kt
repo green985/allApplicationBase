@@ -3,6 +3,7 @@ package com.oyetech.composebase.projectQuestionsFeature.navigation
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.oyetech.composebase.projectQuestionsFeature.createQuestion.QuestionCreateQuestionScreenSetup
 import com.oyetech.composebase.projectQuestionsFeature.homeScreen.QuestionsHomeScreenSetup
 import com.oyetech.composebase.projectRadioFeature.navigationRoutes.navigateRouteOperation
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListScreenSetup
@@ -25,5 +26,9 @@ fun NavGraphBuilder.questionAppNavigation(navController: NavController) {
 
     composable(QuestionAppProjectRoutes.UserList.route) {
         UserListScreenSetup(navigationRoute = navigateRouteOperation(navController))
+    }
+
+    composable(QuestionAppProjectRoutes.QuestionCreateQuestionPage.route) {
+        QuestionCreateQuestionScreenSetup(navigationRoute = navigateRouteOperation(navController))
     }
 }

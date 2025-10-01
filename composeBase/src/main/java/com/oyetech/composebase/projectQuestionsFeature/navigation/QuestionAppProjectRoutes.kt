@@ -21,6 +21,7 @@ Created by Warp Agent
 
 object QuestionAppProjectRoutes {
 
+    val QuestionCreateQuestionPage = Route("questionCreateQuestionPage")
     val QuestionAppHomepage = Route("questionAppHomepage")
     val QuestionAppSettings = Route("question/QuestionAppSettings")
     val MessageConversationList = Route("question/MessageConversationList")
