@@ -33,13 +33,26 @@
             android:launchMode="standard"
             android:theme="@style/Theme.DefaultAppTheme"
             android:windowSoftInputMode="adjustNothing">
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.MAIN" />-->
+
+            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
+            <!--            </intent-filter>-->
+
+
+        </activity>
+
+        <activity
+            android:name="com.oyetech.composebase.projectQuestionsFeature.main.QuestionMainActivity"
+            android:exported="true"
+            android:launchMode="standard"
+            android:theme="@style/Theme.DefaultAppTheme"
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-
         </activity>
 
         <service

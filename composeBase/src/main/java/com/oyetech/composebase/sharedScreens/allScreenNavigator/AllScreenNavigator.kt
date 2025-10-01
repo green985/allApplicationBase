@@ -29,6 +29,7 @@ Created by Erdi Özbek
 object AllScreenNavigator {
 
     const val startApp = "appFullApp"
+    const val questionAppStart = "questionAppStart"
     const val radioStart = "radioStart"
     const val quoteStart = "quoteStart"
 
