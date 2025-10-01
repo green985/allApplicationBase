@@ -1,5 +1,6 @@
 package com.oyetech.composebase.projectRadioFeature.screens.tabSettings
 
+import RadioAppProjectRoutes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,9 +14,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffoldDeprecated
+import com.oyetech.composebase.projectQuestionsFeature.generalOperationScreen.GeneralOperationVM
 import com.oyetech.composebase.projectQuotesFeature.quotes.views.AppInfoViewProperty
-import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
-import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.GeneralOperationVM
 import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.views.SimpleSettingsInfoViewSetup
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarSetup
 import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarState

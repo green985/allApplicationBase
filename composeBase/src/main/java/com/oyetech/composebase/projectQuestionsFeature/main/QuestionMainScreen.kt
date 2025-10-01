@@ -6,12 +6,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.oyetech.composebase.projectQuestionsFeature.generalOperationScreen.GeneralOperationScreenSetup
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppBottomNavigationView
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.composebase.projectQuestionsFeature.navigation.questionAppNavigation
-import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.GeneralOperationScreenSetup
 import com.oyetech.composebase.projectRadioFeature.theme.RadioAppTheme
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator.navHostScreenSetup
@@ -35,10 +36,10 @@ fun QuestionMainScreen(
         GeneralOperationScreenSetup({
             Column(
                 verticalArrangement = Arrangement.Bottom,
-                modifier = androidx.compose.ui.Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize()
             ) {
                 Column(
-                    modifier = androidx.compose.ui.Modifier
+                    modifier = Modifier
                         .weight(1f)
                         .background(MaterialTheme.colorScheme.background)
                 ) {

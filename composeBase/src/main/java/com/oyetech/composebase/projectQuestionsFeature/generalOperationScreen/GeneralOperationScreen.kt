@@ -1,4 +1,4 @@
-package com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen
+package com.oyetech.composebase.projectQuestionsFeature.generalOperationScreen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,7 +13,7 @@ import com.oyetech.composebase.baseViews.snackbar.SnacbarScreenSetup
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationScreenSetup
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
-import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.generalPlayground.GeneralPlaygroundVm
+import com.oyetech.composebase.projectQuestionsFeature.generalOperationScreen.generalPlayground.GeneralPlaygroundVm
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 

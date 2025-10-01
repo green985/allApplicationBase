@@ -1,4 +1,4 @@
-package com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen
+package com.oyetech.composebase.projectQuestionsFeature.generalOperationScreen
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
@@ -6,6 +6,7 @@ import com.oyetech.composebase.sharedScreens.messaging.MessageOperationVM
 import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserListOperationRepository
 import com.oyetech.domain.useCases.helpers.AppReviewOperationUseCase
+import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -19,7 +20,7 @@ Created by Erdi Özbek
  **/
 
 class GeneralOperationVM(
-    appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
+    appDispatchers: AppDispatchers,
     private val appReviewOperationUseCase: AppReviewOperationUseCase,
     private val sharedHelperRepository: SharedOperationRepository,
     private val firebaseUserListOperationRepository: FirebaseUserListOperationRepository,
