@@ -4,8 +4,6 @@ import androidx.lifecycle.LifecycleCoroutineScope
 import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationEvent
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent
-import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteListUiEvent
-import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactWithMe.ContactUIEvent
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigatorEvent
 import com.oyetech.composebase.sharedScreens.settings.FacSettingsUiEvent
 import com.oyetech.composebase.sharedScreens.userList.UserListEvent
@@ -48,14 +46,14 @@ class TestEventNavigator {
     companion object {
         fun bottomNavigationTest(): List<BaseEvent> {
             return buildList {
-                add(AllScreenNavigatorEvent.OnNavigateToQuoteStart)
+                add(AllScreenNavigatorEvent.OnNavigateToQuestionStart)
                 add(BottomNavigationEvent.NavigateToSelectedItem(1))
             }
         }
 
         fun getDummyEventList(): List<BaseEvent> {
             return buildList {
-                add(AllScreenNavigatorEvent.OnNavigateToQuoteStart)
+                add(AllScreenNavigatorEvent.OnNavigateToQuestionStart)
                 add(BottomNavigationEvent.NavigateToSelectedItem(1))
             }
         }
@@ -69,25 +67,19 @@ class TestEventNavigator {
 object EventNavigatorList {
 
     val cancelUserRegistrationOperation = buildList<BaseEvent> {
-        add(AllScreenNavigatorEvent.OnNavigateToQuoteStart)
-        add(QuoteListUiEvent.QuoteListItemClicked(1))
+        add(AllScreenNavigatorEvent.OnNavigateToQuestionStart)
         add(LoginOperationEvent.LoginClicked)
         add(LoginOperationEvent.OnCancel)
     }
 
     val contactWithUsFullScopeOperation = buildList<BaseEvent> {
-        add(AllScreenNavigatorEvent.OnNavigateToQuoteStart)
+//        add(AllScreenNavigatorEvent.OnNavigateToQuoteStart)
         add(BottomNavigationEvent.NavigateToSelectedItem(1))
         add(FacSettingsUiEvent.ContactClicked)
-        add(ContactUIEvent.UpdateName("Test User"))
-        add(ContactUIEvent.UpdateMessage("Test"))
-        add(ContactUIEvent.UpdateMessage(""))
-        add(ContactUIEvent.UpdateMessage("Test"))
-        add(ContactUIEvent.Submit)
     }
 
     val userListStartConversationOperation = buildList<BaseEvent> {
-        add(AllScreenNavigatorEvent.OnNavigateToQuoteStart)
+        add(AllScreenNavigatorEvent.OnNavigateToQuestionStart)
         add(BottomNavigationEvent.NavigateToSelectedItem(2))
         add(UserListEvent.OnUserClick(1))
     }

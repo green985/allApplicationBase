@@ -11,33 +11,12 @@ import com.oyetech.composebase.helpers.adViewDelegate.AdViewOperationDelegateImp
 import com.oyetech.composebase.helpers.eventNavigator.TestEventNavigator
 import com.oyetech.composebase.helpers.vibrationHelper.IVibrationHelper
 import com.oyetech.composebase.helpers.vibrationHelper.VibrationHelperImpl
-import com.oyetech.composebase.projectQuestionsFeature.contentOperation.ContentOperationVm
-import com.oyetech.composebase.projectQuestionsFeature.generalOperationScreen.GeneralOperationVM
-import com.oyetech.composebase.projectQuestionsFeature.generalOperationScreen.generalPlayground.GeneralPlaygroundVm
-import com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer.QuotesVM
-import com.oyetech.composebase.projectQuotesFeature.quotes.tagList.QuoteTagListVM
-import com.oyetech.composebase.projectRadioFeature.helper.RadioListSortRepositoryImp
-import com.oyetech.composebase.projectRadioFeature.screens.countryList.CountryVM
-import com.oyetech.composebase.projectRadioFeature.screens.languageList.LanguageVM
-import com.oyetech.composebase.projectRadioFeature.screens.radioListScreen.RadioListVM
-import com.oyetech.composebase.projectRadioFeature.screens.radioPlayer.vm.RadioPlayerVM
-import com.oyetech.composebase.projectRadioFeature.screens.radioSearchList.RadioSearchVM
-import com.oyetech.composebase.projectRadioFeature.screens.tabAllList.RadioAllListFragmentVM
-import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.TabSettingsVM
-import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.contactWithMe.ContactViewModel
-import com.oyetech.composebase.projectRadioFeature.screens.tagList.TagListVM
-import com.oyetech.composebase.projectRadioFeature.screens.views.dialogs.timerDialog.RadioCountTimerViewModel
-import com.oyetech.composebase.projectRadioFeature.viewModelSlice.IRadioFavViewModelSlice
-import com.oyetech.composebase.projectRadioFeature.viewModelSlice.IRadioPlayerViewModelSlice
-import com.oyetech.composebase.projectRadioFeature.viewModelSlice.RadioFavViewModelSliceImp
-import com.oyetech.composebase.projectRadioFeature.viewModelSlice.RadioPlayerViewModelSliceImp
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigatorVM
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailVm
 import com.oyetech.composebase.sharedScreens.messaging.MessageOperationVM
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListVm
 import com.oyetech.composebase.sharedScreens.userList.UserListVm
 import com.oyetech.composebase.sharedScreens.userProfile.UserProfileVm
-import com.oyetech.domain.repository.helpers.logicRepositories.RadioListSortRepository
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -53,31 +32,13 @@ object ComposeMainModule {
         singleOf(::TestEventNavigator)
         single<IVibrationHelper> { VibrationHelperImpl(get()) }
         factory<AdViewOperationDelegate> { AdViewOperationDelegateImpl() }
-        viewModelOf(::RadioListVM)
-        viewModelOf(::RadioAllListFragmentVM)
-        viewModelOf(::LanguageVM)
-        viewModelOf(::RadioPlayerVM)
-        viewModelOf(::CountryVM)
-        viewModelOf(::RadioCountTimerViewModel)
-        viewModelOf(::RadioSearchVM)
-        viewModelOf(::TabSettingsVM)
-        viewModelOf(::ContactViewModel)
-        viewModelOf(::TagListVM)
-        viewModelOf(::GeneralPlaygroundVm)
-
-        single<IRadioPlayerViewModelSlice> { RadioPlayerViewModelSliceImp(get(), get()) }
-        single<IRadioFavViewModelSlice> { RadioFavViewModelSliceImp(get()) }
-        single<RadioListSortRepository> { RadioListSortRepositoryImp() }
+        // pruned radio/quote VMs after package removal
         single<SnackbarDelegate> { SnackbarDelegate() }
         single<BottomNavigationDelegate> { BottomNavigationDelegate() }
 
 
-        singleOf(::GeneralOperationVM)
         singleOf(::LoginOperationVM)
 
-        viewModelOf(::QuotesVM)
-        viewModelOf(::QuoteTagListVM)
-        viewModelOf(::ContentOperationVm)
         viewModelOf(::CommentScreenWithContentIdVM)
 
         // messaging

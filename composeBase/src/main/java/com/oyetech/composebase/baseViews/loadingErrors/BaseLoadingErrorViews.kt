@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.helpers.ProjectUtil
 import com.oyetech.composebase.helpers.errorHelper.toErrorMessage
 import com.oyetech.composebase.helpers.viewProperties.DialogHelper
-import com.oyetech.composebase.projectRadioFeature.RadioDimensions
 
 /**
 Created by Erdi Özbek
@@ -62,7 +61,7 @@ fun PagingMoreError(errorMessage: String = "Loading Error", onRetry: () -> Unit 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(RadioDimensions.listLoadingItemHeight)
+            .height(64.dp)
             .background(color = MaterialTheme.colorScheme.secondary),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -91,7 +90,7 @@ fun PagingMoreLoading() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(RadioDimensions.listLoadingItemHeight)
+            .height(64.dp)
             .background(MaterialTheme.colorScheme.background.copy(alpha = ProjectUtil.loadingBackgroudAlpha))
             .verticalScroll(rememberScrollState())
             .clickable(

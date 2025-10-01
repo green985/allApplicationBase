@@ -2,7 +2,6 @@ package com.oyetech.composebase.sharedScreens.userProfile
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
-import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.sharedScreens.userProfile.UserProfileEvent.OnEditProfile
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.useCases.NavigationUseCase
@@ -31,7 +30,7 @@ class UserProfileVm(
     fun onEvent(event: UserProfileEvent) {
         when (event) {
             OnEditProfile -> {
-                navigationUseCase.navigate(QuoteAppProjectRoutes.EditProfile.route)
+                // Edit profile navigation not available after pruning quote feature
             }
 
         }

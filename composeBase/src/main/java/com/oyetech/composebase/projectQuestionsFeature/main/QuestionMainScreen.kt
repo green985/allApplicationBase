@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.oyetech.composebase.projectQuestionsFeature.generalOperationScreen.GeneralOperationScreenSetup
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppBottomNavigationView
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.composebase.projectQuestionsFeature.navigation.questionAppNavigation
@@ -33,28 +32,25 @@ fun QuestionMainScreen(
         navigationUseCase.setNavigator { action ->
             navController.navigate(action)
         }
-        GeneralOperationScreenSetup({
+        Column(
+            verticalArrangement = Arrangement.Bottom,
+            modifier = Modifier.fillMaxSize()
+        ) {
             Column(
-                verticalArrangement = Arrangement.Bottom,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .weight(1f)
+                    .background(MaterialTheme.colorScheme.background)
             ) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .background(MaterialTheme.colorScheme.background)
+                NavHost(
+                    navController = navController,
+                    startDestination = QuestionAppProjectRoutes.questionApplicationBottomTabNavList.first().path,
                 ) {
-                    NavHost(
-                        navController = navController,
-                        startDestination = QuestionAppProjectRoutes.questionApplicationBottomTabNavList.first().path,
-                    ) {
-                        navHostScreenSetup(navController, navigationUseCase)
-
-                        questionAppNavigation(navController)
-                    }
+                    navHostScreenSetup(navController, navigationUseCase)
+                    questionAppNavigation(navController)
                 }
-                QuestionAppBottomNavigationView(navController = navController)
             }
-        })
+            QuestionAppBottomNavigationView(navController = navController)
+        }
 
     }
 }

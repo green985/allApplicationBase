@@ -40,7 +40,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     private fun sendNotification(messageBody: String) {
         val requestCode = 0
         val className =
-            "com.oyetech.composebase.projectQuotesFeature.main.QuoteMainActivity"
+            "com.oyetech.composebase.projectQuestionsFeature.main.QuestionMainActivity"
         val activityClass = Class.forName(className)
 
         val intent = Intent(this, activityClass)

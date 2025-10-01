@@ -1,4 +1,4 @@
-package com.oyetech.composebase.projectRadioFeature.screens.views
+package com.oyetech.composebase.projectQuestionsFeature.views
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

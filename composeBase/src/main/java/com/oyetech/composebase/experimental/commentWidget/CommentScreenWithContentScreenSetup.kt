@@ -33,7 +33,6 @@ import com.oyetech.composebase.baseViews.loadingErrors.LoadingDialogFullScreen
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationUiState
-import com.oyetech.composebase.projectRadioFeature.RadioDimensions
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.newPackages.helpers.OperationState.Error
 import com.oyetech.models.newPackages.helpers.OperationState.Idle
@@ -203,7 +202,7 @@ fun CommentInputView(
                 onValueChange = {
                     onEvent(CommentScreenEvent.OnCommentInputChanged(it))
                 },
-                shape = RoundedCornerShape(RadioDimensions.inputFieldRadius),
+                shape = RoundedCornerShape(8f),
                 label = { Text(LanguageKey.commentInputAreaHint) },
                 modifier = Modifier.weight(1f),
                 trailingIcon = {

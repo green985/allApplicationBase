@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.baseViews.helper.GenericPopupMenu
 import com.oyetech.composebase.experimental.commentWidget.CommentOptionsEvent.DeleteComment
 import com.oyetech.composebase.experimental.commentWidget.CommentOptionsEvent.ReportComment
-import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey.commentId
 import com.oyetech.languageModule.keyset.LanguageKey
 
 @Composable
@@ -67,11 +66,11 @@ fun CommentItemView(uiState: CommentItemUiState, onEvent: (CommentScreenEvent) -
                         onItemClick = {
                             when (it) {
                                 "Delete" -> {
-                                    onEvent(DeleteComment(commentId))
+                                    onEvent(DeleteComment(uiState.commentId))
                                 }
 
                                 "Report" -> {
-                                    onEvent(ReportComment(commentId))
+                                    onEvent(ReportComment(uiState.commentId))
                                 }
                             }
                         },
@@ -86,11 +85,11 @@ fun CommentItemView(uiState: CommentItemUiState, onEvent: (CommentScreenEvent) -
                         onItemClick = {
                             when (it) {
                                 LanguageKey.delete -> {
-                                    onEvent(DeleteComment(commentId))
+                                    onEvent(DeleteComment(uiState.commentId))
                                 }
 
                                 "Report" -> {
-                                    onEvent(ReportComment(commentId))
+                                    onEvent(ReportComment(uiState.commentId))
                                 }
                             }
                         },

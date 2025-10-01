@@ -19,12 +19,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffoldDeprecated
 import com.oyetech.composebase.helpers.general.GeneralSettings
-import com.oyetech.composebase.projectQuotesFeature.quotes.views.AppInfoViewProperty
-import com.oyetech.composebase.projectQuotesFeature.views.dialogs.InfoDialogOperation
-import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarSetup
-import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarState
-import com.oyetech.composebase.projectRadioFeature.screens.tabSettings.views.SimpleSettingsInfoViewSetup
-import com.oyetech.composebase.projectRadioFeature.screens.views.dialogs.DeleteAccountInfoDialog
 import com.oyetech.languageModule.keyset.LanguageKey
 import org.koin.androidx.compose.koinViewModel
 
@@ -42,27 +36,27 @@ fun FacSettingsScreenSetup(
     val vm = koinViewModel<FacSettingsVm>()
 
     val uiState by vm.uiState.collectAsStateWithLifecycle()
-    val toolbarState by vm.toolbarState.collectAsStateWithLifecycle()
+    val toolbarTitle by vm.toolbarTitle.collectAsStateWithLifecycle()
 
     FacSettingsScreen(
         uiState = uiState,
-        toolbarState = toolbarState,
+        toolbarTitle = toolbarTitle,
         onEvent = { vm.onEvent(it) },
     )
-
-    if (uiState.isDeleteAccountShown) {
-        DeleteAccountInfoDialog(
-            onDismiss = { vm.onEvent(FacSettingsUiEvent.DeleteAccountDismissed) },
-            onConfirm = { vm.onEvent(FacSettingsUiEvent.DeleteAccountConfirmed) }
-        )
-    }
-    if (uiState.isInfoDialogShown) {
-        InfoDialogOperation(
-            onDismiss = { vm.onEvent(FacSettingsUiEvent.InfoDialogDismissed) },
-            titleText = "Deneme Title",
-            descriptionText = "Deneme Description"
-        )
-    }
+//
+//    if (false && uiState.isDeleteAccountShown) {
+//        DeleteAccountInfoDialog(
+//            onDismiss = { vm.onEvent(FacSettingsUiEvent.DeleteAccountDismissed) },
+//            onConfirm = { vm.onEvent(FacSettingsUiEvent.DeleteAccountConfirmed) }
+//        )
+//    }
+//    if (false && uiState.isInfoDialogShown) {
+//        InfoDialogOperation(
+//            onDismiss = { vm.onEvent(FacSettingsUiEvent.InfoDialogDismissed) },
+//            titleText = "Deneme Title",
+//            descriptionText = "Deneme Description"
+//        )
+//    }
 }
 
 @Suppress("FunctionName", "LongParameterList")
@@ -71,55 +65,46 @@ fun FacSettingsScreen(
     modifier: Modifier = Modifier,
     uiState: FacSettingsUiState,
     onEvent: (FacSettingsUiEvent) -> (Unit),
-    toolbarState: QuoteToolbarState,
+    toolbarTitle: String,
     startReviewOperation: () -> Unit = {},
 ) {
     BaseScaffoldDeprecated(topBarContent = {
-        QuoteToolbarSetup(
-            uiState = toolbarState,
-            onEvent = {
-//                vm.handleToolbarAction(it)
-            }
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            text = toolbarTitle,
+            style = MaterialTheme.typography.titleLarge
         )
     }) {
         Column(modifier = Modifier.padding(it)) {
-            SimpleSettingsInfoViewSetup(
-                onClick = {
-                    onEvent.invoke(FacSettingsUiEvent.ContactClicked)
-                },
-                text = uiState.contactWithMeText
-            )
-            SimpleSettingsInfoViewSetup(
-                onClick = {
-                    onEvent.invoke(FacSettingsUiEvent.InfoClicked)
-                },
-                text = uiState.infoText
-            )
-            SimpleSettingsInfoViewSetup(
-                onClick = { onEvent.invoke(FacSettingsUiEvent.PrivacyPolicyClicked) },
-                text = uiState.privacyPolicyText
-            )
-            SimpleSettingsInfoViewSetup(
-                onClick = { onEvent.invoke(FacSettingsUiEvent.TermsAndConditionsClicked) },
-                text = uiState.termsAndConditionText
-            )
+            Button(onClick = { onEvent.invoke(FacSettingsUiEvent.ContactClicked) }) {
+                Text(text = uiState.contactWithMeText)
+            }
+            Button(onClick = { onEvent.invoke(FacSettingsUiEvent.InfoClicked) }) {
+                Text(text = uiState.infoText)
+            }
+            Button(onClick = { onEvent.invoke(FacSettingsUiEvent.PrivacyPolicyClicked) }) {
+                Text(text = uiState.privacyPolicyText)
+            }
+            Button(onClick = { onEvent.invoke(FacSettingsUiEvent.TermsAndConditionsClicked) }) {
+                Text(text = uiState.termsAndConditionText)
+            }
             if (GeneralSettings.isRatingEnable()) {
                 HorizontalDivider(
                     modifier = Modifier.height(1.dp)
                 )
-                SimpleSettingsInfoViewSetup(
-                    onClick = { startReviewOperation.invoke() },
-                    text = uiState.rateUs
-                )
+                Button(onClick = { startReviewOperation.invoke() }) {
+                    Text(text = uiState.rateUs)
+                }
             }
 
             if (uiState.isUserLoggedIn) {
                 Spacer(modifier = Modifier.height(16.dp))
 
-                SimpleSettingsInfoViewSetup(
-                    onClick = { onEvent.invoke(FacSettingsUiEvent.NavigateToProfile) },
-                    text = "My Profile"
-                )
+                Button(onClick = { onEvent.invoke(FacSettingsUiEvent.NavigateToProfile) }) {
+                    Text(text = "My Profile")
+                }
 
                 Column(
                     modifier = Modifier
@@ -154,13 +139,12 @@ fun FacSettingsScreen(
 
             if (uiState.isDebug) {
                 HorizontalDivider(modifier = Modifier.height(1.dp))
-                SimpleSettingsInfoViewSetup(
-                    onClick = { onEvent.invoke(FacSettingsUiEvent.AdminApproveQuestionsClicked) },
-                    text = "Admin: Approve Questions"
-                )
+                Button(onClick = { onEvent.invoke(FacSettingsUiEvent.AdminApproveQuestionsClicked) }) {
+                    Text(text = "Admin: Approve Questions")
+                }
             }
 
-            AppInfoViewProperty()
+            Text(text = LanguageKey.appName)
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
@@ -170,9 +154,8 @@ fun FacSettingsScreen(
 @Preview(showSystemUi = false, showBackground = true)
 @Composable
 private fun FacSettingsScreenPreview() {
-    FacSettingsScreen(
-        uiState = FacSettingsUiState(),
-        onEvent = {},
-        toolbarState = QuoteToolbarState(),
-    )
+//    FacSettingsScreen(
+//        uiState = FacSettingsUiState(),
+//        onEvent = {},
+//    )
 }

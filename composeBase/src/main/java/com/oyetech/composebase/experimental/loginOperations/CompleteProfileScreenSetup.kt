@@ -25,8 +25,6 @@ import com.oyetech.composebase.baseViews.helper.GenderSegmentedControl
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationUiEvent.OnCancelUserCreation
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationUiEvent.OnLoginSuccess
 import com.oyetech.composebase.helpers.viewProperties.DialogHelper
-import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarSetup
-import com.oyetech.composebase.projectRadioFeature.screens.views.toolbar.RadioToolbarState
 import org.koin.compose.koinInject
 import timber.log.Timber
 
@@ -72,8 +70,10 @@ fun CompleteProfileScreen(
         onDismissRequest = {}) {
         Scaffold(
             topBar = {
-                RadioToolbarSetup(
-                    RadioToolbarState(title = "Complete Register")
+                Text(
+                    modifier = Modifier.padding(12.dp),
+                    text = "Complete Register",
+                    style = MaterialTheme.typography.titleLarge
                 )
             }
         ) { padding ->

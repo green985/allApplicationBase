@@ -6,9 +6,7 @@ import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
-import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
-import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarState
-import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
+import com.oyetech.composebase.shared.navigation.ScreenKey
 import com.oyetech.cripto.stringKeys.WebSiteUrls
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.languageModule.keyset.LanguageKey
@@ -31,7 +29,7 @@ class FacSettingsVm(
     private val firebaseUserRepository: FirebaseUserRepository,
 ) : BaseViewModel(appDispatchers) {
 
-    val toolbarState = MutableStateFlow(QuoteToolbarState(LanguageKey.settings))
+    val toolbarTitle = MutableStateFlow(LanguageKey.settings)
     val uiState =
         MutableStateFlow(FacSettingsUiState())
 
@@ -49,7 +47,7 @@ class FacSettingsVm(
         if (event is FacSettingsUiEvent) {
             when (event) {
                 FacSettingsUiEvent.ContactClicked -> {
-                    navigationUseCase.navigate(QuoteAppProjectRoutes.ContactScreen.route)
+//                    navigationUseCase.navigate(QuoteAppProjectRoutes.ContactScreen.route)
                 }
 
                 FacSettingsUiEvent.InfoClicked -> {
@@ -102,7 +100,7 @@ class FacSettingsVm(
                 FacSettingsUiEvent.NavigateToProfile -> {
                     val uid = firebaseUserRepository.getUserId()
                     if (uid.isNotBlank()) {
-                        navigationUseCase.navigate("${QuoteAppProjectRoutes.UserProfile.route}?${ScreenKey.receiverUserId}=$uid")
+                        navigationUseCase.navigate("${QuestionAppProjectRoutes.UserProfile.route}?${ScreenKey.receiverUserId}=$uid")
                     }
                 }
 

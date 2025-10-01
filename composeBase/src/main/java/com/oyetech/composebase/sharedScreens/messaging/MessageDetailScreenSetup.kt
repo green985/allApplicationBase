@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons.AutoMirrored.Filled
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,7 +36,6 @@ import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.base.baseGenericList.LoadableLazyColumnState
 import com.oyetech.composebase.base.baseGenericList.rememberLoadableLazyColumnState
 import com.oyetech.composebase.base.baseGenericList.safeScrollToItem
-import com.oyetech.composebase.projectRadioFeature.RadioDimensions
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailUiEvent.OnConversationCreated
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailUiEvent.OnMessageIdle
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailUiEvent.OnNewMessage
@@ -212,10 +210,6 @@ private fun MessageDetailContentView(
                 modifier = Modifier.fillMaxWidth(),
                 value = uiState.messageText,
                 onValueChange = { onMessageTextChanged(it) },
-                shape = RoundedCornerShape(
-                    topStart = RadioDimensions.inputFieldRadius,
-                    topEnd = RadioDimensions.inputFieldRadius,
-                ),
                 label = { Text(LanguageKey.sendMessageHint) },
                 trailingIcon = {
                     IconButton(enabled = uiState.messageText.isNotBlank(), onClick = {

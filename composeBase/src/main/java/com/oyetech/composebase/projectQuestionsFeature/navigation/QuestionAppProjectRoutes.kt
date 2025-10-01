@@ -27,6 +27,9 @@ object QuestionAppProjectRoutes {
     val MessageConversationList = Route("question/MessageConversationList")
     val UserList = Route("question/UserList")
     val AdminApproveQuestion = Route("question/AdminApproveQuestion")
+    val UserProfile = Route("question/UserProfile")
+    val MessageDetail = Route("question/MessageDetail")
+    val CompleteProfileScreen = Route("question/CompleteProfileScreen")
 
     val questionApplicationBottomTabNavList = listOf(
         TabQuestionAppHomepage,

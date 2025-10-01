@@ -18,7 +18,6 @@ import androidx.navigation.NavGraph
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationUiEvent.NavigateToSelectedItemWithTest
-import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
@@ -28,7 +27,7 @@ fun BottomNavigationBar(
     vm: BottomNavigationVm = koinViewModel(),
     isClickable: Boolean = true,
     navController: NavHostController = rememberNavController(),
-    navItems: List<BottomNavigationItem> = RadioAppProjectRoutes.radioApplicationBottomTabNavList,
+    navItems: List<BottomNavigationItem> = emptyList(),
 ) {
 
     val selectedItem by vm.selectedItem.collectAsState()

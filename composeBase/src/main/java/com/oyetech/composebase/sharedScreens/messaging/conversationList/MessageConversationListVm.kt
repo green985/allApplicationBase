@@ -8,8 +8,8 @@ import com.oyetech.composebase.base.baseGenericList.setList
 import com.oyetech.composebase.base.baseGenericList.updateErrorInitial
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.experimental.moonOperation.MoonOperationVm
-import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
-import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
+import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
+import com.oyetech.composebase.shared.navigation.ScreenKey
 import com.oyetech.composebase.sharedScreens.messaging.MessageConversationUiState
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListEvent.OnConversationClick
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListEvent.OnConversationClickWithPosition
@@ -160,7 +160,7 @@ class MessageConversationListVm(
                             ?: ""
 
                     navigationUseCase.navigate(
-                        QuoteAppProjectRoutes.MessageDetail.withArgs(
+                        QuestionAppProjectRoutes.MessageDetail.withArgs(
                             ScreenKey.conversationId to event.conversationId,
                             ScreenKey.receiverUserId to event.userId,
                         )
@@ -200,7 +200,7 @@ class MessageConversationListVm(
                 ?: ""
 
         navigationUseCase.navigate(
-            QuoteAppProjectRoutes.MessageDetail.withArgs(
+            QuestionAppProjectRoutes.MessageDetail.withArgs(
                 ScreenKey.conversationId to conversationId,
                 ScreenKey.receiverUserId to userId,
             )

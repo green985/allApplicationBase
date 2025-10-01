@@ -67,7 +67,7 @@ class AppNotificationOperator(private val context: Context) {
     fun getPendingIntent(): PendingIntent {
         val requestCode = 0
         val className =
-            "com.oyetech.composebase.projectQuotesFeature.main.QuoteMainActivity"
+            "com.oyetech.composebase.projectQuestionsFeature.main.QuestionMainActivity"
         val activityClass = Class.forName(className)
 
         val intent = Intent(context, activityClass)

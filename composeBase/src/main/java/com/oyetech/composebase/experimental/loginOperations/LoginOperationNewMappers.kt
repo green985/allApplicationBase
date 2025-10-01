@@ -2,7 +2,6 @@ package com.oyetech.composebase.experimental.loginOperations
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.updateState
-import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
 import kotlinx.coroutines.Dispatchers
@@ -67,7 +66,7 @@ fun LoginOperationVM.mapToProfileValue(userData: FirebaseUserProfileModel?) {
         } else {
             Timber.d("LoginOperationVM mapToProfileValue fail$userData")
             viewModelScope.launch(Dispatchers.Main) {
-                navigationUseCase.navigate(RadioAppProjectRoutes.CompleteProfileScreen.route)
+                navigationUseCase.navigate(com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.CompleteProfileScreen.route)
                 loginOperationState.updateState {
                     LoginOperationUiState(isRegistrationCompleteNeeded = true)
                 }
