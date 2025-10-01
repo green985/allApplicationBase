@@ -1,11 +1,12 @@
 package com.oyetech.composebase.projectQuotesFeature.quotes.detail
 
+import androidx.core.text.parseAsHtml
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.helpers.errorHelper.ErrorHelper
-import com.oyetech.composebase.mappers.mapToUi.QuotesMappers
+import com.oyetech.composebase.helpers.viewProperties.toAnnotatedString
 import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationVm
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.ClickNextButton
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.ClickPreviousButton
@@ -17,6 +18,7 @@ import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarEv
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarState
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
 import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.models.quotes.responseModel.QuoteResponseData
 import com.oyetech.tools.contextHelper.copyToClipboard
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -75,7 +77,7 @@ class QuoteDetailVm(
             ).asResult().collectLatest {
                 it.fold(
                     onSuccess = { quote ->
-                        uiState.value = QuotesMappers.mapToQuoteUiState(quote)
+                        uiState.value = mapToQuoteUiState(quote)
                     }, onFailure = {
                         uiState.updateState {
                             copy(errorMessage = ErrorHelper.getErrorMessage(it))
@@ -85,6 +87,18 @@ class QuoteDetailVm(
             }
         }
     }
+
+    fun mapToQuoteUiState(it: QuoteResponseData) =
+        QuoteUiState(
+            quoteId = it.quoteId,
+            text = it.text,
+            author = it.author,
+//            createdAtString = TimeFunctions.getDateFromLongWithoutHour(it.createdAt),
+            createdAtString = "",
+            authorImage = it.authorImage,
+            htmlFormatted = it.htmlFormatted,
+            annotatedStringText = it.htmlFormatted.parseAsHtml().toAnnotatedString()
+        )
 
     fun onEvent(event: QuoteDetailEvent) {
         when (event) {
