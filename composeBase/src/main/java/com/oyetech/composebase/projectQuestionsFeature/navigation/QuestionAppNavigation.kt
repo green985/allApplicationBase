@@ -29,6 +29,6 @@ fun NavGraphBuilder.questionAppNavigation(navController: NavController) {
     }
 
     composable(QuestionAppProjectRoutes.QuestionCreateQuestionPage.route) {
-        QuestionCreateQuestionScreenSetup(navigationRoute = navigateRouteOperation(navController))
+        QuestionCreateQuestionScreenSetup()
     }
 }
