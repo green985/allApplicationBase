@@ -30,4 +30,7 @@ sealed class FacSettingsUiEvent : BaseEvent() {
     data object DeleteAccountClicked : FacSettingsUiEvent()
     data object DeleteAccountConfirmed : FacSettingsUiEvent()
     data object DeleteAccountDismissed : FacSettingsUiEvent()
+
+    // Debug-only entries
+    data object AdminApproveQuestionsClicked : FacSettingsUiEvent()
 }

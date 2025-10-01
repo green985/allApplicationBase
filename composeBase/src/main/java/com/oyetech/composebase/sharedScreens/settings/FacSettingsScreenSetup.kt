@@ -38,7 +38,6 @@ Created by Erdi Özbek
 @Composable
 fun FacSettingsScreenSetup(
     modifier: Modifier = Modifier,
-    navigationRoute: (navigationRoute: String) -> Unit = {},
 ) {
     val vm = koinViewModel<FacSettingsVm>()
 
@@ -49,7 +48,6 @@ fun FacSettingsScreenSetup(
         uiState = uiState,
         toolbarState = toolbarState,
         onEvent = { vm.onEvent(it) },
-        navigationRoute = navigationRoute
     )
 
     if (uiState.isDeleteAccountShown) {
@@ -73,7 +71,6 @@ fun FacSettingsScreen(
     modifier: Modifier = Modifier,
     uiState: FacSettingsUiState,
     onEvent: (FacSettingsUiEvent) -> (Unit),
-    navigationRoute: (navigationRoute: String) -> Unit,
     toolbarState: QuoteToolbarState,
     startReviewOperation: () -> Unit = {},
 ) {
@@ -150,6 +147,14 @@ fun FacSettingsScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
+            if (uiState.isDebug) {
+                HorizontalDivider(modifier = Modifier.height(1.dp))
+                SimpleSettingsInfoViewSetup(
+                    onClick = { onEvent.invoke(FacSettingsUiEvent.AdminApproveQuestionsClicked) },
+                    text = "Admin: Approve Questions"
+                )
+            }
+
             AppInfoViewProperty()
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -163,7 +168,6 @@ private fun FacSettingsScreenPreview() {
     FacSettingsScreen(
         uiState = FacSettingsUiState(),
         onEvent = {},
-        navigationRoute = {},
         toolbarState = QuoteToolbarState(),
     )
 }

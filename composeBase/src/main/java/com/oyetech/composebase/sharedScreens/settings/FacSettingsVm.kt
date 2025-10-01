@@ -5,6 +5,7 @@ import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
+import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarState
 import com.oyetech.cripto.stringKeys.WebSiteUrls
@@ -93,6 +94,11 @@ class FacSettingsVm(
                     uiState.updateState {
                         copy(isDeleteAccountShown = false)
                     }
+                }
+
+                FacSettingsUiEvent.AdminApproveQuestionsClicked -> {
+                    // Debug-only navigation to Admin Approve screen under Question project
+                    navigationUseCase.navigate(QuestionAppProjectRoutes.AdminApproveQuestion.route)
                 }
             }
         }

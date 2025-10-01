@@ -18,7 +18,7 @@ fun NavGraphBuilder.questionAppNavigation(navController: NavController) {
     }
 
     composable(QuestionAppProjectRoutes.QuestionAppSettings.route) {
-        FacSettingsScreenSetup(navigationRoute = navigateRouteOperation(navController))
+        FacSettingsScreenSetup()
     }
 
     composable(QuestionAppProjectRoutes.MessageConversationList.route) {
