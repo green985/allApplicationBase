@@ -84,7 +84,7 @@ object AllScreenNavigator {
 
         composable(questionAppStart) {
             QuestionMainScreen(
-                navHostController, navigationUseCase
+                navigationUseCase
             )
         }
 

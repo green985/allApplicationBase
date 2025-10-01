@@ -6,13 +6,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppBottomNavigationView
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.composebase.projectQuestionsFeature.navigation.questionAppNavigation
 import com.oyetech.composebase.projectRadioFeature.theme.RadioAppTheme
+import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator.navHostScreenSetup
 import com.oyetech.domain.useCases.NavigationUseCase
 
@@ -24,7 +24,6 @@ Created by Erdi Özbek
 
 @Composable
 fun QuestionMainScreen(
-    navHostController: NavHostController,
     navigationUseCase: NavigationUseCase,
 ) {
     RadioAppTheme {
@@ -52,5 +51,22 @@ fun QuestionMainScreen(
             }
             QuestionAppBottomNavigationView(navController = navController)
         }
+    }
+}
+
+@Composable
+fun QuestionAppDebugRoot(navigationUseCase: NavigationUseCase) {
+    val navController = rememberNavController()
+    // Hook NavigationUseCase to Compose navController in debug as well
+    navigationUseCase.setNavigator { action ->
+        navController.navigate(action)
+    }
+    NavHost(
+        navController = navController,
+        startDestination = AllScreenNavigator.startApp,
+    ) {
+        navHostScreenSetup(navController, navigationUseCase)
+        // Expose Question app routes alongside shared ones in debug
+        questionAppNavigation(navController)
     }
 }

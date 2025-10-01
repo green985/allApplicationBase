@@ -4,20 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
 import com.oyetech.composebase.helpers.eventNavigator.TestEventNavigator
 import com.oyetech.composebase.helpers.general.GeneralSettings
-import com.oyetech.composebase.projectQuestionsFeature.navigation.questionAppNavigation
 import com.oyetech.composebase.projectRadioFeature.theme.RadioAppTheme
-import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator
-import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator.navHostScreenSetup
 import com.oyetech.domain.useCases.NavigationUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,39 +25,12 @@ class QuestionMainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            if (GeneralSettings.isDebug()) {
-                RadioAppTheme {
-                    val navController = rememberNavController()
-                    navigationUseCase.setNavigator { action ->
-                        navController.navigate(action)
-                    }
-                    Column(
-                        verticalArrangement = Arrangement.Bottom,
-                        modifier = androidx.compose.ui.Modifier.fillMaxSize()
-                    ) {
-                        Column(
-                            modifier = androidx.compose.ui.Modifier
-                                .weight(1f)
-                                .background(MaterialTheme.colorScheme.background)
-                        ) {
-                            NavHost(
-                                navController = navController,
-                                startDestination = AllScreenNavigator.startApp,
-                            ) {
-                                navHostScreenSetup(navController, navigationUseCase)
+            RadioAppTheme {
+                if (GeneralSettings.isDebug()) {
+                    QuestionAppDebugRoot(navigationUseCase)
+                } else {
 
-                                questionAppNavigation(navController)
-                            }
-                        }
-                    }
-                }
-            } else {
-                RadioAppTheme {
-                    val navController = rememberNavController()
-                    navigationUseCase.setNavigator { action ->
-                        navController.navigate(action)
-                    }
-                    QuestionMainScreen(navController, navigationUseCase)
+                    QuestionMainScreen(navigationUseCase)
                 }
             }
         }
@@ -78,3 +41,4 @@ class QuestionMainActivity : ComponentActivity() {
         }
     }
 }
+
