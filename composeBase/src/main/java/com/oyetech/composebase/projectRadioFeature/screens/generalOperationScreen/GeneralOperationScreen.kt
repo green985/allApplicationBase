@@ -9,7 +9,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
 import com.oyetech.composebase.baseViews.snackbar.SnacbarScreenSetup
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationScreenSetup
@@ -27,7 +26,6 @@ Created by Erdi Özbek
 @Composable
 fun GeneralOperationScreenSetup(
     content: @Composable () -> Unit,
-    navController: NavController,
 ) {
     val viewModel = koinViewModel<GeneralOperationVM>()
     val generalPlaygroundVm = koinViewModel<GeneralPlaygroundVm>()

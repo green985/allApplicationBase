@@ -76,9 +76,6 @@ object AllScreenNavigator {
     ) {
         composable(startApp) {
             AllScreenNavigatorScreenSetup(
-                navigationRoute = { route ->
-                    navHostController.navigate(route)
-                },
             )
         }
 
@@ -106,7 +103,7 @@ object AllScreenNavigator {
                             )
 
                         }
-                    }, navController = navHostControllerRadio
+                    }
             )
         }
         // TabRadioAllList Route
@@ -144,7 +141,7 @@ object AllScreenNavigator {
                                 navController = navHostControllerQuote
                             )
                         }
-                    }, navController = navHostControllerQuote
+                    }
             )
         }
     }

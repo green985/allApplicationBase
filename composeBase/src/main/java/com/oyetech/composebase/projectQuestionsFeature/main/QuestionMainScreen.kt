@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppBottomNavigationView
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.composebase.projectQuestionsFeature.navigation.questionAppNavigation
+import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.GeneralOperationScreenSetup
 import com.oyetech.composebase.projectRadioFeature.theme.RadioAppTheme
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator.navHostScreenSetup
@@ -31,26 +32,29 @@ fun QuestionMainScreen(
         navigationUseCase.setNavigator { action ->
             navController.navigate(action)
         }
-        Column(
-            verticalArrangement = Arrangement.Bottom,
-            modifier = androidx.compose.ui.Modifier.fillMaxSize()
-        ) {
+        GeneralOperationScreenSetup({
             Column(
-                modifier = androidx.compose.ui.Modifier
-                    .weight(1f)
-                    .background(MaterialTheme.colorScheme.background)
+                verticalArrangement = Arrangement.Bottom,
+                modifier = androidx.compose.ui.Modifier.fillMaxSize()
             ) {
-                NavHost(
-                    navController = navController,
-                    startDestination = QuestionAppProjectRoutes.questionApplicationBottomTabNavList.first().path,
+                Column(
+                    modifier = androidx.compose.ui.Modifier
+                        .weight(1f)
+                        .background(MaterialTheme.colorScheme.background)
                 ) {
-                    navHostScreenSetup(navController, navigationUseCase)
+                    NavHost(
+                        navController = navController,
+                        startDestination = QuestionAppProjectRoutes.questionApplicationBottomTabNavList.first().path,
+                    ) {
+                        navHostScreenSetup(navController, navigationUseCase)
 
-                    questionAppNavigation(navController)
+                        questionAppNavigation(navController)
+                    }
                 }
+                QuestionAppBottomNavigationView(navController = navController)
             }
-            QuestionAppBottomNavigationView(navController = navController)
-        }
+        })
+
     }
 }
 

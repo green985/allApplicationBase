@@ -33,7 +33,6 @@ Created by Erdi Özbek
 @Composable
 fun AllScreenNavigatorScreenSetup(
     modifier: Modifier = Modifier,
-    navigationRoute: (navigationRoute: String) -> Unit = {},
 ) {
     val viewModel = koinViewModel<AllScreenNavigatorVM>()
 //
