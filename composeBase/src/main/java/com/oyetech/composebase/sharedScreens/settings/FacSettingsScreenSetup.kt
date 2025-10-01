@@ -116,6 +116,11 @@ fun FacSettingsScreen(
             if (uiState.isUserLoggedIn) {
                 Spacer(modifier = Modifier.height(16.dp))
 
+                SimpleSettingsInfoViewSetup(
+                    onClick = { onEvent.invoke(FacSettingsUiEvent.NavigateToProfile) },
+                    text = "My Profile"
+                )
+
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()

@@ -31,6 +31,9 @@ sealed class FacSettingsUiEvent : BaseEvent() {
     data object DeleteAccountConfirmed : FacSettingsUiEvent()
     data object DeleteAccountDismissed : FacSettingsUiEvent()
 
+    // Auth-only entries
+    data object NavigateToProfile : FacSettingsUiEvent()
+
     // Debug-only entries
     data object AdminApproveQuestionsClicked : FacSettingsUiEvent()
 }

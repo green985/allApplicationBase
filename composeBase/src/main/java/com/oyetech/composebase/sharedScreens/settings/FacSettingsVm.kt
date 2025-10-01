@@ -8,7 +8,9 @@ import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectQuotesFeature.views.toolbar.QuoteToolbarState
+import com.oyetech.composebase.projectRadioFeature.screens.ScreenKey
 import com.oyetech.cripto.stringKeys.WebSiteUrls
+import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.tools.contextHelper.UrlHelper
 import com.oyetech.tools.coroutineHelper.AppDispatchers
@@ -26,6 +28,7 @@ class FacSettingsVm(
     appDispatchers: AppDispatchers,
     private val loginOperationVM: LoginOperationVM,
     private val navigationUseCase: com.oyetech.domain.useCases.NavigationUseCase,
+    private val firebaseUserRepository: FirebaseUserRepository,
 ) : BaseViewModel(appDispatchers) {
 
     val toolbarState = MutableStateFlow(QuoteToolbarState(LanguageKey.settings))
@@ -93,6 +96,13 @@ class FacSettingsVm(
                 FacSettingsUiEvent.DeleteAccountDismissed -> {
                     uiState.updateState {
                         copy(isDeleteAccountShown = false)
+                    }
+                }
+
+                FacSettingsUiEvent.NavigateToProfile -> {
+                    val uid = firebaseUserRepository.getUserId()
+                    if (uid.isNotBlank()) {
+                        navigationUseCase.navigate("${QuoteAppProjectRoutes.UserProfile.route}?${ScreenKey.receiverUserId}=$uid")
                     }
                 }
 
