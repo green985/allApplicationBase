@@ -26,6 +26,7 @@ object QuestionAppProjectRoutes {
     val QuestionAppSettings = Route("question/QuestionAppSettings")
     val MessageConversationList = Route("question/MessageConversationList")
     val UserList = Route("question/UserList")
+    val AdminApproveQuestion = Route("question/AdminApproveQuestion")
 
     val questionApplicationBottomTabNavList = listOf(
         TabQuestionAppHomepage,
