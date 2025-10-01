@@ -1,4 +1,3 @@
-package com.oyetech.composebase.projectQuotesFeature.main
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -25,8 +24,6 @@ import androidx.navigation.compose.rememberNavController
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationBar
 import com.oyetech.composebase.helpers.eventNavigator.TestEventNavigator
 import com.oyetech.composebase.helpers.general.GeneralSettings
-import com.oyetech.composebase.projectQuotesFeature.navigation.quotesAppNavigation
-import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
 import com.oyetech.composebase.projectRadioFeature.theme.RadioAppTheme
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator.navHostScreenSetup
@@ -106,16 +103,16 @@ class QuoteMainActivity : ComponentActivity() {
                     }
                 }
             } else {
-                RadioAppTheme {
-                    val navController = rememberNavController()
-                    NavHost(
-                        navController = navController,
-                        startDestination = AllScreenNavigator.quoteStart,
-                    ) {
-                        navHostScreenSetup(navController, navigationUseCase)
-                        quotesAppNavigation(navController)
-                    }
-                }
+//                RadioAppTheme {
+//                    val navController = rememberNavController()
+//                    NavHost(
+//                        navController = navController,
+//                        startDestination = AllScreenNavigator.quoteStart,
+//                    ) {
+//                        navHostScreenSetup(navController, navigationUseCase)
+//                        quotesAppNavigation(navController)
+//                    }
+//                }
             }
 //            testEventNavigator.triggerTestEvents(
 //                lifecycleScope,

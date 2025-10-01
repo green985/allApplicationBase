@@ -1,11 +1,11 @@
-package com.oyetech.composebase.projectQuotesFeature.contentOperation
+package com.oyetech.composebase.projectQuestionsFeature.contentOperation
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.helpers.errorHelper.ErrorHelper
-import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationEvent.LikeContent
+import com.oyetech.composebase.projectQuestionsFeature.contentOperation.ContentOperationEvent.LikeContent
 import com.oyetech.domain.repository.contentOperation.ContentOperationLocalRepository
 import com.oyetech.domain.repository.firebase.FirebaseContentLikeOperationRepository
 import com.oyetech.models.firebaseModels.contentOperationModel.LikeOperationModel

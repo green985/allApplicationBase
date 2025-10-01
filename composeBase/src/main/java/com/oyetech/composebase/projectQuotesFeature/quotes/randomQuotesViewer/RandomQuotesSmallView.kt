@@ -20,9 +20,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationEvent
-import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationUiState
-import com.oyetech.composebase.projectQuotesFeature.contentOperation.QuoteContentOperationView
+import com.oyetech.composebase.projectQuestionsFeature.contentOperation.ContentOperationEvent
+import com.oyetech.composebase.projectQuestionsFeature.contentOperation.ContentOperationUiState
+import com.oyetech.composebase.projectQuestionsFeature.contentOperation.QuoteContentOperationView
 import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteUiState
 
 /**

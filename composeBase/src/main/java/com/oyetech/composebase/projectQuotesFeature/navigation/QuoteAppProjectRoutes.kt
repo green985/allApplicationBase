@@ -1,4 +1,3 @@
-package com.oyetech.composebase.projectQuotesFeature.navigation
 
 import com.oyetech.composebase.R
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationItem

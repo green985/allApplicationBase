@@ -1,5 +1,3 @@
-package com.oyetech.composebase.projectRadioFeature.main
-
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
@@ -14,9 +12,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationBar
 import com.oyetech.composebase.helpers.general.GeneralSettings
-import com.oyetech.composebase.projectQuotesFeature.navigation.quotesAppNavigation
-import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
-import com.oyetech.composebase.projectRadioFeature.navigationRoutes.radioAppNavigation
 import com.oyetech.composebase.projectRadioFeature.theme.RadioAppTheme
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
@@ -34,6 +29,7 @@ class RadioMainActivity : ComponentActivity() {
     val loginOperationRepository: GoogleLoginRepository by KoinJavaComponent.inject(
         GoogleLoginRepository::class.java
     )
+
     override fun onResume() {
         super.onResume()
         PlayerServiceUtils.startService()

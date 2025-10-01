@@ -23,9 +23,9 @@ import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenWithContentScreenSetup
 import com.oyetech.composebase.helpers.general.GeneralSettings
+import com.oyetech.composebase.projectQuestionsFeature.contentOperation.ContentOperationEvent
+import com.oyetech.composebase.projectQuestionsFeature.contentOperation.ContentOperationUiState
 import com.oyetech.composebase.projectQuotesFeature.QuotesDimensions
-import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationEvent
-import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationUiState
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.ClickNextButton
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.ClickPreviousButton
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.LongClickForCopy

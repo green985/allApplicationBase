@@ -7,7 +7,7 @@ import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.helpers.errorHelper.ErrorHelper
 import com.oyetech.composebase.helpers.viewProperties.toAnnotatedString
-import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationVm
+import com.oyetech.composebase.projectQuestionsFeature.contentOperation.ContentOperationVm
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.ClickNextButton
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.ClickPreviousButton
 import com.oyetech.composebase.projectQuotesFeature.quotes.detail.QuoteDetailEvent.LongClickForCopy

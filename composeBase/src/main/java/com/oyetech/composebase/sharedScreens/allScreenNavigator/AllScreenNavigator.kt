@@ -1,11 +1,14 @@
 package com.oyetech.composebase.sharedScreens.allScreenNavigator
 
+import QuoteAppProjectRoutes
+import QuoteBottomNavigationView
+import RadioAppNavigationWrapperWithPlayerSetup
+import RadioAppProjectRoutes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -13,11 +16,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.oyetech.composebase.projectQuestionsFeature.main.QuestionMainScreen
-import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
-import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteBottomNavigationView
-import com.oyetech.composebase.projectQuotesFeature.navigation.quotesAppNavigation
-import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppNavigationWrapperWithPlayerSetup
-import com.oyetech.composebase.projectRadioFeature.navigationRoutes.RadioAppProjectRoutes
 import com.oyetech.composebase.projectRadioFeature.screens.generalOperationScreen.GeneralOperationScreenSetup
 import com.oyetech.domain.useCases.NavigationUseCase
 
@@ -31,44 +29,8 @@ object AllScreenNavigator {
 
     const val startApp = "appFullApp"
     const val questionAppStart = "questionAppStart"
-    const val radioStart = "radioStart"
-    const val quoteStart = "quoteStart"
 
-    val generalListOfScreen =
-        QuoteAppProjectRoutes.javaClass.fields.map { it.toGenericString() }.toMutableList().apply {
-            addAll(
-                listOf(
-                    QuoteAppProjectRoutes.EditUserProfile2ScreenSetup.route,
-                    QuoteAppProjectRoutes.User2ProfileScreenSetup.route,
-                    QuoteAppProjectRoutes.FacSettings.route,
-                    QuoteAppProjectRoutes.MessageConversationList.route,
-                    QuoteAppProjectRoutes.MessageDetail.route,
-
-                    QuoteAppProjectRoutes.AdviceQuoteDebug.route,
-                    QuoteAppProjectRoutes.QuoteAdviceScreen.route,
-                    QuoteAppProjectRoutes.QuoteSettings.route,
-                    QuoteAppProjectRoutes.QuoteAppHomepage.route,
-                    QuoteAppProjectRoutes.QuoteDetailRoute.route,
-                    QuoteAppProjectRoutes.QuoteAuthorList.route,
-
-                    // Radio App Routes
-                    RadioAppProjectRoutes.TimerDialog.route,
-                    RadioAppProjectRoutes.TabRadioAllList.route,
-                    RadioAppProjectRoutes.RadioList.route,
-                    RadioAppProjectRoutes.RadioSearchList.route,
-                    RadioAppProjectRoutes.TabFav.route,
-                    RadioAppProjectRoutes.TabHistory.route,
-                    RadioAppProjectRoutes.TabCategories.route,
-                    RadioAppProjectRoutes.TabSettings.route,
-                    RadioAppProjectRoutes.ContactScreen.route,
-                    RadioAppProjectRoutes.QuotesListScreen.route,
-                    RadioAppProjectRoutes.CommentScreenWithContentId.route,
-                    RadioAppProjectRoutes.LoginOperationScreen.route,
-                    RadioAppProjectRoutes.CompleteProfileScreen.route,
-
-                    )
-            )
-        }
+    val generalListOfScreen = emptyList<String>()
 
     fun NavGraphBuilder.navHostScreenSetup(
         navHostController: NavHostController,
@@ -85,8 +47,6 @@ object AllScreenNavigator {
             )
         }
 
-        // TabRadioAllList Route
-        composable(radioStart) {
             val navHostControllerRadio = rememberNavController()
             GeneralOperationScreenSetup(
                 content =
@@ -106,8 +66,6 @@ object AllScreenNavigator {
                     }
             )
         }
-        // TabRadioAllList Route
-        composable(quoteStart) {
             val navHostControllerQuote = rememberNavController()
             LaunchedEffect(Unit) {
                 navigationUseCase.setNavigator { action ->

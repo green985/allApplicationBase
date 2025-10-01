@@ -1,4 +1,4 @@
-package com.oyetech.composebase.projectQuotesFeature.contentOperation
+package com.oyetech.composebase.projectQuestionsFeature.contentOperation
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingDialogFullScreen
-import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationEvent.LikeContent
+import com.oyetech.composebase.projectQuestionsFeature.contentOperation.ContentOperationEvent.LikeContent
 
 /**
 Created by Erdi Özbek

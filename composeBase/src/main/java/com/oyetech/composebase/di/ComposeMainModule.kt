@@ -11,7 +11,7 @@ import com.oyetech.composebase.helpers.adViewDelegate.AdViewOperationDelegateImp
 import com.oyetech.composebase.helpers.eventNavigator.TestEventNavigator
 import com.oyetech.composebase.helpers.vibrationHelper.IVibrationHelper
 import com.oyetech.composebase.helpers.vibrationHelper.VibrationHelperImpl
-import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationVm
+import com.oyetech.composebase.projectQuestionsFeature.contentOperation.ContentOperationVm
 import com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer.QuotesVM
 import com.oyetech.composebase.projectQuotesFeature.quotes.tagList.QuoteTagListVM
 import com.oyetech.composebase.projectRadioFeature.helper.RadioListSortRepositoryImp

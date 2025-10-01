@@ -13,7 +13,5 @@ data class AllScreenNavigatorUiState(val isLoading: Boolean = false)
 sealed class AllScreenNavigatorEvent : BaseEvent() {
     data class NavigateListItemClicked(val navigationRoute: String) : AllScreenNavigatorEvent()
 
-    object OnNavigateToRadioStart : AllScreenNavigatorEvent()
-    object OnNavigateToQuoteStart : AllScreenNavigatorEvent()
     object OnNavigateToQuestionStart : AllScreenNavigatorEvent()
 }
