@@ -6,7 +6,7 @@ import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
-import com.oyetech.composebase.shared.navigation.ScreenKey
+import com.oyetech.composebase.sharedScreens.navigation.ScreenKey
 import com.oyetech.cripto.stringKeys.WebSiteUrls
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.languageModule.keyset.LanguageKey

@@ -7,8 +7,8 @@ import androidx.navigation.navArgument
 import com.oyetech.composebase.projectQuestionsFeature.adminApprove.AdminApproveQuestionScreenSetup
 import com.oyetech.composebase.projectQuestionsFeature.createQuestion.QuestionCreateScreenSetup
 import com.oyetech.composebase.projectQuestionsFeature.homeScreen.QuestionsHomeScreenSetup
-import com.oyetech.composebase.shared.navigation.ScreenKey
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListScreenSetup
+import com.oyetech.composebase.sharedScreens.navigation.ScreenKey
 import com.oyetech.composebase.sharedScreens.settings.FacSettingsScreenSetup
 import com.oyetech.composebase.sharedScreens.userList.UserListScreenSetup
 import com.oyetech.composebase.sharedScreens.userProfile.UserProfileScreenSetup

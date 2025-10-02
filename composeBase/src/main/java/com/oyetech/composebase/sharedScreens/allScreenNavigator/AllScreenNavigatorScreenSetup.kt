@@ -19,7 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.oyetech.composebase.base.BaseScaffoldDeprecated
+import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.helpers.viewProperties.gridItems
 import kotlinx.collections.immutable.toImmutableList
 import org.koin.androidx.compose.koinViewModel
@@ -46,7 +46,7 @@ fun AllScreenNavigatorScreenSetup(
 
     }
 
-    BaseScaffoldDeprecated {
+    BaseScaffold {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -100,20 +100,6 @@ fun AllScreenNavigatorScreenSetup(
 
                 })
             }
-
-        }
-    }
-
-}
-
-@Composable
-fun AllScreenNavigatorVMScreen(
-    modifier: Modifier = Modifier,
-    uiState: AllScreenNavigatorUiState,
-    onEvent: (AllScreenNavigatorEvent) -> (Unit),
-) {
-    BaseScaffoldDeprecated {
-        Column(modifier = Modifier.padding()) {
 
         }
     }

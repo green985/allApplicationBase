@@ -8,7 +8,7 @@ import com.oyetech.composebase.base.baseGenericList.setList
 import com.oyetech.composebase.base.baseGenericList.updateErrorInitial
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
-import com.oyetech.composebase.shared.navigation.ScreenKey
+import com.oyetech.composebase.sharedScreens.navigation.ScreenKey
 import com.oyetech.composebase.sharedScreens.userList.UserListEvent.OnUserClick
 import com.oyetech.composebase.sharedScreens.userList.UserListEvent.RegisterToUserList
 import com.oyetech.composebase.sharedScreens.userList.UserListEvent.RemoveUserFromList

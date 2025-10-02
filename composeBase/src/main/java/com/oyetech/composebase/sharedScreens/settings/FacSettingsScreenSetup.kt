@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.oyetech.composebase.base.BaseScaffoldDeprecated
+import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.helpers.general.GeneralSettings
 import com.oyetech.languageModule.keyset.LanguageKey
 import org.koin.androidx.compose.koinViewModel
@@ -68,7 +68,7 @@ fun FacSettingsScreen(
     toolbarTitle: String,
     startReviewOperation: () -> Unit = {},
 ) {
-    BaseScaffoldDeprecated(topBarContent = {
+    BaseScaffold(topBar = {
         Text(
             modifier = Modifier
                 .fillMaxWidth()
