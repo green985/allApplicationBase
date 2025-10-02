@@ -1,5 +1,3 @@
-@file:Suppress("UNUSED_PARAMETER")
-
 package com.oyetech.languageModule.keyset
 
 import com.oyetech.languageModule.localLanguageHelper.LocalLanguageHelper
@@ -11,6 +9,14 @@ Created by Erdi Özbek
  **/
 
 object LanguageKey {
+    // QuestionYesNoView keys
+    var answerYes set(value) {} get() = LocalLanguageHelper.getStringWithKey("answerYes")
+    var answerNo set(value) {} get() = LocalLanguageHelper.getStringWithKey("answerNo")
+    var untitledQuestionText set(value) {} get() = LocalLanguageHelper.getStringWithKey("untitledQuestionText")
+    var yesText set(value) {} get() = LocalLanguageHelper.getStringWithKey("yesText")
+    var noText set(value) {} get() = LocalLanguageHelper.getStringWithKey("noText")
+    var yourAnswerText set(value) {} get() = LocalLanguageHelper.getStringWithKey("yourAnswerText")
+
     var recordingStatusOff set(value) {} get() = LocalLanguageHelper.getStringWithKey("recordingStatusOff")
     var voiceRecorderTitle set(value) {} get() = LocalLanguageHelper.getStringWithKey("voiceRecorderTitle")
     var startRecording set(value) {} get() = LocalLanguageHelper.getStringWithKey("startRecording")
@@ -80,5 +86,6 @@ object LanguageKey {
         get() =
             LocalLanguageHelper.getStringWithKey("internetConnectionErrorText")
     var login set(value) {} get() = LocalLanguageHelper.getStringWithKey("Login")
+
 
 }
