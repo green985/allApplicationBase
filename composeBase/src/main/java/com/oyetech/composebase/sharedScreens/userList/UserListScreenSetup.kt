@@ -49,7 +49,6 @@ fun UserListScreenSetup(
         modifier = modifier,
         uiState = uiState,
         onEvent = { vm.onEvent(it) },
-        navigationRoute = navigationRoute,
         listViewState = listViewState,
     )
 
@@ -63,7 +62,6 @@ fun UserListScreen(
     modifier: Modifier = Modifier,
     uiState: UserListUiState,
     onEvent: (UserListEvent) -> Unit,
-    navigationRoute: (navigationRoute: String) -> Unit = {},
     listViewState: GenericListState<UserListItemUiState>,
 ) {
     val lazyListState = rememberLazyListState()
