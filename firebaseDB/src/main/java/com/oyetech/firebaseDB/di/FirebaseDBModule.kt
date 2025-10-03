@@ -6,6 +6,7 @@ import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseContentLikeOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseLanguageOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
+import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuotesDebugOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuotesOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseStorageRepository
@@ -20,6 +21,7 @@ import com.oyetech.firebaseDB.firebaseDB.contentOperation.FirebaseContentLikeOpe
 import com.oyetech.firebaseDB.firebaseDB.helper.FirebaseOnlineHelper
 import com.oyetech.firebaseDB.firebaseDB.language.FirebaseLanguageOperationRepositoryImp
 import com.oyetech.firebaseDB.firebaseDB.messaging.FirebaseMessagingRepositoryImpl
+import com.oyetech.firebaseDB.firebaseDB.question.FirebaseQuestionOperationRepositoryImpl
 import com.oyetech.firebaseDB.firebaseDB.quotes.FirebaseQuotesOperationRepositoryImp
 import com.oyetech.firebaseDB.firebaseDB.radio.RadioAnalyticsOperationRepositoryImp
 import com.oyetech.firebaseDB.firebaseDB.userList.FirebaseUserListOperationRepositoryImpl
@@ -94,6 +96,12 @@ object FirebaseDBModule {
                 get(),
                 get(),
                 get(), get(), get(), get(), get()
+            )
+        }
+
+        single<FirebaseQuestionOperationRepository> {
+            FirebaseQuestionOperationRepositoryImpl(
+                get()
             )
         }
 

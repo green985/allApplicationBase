@@ -87,7 +87,7 @@ private fun QuestionCreateScreen(
                 if (uiState.isLoading) {
                     com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize()
                 }
-                if (uiState.isError) {
+                if (uiState.errorText.isNotBlank()) {
                     com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize(
                         errorMessage = uiState.errorText
                     )

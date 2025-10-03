@@ -142,7 +142,6 @@ fun FacSettingsScreen(
 
             Spacer(Modifier.height(200.dp))
 
-
             if (uiState.isDebug) {
                 HorizontalDivider(modifier = Modifier.height(1.dp))
                 SimpleSettingsInfoViewSetup(
