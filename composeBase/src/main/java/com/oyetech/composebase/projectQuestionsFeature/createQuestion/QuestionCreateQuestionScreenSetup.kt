@@ -1,14 +1,11 @@
 package com.oyetech.composebase.projectQuestionsFeature.createQuestion
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -17,10 +14,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
-import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.composebase.projectQuestionsFeature.views.questions.CreateQuestionYesNoView
+import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
+import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
@@ -30,9 +28,12 @@ fun QuestionCreateScreenSetup(
 ) {
     val vm = koinViewModel<QuestionCreateQuestionVm>()
     val uiState by vm.uiState.collectAsStateWithLifecycle()
+    val questionUiState by vm.questionUiState.collectAsStateWithLifecycle()
 
     QuestionCreateScreen(
         uiState = uiState,
+        questionUiState = questionUiState,
+        onQuestionEvent = { vm.onQuestionEvent(it) },
         onEvent = { event: QuestionCreateQuestionEvent -> vm.onEvent(event) },
     )
 
@@ -69,46 +70,12 @@ private fun QuestionCreateToolbar(title: String) {
     })
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun QuestionCreateContent(
-    uiState: QuestionCreateQuestionScreenUiState,
-    onEvent: (QuestionCreateQuestionEvent) -> Unit,
-) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(12.dp)
-    ) {
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = uiState.titleText,
-            onValueChange = { onEvent(QuestionCreateQuestionEvent.OnTitleChange(it)) },
-            label = { Text(LanguageKey.appName) }
-        )
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            value = uiState.descriptionText,
-            onValueChange = { onEvent(QuestionCreateQuestionEvent.OnDescriptionChange(it)) },
-            label = { Text(LanguageKey.commentInputAreaHint) }
-        )
-        Button(
-            enabled = uiState.isSubmitEnabled && !uiState.isLoading,
-            onClick = { onEvent(QuestionCreateQuestionEvent.OnSubmit) },
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Text(LanguageKey.save)
-        }
-    }
-}
-
 @Composable
 private fun QuestionCreateScreen(
     uiState: QuestionCreateQuestionScreenUiState,
     onEvent: (QuestionCreateQuestionEvent) -> Unit,
+    onQuestionEvent: (QuestionViewEvent) -> Unit = {},
+    questionUiState: QuestionViewUiState,
 ) {
     BaseScaffold(
         topBar = { QuestionCreateToolbar(uiState.toolbarTitleText) },
@@ -119,9 +86,10 @@ private fun QuestionCreateScreen(
                     .fillMaxSize()
                     .padding(top = innerPadding.calculateTopPadding())
             ) {
-                QuestionCreateContent(
-                    uiState = uiState,
-                    onEvent = onEvent,
+                CreateQuestionYesNoView(
+                    uiState = questionUiState, onEvent = {
+
+                    }
                 )
             }
         }
@@ -136,6 +104,6 @@ private fun QuestionCreatePreview() {
             titleText = "Sample",
             descriptionText = "Body"
         ),
-        onEvent = {},
+        onEvent = {}, questionUiState = QuestionViewUiState(titleText = "asdasdasd"),
     )
 }

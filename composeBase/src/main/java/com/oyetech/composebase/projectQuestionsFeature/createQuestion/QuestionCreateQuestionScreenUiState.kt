@@ -23,7 +23,6 @@ sealed class QuestionCreateQuestionUiEvent : BaseUIEvent() {
 // View Events (from UI)
 sealed class QuestionCreateQuestionEvent : BaseEvent() {
     data class OnTitleChange(val text: String) : QuestionCreateQuestionEvent()
-    data class OnDescriptionChange(val text: String) : QuestionCreateQuestionEvent()
     data object OnSubmit : QuestionCreateQuestionEvent()
     data object OnRetry : QuestionCreateQuestionEvent()
     data object OnScreenOut : QuestionCreateQuestionEvent()

@@ -25,14 +25,9 @@ data class QuestionViewUiState(
 sealed class QuestionViewEvent : BaseEvent() {
 
     data class TitleChanged(val value: String) : QuestionViewEvent()
-    data class OptionNoChanged(val value: String) : QuestionViewEvent()
-    data class OptionYesChanged(val value: String) : QuestionViewEvent()
     object SubmitClicked : QuestionViewEvent()
     object CancelClicked : QuestionViewEvent()
 
-    // Answering flow
-    object RetryClicked : QuestionViewEvent()
     object YesClicked : QuestionViewEvent()
     object NoClicked : QuestionViewEvent()
-    object DismissError : QuestionViewEvent()
 }

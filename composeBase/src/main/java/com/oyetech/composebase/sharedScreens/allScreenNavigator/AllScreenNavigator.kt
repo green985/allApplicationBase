@@ -4,6 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.oyetech.composebase.projectQuestionsFeature.main.QuestionMainScreen
+import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.domain.useCases.NavigationUseCase
 
 /**
@@ -17,7 +18,9 @@ object AllScreenNavigator {
     const val startApp = "appFullApp"
     const val questionAppStart = "questionAppStart"
 
-    val generalListOfScreen = emptyList<String>()
+    val generalListOfScreen = emptyList<String>().toMutableList<String>().apply {
+        add(QuestionAppProjectRoutes.QuestionCreateQuestionPage.route)
+    }
 
     fun NavGraphBuilder.navHostScreenSetup(
         navHostController: NavHostController,

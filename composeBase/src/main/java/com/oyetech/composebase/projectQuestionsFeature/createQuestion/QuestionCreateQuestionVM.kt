@@ -4,6 +4,8 @@ import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
+import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
+import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import kotlinx.coroutines.channels.BufferOverflow
@@ -23,25 +25,29 @@ class QuestionCreateQuestionVm(
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
+    val questionUiState = MutableStateFlow(QuestionViewUiState())
+
+    fun onQuestionEvent(event: QuestionViewEvent) {
+        when (event) {
+            QuestionViewEvent.CancelClicked -> TODO()
+            QuestionViewEvent.NoClicked -> TODO()
+            QuestionViewEvent.SubmitClicked -> TODO()
+            is QuestionViewEvent.TitleChanged -> {
+                questionUiState.updateState {
+                    copy(titleText = event.value)
+                }
+            }
+
+            QuestionViewEvent.YesClicked -> TODO()
+        }
+    }
+
     override fun onEvent(event: Any) {
         if (event is QuestionCreateQuestionEvent) {
             when (event) {
-                is QuestionCreateQuestionEvent.OnTitleChange -> {
-                    uiState.updateState {
-                        copy(
-                            titleText = event.text,
-                            isSubmitEnabled = event.text.isNotBlank() && descriptionText.isNotBlank()
-                        )
-                    }
-                }
 
-                is QuestionCreateQuestionEvent.OnDescriptionChange -> {
-                    uiState.updateState {
-                        copy(
-                            descriptionText = event.text,
-                            isSubmitEnabled = titleText.isNotBlank() && event.text.isNotBlank()
-                        )
-                    }
+                is QuestionCreateQuestionEvent.OnTitleChange -> {
+                    onQuestionEvent(QuestionViewEvent.TitleChanged(event.text))
                 }
 
                 QuestionCreateQuestionEvent.OnSubmit -> submit()
