@@ -15,7 +15,7 @@ import com.oyetech.domain.repository.viewHelperRepositories.ImageViewerOverlayRe
 import com.oyetech.domain.repository.viewHelperRepositories.ImageViewerRepository
 import com.oyetech.extension.makeToast
 import com.oyetech.extension.permissions.checkIsPermissionAlreadyGranted
-import com.oyetech.languageModule.keyset.WallpaperLanguage
+import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.materialViews.customViews.imageViewer.WallpaperImageOverlayView
 import com.oyetech.materialViews.customViews.imageViewer.WallpaperImageOverlayView.WallpaperImageViewerOverlayViewRepository
 import com.oyetech.materialViews.helper.popupMenu.PopupMenuHelper
@@ -24,7 +24,7 @@ import com.oyetech.materialViews.old.helper.glideHelper.clear
 import com.oyetech.materialViews.old.helper.glideHelper.setImageUrlToViewWithGlideImageLoader
 import com.oyetech.materialViews.old.helper.glideHelper.setImageUrlToViewWithThumbnail
 import com.oyetech.materialViews.old.viewBindings.imageView.shareImageViewToShareIntent
-import com.oyetech.models.wallpaperModels.helperModels.image.ImageViewerPropertyData
+import com.oyetech.models.helperModels.image.ImageViewerPropertyData
 import com.stfalcon.imageviewer.StfalconImageViewer
 import timber.log.Timber
 import java.lang.ref.WeakReference
@@ -201,7 +201,7 @@ class ImageViewerRepositoryImp : WallpaperImageViewerOverlayViewRepository,
         Timber.d("downloadImageClick")
         var url = getImageUrlList()[imagePosition]
         if (url.isNullOrBlank()) {
-            context.makeToast(WallpaperLanguage.DEFAULT_ERROR)
+            context.makeToast(LanguageKey.generalErrorText)
             return
         }
         controlPermissionForDownloadImage(url)
@@ -211,7 +211,7 @@ class ImageViewerRepositoryImp : WallpaperImageViewerOverlayViewRepository,
         var appNameString = StringHelper.getApplicationName(context)
 
         val request = DownloadManager.Request(Uri.parse(uriString))
-        request.setDescription(WallpaperLanguage.DOWNLOAD_IMAGE_DESC)
+        request.setDescription(LanguageKey.downloadImageDesc)
         request.setTitle(appNameString)
 
         // request.addRequestHeader(CriptoClassFile.IMAGE_CLIENT_KEY, HelperConstant.IMAGE_HEADER)
@@ -229,7 +229,7 @@ class ImageViewerRepositoryImp : WallpaperImageViewerOverlayViewRepository,
             return
         }
         downloadManager.enqueue(request)
-        context.makeToast(WallpaperLanguage.DOWNLOAD_IMAGE_START)
+        context.makeToast(LanguageKey.downloadImageStart)
 
     }
 

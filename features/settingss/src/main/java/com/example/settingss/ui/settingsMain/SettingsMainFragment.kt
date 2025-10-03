@@ -4,7 +4,7 @@ import android.view.View
 import com.oyetech.base.BaseFragment
 import com.oyetech.cripto.privateKeys.ads.WallpaperAppAdsKey
 import com.oyetech.cripto.stringKeys.WebSiteUrls
-import com.oyetech.languageModule.keyset.WallpaperLanguage
+import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.materialViews.helper.viewHelpers.toolbarHelper.SimpleToolbarHelperLayout
 import com.oyetech.materialViews.old.layouts.settings.SettingsSimpleTextInfoLayout.SettingsSimpleTextInfoLayoutRepository
 import com.oyetech.navigation.default.openDefaultWebBrowser
@@ -34,7 +34,7 @@ class SettingsMainFragment : BaseFragment<FragmentSettingsMainBinding, SettingsM
     override fun prepareView() {
         SimpleToolbarHelperLayout.changeToolbarTitleCenter(
             binding.includeToolbar,
-            title = WallpaperLanguage.SETTINGS,
+            title = LanguageKey.settings,
             center = true,
             backButtonEnable = false
         )
@@ -58,10 +58,10 @@ class SettingsMainFragment : BaseFragment<FragmentSettingsMainBinding, SettingsM
     }
 
     private fun prepareViewProperty() {
-        binding.csAdFree.setSettingsLayoutProperty(WallpaperLanguage.AD_FREE_USE)
-        binding.csTerms.setSettingsLayoutProperty(WallpaperLanguage.TERMS_AND_CONDITIONS)
-        binding.csPrivacyPolicy.setSettingsLayoutProperty(WallpaperLanguage.PRIVACY_POLICY)
-        binding.csContactWithUs.setSettingsLayoutProperty(WallpaperLanguage.CONTACT_WITH_US)
+        binding.csAdFree.setSettingsLayoutProperty(LanguageKey.adFreeUse)
+        binding.csTerms.setSettingsLayoutProperty(LanguageKey.termsAndConditions)
+        binding.csPrivacyPolicy.setSettingsLayoutProperty(LanguageKey.privacyPolicy)
+        binding.csContactWithUs.setSettingsLayoutProperty(LanguageKey.contactWithUs)
 
 
         binding.csAdFree.setRepositoryToView(this)

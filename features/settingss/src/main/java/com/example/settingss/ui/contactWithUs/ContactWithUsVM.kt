@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.oyetech.base.BaseViewModel
 import com.oyetech.core.coroutineHelper.AppDispatchers
 import com.oyetech.domain.repository.helpers.FirebaseDBOperationRepository
-import com.oyetech.languageModule.keyset.WallpaperLanguage
+import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.utils.states.ViewState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -36,7 +36,7 @@ class ContactWithUsVM(
                     feedbackSendOperationSingleLiveEvent.postValue(ViewState.success())
                     sharedPrefRepositoryHelper.setLastFeedbackTimeMilis()
                 } else {
-                    feedbackSendOperationSingleLiveEvent.postValue(ViewState.error(WallpaperLanguage.DEFAULT_ERROR))
+                    feedbackSendOperationSingleLiveEvent.postValue(ViewState.error(LanguageKey.generalErrorText))
                 }
                 firebaseDBOperationRepository.clearFeedbackOperationStateFlow()
             }
@@ -48,7 +48,7 @@ class ContactWithUsVM(
 
         if (!userCanSendFeedback) {
             feedbackSendOperationSingleLiveEvent.value =
-                ViewState.error(msg = WallpaperLanguage.FEEDBACK_ALREADY_SEND)
+                ViewState.error(msg = LanguageKey.feedbackAlreadySend)
             return
         }
 

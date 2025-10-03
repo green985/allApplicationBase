@@ -81,6 +81,16 @@ object LanguageKey {
     var deleteUserErrorMessage set(value) {} get() = LocalLanguageHelper.getStringWithKey("deleteAccountButtonText")
 
     var generalErrorText set(value) {} get() = LocalLanguageHelper.getStringWithKey("Error")
+
+    // Migrations from WallpaperLanguage
+    var feedbackAlreadySend set(value) {} get() = LocalLanguageHelper.getStringWithKey("FEEDBACK_ALREADY_SEND")
+    var googleSignInError set(value) {} get() = LocalLanguageHelper.getStringWithKey("GOOGLE_SIGN_IN_ERROR")
+    var downloadImageDesc set(value) {} get() = LocalLanguageHelper.getStringWithKey("DOWNLOAD_IMAGE_DESC")
+    var downloadImageStart set(value) {} get() = LocalLanguageHelper.getStringWithKey("DOWNLOAD_IMAGE_START")
+    var writeExternalRequired set(value) {} get() = LocalLanguageHelper.getStringWithKey("WRITE_EXTERNAL_REQUIRED")
+    var adFreeUse set(value) {} get() = LocalLanguageHelper.getStringWithKey("AD_FREE_USE")
+    var termsAndConditions set(value) {} get() = LocalLanguageHelper.getStringWithKey("TERMS_AND_CONDITIONS")
+    var privacyPolicy set(value) {} get() = LocalLanguageHelper.getStringWithKey("PRIVACY_POLICY")
     var appName set(value) {} get() = LocalLanguageHelper.getStringWithKey("Thought Nest")
     var internetConnectionErrorText
         set(value) {}

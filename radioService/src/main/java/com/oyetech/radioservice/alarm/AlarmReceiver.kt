@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.domain.useCases.AlarmOperationUseCase
-import com.oyetech.domain.useCases.VolumeOperationUseCase
 import com.oyetech.domain.useCases.contentOperations.RadioOperationUseCase
 import com.oyetech.radioservice.serviceUtils.PlayerServiceUtils
 import com.oyetech.radioservice.serviceUtils.ServiceConst
@@ -27,9 +26,6 @@ class AlarmReceiver : BroadcastReceiver() {
 
     val radioOperationUseCase: RadioOperationUseCase by KoinJavaComponent.inject(
         RadioOperationUseCase::class.java
-    )
-    val volumeOperationUseCase: VolumeOperationUseCase by KoinJavaComponent.inject(
-        VolumeOperationUseCase::class.java
     )
     val alarmOperationUseCase: AlarmOperationUseCase by KoinJavaComponent.inject(
         AlarmOperationUseCase::class.java

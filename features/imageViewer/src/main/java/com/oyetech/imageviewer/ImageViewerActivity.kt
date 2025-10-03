@@ -18,7 +18,7 @@ import com.oyetech.extension.makeToast
 import com.oyetech.extension.permissions.checkIsPermissionAlreadyGranted
 import com.oyetech.helper.dialogs.showPermissionMustRequiredDialog
 import com.oyetech.imageviewer.databinding.ActivityImageViewerBinding
-import com.oyetech.languageModule.keyset.WallpaperLanguage
+import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.materialViews.customViews.imageViewer.ImageViewerOverlayView
 import com.oyetech.materialViews.helper.popupMenu.PopupMenuHelper
 import com.oyetech.materialViews.old.helper.glideHelper.setImageUrlToView
@@ -45,7 +45,7 @@ class ImageViewerActivity :
     private fun getImageUrlFromBundle(): ArrayList<String>? {
         var imageUrlList = intent.getStringArrayListExtra(ActivityBundleKey.IMAGE_URL_LIST)
         if (imageUrlList.isNullOrEmpty()) {
-            makeToast(WallpaperLanguage.DEFAULT_ERROR)
+            makeToast(LanguageKey.generalErrorText)
             finish()
         }
 
@@ -155,7 +155,7 @@ class ImageViewerActivity :
         var appNameString = StringHelper.getApplicationName(this)
 
         val request = DownloadManager.Request(Uri.parse(uriString))
-        request.setDescription(WallpaperLanguage.DOWNLOAD_IMAGE_DESC)
+        request.setDescription(LanguageKey.downloadImageDesc)
         request.setTitle(appNameString)
 
         // request.addRequestHeader(CriptoClassFile.IMAGE_CLIENT_KEY, HelperConstant.IMAGE_HEADER)
@@ -218,7 +218,7 @@ class ImageViewerActivity :
             fileFlag = true
         }
         if (fileFlag) {
-            showPermissionMustRequiredDialog(WallpaperLanguage.WRITE_EXTERNAL_REQUIRED)
+            showPermissionMustRequiredDialog(LanguageKey.writeExternalRequired)
         }
     }
 

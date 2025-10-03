@@ -1,6 +1,6 @@
 package com.example.settingss.ui.settingsMain
 
-import com.oyetech.languageModule.keyset.WallpaperLanguage
+import com.oyetech.languageModule.keyset.LanguageKey
 
 /**
 Created by Erdi Özbek
@@ -14,10 +14,10 @@ fun SettingsMainFragment.prepareLayoutTextAndRepository() {
     var csContactWithUs = binding.csContactWithUs
     var csTerms = binding.csTerms
 
-    csPrivacyPolicy.setSettingsLayoutProperty(WallpaperLanguage.PRIVACY_POLICY)
-    csAdFree.setSettingsLayoutProperty(WallpaperLanguage.AD_FREE_USE)
-    csContactWithUs.setSettingsLayoutProperty(WallpaperLanguage.CONTACT_WITH_US)
-    csTerms.setSettingsLayoutProperty(WallpaperLanguage.TERMS_AND_CONDITIONS)
+    csPrivacyPolicy.setSettingsLayoutProperty(LanguageKey.privacyPolicy)
+    csAdFree.setSettingsLayoutProperty(LanguageKey.adFreeUse)
+    csContactWithUs.setSettingsLayoutProperty(LanguageKey.contactWithUs)
+    csTerms.setSettingsLayoutProperty(LanguageKey.termsAndConditions)
 
 
     csPrivacyPolicy.setRepositoryToView(this)
