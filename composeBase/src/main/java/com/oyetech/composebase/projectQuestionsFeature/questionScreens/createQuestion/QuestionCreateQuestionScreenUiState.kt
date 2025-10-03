@@ -1,4 +1,4 @@
-package com.oyetech.composebase.projectQuestionsFeature.createQuestion
+package com.oyetech.composebase.projectQuestionsFeature.questionScreens.createQuestion
 
 import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.base.BaseUIEvent

@@ -1,4 +1,4 @@
-package com.oyetech.composebase.projectQuestionsFeature.createQuestion
+package com.oyetech.composebase.projectQuestionsFeature.questionScreens.createQuestion
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
+import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
+import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.CreateQuestionYesNoView
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
@@ -85,10 +87,10 @@ private fun QuestionCreateScreen(
                     .padding(top = innerPadding.calculateTopPadding())
             ) {
                 if (uiState.isLoading) {
-                    com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize()
+                    LoadingScreenFullSize()
                 }
                 if (uiState.errorText.isNotBlank()) {
-                    com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize(
+                    ErrorScreenFullSize(
                         errorMessage = uiState.errorText
                     )
                 }

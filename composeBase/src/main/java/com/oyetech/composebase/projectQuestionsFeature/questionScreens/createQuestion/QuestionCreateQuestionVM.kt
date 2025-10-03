@@ -1,4 +1,4 @@
-package com.oyetech.composebase.projectQuestionsFeature.createQuestion
+package com.oyetech.composebase.projectQuestionsFeature.questionScreens.createQuestion
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
@@ -11,6 +11,7 @@ import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionV
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent.YesClicked
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.toOperationBody
+import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.tools.coroutineHelper.AppDispatchers
@@ -24,7 +25,7 @@ import kotlinx.coroutines.launch
 class QuestionCreateQuestionVm(
     appDispatchers: AppDispatchers,
     private val navigationUseCase: NavigationUseCase,
-    private val questionRepository: com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository,
+    private val questionRepository: FirebaseQuestionOperationRepository,
 ) : BaseViewModel(appDispatchers) {
 
     val uiState = MutableStateFlow(QuestionCreateQuestionScreenUiState())
