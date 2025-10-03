@@ -3,13 +3,10 @@ package com.oyetech.composebase.projectQuestionsFeature.navigation
 import com.oyetech.composebase.R
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationItem
 import com.oyetech.composebase.navigator.Route
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppNavItem.QuestionAppMessageTab
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppNavItem.QuestionAppSettingsTab
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppNavItem.QuestionAppUserListTab
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppNavItem.TabQuestionAppHomepage
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.MessageConversationList
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.QuestionAppHomepage
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.QuestionAppSettings
+import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.QuestionList
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.UserList
 import com.oyetech.languageModule.keyset.LanguageKey
 
@@ -27,15 +24,17 @@ object QuestionAppProjectRoutes {
     val MessageConversationList = Route("question/MessageConversationList")
     val UserList = Route("question/UserList")
     val AdminApproveQuestion = Route("question/AdminApproveQuestion")
+    val QuestionList = Route("question/QuestionList")
     val UserProfile = Route("question/UserProfile")
     val MessageDetail = Route("question/MessageDetail")
     val CompleteProfileScreen = Route("question/CompleteProfileScreen")
 
     val questionApplicationBottomTabNavList = listOf(
-        TabQuestionAppHomepage,
-        QuestionAppSettingsTab,
-        QuestionAppUserListTab,
-        QuestionAppMessageTab,
+        QuestionAppNavItem.TabQuestionAppHomepage,
+        QuestionAppNavItem.TabQuestionList,
+        QuestionAppNavItem.QuestionAppSettingsTab,
+        QuestionAppNavItem.QuestionAppUserListTab,
+        QuestionAppNavItem.QuestionAppMessageTab,
     )
 }
 
@@ -43,6 +42,13 @@ sealed class QuestionAppNavItem {
     object TabQuestionAppHomepage :
         BottomNavigationItem(
             path = QuestionAppHomepage.route.toString(),
+            titleText = LanguageKey.home,
+            icon = R.drawable.ic_tab_all_radio
+        )
+
+    object TabQuestionList :
+        BottomNavigationItem(
+            path = QuestionList.route.toString(),
             titleText = LanguageKey.home,
             icon = R.drawable.ic_tab_all_radio
         )

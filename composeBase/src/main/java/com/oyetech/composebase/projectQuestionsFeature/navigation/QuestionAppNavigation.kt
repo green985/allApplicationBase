@@ -39,6 +39,10 @@ fun NavGraphBuilder.questionAppNavigation(navController: NavController) {
         AdminApproveQuestionScreenSetup()
     }
 
+    composable(QuestionAppProjectRoutes.QuestionList.route) {
+        com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListScreenSetup()
+    }
+
     // Complete Profile
     composable(QuestionAppProjectRoutes.CompleteProfileScreen.route) {
         com.oyetech.composebase.experimental.loginOperations.CompleteProfileScreenSetup()
