@@ -84,6 +84,14 @@ private fun QuestionCreateScreen(
                     .fillMaxSize()
                     .padding(top = innerPadding.calculateTopPadding())
             ) {
+                if (uiState.isLoading) {
+                    com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize()
+                }
+                if (uiState.isError) {
+                    com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize(
+                        errorMessage = uiState.errorText
+                    )
+                }
                 CreateQuestionYesNoView(
                     uiState = questionUiState, onEvent = onEvent
                 )

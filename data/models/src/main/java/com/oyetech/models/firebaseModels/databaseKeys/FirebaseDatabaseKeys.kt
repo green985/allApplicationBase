@@ -22,4 +22,5 @@ object FirebaseDatabaseKeys {
 
     const val conversations = "conversations"
     const val messages = "messages"
+    const val questions = "questions"
 }
