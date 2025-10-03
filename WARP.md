@@ -146,3 +146,102 @@ Important files
   modules
 - gradle/libs.versions.toml contains the version catalog for plugins and libraries used at the root
   and in Compose-centric modules
+
+Genel mimari kararlar ve kurallar
+• Navigasyon: ViewModel içinde NavigationUseCase kullanımı ve navigationUseCase.setNavigator +
+navController.navigate/back deseni korundu.
+• DI: Koin ile viewModelOf(::YourVm) kullanımı. Firebase repo’ları da Koin modülüne eklendi.
+• İsimlendirme: QuestionApp* isimlendirme ve proje/dosya konumlandırmaları korundu.
+• UI State: UI katmanında ImmutableList kullanımı tercih edildi (kotlinx.collections.immutable).
+
+Ekranlar ve Navigasyon
+• AdminApproveQuestion:
+◦ AdminApproveQuestionScreenSetup ve AdminApproveQuestionVm oluşturuldu.
+◦ QuestionAppProjectRoutes altında AdminApproveQuestion route eklendi ve QuestionAppNavigation
+içinde composable olarak bağlandı.
+◦ FacSettings ekranına debug-only menü girdisi eklendi (BuildConfig.DEBUG → true ise görünür),
+NavigationUseCase ile admin ekranına yönlendirme yapıyor.
+• QuestionList:
+◦ QuestionListScreenSetup ve QuestionListVm eklendi.
+◦ MessageConversationList pattern’ine uyumlu GenericListState yapısı kullanıldı (
+dataFlow/refreshDataFlow).
+◦ Liste elemanları QuestionYesNoView ile render ediliyor; olaylar generic olarak işleniyor.
+◦ QuestionAppProjectRoutes.QuestionList route eklendi ve NavGraph’a bağlandı.
+
+QuestionYesNoView ve UI Event yapısı
+• Soru görünümü:
+◦ Başlangıçta Yes/No butonları ve Title edit mantığı vardı; create modunda sadece title
+düzenlenebilir, cevaplama modunda Yes/No gösterilir.
+◦ Daha sonra generic seçeneğe evrildi: QueOption’lar UIState’e eklendi ve butonlar options üzerinden
+oluşturuluyor (dolu değilse YES/NO fallback).
+• Event yapısı:
+◦ YesClicked/NoClicked kaldırıldı.
+◦ Yerine generic QuestionViewEvent.OptionSelected(optionId: String) eklendi.
+◦ TitleChanged, SubmitClicked, CancelClicked, OnErrorDismiss korundu.
+• UI State:
+◦ QuestionViewUiState.options ImmutableList<QueOption> oldu.
+◦ Backend modelden UI’a dönüşte options toImmutableList() ile map’leniyor.
+
+Listeleme mimarisi (GenericListState uyumu)
+• QuestionListVm, BaseListViewModel<QuestionViewUiState>’ten türetildi.
+• listViewState: GenericListState<QuestionViewUiState>
+◦ dataFlow/refreshDataFlow: repository.getQuestionList() → List<QuestionOperationResponseBody> →
+map → List<QuestionViewUiState>.
+• QuestionListScreen:
+◦ listViewState.items üzerinden LazyColumn render.
+◦ QuestionYesNoView’dan gelen OptionSelected, QuestionListEvent.OnOptionSelected(itemUi, optionId)
+olarak VM’e iletiliyor.
+
+Domain ve veri modeli (genişlemeye hazır)
+• QuestionOperationResponseBody genişletildi:
+◦ payload: QuestionPayload? = null (ileride tip özel konfig için)
+◦ options: List<QueOption> = []
+◦ constraints: QueConstraints? = null
+◦ metadata: Map<String, String> = emptyMap()
+◦ version: Int = 1
+• Yeni modeller:
+◦ QueOption(id, text, value?, order)
+◦ QueConstraints(required?, minSelections?, maxSelections?, minValue?, maxValue?, step?)
+◦ QueAnswer(questionId, type, selectedOptionIds?, numericValue?, textValue?, userId, submittedAt) —
+şimdilik kullanılmıyor
+◦ QuestionPayload (placeholder)
+• Mapping:
+◦ toOperationBody(): YES/NO için iki QueOption (YES, NO) ve QueConstraints(required=true,
+minSelections=1, maxSelections=1) ekleniyor.
+
+Repository ve Firestore
+• Domain arayüz: FirebaseQuestionOperationRepository
+◦ createQuestion(body): Flow<Unit> — hata durumunda exception fırlatıyor.
+◦ getQuestionList(): Flow<List<QuestionOperationResponseBody>> eklendi.
+• Firebase implemantasyonu:
+◦ createQuestion Firestore transaction ile yazıyor; hata durumunda GeneralException.
+◦ getQuestionList createdAt’e göre DESC sıralı liste döndürüyor.
+• DI: FirebaseDBModule içinde FirebaseQuestionOperationRepositoryImpl binding eklendi.
+
+Refactorlar ve iyileştirmeler
+• QuestionAppDebugRoot TODO çözümü: GlobalScope yerine rememberCoroutineScope kullanıldı (
+composition-scoped).
+• QuestionCreateQuestionVm:
+◦ Repository injection ile createQuestion çağrısı yapıyor.
+◦ CancelClicked → navigate("back")
+◦ Snackbar success/error örnekleri eklendi (snackbarDelegate).
+• Navigation/DI kuralları ve naming konvansiyonları korunuyor.
+
+Gelecek adımlar (taslak/hatırlatma)
+• Renderer registry: QuestionKind → Composable eşlemesi (henüz yazılmadı).
+• Validasyon ve iş kuralları: tip bazlı validator stratejileri (min/max selection, scale aralıkları
+vs) — sonra yapılacak.
+• Soru akışı (Flow), geçişler ve branching: RuleEngine/DSL — sonra yapılacak.
+• Yeni tipler: SingleChoice/MultiChoice/Scale/Likert/Matrix — payload ve renderer ile eklenecek.
+• UI’nın options’ı birincil bilgi kaynağı olarak tüketmesini standartlaştırma (YES/NO fallback
+kaldırılabilir).
+
+Öğrenilenler ve prensipler
+• UI State’te ImmutableList kullanmak stabil ve predictable bir render akışı sağlıyor.
+• Event’leri generic (OptionSelected) tutmak, yeni tipleri eklerken UI’ı büyütmeden genişlemeyi
+kolaylaştırıyor.
+• Repository tarafında Flow<Unit> + exception stratejisi, hata yönetiminde yalın ve net bir yapı
+sunuyor.
+• NavigationUseCase ViewModel’de tutulduğunda test ve soyutlama avantajı sağlıyor; UI tarafında
+navController ile bağlama setNavigator ile yapılmalı.
+• Koin viewModelOf kullanımı ile VM bağımlılık zinciri basit ve izlenebilir kalıyor.
