@@ -3,7 +3,7 @@ package com.oyetech.analyticsmodule.analytics
 import android.content.Context
 import android.content.ContextWrapper
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.oyetech.domain.helper.isDebug
+import com.oyetech.tools.contextHelper.isDebug
 import com.oyetech.domain.repository.AnalyticsRepository
 import timber.log.Timber
 

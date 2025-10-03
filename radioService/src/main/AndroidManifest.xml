@@ -26,15 +26,5 @@
         </service>
 
 
-        <receiver
-            android:name="com.oyetech.radioservice.alarm.AlarmReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.oyetech.radioservice.alarm.AlarmReceiver" />
-            </intent-filter>
-        </receiver>
-
-
     </application>
 </manifest>

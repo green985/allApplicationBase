@@ -6,8 +6,8 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.gms.dynamite.DynamiteModule
 import com.oyetech.dimodule.koins.AppComponent
 import com.oyetech.domain.helper.ActivityProviderUseCase
-import com.oyetech.domain.helper.isDebug
 import com.oyetech.languageimp.LanguageOperationHelper
+import com.oyetech.tools.contextHelper.isDebug
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.java.KoinJavaComponent

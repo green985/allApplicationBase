@@ -1,9 +1,7 @@
 package com.oyetech.radioservice.di
 
 import android.content.Context
-import com.oyetech.domain.repository.AlarmOperationRepository
 import com.oyetech.domain.useCases.contentOperations.ExoPlayerOperationUseCase
-import com.oyetech.radioservice.alarm.AlarmManagerHelper
 import com.oyetech.radioservice.services.PlayerService
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -34,7 +32,6 @@ object RadioServiceModule {
 
         single { ExoPlayerOperationUseCase(get()) }
 
-        single<AlarmOperationRepository> { AlarmManagerHelper(get(), get()) }
     }
 }
 

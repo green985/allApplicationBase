@@ -3,12 +3,12 @@ package com.oyetech.radioservice.helper
 import android.content.Context
 import android.media.AudioManager
 import android.media.AudioManager.OnAudioFocusChangeListener
-import com.oyetech.domain.helper.isDebug
 import com.oyetech.domain.useCases.contentOperations.RadioOperationUseCase
 import com.oyetech.models.radioProject.radioModels.PauseReason.FOCUS_LOSS
 import com.oyetech.models.radioProject.radioModels.PauseReason.FOCUS_LOSS_TRANSIENT
 import com.oyetech.radioservice.BuildConfig
 import com.oyetech.radioservice.serviceUtils.ServiceConst
+import com.oyetech.tools.contextHelper.isDebug
 import org.koin.java.KoinJavaComponent
 import timber.log.Timber
 

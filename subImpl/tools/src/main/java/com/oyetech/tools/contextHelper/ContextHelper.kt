@@ -112,6 +112,11 @@ fun Context.getAppName(): String {
     return applicationName
 }
 
+fun Context.isDebug(): Boolean {
+    return this.applicationInfo.flags and
+            ApplicationInfo.FLAG_DEBUGGABLE !== 0
+}
+
 fun Context.getVersionName(): String {
     val context = this
     try {

@@ -10,7 +10,7 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.oyetech.adshelper.di.BaseAdHelper
-import com.oyetech.domain.helper.isDebug
+import com.oyetech.tools.contextHelper.isDebug
 import timber.log.Timber
 
 /**

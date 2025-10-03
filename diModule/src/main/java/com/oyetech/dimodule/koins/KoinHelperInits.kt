@@ -6,11 +6,11 @@ import com.google.gson.GsonBuilder
 import com.oyetech.dimodule.BaseApplication
 import com.oyetech.dimodule.sharedPref.SharedHelper
 import com.oyetech.dimodule.sharedPref.SharedOperationRepositoryImp
-import com.oyetech.domain.helper.isDebug
 import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.languageimp.LanguageOperationHelper
 import com.oyetech.models.utils.const.HelperConstant.DEFAULT_TIMEOUT
 import com.oyetech.models.utils.moshi.DefaultIfNullFactory
+import com.oyetech.tools.contextHelper.isDebug
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.ConnectionPool
