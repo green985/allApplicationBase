@@ -16,6 +16,9 @@ import com.oyetech.composebase.projectQuestionsFeature.theme.RadioAppTheme
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator.navHostScreenSetup
 import com.oyetech.domain.useCases.NavigationUseCase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 /**
 Created by Erdi Özbek
@@ -30,7 +33,13 @@ fun QuestionMainScreen(
     RadioAppTheme {
         val navController = rememberNavController()
         navigationUseCase.setNavigator { action ->
-            navController.navigate(action)
+            GlobalScope.launch(Dispatchers.Main) {
+                if (action == "back") {
+                    navController.navigateUp()
+                } else {
+                    navController.navigate(action)
+                }
+            }
         }
         Column(
             verticalArrangement = Arrangement.Bottom,
@@ -60,7 +69,15 @@ fun QuestionAppDebugRoot(navigationUseCase: NavigationUseCase) {
     val navController = rememberNavController()
     // Hook NavigationUseCase to Compose navController in debug as well
     navigationUseCase.setNavigator { action ->
-        navController.navigate(action)
+        // todo will be refactor later
+        GlobalScope.launch(Dispatchers.Main) {
+            if (action == "back") {
+                navController.navigateUp()
+            } else {
+                navController.navigate(action)
+            }
+        }
+
     }
     NavHost(
         navController = navController,

@@ -240,6 +240,8 @@ class LoginOperationVM(
                 gender = loginOperationState.value.gender
             )
             firebaseUserRepository.updateUserProperty(editedUserData)
+            uiEvent.emit(LoginOperationUiEvent.OnLoginSuccess)
+            navigationUseCase.navigate("back")
         }
         return false
     }

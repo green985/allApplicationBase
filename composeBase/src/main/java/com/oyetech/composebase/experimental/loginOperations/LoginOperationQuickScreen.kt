@@ -28,7 +28,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.base.updateState
-import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import kotlin.random.Random
 
@@ -83,9 +82,6 @@ fun LoginOperationQuickScreen(
                             age = (Random.nextInt(18, 40)).toString(),
                             gender = if (randomId % 2 == 0) "male" else "female"
                         )
-                    }
-                    scope.launch {
-                        loginOperationVM.onEvent(LoginOperationEvent.OnSubmit)
                     }
                 },
                 shape = RoundedCornerShape(12.dp),

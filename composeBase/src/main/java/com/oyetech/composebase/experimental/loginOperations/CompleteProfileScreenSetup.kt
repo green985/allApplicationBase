@@ -42,9 +42,8 @@ fun CompleteProfileScreenSetup(navigationRoute: (navigationRoute: String) -> Uni
         }
 
         OnLoginSuccess -> {
-            LaunchedEffect(Unit) {
-                navigationRoute.invoke("back")
-            }
+
+            Timber.d("OnLoginSuccess navigationRoute to home")
         }
 
         null -> {
