@@ -2,6 +2,8 @@ package com.oyetech.composebase.projectQuestionsFeature.views.questions
 
 import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.base.BaseUIState
+import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
+import com.oyetech.models.questionProject.questionOperation.QuestionType
 
 /**
 Created by Erdi Özbek
@@ -30,4 +32,31 @@ sealed class QuestionViewEvent : BaseEvent() {
 
     object YesClicked : QuestionViewEvent()
     object NoClicked : QuestionViewEvent()
+}
+
+// UI -> Backend model
+fun QuestionViewUiState.toOperationBody(): QuestionOperationResponseBody {
+    return QuestionOperationResponseBody(
+        questionId = questionId,
+        questionTitle = titleText,
+        questionType = QuestionType.YES_NO_QUESTION,
+        // createdAt is @ServerTimestamp and set by backend; null here is fine
+        createdAt = null,
+    )
+}
+
+// Backend model -> UI
+fun QuestionOperationResponseBody.toUiState(
+    base: QuestionViewUiState = QuestionViewUiState(isLoading = false),
+): QuestionViewUiState {
+    return base.copy(
+        isLoading = false,
+        isError = false,
+        errorText = "",
+        questionId = this.questionId,
+        titleText = this.questionTitle,
+        // bodyText, options are not part of response, keep as-is
+        isAnswered = false,
+        selectedAnswer = null,
+    )
 }
