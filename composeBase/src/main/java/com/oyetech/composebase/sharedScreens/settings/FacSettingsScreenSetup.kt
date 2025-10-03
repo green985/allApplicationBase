@@ -106,8 +106,6 @@ fun FacSettingsScreen(
             }
 
             if (uiState.isUserLoggedIn) {
-                Spacer(modifier = Modifier.height(16.dp))
-
                 SimpleSettingsInfoViewSetup(
                     onClick = { onEvent.invoke(FacSettingsUiEvent.NavigateToProfile) },
                     text = "My Profile"
@@ -142,7 +140,8 @@ fun FacSettingsScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(Modifier.height(200.dp))
+
 
             if (uiState.isDebug) {
                 HorizontalDivider(modifier = Modifier.height(1.dp))
@@ -152,7 +151,7 @@ fun FacSettingsScreen(
                 )
             }
 
-            Text(text = LanguageKey.appName)
+//            com.oyetech.composebase.sharedViews.app.AppInfoViewProperty()
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
@@ -162,8 +161,9 @@ fun FacSettingsScreen(
 @Preview(showSystemUi = false, showBackground = true)
 @Composable
 private fun FacSettingsScreenPreview() {
-//    FacSettingsScreen(
-//        uiState = FacSettingsUiState(),
-//        onEvent = {},
-//    )
+    FacSettingsScreen(
+        uiState = FacSettingsUiState(),
+        onEvent = {},
+        toolbarTitle = "Settings"
+    )
 }
