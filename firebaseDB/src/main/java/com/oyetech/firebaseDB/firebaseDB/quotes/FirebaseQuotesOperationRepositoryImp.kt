@@ -32,7 +32,6 @@ class FirebaseQuotesOperationRepositoryImp(
     override val saveListOperationState = MutableStateFlow<Boolean?>(null)
 
     override fun saveListWithNoTag(list: List<QuoteResponseData>) {
-        // todo will be changed, maybe...
         GlobalScope.launch {
             list.map {
                 firestore.collection(FirebaseDatabaseKeys.quotesNoTagCollection).add(it).await()

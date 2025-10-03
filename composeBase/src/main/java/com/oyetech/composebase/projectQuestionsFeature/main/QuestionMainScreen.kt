@@ -67,17 +67,17 @@ fun QuestionMainScreen(
 @Composable
 fun QuestionAppDebugRoot(navigationUseCase: NavigationUseCase) {
     val navController = rememberNavController()
+    val coroutineScope = androidx.compose.runtime.rememberCoroutineScope()
     // Hook NavigationUseCase to Compose navController in debug as well
     navigationUseCase.setNavigator { action ->
-        // todo will be refactor later
-        GlobalScope.launch(Dispatchers.Main) {
+        // Refactored: use composition-scoped coroutine instead of GlobalScope
+        coroutineScope.launch {
             if (action == "back") {
                 navController.navigateUp()
             } else {
                 navController.navigate(action)
             }
         }
-
     }
     NavHost(
         navController = navController,

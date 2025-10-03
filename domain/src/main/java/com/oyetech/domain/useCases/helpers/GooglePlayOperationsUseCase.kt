@@ -31,7 +31,6 @@ class GooglePlayOperationsUseCase(private var repository: GoogleSubscriptionOper
 
     fun checkGooglePlayServicesAvailable(): Boolean {
         // todo will be fixed.
-        // todo will be fixed.
 
         return true
     }

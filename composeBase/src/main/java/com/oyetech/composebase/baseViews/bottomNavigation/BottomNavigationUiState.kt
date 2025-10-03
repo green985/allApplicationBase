@@ -12,10 +12,7 @@ Created by Erdi Özbek
 data class BottomNavigationUiState(val asdasd: Boolean = false) : BaseUIState()
 
 sealed class BottomNavigationEvent : BaseEvent() {
-    data class Idle(val data: Int) : BottomNavigationEvent()
     data class NavigateToSelectedItem(val index: Int) : BottomNavigationEvent()
-    object Idlee : BottomNavigationEvent()
-
 }
 
 sealed class BottomNavigationUiEvent : BaseEvent() {

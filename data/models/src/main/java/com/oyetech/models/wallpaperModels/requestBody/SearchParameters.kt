@@ -31,7 +31,6 @@ data class SearchParameters(
     var tags: Boolean? = null,
     var facet: String? = null,
 
-    //TODO will be fixed with default values
     // defaults
     /*
     var puritySFW: Int = 1,
@@ -105,7 +104,6 @@ fun SearchParameters.toSearchMap(): HashMap<String, Any> {
 
         if (!sortingKey.isNullOrBlank()) {
             if (sortingKey == "random") {
-                // TODO generate random string for seed
                 map["seed"] = generateRandomStringForWallpaperSeed()
             }
 

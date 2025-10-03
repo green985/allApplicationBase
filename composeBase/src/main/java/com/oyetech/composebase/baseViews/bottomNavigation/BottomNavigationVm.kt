@@ -2,8 +2,6 @@ package com.oyetech.composebase.baseViews.bottomNavigation;
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
-import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationEvent.Idle
-import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationEvent.Idlee
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationEvent.NavigateToSelectedItem
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
@@ -34,8 +32,6 @@ class BottomNavigationVm(
         if (event is BottomNavigationEvent) {
 
             when (event) {
-                is Idle -> TODO()
-                Idlee -> TODO()
                 is NavigateToSelectedItem -> {
                     selectedItem.value = event.index
                     viewModelScope.launch {

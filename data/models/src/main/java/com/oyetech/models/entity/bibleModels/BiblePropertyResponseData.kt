@@ -15,7 +15,6 @@ data class BiblePropertyResponseData(
     @Json(name = "abbreviationLocal")
     var abbreviationLocal: String = "",
     /*
-    // TODO will be asked
     @Json(name = "audioBibles")
     var audioBibles: List<Any> = listOf(),
 
@@ -45,7 +44,6 @@ data class BiblePropertyResponseData(
     @Json(name = "hasAudio")
     var hasAudio: Boolean = false,
     /*
-    // TODO will be asked
     @Json(name = "relatedDbl")
     var relatedDbl: Any = Any(),
 

@@ -34,7 +34,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-        // todo maybe save token to server
     }
 
     private fun sendNotification(messageBody: String) {

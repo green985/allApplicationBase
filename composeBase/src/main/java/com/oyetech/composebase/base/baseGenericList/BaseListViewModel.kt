@@ -80,7 +80,6 @@ abstract class BaseListViewModel<T>(
     }
 
     fun retry() {
-        // todo analytics
         loadList()
     }
 

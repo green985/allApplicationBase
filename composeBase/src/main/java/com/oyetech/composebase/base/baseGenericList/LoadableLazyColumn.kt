@@ -197,7 +197,6 @@ private fun initLazyColumn(
 
 
             item {
-//                // todo will be contunie
 //                if (!isLoadingInitial && !isErrorMore && !isErrorInitial) {
 //                    loadMoreLoadingContent?.invoke()
 //                }
