@@ -3,6 +3,7 @@ package com.oyetech.composebase.projectQuestionsFeature.questionScreens.createQu
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
+import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent.CancelClicked
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent.NoClicked
@@ -21,11 +22,13 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class QuestionCreateQuestionVm(
     appDispatchers: AppDispatchers,
     private val navigationUseCase: NavigationUseCase,
     private val questionRepository: FirebaseQuestionOperationRepository,
+    private val snackbarDelegate: SnackbarDelegate,
 ) : BaseViewModel(appDispatchers) {
 
     val uiState = MutableStateFlow(QuestionCreateQuestionScreenUiState())
@@ -41,6 +44,10 @@ class QuestionCreateQuestionVm(
         if (event is QuestionViewEvent) {
             when (event) {
                 CancelClicked -> navigationUseCase.navigate("back")
+                QuestionViewEvent.OnErrorDismiss -> {
+                    uiState.updateState { copy(errorText = "") }
+                }
+
                 NoClicked -> TODO()
                 SubmitClicked -> submit()
                 is TitleChanged -> {
@@ -64,21 +71,23 @@ class QuestionCreateQuestionVm(
                 .collectLatest { result ->
                     result.fold(
                         onSuccess = {
+                            Timber.d("Question created")
                             uiState.updateState { copy(isLoading = false, isSubmitted = true) }
                             navigationUseCase.navigate("back")
-                            uiEvent.tryEmit(QuestionCreateQuestionUiEvent.OnSubmitSuccess)
+                            snackbarDelegate.triggerSnackbarState(
+                                message = LanguageKey.questionAddedSuccessfullyText
+                            )
                         },
                         onFailure = {
+                            Timber.d(it)
                             uiState.updateState {
                                 copy(
                                     isLoading = false,
                                     errorText = LanguageKey.generalErrorText
                                 )
                             }
-                            uiEvent.tryEmit(
-                                QuestionCreateQuestionUiEvent.OnSubmitError(
-                                    it.message ?: LanguageKey.generalErrorText
-                                )
+                            snackbarDelegate.triggerSnackbarState(
+                                message = it.message ?: LanguageKey.generalErrorText
                             )
                         }
                     )

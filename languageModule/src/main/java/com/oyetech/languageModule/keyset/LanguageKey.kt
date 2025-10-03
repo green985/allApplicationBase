@@ -10,11 +10,12 @@ Created by Erdi Özbek
 
 object LanguageKey {
     // QuestionYesNoView keys
+    var questionAddedSuccessfullyText set(value) {} get() = LocalLanguageHelper.getStringWithKey("questionAddedSuccessfullyText")
     var answerYes set(value) {} get() = LocalLanguageHelper.getStringWithKey("answerYes")
     var answerNo set(value) {} get() = LocalLanguageHelper.getStringWithKey("answerNo")
     var untitledQuestionText set(value) {} get() = LocalLanguageHelper.getStringWithKey("untitledQuestionText")
-    var yesText set(value) {} get() = LocalLanguageHelper.getStringWithKey("yesText")
-    var noText set(value) {} get() = LocalLanguageHelper.getStringWithKey("noText")
+    var yesText set(value) {} get() = LocalLanguageHelper.getStringWithKey("YES")
+    var noText set(value) {} get() = LocalLanguageHelper.getStringWithKey("NO")
     var yourAnswerText set(value) {} get() = LocalLanguageHelper.getStringWithKey("yourAnswerText")
 
     var recordingStatusOff set(value) {} get() = LocalLanguageHelper.getStringWithKey("recordingStatusOff")

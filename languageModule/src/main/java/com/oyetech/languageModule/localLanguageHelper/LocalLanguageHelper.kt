@@ -40,7 +40,8 @@ class LocalLanguageHelper(private val context: Context) {
 //                return defaultString
             }
 
-            val languageValue = languageHashMap[languageKey] ?: languageKey.plus("~~")
+            val languageValue = languageHashMap[languageKey] ?: languageKey
+//                .plus("~~")
             return languageValue
         }
 

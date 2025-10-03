@@ -46,7 +46,7 @@ fun QuestionCreateScreenSetup(
                 }
 
                 is QuestionCreateQuestionUiEvent.OnSubmitError -> {
-                    // TODO: handle error UI feedback
+
                 }
             }
         }
@@ -91,7 +91,8 @@ private fun QuestionCreateScreen(
                 }
                 if (uiState.errorText.isNotBlank()) {
                     ErrorScreenFullSize(
-                        errorMessage = uiState.errorText
+                        errorMessage = uiState.errorText,
+                        onDismiss = { onEvent(QuestionViewEvent.OnErrorDismiss) }
                     )
                 }
                 CreateQuestionYesNoView(

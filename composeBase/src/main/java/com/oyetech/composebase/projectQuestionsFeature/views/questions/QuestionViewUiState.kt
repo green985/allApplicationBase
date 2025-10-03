@@ -29,6 +29,7 @@ sealed class QuestionViewEvent : BaseEvent() {
     data class TitleChanged(val value: String) : QuestionViewEvent()
     object SubmitClicked : QuestionViewEvent()
     object CancelClicked : QuestionViewEvent()
+    object OnErrorDismiss : QuestionViewEvent()
 
     object YesClicked : QuestionViewEvent()
     object NoClicked : QuestionViewEvent()
