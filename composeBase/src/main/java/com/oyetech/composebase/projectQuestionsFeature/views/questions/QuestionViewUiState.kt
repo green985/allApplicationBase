@@ -6,6 +6,8 @@ import com.oyetech.models.questionProject.questionOperation.QueConstraints
 import com.oyetech.models.questionProject.questionOperation.QueOption
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.models.questionProject.questionOperation.QuestionType
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 /**
 Created by Erdi Özbek
@@ -22,6 +24,7 @@ data class QuestionViewUiState(
     val bodyText: String = "",
     val optionYesText: String = "",
     val optionNoText: String = "",
+    val options: ImmutableList<QueOption> = emptyList<QueOption>().toImmutableList(),
     val isAnswered: Boolean = false,
     val selectedAnswer: String? = null,
 ) : BaseUIState()
@@ -33,8 +36,7 @@ sealed class QuestionViewEvent : BaseEvent() {
     object CancelClicked : QuestionViewEvent()
     object OnErrorDismiss : QuestionViewEvent()
 
-    object YesClicked : QuestionViewEvent()
-    object NoClicked : QuestionViewEvent()
+    data class OnOptionSelected(val questionId: String, val optionId: String) : QuestionViewEvent()
 }
 
 // UI -> Backend model
@@ -64,7 +66,7 @@ fun QuestionOperationResponseBody.toUiState(
         errorText = "",
         questionId = this.questionId,
         titleText = this.questionTitle,
-        // bodyText, options are not part of response, keep as-is
+        options = this.options.toImmutableList(),
         isAnswered = false,
         selectedAnswer = null,
     )

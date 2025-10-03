@@ -6,10 +6,8 @@ import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent.CancelClicked
-import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent.NoClicked
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent.SubmitClicked
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent.TitleChanged
-import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent.YesClicked
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.toOperationBody
 import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
@@ -48,7 +46,6 @@ class QuestionCreateQuestionVm(
                     uiState.updateState { copy(errorText = "") }
                 }
 
-                NoClicked -> TODO()
                 SubmitClicked -> submit()
                 is TitleChanged -> {
                     questionUiState.updateState {
@@ -56,7 +53,9 @@ class QuestionCreateQuestionVm(
                     }
                 }
 
-                YesClicked -> TODO()
+                is QuestionViewEvent.OnOptionSelected -> {
+                    // todo will be implemented in future
+                }
             }
         }
     }

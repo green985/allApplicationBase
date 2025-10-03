@@ -36,15 +36,13 @@ class QuestionListVm(
         if (event is QuestionListEvent) {
             when (event) {
                 QuestionListEvent.OnRefreshClicked -> refreshList()
-                is QuestionListEvent.OnYesClicked -> onAnswered(event.item, true)
-                is QuestionListEvent.OnNoClicked -> onAnswered(event.item, false)
                 is QuestionListEvent.OnItemClicked -> onItemClicked(event.item)
             }
         }
     }
 
-    private fun onAnswered(item: QuestionViewUiState, isYes: Boolean) {
-        // Use questionType for next operations when available from item
+    private fun onOptionSelected(questionId: String, optionId: String) {
+        // For YES/NO question, optionId will be "YES" or "NO"; future types can extend this logic
         when (QuestionType.YES_NO_QUESTION) {
             QuestionType.YES_NO_QUESTION -> {
                 // Hook for future persistence or navigation if needed
@@ -62,6 +60,13 @@ class QuestionListVm(
     }
 
     fun onQuestionEvent(event: QuestionViewEvent) {
+        when (event) {
+            is QuestionViewEvent.OnOptionSelected -> onOptionSelected(
+                event.questionId,
+                event.optionId
+            )
 
+            else -> {}
+        }
     }
 }

@@ -21,6 +21,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.models.questionProject.questionOperation.QueOptionsValues
+import kotlinx.collections.immutable.toImmutableList
 
 /**
 Created by Erdi Özbek
@@ -83,18 +85,37 @@ private fun YesNoQuestionContent(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Button(
-                    onClick = { onEvent(QuestionViewEvent.YesClicked) },
-                    enabled = !uiState.isAnswered
-                ) {
-                    Text(text = uiState.optionYesText.ifBlank { LanguageKey.yesText })
-                }
-                Spacer(Modifier.size(8.dp))
-                Button(
-                    onClick = { onEvent(QuestionViewEvent.NoClicked) },
-                    enabled = !uiState.isAnswered
-                ) {
-                    Text(text = uiState.optionNoText.ifBlank { LanguageKey.noText })
+                if (uiState.options.isNotEmpty()) {
+                    uiState.options.forEachIndexed { index, opt ->
+                        if (index > 0) Spacer(Modifier.size(8.dp))
+                        Button(
+                            onClick = {
+                                onEvent(
+                                    QuestionViewEvent.OnOptionSelected(
+                                        uiState.questionId,
+                                        opt.id
+                                    )
+                                )
+                            },
+                            enabled = !uiState.isAnswered
+                        ) {
+                            Text(text = opt.text.ifBlank { opt.id })
+                        }
+                    }
+                } else {
+//                    Button(
+//                        onClick = { onEvent(QuestionViewEvent.OptionSelected("YES")) },
+//                        enabled = !uiState.isAnswered
+//                    ) {
+//                        Text(text = uiState.optionYesText.ifBlank { LanguageKey.yesText })
+//                    }
+//                    Spacer(Modifier.size(8.dp))
+//                    Button(
+//                        onClick = { onEvent(QuestionViewEvent.OptionSelected("NO")) },
+//                        enabled = !uiState.isAnswered
+//                    ) {
+//                        Text(text = uiState.optionNoText.ifBlank { LanguageKey.noText })
+//                    }
                 }
             }
 
@@ -196,7 +217,8 @@ fun QuestionYesNoScreen_Preview_Loading() {
             titleText = "Enable notifications?",
             bodyText = "Quick poll",
             optionYesText = "Yes",
-            optionNoText = "No"
+            optionNoText = "No",
+            options = QueOptionsValues.queYesNoQuestionOptionList.toImmutableList()
         ),
         onEvent = {},
     )
