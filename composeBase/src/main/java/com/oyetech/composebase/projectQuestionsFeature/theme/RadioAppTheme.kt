@@ -26,7 +26,7 @@ fun RadioAppTheme(
     }
 
     MaterialTheme(
-        colorScheme = darkScheme,
+        colorScheme = colorScheme,
         typography = AppTypography,
         content = content
     )

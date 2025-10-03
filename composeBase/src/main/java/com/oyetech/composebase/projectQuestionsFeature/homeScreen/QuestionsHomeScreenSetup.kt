@@ -17,6 +17,8 @@ import org.koin.java.KoinJavaComponent
 @Composable
 fun QuestionsHomeScreenSetup(
     modifier: Modifier = Modifier,
+//    userUiState: LoginOperationUiState,
+//    onUserEvent: (LoginOperationEvent) -> (Unit),
 ) {
     val navigationUseCase: NavigationUseCase by KoinJavaComponent.inject(NavigationUseCase::class.java)
 
@@ -35,6 +37,23 @@ fun QuestionsHomeScreenSetup(
                 }) {
                     Text(text = "Create Question")
                 }
+
+                // todo enable login operation
+//                if (!userUiState.isLogin) {
+//                    Column(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(4.dp),
+//                        verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
+//                        horizontalAlignment = Alignment.CenterHorizontally,
+//                    ) {
+//                        Button(onClick = {
+//                            onUserEvent(LoginOperationEvent.LoginClicked)
+//                        }) {
+//                            Text(LanguageKey.commentLoginButtonText)
+//                        }
+//                    }
+//                }
             }
         }
     )

@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.lifecycleScope
 import com.oyetech.composebase.helpers.eventNavigator.TestEventNavigator
 import com.oyetech.composebase.helpers.general.GeneralSettings
+import com.oyetech.composebase.projectQuestionsFeature.generalOperationScreen.GeneralOperationScreenSetup
 import com.oyetech.composebase.projectQuestionsFeature.theme.RadioAppTheme
 import com.oyetech.domain.useCases.NavigationUseCase
 import kotlinx.coroutines.Dispatchers
@@ -26,12 +27,14 @@ class QuestionMainActivity : ComponentActivity() {
 
         setContent {
             RadioAppTheme {
-                if (GeneralSettings.isDebug()) {
-                    QuestionAppDebugRoot(navigationUseCase)
-                } else {
+                GeneralOperationScreenSetup({
+                    if (GeneralSettings.isDebug()) {
+                        QuestionAppDebugRoot(navigationUseCase)
+                    } else {
 
-                    QuestionMainScreen(navigationUseCase)
-                }
+                        QuestionMainScreen(navigationUseCase)
+                    }
+                })
             }
         }
 
