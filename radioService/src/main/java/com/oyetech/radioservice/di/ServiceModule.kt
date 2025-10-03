@@ -1,13 +1,8 @@
 package com.oyetech.radioservice.di
 
-import android.content.Context
 import com.oyetech.domain.useCases.contentOperations.ExoPlayerOperationUseCase
 import com.oyetech.radioservice.services.PlayerService
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.koin.dsl.module
-import timber.log.Timber
 
 /**
 Created by Erdi Özbek
@@ -27,23 +22,9 @@ object RadioServiceModule {
          */
 
         scope<PlayerService> {
-            scoped { DenemeClasss(get()) }
         }
 
         single { ExoPlayerOperationUseCase(get()) }
 
     }
-}
-
-class DenemeClasss(var context: Context) {
-
-    fun startAsdasdasd() {
-        GlobalScope.launch {
-            repeat(1000000) {
-                delay(1000)
-                Timber.d("asdasd == " + it)
-            }
-        }
-    }
-
 }

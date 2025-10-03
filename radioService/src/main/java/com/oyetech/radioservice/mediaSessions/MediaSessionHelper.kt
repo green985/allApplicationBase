@@ -89,7 +89,6 @@ class MediaSessionHelper(private var service: Service) : PlayerBroadcastHelper(s
             )
         )
 
-        mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
         powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
 
         notificationHelper = RadioNotificationHelper(service, mediaSession)
@@ -117,9 +116,6 @@ class MediaSessionHelper(private var service: Service) : PlayerBroadcastHelper(s
     }
 
     private fun setMediaPlaybackState(state: Int) {
-        if (mediaSession == null) {
-            return
-        }
         var actions = (PlaybackStateCompat.ACTION_SKIP_TO_NEXT
                 or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
                 or PlaybackStateCompat.ACTION_STOP
@@ -212,44 +208,42 @@ class MediaSessionHelper(private var service: Service) : PlayerBroadcastHelper(s
                         radioLogo = radioDataModel.favicon
                     )
                 }
-                if (mediaSession != null) {
-                    val builder = MediaMetadataCompat.Builder()
-                    builder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM, currentStationName)
-                    /*
-                    builder.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, liveInfo.getArtist())
-                    builder.putString(MediaMetadataCompat.METADATA_KEY_TITLE, liveInfo.getTrack())
-                    builder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM, currentStation.Name)
-                    if (liveInfo.hasArtistAndTrack()) {
-                        builder.putString(
-                            MediaMetadataCompat.METADATA_KEY_ARTIST,
-                            liveInfo.getArtist()
-                        )
-                        builder.putString(
-                            MediaMetadataCompat.METADATA_KEY_TITLE,
-                            liveInfo.getTrack()
-                        )
-                    } else {
-                        builder.putString(
-                            MediaMetadataCompat.METADATA_KEY_TITLE,
-                            liveInfo.getTitle()
-                        )
-                        builder.putString(
-                            MediaMetadataCompat.METADATA_KEY_ARTIST,
-                            currentStation.Name
-                        ) // needed for android-media-controller to show an icon
-                    }
-                    builder.putBitmap(
-                        MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON,
-                        radioIcon.getBitmap()
-                    )
-                    builder.putBitmap(
-                        MediaMetadataCompat.METADATA_KEY_ALBUM_ART,
-                        radioIcon.getBitmap()
-                    )
-                     */
+                val builder = MediaMetadataCompat.Builder()
+                builder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM, currentStationName)
+                /*
+            builder.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, liveInfo.getArtist())
+            builder.putString(MediaMetadataCompat.METADATA_KEY_TITLE, liveInfo.getTrack())
+            builder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM, currentStation.Name)
+            if (liveInfo.hasArtistAndTrack()) {
+                builder.putString(
+                    MediaMetadataCompat.METADATA_KEY_ARTIST,
+                    liveInfo.getArtist()
+                )
+                builder.putString(
+                    MediaMetadataCompat.METADATA_KEY_TITLE,
+                    liveInfo.getTrack()
+                )
+            } else {
+                builder.putString(
+                    MediaMetadataCompat.METADATA_KEY_TITLE,
+                    liveInfo.getTitle()
+                )
+                builder.putString(
+                    MediaMetadataCompat.METADATA_KEY_ARTIST,
+                    currentStation.Name
+                ) // needed for android-media-controller to show an icon
+            }
+            builder.putBitmap(
+                MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON,
+                radioIcon.getBitmap()
+            )
+            builder.putBitmap(
+                MediaMetadataCompat.METADATA_KEY_ALBUM_ART,
+                radioIcon.getBitmap()
+            )
+             */
 
-                    mediaSession.setMetadata(builder.build())
-                }
+                mediaSession.setMetadata(builder.build())
                 setMediaPlaybackState(PlaybackStateCompat.STATE_PLAYING)
             }
 
