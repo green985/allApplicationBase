@@ -23,6 +23,7 @@ open class BaseViewModel(private val dispatcher: AppDispatchers) : ViewModel() {
     fun getDispatcherIo() = dispatcher.io
 
     init {
+        Timber.d("Init BaseViewModel == " + this.javaClass.name)
         viewModelScope.launch {
             testEventNavigator.eventFlow.collectLatest {
                 Timber.d("Event received from class ${this@BaseViewModel.javaClass.name}: $it")

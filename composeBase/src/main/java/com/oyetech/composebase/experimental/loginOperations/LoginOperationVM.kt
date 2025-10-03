@@ -213,6 +213,8 @@ class LoginOperationVM(
 
     private fun onSubmitOperation(): Boolean {
         if (isErrorInLoginForm()) {
+            Timber.d("onSubmitOperation: isErrorInLoginForm true")
+            Timber.d("onSubmitOperation: isErrorInLoginForm ${loginOperationState.value.errorMessage}")
             return true
         }
 

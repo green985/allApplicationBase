@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.helpers.general.GeneralSettings
+import com.oyetech.composebase.sharedViews.settings.SimpleSettingsInfoViewSetup
 import com.oyetech.languageModule.keyset.LanguageKey
 import org.koin.androidx.compose.koinViewModel
 
@@ -44,12 +45,12 @@ fun FacSettingsScreenSetup(
         onEvent = { vm.onEvent(it) },
     )
 //
-//    if (false && uiState.isDeleteAccountShown) {
-//        DeleteAccountInfoDialog(
-//            onDismiss = { vm.onEvent(FacSettingsUiEvent.DeleteAccountDismissed) },
-//            onConfirm = { vm.onEvent(FacSettingsUiEvent.DeleteAccountConfirmed) }
-//        )
-//    }
+    if (uiState.isDeleteAccountShown) {
+        com.oyetech.composebase.sharedViews.dialogs.DeleteAccountInfoDialog(
+            onDismiss = { vm.onEvent(FacSettingsUiEvent.DeleteAccountDismissed) },
+            onConfirm = { vm.onEvent(FacSettingsUiEvent.DeleteAccountConfirmed) }
+        )
+    }
 //    if (false && uiState.isInfoDialogShown) {
 //        InfoDialogOperation(
 //            onDismiss = { vm.onEvent(FacSettingsUiEvent.InfoDialogDismissed) },
@@ -78,33 +79,39 @@ fun FacSettingsScreen(
         )
     }) {
         Column(modifier = Modifier.padding(it)) {
-            Button(onClick = { onEvent.invoke(FacSettingsUiEvent.ContactClicked) }) {
-                Text(text = uiState.contactWithMeText)
-            }
-            Button(onClick = { onEvent.invoke(FacSettingsUiEvent.InfoClicked) }) {
-                Text(text = uiState.infoText)
-            }
-            Button(onClick = { onEvent.invoke(FacSettingsUiEvent.PrivacyPolicyClicked) }) {
-                Text(text = uiState.privacyPolicyText)
-            }
-            Button(onClick = { onEvent.invoke(FacSettingsUiEvent.TermsAndConditionsClicked) }) {
-                Text(text = uiState.termsAndConditionText)
-            }
+            SimpleSettingsInfoViewSetup(
+                onClick = { onEvent.invoke(FacSettingsUiEvent.ContactClicked) },
+                text = uiState.contactWithMeText
+            )
+            SimpleSettingsInfoViewSetup(
+                onClick = { onEvent.invoke(FacSettingsUiEvent.InfoClicked) },
+                text = uiState.infoText
+            )
+            SimpleSettingsInfoViewSetup(
+                onClick = { onEvent.invoke(FacSettingsUiEvent.PrivacyPolicyClicked) },
+                text = uiState.privacyPolicyText
+            )
+            SimpleSettingsInfoViewSetup(
+                onClick = { onEvent.invoke(FacSettingsUiEvent.TermsAndConditionsClicked) },
+                text = uiState.termsAndConditionText
+            )
             if (GeneralSettings.isRatingEnable()) {
                 HorizontalDivider(
                     modifier = Modifier.height(1.dp)
                 )
-                Button(onClick = { startReviewOperation.invoke() }) {
-                    Text(text = uiState.rateUs)
-                }
+                SimpleSettingsInfoViewSetup(
+                    onClick = { startReviewOperation.invoke() },
+                    text = uiState.rateUs
+                )
             }
 
             if (uiState.isUserLoggedIn) {
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Button(onClick = { onEvent.invoke(FacSettingsUiEvent.NavigateToProfile) }) {
-                    Text(text = "My Profile")
-                }
+                SimpleSettingsInfoViewSetup(
+                    onClick = { onEvent.invoke(FacSettingsUiEvent.NavigateToProfile) },
+                    text = "My Profile"
+                )
 
                 Column(
                     modifier = Modifier
@@ -139,9 +146,10 @@ fun FacSettingsScreen(
 
             if (uiState.isDebug) {
                 HorizontalDivider(modifier = Modifier.height(1.dp))
-                Button(onClick = { onEvent.invoke(FacSettingsUiEvent.AdminApproveQuestionsClicked) }) {
-                    Text(text = "Admin: Approve Questions")
-                }
+                SimpleSettingsInfoViewSetup(
+                    onClick = { onEvent.invoke(FacSettingsUiEvent.AdminApproveQuestionsClicked) },
+                    text = "Admin: Approve Questions"
+                )
             }
 
             Text(text = LanguageKey.appName)

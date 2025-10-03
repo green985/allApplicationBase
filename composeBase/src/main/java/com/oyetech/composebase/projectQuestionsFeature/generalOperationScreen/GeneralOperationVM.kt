@@ -49,6 +49,7 @@ class GeneralOperationVM(
     fun observeRealtimeMessages() {}
 
     private fun signToUserFeedList() {
+        // todo bug can be happen here when request is sent
         viewModelScope.launch(getDispatcherIo()) {
             firebaseUserListOperationRepository.addUserToUserList().asResult()
                 .collectLatest {
@@ -64,7 +65,7 @@ class GeneralOperationVM(
             delay(1000)
             appReviewOperationUseCase.controlReviewCanShow()
         }
-        signToUserFeedList()
+//        signToUserFeedList()
     }
 
 
