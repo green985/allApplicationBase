@@ -11,6 +11,8 @@ import com.oyetech.composebase.helpers.adViewDelegate.AdViewOperationDelegateImp
 import com.oyetech.composebase.helpers.eventNavigator.TestEventNavigator
 import com.oyetech.composebase.helpers.vibrationHelper.IVibrationHelper
 import com.oyetech.composebase.helpers.vibrationHelper.VibrationHelperImpl
+import com.oyetech.composebase.projectQuestionsFeature.generalOperationScreen.GeneralOperationVM
+import com.oyetech.composebase.projectQuestionsFeature.generalOperationScreen.generalPlayground.GeneralPlaygroundVm
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigatorVM
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailVm
 import com.oyetech.composebase.sharedScreens.messaging.MessageOperationVM
@@ -37,6 +39,8 @@ object ComposeMainModule {
         single<BottomNavigationDelegate> { BottomNavigationDelegate() }
 
 
+        singleOf(::GeneralOperationVM)
+        singleOf(::GeneralPlaygroundVm)
         singleOf(::LoginOperationVM)
 
         viewModelOf(::CommentScreenWithContentIdVM)

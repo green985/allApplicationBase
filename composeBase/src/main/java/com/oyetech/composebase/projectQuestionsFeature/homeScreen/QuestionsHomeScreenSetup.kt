@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.oyetech.composebase.base.BaseScaffold
+import com.oyetech.composebase.experimental.loginOperations.LoginOperationSmallButtonSetup
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
@@ -38,22 +39,8 @@ fun QuestionsHomeScreenSetup(
                     Text(text = "Create Question")
                 }
 
-                // todo enable login operation
-//                if (!userUiState.isLogin) {
-//                    Column(
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .padding(4.dp),
-//                        verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
-//                        horizontalAlignment = Alignment.CenterHorizontally,
-//                    ) {
-//                        Button(onClick = {
-//                            onUserEvent(LoginOperationEvent.LoginClicked)
-//                        }) {
-//                            Text(LanguageKey.commentLoginButtonText)
-//                        }
-//                    }
-//                }
+                LoginOperationSmallButtonSetup()
+
             }
         }
     )

@@ -32,6 +32,7 @@ fun GlideImageWithState(
     placeholderPainter: Painter? = null,
 ) {
     val context = LocalContext.current
+
     GlideSubcomposition(imageUrl, modifier) {
         when (state) {
             RequestState.Loading -> {

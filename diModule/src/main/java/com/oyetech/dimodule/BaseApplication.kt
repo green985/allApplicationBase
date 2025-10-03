@@ -4,9 +4,6 @@ import android.app.Application
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.gms.dynamite.DynamiteModule
-import com.oyetech.composebase.sharedScreens.voiceRecord.service.DigitalNoteActionDispatcher
-import com.oyetech.composebase.sharedScreens.voiceRecord.service.VolumeDoublePressListener
-import com.oyetech.composebase.sharedScreens.voiceRecord.service.VolumeKeyType
 import com.oyetech.dimodule.koins.AppComponent
 import com.oyetech.domain.helper.ActivityProviderUseCase
 import com.oyetech.domain.helper.isDebug
@@ -16,7 +13,7 @@ import org.koin.core.context.startKoin
 import org.koin.java.KoinJavaComponent
 import timber.log.Timber
 
-class BaseApplication : Application(), VolumeDoublePressListener {
+class BaseApplication : Application() {
 
     init {
     }
@@ -39,7 +36,6 @@ class BaseApplication : Application(), VolumeDoublePressListener {
             Timber.uprootAll()
             Timber.plant(Timber.DebugTree())
         }
-        DigitalNoteActionDispatcher.register(this)
         try {
             val dynamiteModule = DynamiteModule.load(
                 this,
@@ -60,25 +56,6 @@ class BaseApplication : Application(), VolumeDoublePressListener {
 
         activityProviderUseCase.hashCode()
 
-    }
-
-    override fun onTerminate() {
-        // uygulama kapanırken kaydı sil
-        DigitalNoteActionDispatcher.unregister(this)
-        super.onTerminate()
-    }
-
-    override fun onVolumeDoublePress(type: VolumeKeyType) {
-        // Çift basış olayı buraya düşer
-        when (type) {
-            VolumeKeyType.Up -> onTriggerFastNoteInsert()
-            VolumeKeyType.Down -> onTriggerFastNoteInsert()
-        }
-    }
-
-    private fun onTriggerFastNoteInsert() {
-        // hızlı not ekleme işlemin
-        Timber.d("Hızlı Not Ekleme Tetiklendi")
     }
 
     // CONFIGURATION ---
