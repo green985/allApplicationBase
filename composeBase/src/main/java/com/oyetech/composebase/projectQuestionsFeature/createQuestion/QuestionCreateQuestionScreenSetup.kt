@@ -33,8 +33,7 @@ fun QuestionCreateScreenSetup(
     QuestionCreateScreen(
         uiState = uiState,
         questionUiState = questionUiState,
-        onQuestionEvent = { vm.onQuestionEvent(it) },
-        onEvent = { event: QuestionCreateQuestionEvent -> vm.onEvent(event) },
+        onEvent = { event: QuestionViewEvent -> vm.onEvent(event) },
     )
 
     LaunchedEffect(Unit) {
@@ -73,8 +72,7 @@ private fun QuestionCreateToolbar(title: String) {
 @Composable
 private fun QuestionCreateScreen(
     uiState: QuestionCreateQuestionScreenUiState,
-    onEvent: (QuestionCreateQuestionEvent) -> Unit,
-    onQuestionEvent: (QuestionViewEvent) -> Unit = {},
+    onEvent: (QuestionViewEvent) -> Unit = {},
     questionUiState: QuestionViewUiState,
 ) {
     BaseScaffold(
@@ -87,9 +85,7 @@ private fun QuestionCreateScreen(
                     .padding(top = innerPadding.calculateTopPadding())
             ) {
                 CreateQuestionYesNoView(
-                    uiState = questionUiState, onEvent = {
-
-                    }
+                    uiState = questionUiState, onEvent = onEvent
                 )
             }
         }

@@ -3,8 +3,12 @@ package com.oyetech.composebase.projectQuestionsFeature.createQuestion
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
+import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent.CancelClicked
+import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent.NoClicked
+import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent.SubmitClicked
+import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent.TitleChanged
+import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent.YesClicked
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
@@ -27,45 +31,32 @@ class QuestionCreateQuestionVm(
 
     val questionUiState = MutableStateFlow(QuestionViewUiState())
 
-    fun onQuestionEvent(event: QuestionViewEvent) {
-        when (event) {
-            QuestionViewEvent.CancelClicked -> TODO()
-            QuestionViewEvent.NoClicked -> TODO()
-            QuestionViewEvent.SubmitClicked -> TODO()
-            is QuestionViewEvent.TitleChanged -> {
-                questionUiState.updateState {
-                    copy(titleText = event.value)
-                }
-            }
-
-            QuestionViewEvent.YesClicked -> TODO()
-        }
-    }
-
     override fun onEvent(event: Any) {
-        if (event is QuestionCreateQuestionEvent) {
+        if (event is QuestionViewEvent) {
             when (event) {
-
-                is QuestionCreateQuestionEvent.OnTitleChange -> {
-                    onQuestionEvent(QuestionViewEvent.TitleChanged(event.text))
+                CancelClicked -> TODO()
+                NoClicked -> TODO()
+                SubmitClicked -> submit()
+                is TitleChanged -> {
+                    questionUiState.updateState {
+                        copy(titleText = event.value)
+                    }
                 }
 
-                QuestionCreateQuestionEvent.OnSubmit -> submit()
-                QuestionCreateQuestionEvent.OnRetry -> Unit
-                QuestionCreateQuestionEvent.OnScreenOut -> Unit
+                YesClicked -> TODO()
             }
         }
     }
 
     private fun submit() {
         val current = uiState.value
-        if (current.titleText.isBlank() || current.descriptionText.isBlank()) return
+        if (current.titleText.isBlank()) return
         uiState.updateState { copy(isLoading = true) }
         viewModelScope.launch(getDispatcherIo()) {
             // TODO: integrate with repository when available
             // Simulate success
             uiState.updateState { copy(isLoading = false, isSubmitted = true) }
-            navigationUseCase.navigate(QuestionAppProjectRoutes.QuestionAppHomepage.route)
+            navigationUseCase.navigate("back")
             uiEvent.tryEmit(QuestionCreateQuestionUiEvent.OnSubmitSuccess)
         }
     }
