@@ -44,7 +44,7 @@ fun QuestionYesNoView(
             modifier = modifier
         )
     } else {
-        YesNoQuestionContent(uiState = uiState, onEvent = onEvent, modifier = modifier)
+        QuestionViewScaffoldLayout(uiState = uiState, onEvent = onEvent, modifier = modifier)
     }
 }
 
