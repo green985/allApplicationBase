@@ -4,6 +4,7 @@ import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.base.BaseUIState
 import com.oyetech.models.questionProject.questionOperation.QueConstraints
 import com.oyetech.models.questionProject.questionOperation.QueOption
+import com.oyetech.models.questionProject.questionOperation.QueOptionsValues
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.models.questionProject.questionOperation.QuestionType
 import kotlinx.collections.immutable.ImmutableList
@@ -22,9 +23,7 @@ data class QuestionViewUiState(
     val questionId: String = "",
     val titleText: String = "",
     val bodyText: String = "",
-    val optionYesText: String = "",
-    val optionNoText: String = "",
-    val options: ImmutableList<QueOption> = emptyList<QueOption>().toImmutableList(),
+    val options: ImmutableList<QueOption> = QueOptionsValues.queYesNoQuestionOptionList.toImmutableList(),
     val isAnswered: Boolean = false,
     val selectedAnswer: String? = null,
 ) : BaseUIState()
@@ -41,15 +40,12 @@ sealed class QuestionViewEvent : BaseEvent() {
 
 // UI -> Backend model
 fun QuestionViewUiState.toOperationBody(): QuestionOperationResponseBody {
-    // For YES/NO type, provide two options and a simple constraint
-    val yesOption = QueOption(id = "YES", text = optionYesText.ifBlank { "Yes" }, order = 0)
-    val noOption = QueOption(id = "NO", text = optionNoText.ifBlank { "No" }, order = 1)
 
     return QuestionOperationResponseBody(
         questionId = questionId,
         questionTitle = titleText,
         questionType = QuestionType.YES_NO_QUESTION,
-        options = listOf(yesOption, noOption),
+        options = this.options,
         constraints = QueConstraints(required = true, minSelections = 1, maxSelections = 1),
         // createdAt is @ServerTimestamp and set by backend; null here is fine
         createdAt = null,

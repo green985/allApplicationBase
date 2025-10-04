@@ -1,8 +1,8 @@
 package com.oyetech.composebase.sharedScreens.settings
 
-import com.oyetech.composebase.BuildConfig
 import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.base.BaseUIState
+import com.oyetech.domain.BuildConfig
 import com.oyetech.languageModule.keyset.LanguageKey
 
 data class FacSettingsUiState(

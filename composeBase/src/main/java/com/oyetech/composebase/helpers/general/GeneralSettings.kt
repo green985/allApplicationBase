@@ -1,6 +1,6 @@
 package com.oyetech.composebase.helpers.general
 
-import com.oyetech.composebase.BuildConfig
+import com.oyetech.domain.BuildConfig
 
 /**
 Created by Erdi Özbek

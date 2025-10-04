@@ -179,8 +179,6 @@ fun QuestionYesNoScreen_Preview_Answered() {
             isLoading = false,
             titleText = "Enable dark mode?",
             bodyText = "Vote now",
-            optionYesText = "Yes",
-            optionNoText = "No",
             isAnswered = true,
             selectedAnswer = "YES"
         ),
@@ -197,8 +195,6 @@ private fun QuestionYesNoScreen_Preview_Edit_Mode() {
             isLoading = false,
             titleText = "Enable dark mode?",
             bodyText = "Vote now",
-            optionYesText = "Yes",
-            optionNoText = "No",
             isAnswered = true,
             selectedAnswer = "YES"
         ),
@@ -216,8 +212,6 @@ fun QuestionYesNoScreen_Preview_Loading() {
             isLoading = false,
             titleText = "Enable notifications?",
             bodyText = "Quick poll",
-            optionYesText = "Yes",
-            optionNoText = "No",
             options = QueOptionsValues.queYesNoQuestionOptionList.toImmutableList()
         ),
         onEvent = {},
