@@ -98,6 +98,29 @@ object QuestionOptionCatalog {
     }
 }
 
+// Helpers to map string keys to enums
+fun categoryFromKey(key: String): QuestionCategories? = when (key) {
+    QuestionCategoryKeys.TWO_CHOICE -> QuestionCategories.TWO_CHOICE
+    QuestionCategoryKeys.THREE_CHOICE -> QuestionCategories.THREE_CHOICE
+    QuestionCategoryKeys.MULTI_CHOICE -> QuestionCategories.MULTI_CHOICE
+    QuestionCategoryKeys.SCALE -> QuestionCategories.SCALE
+    QuestionCategoryKeys.OPEN_ENDED -> QuestionCategories.OPEN_ENDED
+    else -> null
+}
+
+fun twoChoiceSubFromKey(key: String?): TwoChoiceSubCategories? = when (key) {
+    TwoChoiceSubCategoryKeys.YES_NO -> TwoChoiceSubCategories.YES_NO
+    TwoChoiceSubCategoryKeys.UP_DOWN -> TwoChoiceSubCategories.UP_DOWN
+    TwoChoiceSubCategoryKeys.GOOD_BAD -> TwoChoiceSubCategories.GOOD_BAD
+    else -> null
+}
+
+fun threeChoiceSubFromKey(key: String?): ThreeChoiceSubCategories? = when (key) {
+    ThreeChoiceSubCategoryKeys.LOW_MED_HIGH -> ThreeChoiceSubCategories.LOW_MED_HIGH
+    ThreeChoiceSubCategoryKeys.AGREE_NEUTRAL_DISAGREE -> ThreeChoiceSubCategories.AGREE_NEUTRAL_DISAGREE
+    else -> null
+}
+
 object QuestionTaxonomyDefaults {
     fun defaultOptions(category: QuestionCategories, sub: TwoChoiceSubCategories): List<QueOption> {
         return when (category) {

@@ -59,3 +59,33 @@ fun Preview_Question_3Choice_AgreeNeutralDisagree() {
     )
     QuestionYesNoView(uiState = ui, onEvent = {})
 }
+
+@Preview(showBackground = true)
+@Composable
+fun Preview_Factory_TwoChoice_YesNo() {
+    val body =
+        com.oyetech.models.questionProject.questionOperation.QuestionTaxonomyFactory.buildQuestion(
+            title = "Enable notifications?",
+            taxonomy = com.oyetech.models.questionProject.questionOperation.QuestionTaxonomyRef(
+                categoryKey = com.oyetech.models.questionProject.questionOperation.QuestionCategoryKeys.TWO_CHOICE,
+                subCategoryKey = com.oyetech.models.questionProject.questionOperation.TwoChoiceSubCategoryKeys.YES_NO
+            )
+        )
+    val ui = body.toUiState()
+    QuestionYesNoView(uiState = ui, onEvent = {})
+}
+
+@Preview(showBackground = true)
+@Composable
+fun Preview_Factory_ThreeChoice_LowMedHigh() {
+    val body =
+        com.oyetech.models.questionProject.questionOperation.QuestionTaxonomyFactory.buildQuestion(
+            title = "Focus intensity",
+            taxonomy = com.oyetech.models.questionProject.questionOperation.QuestionTaxonomyRef(
+                categoryKey = com.oyetech.models.questionProject.questionOperation.QuestionCategoryKeys.THREE_CHOICE,
+                subCategoryKey = com.oyetech.models.questionProject.questionOperation.ThreeChoiceSubCategoryKeys.LOW_MED_HIGH
+            )
+        )
+    val ui = body.toUiState()
+    QuestionYesNoView(uiState = ui, onEvent = {})
+}

@@ -16,6 +16,9 @@ data class QuestionOperationResponseBody(
     val questionTitle: String = "",
     val questionType: QuestionType = QuestionType.YES_NO_QUESTION,
 
+    // Taxonomy keys to classify question semantics (category/subCategory)
+    val taxonomy: QuestionTaxonomyRef = QuestionTaxonomyRef(),
+
     // Extensible fields (kept minimal for now)
     val payload: QuestionPayload? = null,
     val options: List<QueOption> = emptyList(),
