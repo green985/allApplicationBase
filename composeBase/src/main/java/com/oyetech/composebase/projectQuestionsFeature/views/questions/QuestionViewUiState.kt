@@ -2,7 +2,6 @@ package com.oyetech.composebase.projectQuestionsFeature.views.questions
 
 import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.base.BaseUIState
-import com.oyetech.models.questionProject.questionOperation.QueConstraints
 import com.oyetech.models.questionProject.questionOperation.QueOption
 import com.oyetech.models.questionProject.questionOperation.QueOptionsValues
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
@@ -23,6 +22,7 @@ data class QuestionViewUiState(
     val questionId: String = "",
     val titleText: String = "",
     val bodyText: String = "",
+    val questionType: QuestionType = QuestionType.YES_NO_QUESTION,
     val options: ImmutableList<QueOption> = QueOptionsValues.queYesNoQuestionOptionList.toImmutableList(),
     val isAnswered: Boolean = false,
     val selectedAnswer: String? = null,
@@ -44,9 +44,9 @@ fun QuestionViewUiState.toOperationBody(): QuestionOperationResponseBody {
     return QuestionOperationResponseBody(
         questionId = questionId,
         questionTitle = titleText,
-        questionType = QuestionType.YES_NO_QUESTION,
+        questionType = this.questionType,
         options = this.options,
-        constraints = QueConstraints(required = true, minSelections = 1, maxSelections = 1),
+        constraints = null,
         // createdAt is @ServerTimestamp and set by backend; null here is fine
         createdAt = null,
     )
@@ -62,6 +62,7 @@ fun QuestionOperationResponseBody.toUiState(
         errorText = "",
         questionId = this.questionId,
         titleText = this.questionTitle,
+        questionType = this.questionType,
         options = this.options.toImmutableList(),
         isAnswered = false,
         selectedAnswer = null,
