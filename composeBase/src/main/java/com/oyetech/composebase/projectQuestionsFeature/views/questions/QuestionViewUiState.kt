@@ -4,8 +4,14 @@ import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.base.BaseUIState
 import com.oyetech.models.questionProject.questionOperation.QueOption
 import com.oyetech.models.questionProject.questionOperation.QueOptionsValues
+import com.oyetech.models.questionProject.questionOperation.QuestionCategories
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
+import com.oyetech.models.questionProject.questionOperation.QuestionOptionCatalog
+import com.oyetech.models.questionProject.questionOperation.QuestionTaxonomyDefaults
 import com.oyetech.models.questionProject.questionOperation.QuestionType
+import com.oyetech.models.questionProject.questionOperation.categoryFromKey
+import com.oyetech.models.questionProject.questionOperation.threeChoiceSubFromKey
+import com.oyetech.models.questionProject.questionOperation.twoChoiceSubFromKey
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -35,6 +41,7 @@ sealed class QuestionViewEvent : BaseEvent() {
     object CancelClicked : QuestionViewEvent()
     object OnErrorDismiss : QuestionViewEvent()
 
+    // Extended selection with questionId
     data class OnOptionSelected(val questionId: String, val optionId: String) : QuestionViewEvent()
 }
 
@@ -56,14 +63,41 @@ fun QuestionViewUiState.toOperationBody(): QuestionOperationResponseBody {
 fun QuestionOperationResponseBody.toUiState(
     base: QuestionViewUiState = QuestionViewUiState(isLoading = false),
 ): QuestionViewUiState {
+    // If backend provided options, use them; otherwise derive defaults from taxonomy or fallback to YES/NO
+    val derivedOptions: List<QueOption> = this.options.ifEmpty {
+        val category = categoryFromKey(this.taxonomy.categoryKey)
+        when (category) {
+            QuestionCategories.TWO_CHOICE -> {
+                val sub = twoChoiceSubFromKey(this.taxonomy.subCategoryKey)
+                sub?.let {
+                    QuestionTaxonomyDefaults.defaultOptions(
+                        QuestionCategories.TWO_CHOICE,
+                        it
+                    )
+                }
+                    ?: QuestionOptionCatalog.TwoChoice.YES_NO
+            }
+
+            QuestionCategories.THREE_CHOICE -> {
+                val sub = threeChoiceSubFromKey(this.taxonomy.subCategoryKey)
+                // For now, only YES/NO is supported to render; keep empty for non-two-choice
+                sub?.let { emptyList() } ?: emptyList()
+            }
+
+            else -> {
+                // Fallback to YES/NO
+                QuestionOptionCatalog.TwoChoice.YES_NO
+            }
+        }
+    }
+
     return base.copy(
         isLoading = false,
         isError = false,
         errorText = "",
         questionId = this.questionId,
         titleText = this.questionTitle,
-        questionType = this.questionType,
-        options = this.options.toImmutableList(),
+        options = derivedOptions.toImmutableList(),
         isAnswered = false,
         selectedAnswer = null,
     )

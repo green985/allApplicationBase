@@ -55,7 +55,9 @@ class QuestionCreateQuestionVm(
 
                 is QuestionViewEvent.OnOptionSelected -> {
                     // todo will be implemented in future
+                    Timber.d("Option selected: ${event.optionId} for question ${event.questionId}")
                 }
+
             }
         }
     }
