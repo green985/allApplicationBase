@@ -72,7 +72,6 @@ class QuestionListVm(
         // Branch based on future questionType when added to UI state
         when (item.questionType) {
             QuestionType.SINGLE_CHOICE -> {}
-            QuestionType.YES_NO_QUESTION -> {}
         }
     }
 

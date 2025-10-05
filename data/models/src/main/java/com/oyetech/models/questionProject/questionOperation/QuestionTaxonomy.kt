@@ -3,6 +3,14 @@ package com.oyetech.models.questionProject.questionOperation
 import androidx.annotation.Keep
 
 @Keep
+enum class QuestionType {
+    SINGLE_CHOICE,
+//    MULTI_CHOICE,
+//    SCALE,
+//    OPEN_ENDED,
+}
+
+@Keep
 enum class QuestionCategories {
     TWO_CHOICE,
     THREE_CHOICE,

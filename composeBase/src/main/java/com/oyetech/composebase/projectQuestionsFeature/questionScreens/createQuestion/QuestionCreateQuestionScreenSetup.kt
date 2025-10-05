@@ -1,12 +1,18 @@
 package com.oyetech.composebase.projectQuestionsFeature.questionScreens.createQuestion
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -14,6 +20,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
@@ -21,6 +28,11 @@ import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.CreateQuestionYesNoView
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
+import com.oyetech.models.questionProject.questionOperation.QuestionCategories
+import com.oyetech.models.questionProject.questionOperation.QuestionCategoryKeys
+import com.oyetech.models.questionProject.questionOperation.ThreeChoiceSubCategories
+import com.oyetech.models.questionProject.questionOperation.TwoChoiceSubCategories
+import com.oyetech.models.questionProject.questionOperation.asKey
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
@@ -36,6 +48,7 @@ fun QuestionCreateScreenSetup(
         uiState = uiState,
         questionUiState = questionUiState,
         onEvent = { event: QuestionViewEvent -> vm.onEvent(event) },
+        onCreateEvent = { vm.onCreateEvent(it) }
     )
 
     LaunchedEffect(Unit) {
@@ -76,6 +89,7 @@ private fun QuestionCreateScreen(
     uiState: QuestionCreateQuestionScreenUiState,
     onEvent: (QuestionViewEvent) -> Unit = {},
     questionUiState: QuestionViewUiState,
+    onCreateEvent: (QuestionCreateQuestionEvent) -> Unit,
 ) {
     BaseScaffold(
         topBar = { QuestionCreateToolbar(uiState.toolbarTitleText) },
@@ -95,6 +109,37 @@ private fun QuestionCreateScreen(
                         onDismiss = { onEvent(QuestionViewEvent.OnErrorDismiss) }
                     )
                 }
+                // Categories selector (horizontal)
+                CategoriesView(
+                    selected = uiState.taxonomy.categoryKey,
+                    onSelect = { cat ->
+                        onCreateEvent(
+                            QuestionCreateQuestionEvent.OnCategorySelected(
+                                cat
+                            )
+                        )
+                    }
+                )
+                // Subcategories selector for selected category (horizontal)
+                SubcategoriesView(
+                    categoryKey = uiState.taxonomy.categoryKey,
+                    selectedSubKey = uiState.taxonomy.subCategoryKey,
+                    onSelectTwoChoice = { sub ->
+                        onCreateEvent(
+                            QuestionCreateQuestionEvent.OnTwoChoiceSubSelected(
+                                sub
+                            )
+                        )
+                    },
+                    onSelectThreeChoice = { sub ->
+                        onCreateEvent(
+                            QuestionCreateQuestionEvent.OnThreeChoiceSubSelected(
+                                sub
+                            )
+                        )
+                    }
+                )
+
                 CreateQuestionYesNoView(
                     uiState = questionUiState, onEvent = onEvent
                 )
@@ -103,14 +148,95 @@ private fun QuestionCreateScreen(
     )
 }
 
+@Composable
+private fun CategoryChip(
+    text: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    TextButton(
+        onClick = onClick,
+        modifier = Modifier
+            .padding(horizontal = 6.dp, vertical = 4.dp)
+            .then(
+                if (selected) Modifier.border(
+                    width = 2.dp,
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = RoundedCornerShape(12.dp)
+                ) else Modifier
+            )
+    ) {
+        Text(text = text, style = MaterialTheme.typography.bodyMedium)
+    }
+}
+
+@Composable
+fun CategoriesView(
+    selected: String,
+    onSelect: (QuestionCategories) -> Unit,
+) {
+    val scroll = rememberScrollState()
+    Row(
+        modifier = Modifier
+            .horizontalScroll(scroll)
+            .padding(horizontal = 8.dp)
+    ) {
+        listOf(
+            QuestionCategories.TWO_CHOICE,
+            QuestionCategories.THREE_CHOICE,
+            QuestionCategories.MULTI_CHOICE,
+            QuestionCategories.SCALE,
+            QuestionCategories.OPEN_ENDED,
+        ).forEach { cat ->
+            val isSel = (selected == cat.asKey())
+            CategoryChip(text = cat.name, selected = isSel) { onSelect(cat) }
+        }
+    }
+}
+
+@Composable
+fun SubcategoriesView(
+    categoryKey: String,
+    selectedSubKey: String?,
+    onSelectTwoChoice: (TwoChoiceSubCategories) -> Unit,
+    onSelectThreeChoice: (ThreeChoiceSubCategories) -> Unit,
+) {
+    val scroll = rememberScrollState()
+    Row(
+        modifier = Modifier
+            .horizontalScroll(scroll)
+            .padding(horizontal = 8.dp)
+    ) {
+        when (categoryKey) {
+            QuestionCategoryKeys.TWO_CHOICE -> {
+                TwoChoiceSubCategories.values().forEach { sub ->
+                    CategoryChip(text = sub.name, selected = (selectedSubKey == sub.asKey())) {
+                        onSelectTwoChoice(sub)
+                    }
+                }
+            }
+
+            QuestionCategoryKeys.THREE_CHOICE -> {
+                ThreeChoiceSubCategories.values().forEach { sub ->
+                    CategoryChip(text = sub.name, selected = (selectedSubKey == sub.asKey())) {
+                        onSelectThreeChoice(sub)
+                    }
+                }
+            }
+
+            else -> {
+                // Not implemented for other categories
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun QuestionCreatePreview() {
     QuestionCreateScreen(
-        uiState = QuestionCreateQuestionScreenUiState(
-            titleText = "Sample",
-            descriptionText = "Body"
-        ),
-        onEvent = {}, questionUiState = QuestionViewUiState(titleText = "asdasdasd"),
-    )
+        uiState = QuestionCreateQuestionScreenUiState(),
+        onEvent = {},
+        questionUiState = QuestionViewUiState()
+    ) { }
 }

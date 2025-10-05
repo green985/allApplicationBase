@@ -9,10 +9,14 @@ import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionV
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent.SubmitClicked
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent.TitleChanged
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
-import com.oyetech.composebase.projectQuestionsFeature.views.questions.toOperationBody
 import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.models.questionProject.questionOperation.QuestionCategories
+import com.oyetech.models.questionProject.questionOperation.QuestionTaxonomyFactory
+import com.oyetech.models.questionProject.questionOperation.ThreeChoiceSubCategoryKeys
+import com.oyetech.models.questionProject.questionOperation.TwoChoiceSubCategoryKeys
+import com.oyetech.models.questionProject.questionOperation.asKey
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.channels.BufferOverflow
@@ -62,12 +66,54 @@ class QuestionCreateQuestionVm(
         }
     }
 
+    fun onCreateEvent(event: QuestionCreateQuestionEvent) {
+        when (event) {
+            is QuestionCreateQuestionEvent.OnTitleChange -> {
+                questionUiState.updateState { copy(titleText = event.text) }
+            }
+
+            is QuestionCreateQuestionEvent.OnCategorySelected -> {
+                uiState.updateState {
+                    copy(
+                        taxonomy = taxonomy.copy(
+                            categoryKey = event.category.asKey(),
+                            subCategoryKey = when (event.category) {
+                                QuestionCategories.TWO_CHOICE -> TwoChoiceSubCategoryKeys.YES_NO
+                                QuestionCategories.THREE_CHOICE -> ThreeChoiceSubCategoryKeys.LOW_MED_HIGH
+                                QuestionCategories.MULTI_CHOICE -> taxonomy.subCategoryKey
+                                QuestionCategories.SCALE -> taxonomy.subCategoryKey
+                                QuestionCategories.OPEN_ENDED -> taxonomy.subCategoryKey
+                            }
+                        )
+                    )
+                }
+            }
+
+            is QuestionCreateQuestionEvent.OnTwoChoiceSubSelected -> {
+                uiState.updateState { copy(taxonomy = taxonomy.copy(subCategoryKey = event.sub.asKey())) }
+            }
+
+            is QuestionCreateQuestionEvent.OnThreeChoiceSubSelected -> {
+                uiState.updateState { copy(taxonomy = taxonomy.copy(subCategoryKey = event.sub.asKey())) }
+            }
+
+            QuestionCreateQuestionEvent.OnSubmit -> submit()
+            else -> {}
+        }
+    }
+
     private fun submit() {
         val currentQuestion = questionUiState.value
         if (currentQuestion.titleText.isBlank()) return
         uiState.updateState { copy(isLoading = true, errorText = "") }
         viewModelScope.launch(getDispatcherIo()) {
-            questionRepository.createQuestion(currentQuestion.toOperationBody())
+            val taxonomy = uiState.value.taxonomy
+            val body = QuestionTaxonomyFactory.buildQuestion(
+                title = currentQuestion.titleText,
+                taxonomy = taxonomy,
+                questionId = currentQuestion.questionId
+            )
+            questionRepository.createQuestion(body)
                 .asResult()
                 .collectLatest { result ->
                     result.fold(
