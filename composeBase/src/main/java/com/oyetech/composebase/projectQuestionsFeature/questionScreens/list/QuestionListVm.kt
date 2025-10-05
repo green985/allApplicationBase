@@ -70,10 +70,9 @@ class QuestionListVm(
 
     private fun onItemClicked(item: QuestionViewUiState) {
         // Branch based on future questionType when added to UI state
-        when (QuestionType.YES_NO_QUESTION) {
-            QuestionType.YES_NO_QUESTION -> {
-                // Example: navigate to detail screen if needed
-            }
+        when (item.questionType) {
+            QuestionType.SINGLE_CHOICE -> {}
+            QuestionType.YES_NO_QUESTION -> {}
         }
     }
 
@@ -100,7 +99,7 @@ class QuestionListVm(
                     if (uid.isBlank()) return@launch
                     val answer = QueAnswer(
                         questionId = event.questionId,
-                        type = QuestionType.YES_NO_QUESTION,
+                        type = QuestionType.SINGLE_CHOICE,
                         selectedOptionIds = setOf(event.optionId).toList(),
                         numericValue = null,
                         textValue = null,

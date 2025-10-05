@@ -7,7 +7,7 @@ import java.util.Date
 @Keep
 data class QueAnswer(
     val questionId: String = "",
-    val type: QuestionType = QuestionType.YES_NO_QUESTION,
+    val type: QuestionType = QuestionType.SINGLE_CHOICE,
     val selectedOptionIds: List<String>? = null,
     val numericValue: Double? = null,
     val textValue: String? = null,

@@ -14,7 +14,7 @@ Created by Erdi Özbek
 data class QuestionOperationResponseBody(
     val questionId: String = "",
     val questionTitle: String = "",
-    val questionType: QuestionType = QuestionType.YES_NO_QUESTION,
+    val questionType: QuestionType = QuestionType.SINGLE_CHOICE,
 
     // Taxonomy keys to classify question semantics (category/subCategory)
     val taxonomy: QuestionTaxonomyRef = QuestionTaxonomyRef(),

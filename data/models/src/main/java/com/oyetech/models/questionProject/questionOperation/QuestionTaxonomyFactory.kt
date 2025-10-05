@@ -4,7 +4,7 @@ object QuestionTaxonomyFactory {
 
     /**
      * Build a QuestionOperationResponseBody by taxonomy keys, auto-filling default options/constraints.
-     * Note: questionType remains YES_NO_QUESTION as a placeholder until more types are introduced.
+     * Sets questionType based on taxonomy category (SINGLE_CHOICE, MULTI_CHOICE, SCALE, OPEN_ENDED).
      */
     fun buildQuestion(
         title: String,
@@ -60,10 +60,18 @@ object QuestionTaxonomyFactory {
             else -> null
         }
 
+        val qType = when (category) {
+            QuestionCategories.TWO_CHOICE, QuestionCategories.THREE_CHOICE -> QuestionType.SINGLE_CHOICE
+//            QuestionCategories.MULTI_CHOICE -> QuestionType.MULTI_CHOICE
+//            QuestionCategories.SCALE -> QuestionType.SCALE
+//            QuestionCategories.OPEN_ENDED -> QuestionType.OPEN_ENDED
+            else -> QuestionType.SINGLE_CHOICE
+        }
+
         return QuestionOperationResponseBody(
             questionId = questionId,
             questionTitle = title,
-            questionType = QuestionType.YES_NO_QUESTION, // placeholder for now
+            questionType = qType,
             taxonomy = taxonomy,
             options = opts,
             constraints = constraints,
