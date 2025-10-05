@@ -100,10 +100,7 @@ class QuestionListVm(
                         questionId = event.questionId,
                         type = QuestionType.SINGLE_CHOICE,
                         selectedOptionIds = setOf(event.optionId).toList(),
-                        numericValue = null,
-                        textValue = null,
                         userId = uid,
-                        submittedAt = null,
                     )
                     answerRepository.submitAnswer(answer)
                         .collectLatest { /* updated in repo state */ }
