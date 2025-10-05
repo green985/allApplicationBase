@@ -62,6 +62,7 @@ class QuestionCreateQuestionVm(
                     Timber.d("Option selected CreateQuestionVM: ${event.optionId} for question ${event.questionId}")
                 }
 
+                else -> {}
             }
         }
     }

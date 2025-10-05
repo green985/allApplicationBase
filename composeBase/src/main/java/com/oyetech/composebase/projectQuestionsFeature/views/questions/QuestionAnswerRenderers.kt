@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -58,7 +59,8 @@ fun TwoChoiceAnswerView(
                     modifier = Modifier
                         .clip(RoundedCornerShape(10.dp))
                         .background(bgColor)
-                        .clickable(enabled = enabled) {
+                        .alpha(if (uiState.isAnswered && !isSelected) 0.75f else 1f)
+                        .clickable(enabled = true) {
                             onEvent(
                                 QuestionViewEvent.OnOptionSelected(
                                     uiState.questionId,
@@ -73,13 +75,6 @@ fun TwoChoiceAnswerView(
                         style = MaterialTheme.typography.titleMedium,
                         color = Color.White
                     )
-                    if (isSelected) {
-                        Box(
-                            modifier = Modifier
-                                .matchParentSize()
-                                .background(Color.Black.copy(alpha = 0.5f))
-                        )
-                    }
                 }
             }
         }

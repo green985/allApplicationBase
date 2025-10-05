@@ -96,6 +96,10 @@ class QuestionListVm(
                 viewModelScope.launch(getDispatcherIo()) {
                     val uid = userRepository.getUserId()
                     if (uid.isBlank()) return@launch
+                    val alreadyAnswered = answerRepository.answersState.value.any {
+                        it.userId == uid && it.questionId == event.questionId
+                    }
+                    if (alreadyAnswered) return@launch
                     val answer = QueAnswer(
                         questionId = event.questionId,
                         type = QuestionType.SINGLE_CHOICE,

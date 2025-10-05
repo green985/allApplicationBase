@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 interface FirebaseQuestionAnswerRepository {
     fun getAnswersByUser(userId: String): Flow<List<QueAnswer>>
 
+    suspend fun getAnswersByQuestion(questionId: String): Flow<List<QueAnswer>>
     val answersState: StateFlow<List<QueAnswer>>
 
     fun submitAnswer(answer: QueAnswer): Flow<Unit>

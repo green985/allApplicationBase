@@ -2,6 +2,7 @@ package com.oyetech.firebaseDB.firebaseDB.question
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.oyetech.domain.repository.firebase.FirebaseQuestionAnswerRepository
+import com.oyetech.models.errors.exceptionHelper.GeneralException
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,6 +26,22 @@ class FirebaseQuestionAnswerRepositoryImpl(
         val items = snapshot.documents.mapNotNull { it.toObject(QueAnswer::class.java) }
         _answersState.value = items
         emit(items)
+    }
+
+    override suspend fun getAnswersByQuestion(questionId: String): Flow<List<QueAnswer>> {
+        return flow {
+            try {
+                val snapshot = firestore
+                    .collectionGroup("answers")
+                    .whereEqualTo("questionId", questionId)
+                    .get()
+                    .await()
+                val items = snapshot.documents.mapNotNull { it.toObject(QueAnswer::class.java) }
+                emit(items)
+            } catch (e: Exception) {
+                throw GeneralException(e.message ?: "Question answers fetch error")
+            }
+        }
     }
 
     override fun submitAnswer(answer: QueAnswer): Flow<Unit> = flow {
