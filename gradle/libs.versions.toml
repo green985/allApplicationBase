@@ -2,16 +2,17 @@
 compile-sdk = "36"
 kotlin = "2.2.20"
 agp = "8.7.0"
-compose-bom = "2024.09.02"
+compose-bom = "2025.09.01"
 koin-bom = "3.5.0"
 appcompat = "1.7.0"
-core-ktx = "1.13.1"
+core-ktx = "1.16.0"
 kotlin-gradle-plugin = "2.2.20"
 lifecycle = "2.7.0"
 media = "1.7.1"
 activity-compose = "1.9.2"
-material3 = "1.3.0"
-foundation = "1.7.7"
+material3 = "1.4.0"
+material = "1.9.2"
+foundation = "1.9.2"
 runtime = "1.7.7"
 navigation = "2.8.6"
 paging = "3.3.5"
@@ -26,7 +27,7 @@ lsparanoid = "0.5.2"
 google-services = "4.4.2"
 crashlytics-gradle = "3.0.2"
 kover = "0.5.0"
-ui-tooling = "1.9.1"
+ui-tooling = "1.9.2"
 
 [libraries]
 
@@ -43,6 +44,7 @@ compose-ui = { module = "androidx.compose.ui:ui" }
 compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
+compose-material = { module = "androidx.compose.material:material", version.ref = "material" }
 compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "foundation" }
 compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "runtime" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin-gradle-plugin" }

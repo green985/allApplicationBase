@@ -8,7 +8,7 @@ plugins {
 
 android {
 
-namespace = "com.oyetech.composebase"
+    namespace = "com.oyetech.composebase"
 
     compileSdk = libs.versions.compile.sdk.get().toInt()
 
@@ -34,6 +34,7 @@ dependencies {
     implementation(libs.compose.ui.graphics)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
+    implementation(libs.compose.material)
     implementation(libs.compose.runtime)
     implementation(libs.compose.foundation)
     implementation(libs.paging.compose)
@@ -56,4 +57,6 @@ dependencies {
     implementation(project(Modules.radioService))
     implementation(project(Modules.languageModule))
     debugImplementation(libs.androidx.ui.tooling)
+
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
 }
