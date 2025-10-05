@@ -3,7 +3,6 @@ package com.oyetech.composebase.projectQuestionsFeature.views.questions
 import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.base.BaseUIState
 import com.oyetech.models.questionProject.questionOperation.QueOption
-import com.oyetech.models.questionProject.questionOperation.QueOptionsValues
 import com.oyetech.models.questionProject.questionOperation.QuestionCategories
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.models.questionProject.questionOperation.QuestionOptionCatalog
@@ -29,7 +28,7 @@ data class QuestionViewUiState(
     val titleText: String = "",
     val bodyText: String = "",
     val questionType: QuestionType = QuestionType.YES_NO_QUESTION,
-    val options: ImmutableList<QueOption> = QueOptionsValues.queYesNoQuestionOptionList.toImmutableList(),
+    val options: ImmutableList<QueOption> = QuestionOptionCatalog.TwoChoice.YES_NO.toImmutableList(),
     val isAnswered: Boolean = false,
     val selectedAnswer: String? = null,
 ) : BaseUIState()

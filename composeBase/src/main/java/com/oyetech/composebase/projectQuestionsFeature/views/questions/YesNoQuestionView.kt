@@ -21,7 +21,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oyetech.languageModule.keyset.LanguageKey
-import com.oyetech.models.questionProject.questionOperation.QueOptionsValues
+import com.oyetech.models.questionProject.questionOperation.QuestionOptionCatalog
 import kotlinx.collections.immutable.toImmutableList
 
 /**
@@ -212,7 +212,7 @@ fun QuestionYesNoScreen_Preview_Loading() {
             isLoading = false,
             titleText = "Enable notifications?",
             bodyText = "Quick poll",
-            options = QueOptionsValues.queYesNoQuestionOptionList.toImmutableList()
+            options = QuestionOptionCatalog.TwoChoice.YES_NO.toImmutableList()
         ),
         onEvent = {},
     )

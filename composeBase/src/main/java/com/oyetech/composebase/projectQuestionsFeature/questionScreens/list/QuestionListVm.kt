@@ -29,21 +29,19 @@ class QuestionListVm(
 ) : BaseListViewModel<QuestionViewUiState>(appDispatchers) {
 
     val uiState = MutableStateFlow(QuestionListUiState())
-    private val answersState =
-        MutableStateFlow(emptyList<QueAnswer>())
 
     override val listViewState: MutableStateFlow<GenericListState<QuestionViewUiState>> =
         MutableStateFlow(
             GenericListState(
                 dataFlow = combine(
                     repository.getQuestionList(),
-                    answersState,
+                    answerRepository.answersState,
                 ) { questions, answers ->
                     overlayAnswers(questions, answers)
                 },
                 refreshDataFlow = combine(
                     repository.getQuestionList(),
-                    answersState,
+                    answerRepository.answersState,
                 ) { questions, answers ->
                     overlayAnswers(questions, answers)
                 }
@@ -55,9 +53,8 @@ class QuestionListVm(
         viewModelScope.launch(getDispatcherIo()) {
             val uid = userRepository.getUserId()
             if (uid.isNotBlank()) {
-                answerRepository.getAnswersByUser(uid).collectLatest { list ->
-                    answersState.value = list
-                }
+                answerRepository.getAnswersByUser(uid)
+                    .collectLatest { /* repo updates its own state */ }
             }
         }
     }
@@ -71,14 +68,6 @@ class QuestionListVm(
         }
     }
 
-    private fun onOptionSelected(questionId: String, optionId: String) {
-        // For YES/NO question, optionId will be "YES" or "NO"; future types can extend this logic
-        when (QuestionType.YES_NO_QUESTION) {
-            QuestionType.YES_NO_QUESTION -> {
-                // Hook for future persistence or navigation if needed
-            }
-        }
-    }
 
     private fun onItemClicked(item: QuestionViewUiState) {
         // Branch based on future questionType when added to UI state
@@ -107,13 +96,23 @@ class QuestionListVm(
     fun onQuestionEvent(event: QuestionViewEvent) {
         when (event) {
             is QuestionViewEvent.OnOptionSelected -> {
-                onOptionSelected(
-                    event.questionId,
-                    event.optionId
-                )
-                Timber.d("Option selected: ${event.optionId} for question ${event.questionId}")
+                viewModelScope.launch(getDispatcherIo()) {
+                    val uid = userRepository.getUserId()
+                    if (uid.isBlank()) return@launch
+                    val answer = QueAnswer(
+                        questionId = event.questionId,
+                        type = QuestionType.YES_NO_QUESTION,
+                        selectedOptionIds = setOf(event.optionId),
+                        numericValue = null,
+                        textValue = null,
+                        userId = uid,
+                        submittedAt = null,
+                    )
+                    answerRepository.submitAnswer(answer)
+                        .collectLatest { /* updated in repo state */ }
+                }
+                Timber.d("Option selected: ${'$'}{event.optionId} for question ${'$'}{event.questionId}")
             }
-
             else -> {}
         }
     }
