@@ -68,7 +68,6 @@ class QuestionListVm(
         }
     }
 
-
     private fun onItemClicked(item: QuestionViewUiState) {
         // Branch based on future questionType when added to UI state
         when (QuestionType.YES_NO_QUESTION) {
@@ -102,7 +101,7 @@ class QuestionListVm(
                     val answer = QueAnswer(
                         questionId = event.questionId,
                         type = QuestionType.YES_NO_QUESTION,
-                        selectedOptionIds = setOf(event.optionId),
+                        selectedOptionIds = setOf(event.optionId).toList(),
                         numericValue = null,
                         textValue = null,
                         userId = uid,
@@ -113,6 +112,7 @@ class QuestionListVm(
                 }
                 Timber.d("Option selected: ${'$'}{event.optionId} for question ${'$'}{event.questionId}")
             }
+
             else -> {}
         }
     }

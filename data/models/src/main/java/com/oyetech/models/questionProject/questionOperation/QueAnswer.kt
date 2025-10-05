@@ -8,7 +8,7 @@ import java.util.Date
 data class QueAnswer(
     val questionId: String = "",
     val type: QuestionType = QuestionType.YES_NO_QUESTION,
-    val selectedOptionIds: Set<String>? = null,
+    val selectedOptionIds: List<String>? = null,
     val numericValue: Double? = null,
     val textValue: String? = null,
     val userId: String = "",
