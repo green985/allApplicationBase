@@ -54,8 +54,8 @@ class QuestionCreateQuestionVm(
                 }
 
                 is QuestionViewEvent.OnOptionSelected -> {
-                    // todo will be implemented in future
-                    Timber.d("Option selected: ${event.optionId} for question ${event.questionId}")
+                    // todo will be removed, create question doesnt have answer selection
+                    Timber.d("Option selected CreateQuestionVM: ${event.optionId} for question ${event.questionId}")
                 }
 
             }

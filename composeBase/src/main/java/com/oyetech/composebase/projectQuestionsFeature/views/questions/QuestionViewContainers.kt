@@ -87,14 +87,15 @@ fun QuestionAnswerAreaContainer(
     modifier: Modifier = Modifier,
 ) {
     // Only implement YES/NO (or any two-option case) for now
-    if (uiState.options.size == 2) {
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(2.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (uiState.options.size == 2) {
+
             uiState.options.forEachIndexed { index, opt ->
                 if (index > 0) Spacer(Modifier.size(8.dp))
                 Button(
@@ -111,16 +112,17 @@ fun QuestionAnswerAreaContainer(
                     Text(text = opt.text.ifBlank { opt.id })
                 }
             }
-        }
-    } else {
-        Box(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp)
-        ) {
-            // Not implemented for other categories
+        } else {
+            Box(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+            ) {
+                // Not implemented for other categories
+            }
         }
     }
+
 }
 
 @Composable

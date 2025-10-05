@@ -13,7 +13,7 @@ fun Preview_Question_2Choice_YesNo() {
         titleText = "Enable dark mode?",
         options = QuestionOptionCatalog.TwoChoice.YES_NO.toImmutableList(),
     )
-    QuestionYesNoView(uiState = ui, onEvent = {})
+    BaseQuestionView(uiState = ui, onEvent = {})
 }
 
 @Preview(showBackground = true)
@@ -24,7 +24,7 @@ fun Preview_Question_2Choice_UpDown() {
         titleText = "Trend vote",
         options = QuestionOptionCatalog.TwoChoice.UP_DOWN.toImmutableList(),
     )
-    QuestionYesNoView(uiState = ui, onEvent = {})
+    BaseQuestionView(uiState = ui, onEvent = {})
 }
 
 @Preview(showBackground = true)
@@ -35,7 +35,7 @@ fun Preview_Question_2Choice_GoodBad() {
         titleText = "Rate the update",
         options = QuestionOptionCatalog.TwoChoice.GOOD_BAD.toImmutableList(),
     )
-    QuestionYesNoView(uiState = ui, onEvent = {})
+    BaseQuestionView(uiState = ui, onEvent = {})
 }
 
 @Preview(showBackground = true)
@@ -46,7 +46,7 @@ fun Preview_Question_3Choice_LowMedHigh() {
         titleText = "Focus intensity",
         options = QuestionOptionCatalog.ThreeChoice.LOW_MED_HIGH.toImmutableList(),
     )
-    QuestionYesNoView(uiState = ui, onEvent = {})
+    BaseQuestionView(uiState = ui, onEvent = {})
 }
 
 @Preview(showBackground = true)
@@ -57,7 +57,7 @@ fun Preview_Question_3Choice_AgreeNeutralDisagree() {
         titleText = "This feature improved my productivity",
         options = QuestionOptionCatalog.ThreeChoice.AGREE_NEUTRAL_DISAGREE.toImmutableList(),
     )
-    QuestionYesNoView(uiState = ui, onEvent = {})
+    BaseQuestionView(uiState = ui, onEvent = {})
 }
 
 @Preview(showBackground = true)
@@ -72,7 +72,7 @@ fun Preview_Factory_TwoChoice_YesNo() {
             )
         )
     val ui = body.toUiState()
-    QuestionYesNoView(uiState = ui, onEvent = {})
+    BaseQuestionView(uiState = ui, onEvent = {})
 }
 
 @Preview(showBackground = true)
@@ -87,5 +87,5 @@ fun Preview_Factory_ThreeChoice_LowMedHigh() {
             )
         )
     val ui = body.toUiState()
-    QuestionYesNoView(uiState = ui, onEvent = {})
+    BaseQuestionView(uiState = ui, onEvent = {})
 }

@@ -31,7 +31,7 @@ Created by Erdi Özbek
  **/
 
 @Composable
-fun QuestionYesNoView(
+fun BaseQuestionView(
     uiState: QuestionViewUiState,
     onEvent: (QuestionViewEvent) -> Unit,
     modifier: Modifier = Modifier,
@@ -174,7 +174,7 @@ fun SpacerSmall() {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun QuestionYesNoScreen_Preview_Answered() {
-    QuestionYesNoView(
+    BaseQuestionView(
         uiState = QuestionViewUiState(
             isLoading = false,
             titleText = "Enable dark mode?",
@@ -190,7 +190,7 @@ fun QuestionYesNoScreen_Preview_Answered() {
 @Composable
 private fun QuestionYesNoScreen_Preview_Edit_Mode() {
 
-    QuestionYesNoView(
+    BaseQuestionView(
         uiState = QuestionViewUiState(
             isLoading = false,
             titleText = "Enable dark mode?",
@@ -207,7 +207,7 @@ private fun QuestionYesNoScreen_Preview_Edit_Mode() {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun QuestionYesNoScreen_Preview_Loading() {
-    QuestionYesNoView(
+    BaseQuestionView(
         uiState = QuestionViewUiState(
             isLoading = false,
             titleText = "Enable notifications?",

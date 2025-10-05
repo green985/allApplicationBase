@@ -23,9 +23,9 @@ import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
+import com.oyetech.composebase.projectQuestionsFeature.views.questions.BaseQuestionView
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
-import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionYesNoView
 import kotlinx.collections.immutable.toImmutableList
 import org.koin.androidx.compose.koinViewModel
 
@@ -95,7 +95,7 @@ fun QuestionListScreen(
                     items = listViewState.items,
                     key = { it.questionId },
                     itemContent = { itemUi ->
-                        QuestionYesNoView(
+                        BaseQuestionView(
                             uiState = itemUi,
                             onEvent = { ev ->
                                 onQuestionEvent.invoke(ev)

@@ -11,6 +11,7 @@ import com.oyetech.models.questionProject.questionOperation.QuestionType
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 
 class QuestionListVm(
     appDispatchers: AppDispatchers,
@@ -61,10 +62,13 @@ class QuestionListVm(
 
     fun onQuestionEvent(event: QuestionViewEvent) {
         when (event) {
-            is QuestionViewEvent.OnOptionSelected -> onOptionSelected(
-                event.questionId,
-                event.optionId
-            )
+            is QuestionViewEvent.OnOptionSelected -> {
+                onOptionSelected(
+                    event.questionId,
+                    event.optionId
+                )
+                Timber.d("Option selected: ${event.optionId} for question ${event.questionId}")
+            }
 
             else -> {}
         }
