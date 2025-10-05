@@ -42,6 +42,9 @@ sealed class QuestionViewEvent : BaseEvent() {
 
     // Extended selection with questionId
     data class OnOptionSelected(val questionId: String, val optionId: String) : QuestionViewEvent()
+
+    // Clear existing answer for a question
+    data class OnDeleteAnswerClicked(val questionId: String) : QuestionViewEvent()
 }
 
 // UI -> Backend model

@@ -1,25 +1,20 @@
 package com.oyetech.composebase.projectQuestionsFeature.views.questions
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.models.questionProject.questionOperation.QuestionType
 
 /**
  * Skeleton containers for Question UI. Keep contents empty for now.
@@ -86,43 +81,53 @@ fun QuestionAnswerAreaContainer(
     onEvent: (QuestionViewEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Only implement YES/NO (or any two-option case) for now
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(2.dp),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        if (uiState.options.size == 2) {
-
-            uiState.options.forEachIndexed { index, opt ->
-                if (index > 0) Spacer(Modifier.size(8.dp))
-                Button(
-                    onClick = {
-                        onEvent(
-                            QuestionViewEvent.OnOptionSelected(
-                                uiState.questionId,
-                                opt.id,
-                            )
-                        )
-                    },
-                    enabled = !uiState.isAnswered
+    when (uiState.questionType) {
+        QuestionType.SINGLE_CHOICE -> {
+            if (uiState.options.size == 2) {
+                TwoChoiceAnswerView(uiState = uiState, onEvent = onEvent, modifier = modifier)
+            } else {
+                Box(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
                 ) {
-                    Text(text = opt.text.ifBlank { opt.id })
+                    // TODO: SINGLE_CHOICE (N) renderer
                 }
             }
-        } else {
-            Box(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-            ) {
-                // Not implemented for other categories
-            }
         }
+//        QuestionType.MULTI_CHOICE -> {
+//            Box(
+//                modifier = modifier
+//                    .fillMaxWidth()
+//                    .padding(vertical = 4.dp)
+//            ) {
+//                // TODO: MULTI_CHOICE renderer
+//            }
+//        }
+//        QuestionType.SCALE -> {
+//            Box(
+//                modifier = modifier
+//                    .fillMaxWidth()
+//                    .padding(vertical = 4.dp)
+//            ) {
+//                // TODO: SCALE renderer
+//            }
+//        }
+//        QuestionType.OPEN_ENDED -> {
+//            Box(
+//                modifier = modifier
+//                    .fillMaxWidth()
+//                    .padding(vertical = 4.dp)
+//            ) {
+//                // TODO: OPEN_ENDED renderer
+//            }
+//        }
     }
+}
 
+private fun reorderTwoOptionsConsistently(uiState: QuestionViewUiState): List<com.oyetech.models.questionProject.questionOperation.QueOption> {
+    val opts = uiState.options.toList()
+    return if (uiState.questionId.hashCode() % 2 == 0) opts else opts.reversed()
 }
 
 @Composable

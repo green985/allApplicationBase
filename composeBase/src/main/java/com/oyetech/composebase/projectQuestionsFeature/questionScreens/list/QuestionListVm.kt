@@ -99,8 +99,11 @@ class QuestionListVm(
                     val answer = QueAnswer(
                         questionId = event.questionId,
                         type = QuestionType.SINGLE_CHOICE,
-                        selectedOptionIds = setOf(event.optionId).toList(),
+                        selectedOptionIds = listOf(event.optionId),
+                        numericValue = null,
+                        textValue = null,
                         userId = uid,
+                        submittedAt = null,
                     )
                     answerRepository.submitAnswer(answer)
                         .collectLatest { /* updated in repo state */ }
@@ -108,7 +111,18 @@ class QuestionListVm(
                 Timber.d("Option selected: ${'$'}{event.optionId} for question ${'$'}{event.questionId}")
             }
 
-            else -> {}
+            is QuestionViewEvent.OnDeleteAnswerClicked -> {
+                viewModelScope.launch(getDispatcherIo()) {
+                    val uid = userRepository.getUserId()
+                    if (uid.isBlank()) return@launch
+                    answerRepository.deleteAnswer(uid, event.questionId)
+                        .collectLatest { /* updated in repo state */ }
+                }
+            }
+
+            else -> {
+                Timber.d("Unhandled QuestionViewEvent in ListVM: ${event.javaClass.simpleName}")
+            }
         }
     }
 }
