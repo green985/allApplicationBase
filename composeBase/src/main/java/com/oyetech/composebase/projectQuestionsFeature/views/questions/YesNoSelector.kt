@@ -27,6 +27,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oyetech.models.questionProject.questionOperation.QueOption
+import com.oyetech.models.questionProject.questionOperation.QuestionCategories
+import com.oyetech.models.questionProject.questionOperation.inferCategory
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
@@ -34,8 +36,9 @@ fun YesNoSelector(
     uiState: QuestionViewUiState,
     onEvent: (QuestionViewEvent) -> Unit,
 ) {
-    val yesSelected = uiState.selectedAnswer == "YES"
-    val noSelected = uiState.selectedAnswer == "NO"
+    val selectedId = uiState.selectedAnswer
+    val options = uiState.options
+    val category = options.inferCategory()
 
     Row(
         modifier = Modifier
@@ -46,62 +49,50 @@ fun YesNoSelector(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight()
-                .border(
-                    width = if (yesSelected) 2.dp else 1.dp,
-                    color = if (yesSelected) QuestionAnswerColors.Yes else QuestionAnswerColors.Outline,
-                    shape = RoundedCornerShape(
-                        topStart = 8.dp, bottomStart = 8.dp
-                    )
-                )
-                .clickable {
-                    onEvent(
-                        QuestionViewEvent.OnOptionSelected(
-                            uiState.questionId,
-                            "YES"
-                        )
-                    )
-                },
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "YES",
-                color = QuestionAnswerColors.Yes,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
-        }
+        options.forEachIndexed { index, option ->
+            val isSelected = option.id == selectedId
+            val color = when (category) {
+                QuestionCategories.TWO_CHOICE -> when (option.id.uppercase()) {
+                    "YES" -> QuestionAnswerColors.Yes
+                    "NO" -> QuestionAnswerColors.No
+                    else -> QuestionAnswerColors.Outline
+                }
 
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight()
-                .border(
-                    width = if (noSelected) 2.dp else 1.dp,
-                    color = if (noSelected) QuestionAnswerColors.No else QuestionAnswerColors.Outline,
-                    shape = RoundedCornerShape(
-                        topEnd = 8.dp, bottomEnd = 8.dp
+                else -> if (isSelected) MaterialTheme.colorScheme.primary else QuestionAnswerColors.Outline
+            }
+
+            val shape = when (index) {
+                0 -> RoundedCornerShape(topStart = 8.dp, bottomStart = 8.dp)
+                options.size - 1 -> RoundedCornerShape(topEnd = 8.dp, bottomEnd = 8.dp)
+                else -> RoundedCornerShape(0.dp)
+            }
+
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .border(
+                        width = if (isSelected) 2.dp else 1.dp,
+                        color = if (isSelected) color else QuestionAnswerColors.Outline,
+                        shape = shape
                     )
-                )
-                .clickable {
-                    onEvent(
-                        QuestionViewEvent.OnOptionSelected(
-                            uiState.questionId,
-                            "NO"
+                    .clickable {
+                        onEvent(
+                            QuestionViewEvent.OnOptionSelected(
+                                uiState.questionId,
+                                option.id
+                            )
                         )
-                    )
-                },
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "NO",
-                color = QuestionAnswerColors.No,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = option.text.ifEmpty { option.id },
+                    color = color,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
     }
 }

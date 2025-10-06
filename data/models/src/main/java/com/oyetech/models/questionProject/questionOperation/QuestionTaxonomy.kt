@@ -174,3 +174,29 @@ object QuestionTaxonomyDefaults {
         }
     }
 }
+
+// Inference helpers: derive category from option ids
+fun List<QueOption>.inferCategory(): QuestionCategories? {
+    val ids = this.map { it.id.trim().uppercase() }
+    return when {
+        // Two choice patterns
+        this.size == 2 && ids.toSet() == setOf("YES", "NO") -> QuestionCategories.TWO_CHOICE
+        this.size == 2 && ids.toSet() == setOf("UP", "DOWN") -> QuestionCategories.TWO_CHOICE
+        this.size == 2 && ids.toSet() == setOf("GOOD", "BAD") -> QuestionCategories.TWO_CHOICE
+
+        // Three choice patterns
+        this.size == 3 && ids.toSet() == setOf(
+            "LOW",
+            "MEDIUM",
+            "HIGH"
+        ) -> QuestionCategories.THREE_CHOICE
+
+        this.size == 3 && ids.toSet() == setOf(
+            "AGREE",
+            "NEUTRAL",
+            "DISAGREE"
+        ) -> QuestionCategories.THREE_CHOICE
+
+        else -> null
+    }
+}
