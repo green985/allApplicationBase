@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,24 +25,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.oyetech.models.questionProject.questionOperation.QueOption
 import com.oyetech.models.questionProject.questionOperation.QuestionCategories
-import com.oyetech.models.questionProject.questionOperation.inferCategory
+import com.oyetech.models.questionProject.questionOperation.QuestionOptionCatalog
+import com.oyetech.models.questionProject.questionOperation.QuestionOptionCatalog.TwoChoice.YES_NO
 import kotlinx.collections.immutable.toImmutableList
+import timber.log.Timber
 
 @Composable
-fun YesNoSelector(
+fun TwoChoicesSelectorView(
     uiState: QuestionViewUiState,
     onEvent: (QuestionViewEvent) -> Unit,
 ) {
     val selectedId = uiState.selectedAnswer
     val options = uiState.options
-    val category = options.inferCategory()
+
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(60.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(Color.White),
         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -51,11 +50,41 @@ fun YesNoSelector(
     ) {
         options.forEachIndexed { index, option ->
             val isSelected = option.id == selectedId
-            val color = when (category) {
-                QuestionCategories.TWO_CHOICE -> when (option.id.uppercase()) {
-                    "YES" -> QuestionAnswerColors.Yes
-                    "NO" -> QuestionAnswerColors.No
-                    else -> QuestionAnswerColors.Outline
+            val color = when (uiState.category) {
+                QuestionCategories.TWO_CHOICE -> when (option) {
+                    QuestionOptionCatalog.TwoChoice.YES -> {
+                        Timber.d("YesNoSelector: YES selected")
+                        QuestionAnswerColors.Yes
+                    }
+
+                    QuestionOptionCatalog.TwoChoice.NO -> {
+                        Timber.d("YesNoSelector: NO selected")
+                        QuestionAnswerColors.No
+                    }
+
+                    QuestionOptionCatalog.TwoChoice.DOWN -> {
+                        Timber.d("YesNoSelector: NO selected")
+                        QuestionAnswerColors.Down
+                    }
+
+                    QuestionOptionCatalog.TwoChoice.UP -> {
+                        Timber.d("YesNoSelector: NO selected")
+                        QuestionAnswerColors.Up
+                    }
+
+                    QuestionOptionCatalog.TwoChoice.GOOD -> {
+                        Timber.d("YesNoSelector: NO selected")
+                        QuestionAnswerColors.Good
+                    }
+
+                    QuestionOptionCatalog.TwoChoice.BAD -> {
+                        Timber.d("YesNoSelector: NO selected")
+                        QuestionAnswerColors.Bad
+                    }
+
+                    else -> {
+                        QuestionAnswerColors.Outline
+                    }
                 }
 
                 else -> if (isSelected) MaterialTheme.colorScheme.primary else QuestionAnswerColors.Outline
@@ -72,9 +101,14 @@ fun YesNoSelector(
                     .weight(1f)
                     .fillMaxHeight()
                     .border(
-                        width = if (isSelected) 2.dp else 1.dp,
+                        width = if (isSelected) 1.dp else 1.dp,
                         color = if (isSelected) color else QuestionAnswerColors.Outline,
                         shape = shape
+                    )
+                    .background(
+                        if (isSelected) {
+                            color.copy(alpha = 0.12f)
+                        } else Color.Transparent
                     )
                     .clickable {
                         onEvent(
@@ -87,8 +121,12 @@ fun YesNoSelector(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = option.text.ifEmpty { option.id },
-                    color = color,
+                    text = option.text.ifEmpty { option.id }.uppercase(),
+                    color = if (uiState.isAnswered) {
+                        QuestionAnswerColors.Disabled
+                    } else {
+                        color
+                    },
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -111,15 +149,12 @@ fun YesNoSelectorPreview() {
             ),
         contentAlignment = Alignment.Center
     ) {
-        YesNoSelector(
+        TwoChoicesSelectorView(
             uiState = QuestionViewUiState(
                 isLoading = false,
                 questionId = "q1",
                 selectedAnswer = selected,
-                options = listOf(
-                    QueOption(id = "YES", text = "YES"),
-                    QueOption(id = "NO", text = "NO")
-                ).toImmutableList()
+                options = YES_NO.toImmutableList()
             ),
             onEvent = {
                 if (it is QuestionViewEvent.OnOptionSelected) {

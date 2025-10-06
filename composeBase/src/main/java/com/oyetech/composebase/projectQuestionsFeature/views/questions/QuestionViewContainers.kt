@@ -84,7 +84,7 @@ fun QuestionAnswerAreaContainer(
     when (uiState.questionType) {
         QuestionType.SINGLE_CHOICE -> {
             if (uiState.options.size == 2) {
-                TwoChoiceAnswerView(uiState = uiState, onEvent = onEvent, modifier = modifier)
+                TwoChoicesSelectorView(uiState = uiState, onEvent = onEvent)
             } else {
                 Box(
                     modifier = modifier

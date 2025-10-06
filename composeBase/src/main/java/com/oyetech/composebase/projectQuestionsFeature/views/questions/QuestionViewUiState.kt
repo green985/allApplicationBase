@@ -9,6 +9,7 @@ import com.oyetech.models.questionProject.questionOperation.QuestionOptionCatalo
 import com.oyetech.models.questionProject.questionOperation.QuestionTaxonomyDefaults
 import com.oyetech.models.questionProject.questionOperation.QuestionType
 import com.oyetech.models.questionProject.questionOperation.categoryFromKey
+import com.oyetech.models.questionProject.questionOperation.inferCategory
 import com.oyetech.models.questionProject.questionOperation.threeChoiceSubFromKey
 import com.oyetech.models.questionProject.questionOperation.twoChoiceSubFromKey
 import kotlinx.collections.immutable.ImmutableList
@@ -29,6 +30,7 @@ data class QuestionViewUiState(
     val bodyText: String = "",
     val questionType: QuestionType = QuestionType.SINGLE_CHOICE,
     val options: ImmutableList<QueOption> = QuestionOptionCatalog.TwoChoice.YES_NO.toImmutableList(),
+    val category: QuestionCategories? = options.inferCategory(),
     val isAnswered: Boolean = false,
     val selectedAnswer: String? = null,
 ) : BaseUIState()
