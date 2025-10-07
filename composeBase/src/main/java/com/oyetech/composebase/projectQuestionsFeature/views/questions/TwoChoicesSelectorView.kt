@@ -101,6 +101,7 @@ fun TwoChoicesSelectorView(
                     topEnd = QuestionProjectViewAttrs.cornerRadiusSmall,
                     bottomEnd = QuestionProjectViewAttrs.cornerRadiusSmall
                 )
+
                 else -> RoundedCornerShape(0.dp)
             }
 
