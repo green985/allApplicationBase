@@ -19,7 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import com.oyetech.composebase.projectQuestionsFeature.theme.QuestionProjectViewAttrs
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.questionProject.questionOperation.QuestionOptionCatalog
 import kotlinx.collections.immutable.toImmutableList
@@ -60,16 +60,16 @@ private fun YesNoQuestionContent(
         else -> ""
     }
 
-    OutlinedCard(modifier = Modifier.padding(4.dp)) {
+    OutlinedCard(modifier = Modifier.padding(QuestionProjectViewAttrs.spacingXs)) {
         Column(
             modifier = modifier
-                .padding(8.dp)
+                .padding(QuestionProjectViewAttrs.spacingSm)
                 .background(MaterialTheme.colorScheme.background)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(QuestionProjectViewAttrs.paddingTitleRow)
             ) {
                 Text(
                     modifier = Modifier.testTag("titleText"),
@@ -87,7 +87,7 @@ private fun YesNoQuestionContent(
             ) {
                 if (uiState.options.isNotEmpty()) {
                     uiState.options.forEachIndexed { index, opt ->
-                        if (index > 0) Spacer(Modifier.size(8.dp))
+                        if (index > 0) Spacer(Modifier.size(QuestionProjectViewAttrs.spacingSm))
                         Button(
                             onClick = {
                                 onEvent(
@@ -134,10 +134,10 @@ fun CreateQuestionYesNoView(
     onEvent: (QuestionViewEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    OutlinedCard(modifier = Modifier.padding(4.dp)) {
+    OutlinedCard(modifier = Modifier.padding(QuestionProjectViewAttrs.spacingXs)) {
         Column(
             modifier = modifier
-                .padding(8.dp)
+                .padding(QuestionProjectViewAttrs.spacingSm)
                 .background(MaterialTheme.colorScheme.background)
         ) {
             SpacerSmall()
@@ -157,7 +157,7 @@ fun CreateQuestionYesNoView(
                 Button(onClick = { onEvent(QuestionViewEvent.SubmitClicked) }) {
                     Text(text = LanguageKey.save)
                 }
-                Spacer(Modifier.size(8.dp))
+                Spacer(Modifier.size(QuestionProjectViewAttrs.spacingSm))
                 Button(onClick = { onEvent(QuestionViewEvent.CancelClicked) }) {
                     Text(text = LanguageKey.cancel)
                 }
@@ -168,7 +168,7 @@ fun CreateQuestionYesNoView(
 
 @Composable
 fun SpacerSmall() {
-    Box(modifier = Modifier.height(8.dp))
+    Box(modifier = Modifier.height(QuestionProjectViewAttrs.spacingSm))
 }
 
 @Preview(showBackground = true, showSystemUi = true)

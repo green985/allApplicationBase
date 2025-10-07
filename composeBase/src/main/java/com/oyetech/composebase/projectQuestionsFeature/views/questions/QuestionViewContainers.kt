@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oyetech.composebase.projectQuestionsFeature.theme.QuestionProjectViewAttrs
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.questionProject.questionOperation.QuestionType
 
@@ -33,10 +34,10 @@ fun QuestionViewScaffoldLayout(
     onEvent: (QuestionViewEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    OutlinedCard(modifier = Modifier.padding(4.dp)) {
+    OutlinedCard(modifier = Modifier.padding(QuestionProjectViewAttrs.spacingXs)) {
         Column(
             modifier = modifier
-                .padding(8.dp)
+                .padding(QuestionProjectViewAttrs.spacingSm)
                 .background(MaterialTheme.colorScheme.background)
         ) {
             QuestionHeaderContainer(uiState = uiState, onEvent = onEvent)
@@ -80,7 +81,7 @@ fun QuestionHeaderContainer(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp)
+            .padding(vertical = QuestionProjectViewAttrs.spacingXs)
     ) {
         // EMPTY PLACEHOLDER
     }
@@ -95,7 +96,7 @@ fun QuestionTitleDescriptionContainer(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp)
+            .padding(vertical = QuestionProjectViewAttrs.spacingXs)
     ) {
         Text(
             modifier = Modifier.testTag("titleText"),
@@ -119,7 +120,7 @@ fun QuestionAnswerAreaContainer(
                 Box(
                     modifier = modifier
                         .fillMaxWidth()
-                        .padding(vertical = 4.dp)
+                        .padding(vertical = QuestionProjectViewAttrs.spacingXs)
                 ) {
                     // TODO: SINGLE_CHOICE (N) renderer
                 }
@@ -169,7 +170,7 @@ fun QuestionUserInfoContainer(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp)
+            .padding(vertical = QuestionProjectViewAttrs.spacingXs)
     ) {
         // EMPTY PLACEHOLDER (user + question info area)
     }
@@ -184,7 +185,7 @@ fun QuestionShareActionsContainer(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp)
+            .padding(vertical = QuestionProjectViewAttrs.spacingXs)
     ) {
         // EMPTY PLACEHOLDER (share, etc.)
     }

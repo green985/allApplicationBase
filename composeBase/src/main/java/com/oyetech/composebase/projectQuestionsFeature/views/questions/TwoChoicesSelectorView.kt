@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oyetech.composebase.projectQuestionsFeature.theme.QuestionProjectViewAttrs
 import com.oyetech.models.questionProject.questionOperation.QuestionCategories
 import com.oyetech.models.questionProject.questionOperation.QuestionOptionCatalog
 import com.oyetech.models.questionProject.questionOperation.QuestionOptionCatalog.TwoChoice.YES_NO
@@ -42,8 +43,8 @@ fun TwoChoicesSelectorView(
 
     Row(
         modifier = Modifier
-            .fillMaxWidth(0.75f)
-            .clip(RoundedCornerShape(8.dp))
+            .fillMaxWidth(QuestionProjectViewAttrs.selectorWidthFraction)
+            .clip(RoundedCornerShape(QuestionProjectViewAttrs.cornerRadiusSmall))
             .background(Color.White),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
@@ -91,8 +92,15 @@ fun TwoChoicesSelectorView(
             }
 
             val shape = when (index) {
-                0 -> RoundedCornerShape(topStart = 8.dp, bottomStart = 8.dp)
-                options.size - 1 -> RoundedCornerShape(topEnd = 8.dp, bottomEnd = 8.dp)
+                0 -> RoundedCornerShape(
+                    topStart = QuestionProjectViewAttrs.cornerRadiusSmall,
+                    bottomStart = QuestionProjectViewAttrs.cornerRadiusSmall
+                )
+
+                options.size - 1 -> RoundedCornerShape(
+                    topEnd = QuestionProjectViewAttrs.cornerRadiusSmall,
+                    bottomEnd = QuestionProjectViewAttrs.cornerRadiusSmall
+                )
                 else -> RoundedCornerShape(0.dp)
             }
 
@@ -100,13 +108,13 @@ fun TwoChoicesSelectorView(
                 modifier = Modifier
                     .weight(1f)
                     .border(
-                        width = if (isSelected) 1.dp else 1.dp,
+                        width = QuestionProjectViewAttrs.borderWidthThin,
                         color = if (isSelected) color else QuestionAnswerColors.Outline,
                         shape = shape
                     )
                     .background(
                         if (isSelected) {
-                            color.copy(alpha = 0.12f)
+                            color.copy(alpha = QuestionProjectViewAttrs.selectedBgAlpha)
                         } else Color.Transparent
                     )
                     .clickable {
@@ -120,7 +128,7 @@ fun TwoChoicesSelectorView(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    modifier = Modifier.padding(12.dp),
+                    modifier = Modifier.padding(QuestionProjectViewAttrs.spacingMd),
                     text = option.text.ifEmpty { option.id }.uppercase(),
                     color = if (uiState.isAnswered) {
                         QuestionAnswerColors.Disabled

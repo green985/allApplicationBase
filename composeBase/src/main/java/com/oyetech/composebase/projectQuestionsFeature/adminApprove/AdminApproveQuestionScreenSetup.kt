@@ -16,9 +16,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
+import com.oyetech.composebase.projectQuestionsFeature.theme.QuestionProjectViewAttrs
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
@@ -65,10 +65,10 @@ private fun AdminApproveQuestionContent(
     onEvent: (AdminApproveQuestionEvent) -> Unit,
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(QuestionProjectViewAttrs.spacingMd),
         modifier = Modifier
             .fillMaxSize()
-            .padding(12.dp)
+            .padding(QuestionProjectViewAttrs.paddingPage)
     ) {
         Text(text = "Pending: ${uiState.pendingCountText}")
         Button(onClick = { onEvent(AdminApproveQuestionEvent.OnRefreshClicked) }) {
