@@ -21,6 +21,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListFilterType.ALL
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListFilterType.APPROVED
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListFilterType.DECLINED
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListFilterType.PENDING
 import com.oyetech.composebase.projectQuestionsFeature.theme.QuestionProjectViewAttrs
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
@@ -97,10 +101,10 @@ private fun AdminApproveQuestionContent(
     ) {
         // Tabs for filters
         val tabs = listOf(
-            com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListFilterType.ALL to "All",
-            com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListFilterType.PENDING to "Pending",
-            com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListFilterType.APPROVED to "Approved",
-            com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListFilterType.DECLINED to "Declined",
+            ALL to "All",
+            PENDING to "Pending",
+            APPROVED to "Approved",
+            DECLINED to "Declined",
         )
         Row(
             modifier = Modifier.fillMaxWidth(),

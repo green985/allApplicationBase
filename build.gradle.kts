@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.serialization) apply false
 
-    alias(libs.plugins.ktlint)              // genelde root’ta apply true
+    alias(libs.plugins.ktlint)              // genelde root'ta apply true
     alias(libs.plugins.lsparanoid) apply false
     alias(libs.plugins.detekt)
     alias(libs.plugins.ksp) apply false
@@ -13,11 +13,22 @@ plugins {
 
     alias(libs.plugins.google.services) apply false
     alias(libs.plugins.crashlytics) apply false
-    alias(libs.plugins.kover)               // genelde root’ta apply true
+    alias(libs.plugins.kover)               // genelde root'ta apply true
     alias(libs.plugins.safe.args) apply false
 }
 
+detekt {
+    config.setFrom(files("$rootDir/detekt.yml"))
+    buildUponDefaultConfig = true
+}
+
 subprojects {
+    apply(plugin = "io.gitlab.arturbosch.detekt")
+
+    configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
+        config.setFrom(files("$rootDir/detekt.yml"))
+        buildUponDefaultConfig = true
+    }
     plugins.withId("org.jetbrains.kotlin.android") {
         extensions.configure<org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension> {
             jvmToolchain(17)

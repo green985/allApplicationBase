@@ -251,3 +251,7 @@ Kod yazım kuralları
 ◦ YANLIŞ: androidx.compose.foundation.layout.Spacer, androidx.compose.material3.Button
 ◦ DOĞRU: import ile eklenip direkt Spacer, Button kullanılmalı
 ◦ Bu kural tüm Compose bileşenleri ve Material3 component'leri için geçerlidir.
+• Detekt FunctionNaming kuralı:
+◦ detekt.yml dosyasında Compose fonksiyonları için FunctionNaming kuralı devre dışı bırakıldı
+◦ @Composable annotate edilmiş fonksiyonlar büyük harfle başlayabilir (Compose convention)
+◦ Detekt config: ignoreAnnotated: ['Composable', 'androidx.compose.runtime.Composable']
