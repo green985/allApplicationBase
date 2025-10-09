@@ -1,0 +1,13 @@
+detekt:
+  parallel: true
+  build:
+    maxIssues: 0
+
+naming:
+  FunctionNaming:
+    active: true
+    # Exclude Composable functions from the naming rule
+    # Compose functions conventionally start with capital letters
+    excludes: [ '**/src/main/**/compose/**', '**/src/main/**/ui/**', '**/composeBase/**' ]
+    ignoreAnnotated: [ 'Composable', 'androidx.compose.runtime.Composable' ]
+    functionPattern: '[a-z][a-zA-Z0-9]*'
