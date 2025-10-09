@@ -98,7 +98,7 @@ class QuestionListVm(
             val ans = answerMap[q.questionId]
             if (ans != null) {
                 val selected = ans.selectedOptionIds?.firstOrNull()
-                ui.copy(isAnswered = selected != null, selectedAnswer = selected)
+                ui.copy(isAnsweredByUser = selected != null, selectedAnswer = selected)
             } else ui
         }
     }

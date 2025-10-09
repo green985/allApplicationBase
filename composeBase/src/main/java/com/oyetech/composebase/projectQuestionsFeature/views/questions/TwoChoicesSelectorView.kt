@@ -131,7 +131,7 @@ fun TwoChoicesSelectorView(
                 Text(
                     modifier = Modifier.padding(QuestionProjectViewAttrs.spacingMd),
                     text = option.text.ifEmpty { option.id }.uppercase(),
-                    color = if (uiState.isAnswered) {
+                    color = if (uiState.isAnsweredByUser) {
                         QuestionAnswerColors.Disabled
                     } else {
                         color

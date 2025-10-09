@@ -56,7 +56,7 @@ fun QuestionOptionsAreaContainer(
     onEvent: (QuestionViewEvent) -> Unit,
 ) {
     // optionsHolder: left bottom - delete icon
-    if (uiState.isAnswered) {
+    if (uiState.isAnsweredByUser) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()

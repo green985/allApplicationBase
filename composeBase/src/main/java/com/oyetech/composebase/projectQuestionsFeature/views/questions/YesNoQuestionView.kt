@@ -97,7 +97,7 @@ private fun YesNoQuestionContent(
                                     )
                                 )
                             },
-                            enabled = !uiState.isAnswered
+                            enabled = !uiState.isAnsweredByUser
                         ) {
                             Text(text = opt.text.ifBlank { opt.id })
                         }
@@ -119,7 +119,7 @@ private fun YesNoQuestionContent(
                 }
             }
 
-            if (uiState.isAnswered) {
+            if (uiState.isAnsweredByUser) {
                 SpacerSmall()
                 Text(text = LanguageKey.yourAnswerText + ": " + answeredText)
             }
@@ -179,7 +179,7 @@ fun QuestionYesNoScreen_Preview_Answered() {
             isLoading = false,
             titleText = "Enable dark mode?",
             bodyText = "Vote now",
-            isAnswered = true,
+            isAnsweredByUser = true,
             selectedAnswer = "YES"
         ),
         onEvent = {},
@@ -195,7 +195,7 @@ private fun QuestionYesNoScreen_Preview_Edit_Mode() {
             isLoading = false,
             titleText = "Enable dark mode?",
             bodyText = "Vote now",
-            isAnswered = true,
+            isAnsweredByUser = true,
             selectedAnswer = "YES"
         ),
         onEvent = {},

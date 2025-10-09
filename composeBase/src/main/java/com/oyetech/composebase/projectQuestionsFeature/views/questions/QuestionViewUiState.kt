@@ -31,7 +31,8 @@ data class QuestionViewUiState(
     val questionType: QuestionType = QuestionType.SINGLE_CHOICE,
     val options: ImmutableList<QueOption> = QuestionOptionCatalog.TwoChoice.YES_NO.toImmutableList(),
     val category: QuestionCategories? = options.inferCategory(),
-    val isAnswered: Boolean = false,
+    val isAnsweredByUser: Boolean = false,
+    val isQuestionApproved: Boolean = false,
     val selectedAnswer: String? = null,
 ) : BaseUIState()
 
@@ -103,7 +104,7 @@ fun QuestionOperationResponseBody.toUiState(
         titleText = this.questionTitle,
         questionType = this.questionType,
         options = derivedOptions.toImmutableList(),
-        isAnswered = false,
+        isAnsweredByUser = false,
         selectedAnswer = null,
     )
 }
