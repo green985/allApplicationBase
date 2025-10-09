@@ -10,6 +10,7 @@ import com.oyetech.domain.repository.firebase.FirebaseQuestionAnswerRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.useCases.NavigationUseCase
+import com.oyetech.models.questionProject.questionOperation.ModerationStatus
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.models.questionProject.questionOperation.QuestionType
@@ -29,6 +30,7 @@ class QuestionListVm(
 ) : BaseListViewModel<QuestionViewUiState>(appDispatchers) {
 
     val uiState = MutableStateFlow(QuestionListUiState())
+    private val filterType = MutableStateFlow(QuestionListFilterType.ALL)
 
     override val listViewState: MutableStateFlow<GenericListState<QuestionViewUiState>> =
         MutableStateFlow(
@@ -36,20 +38,31 @@ class QuestionListVm(
                 dataFlow = combine(
                     repository.getQuestionList(),
                     answerRepository.answersState,
-                ) { questions, answers ->
-                    overlayAnswers(questions, answers)
-                },
-                refreshDataFlow = combine(
+                    filterType,
+                ) { questions, answers, filter ->
+                    val filtered = filterQuestionsByStatus(questions, filter)
+                    overlayAnswers(filtered, answers)
+                }, refreshDataFlow = combine(
                     repository.getQuestionList(),
                     answerRepository.answersState,
-                ) { questions, answers ->
-                    overlayAnswers(questions, answers)
-                }
-            )
+                    filterType,
+                ) { questions, answers, filter ->
+                    val filtered = filterQuestionsByStatus(questions, filter)
+                    overlayAnswers(filtered, answers)
+                })
         )
 
     init {
         // Fetch user answers on start
+        viewModelScope.launch(getDispatcherIo()) {
+            filterType.collectLatest {
+                Timber.d("Filter changed to: ${it.name}")
+            }
+        }
+
+
+
+
         viewModelScope.launch(getDispatcherIo()) {
             val uid = userRepository.getUserId()
             if (uid.isNotBlank()) {
@@ -90,6 +103,42 @@ class QuestionListVm(
         }
     }
 
+    fun setFilter(newFilter: QuestionListFilterType) {
+        filterType.value = newFilter
+        uiState.value = uiState.value.copy(
+            toolbarTitleText = when (newFilter) {
+                QuestionListFilterType.ALL -> "All Questions"
+                QuestionListFilterType.APPROVED -> "Approved Questions"
+                QuestionListFilterType.DECLINED -> "Declined Questions"
+                QuestionListFilterType.PENDING -> "Pending Questions"
+            }
+        )
+    }
+
+    fun approveAllPending() {
+        viewModelScope.launch(getDispatcherIo()) {
+            val items = listViewState.value.items
+            items.forEach { item ->
+                repository.updateQuestionStatus(
+                    item.questionId,
+                    ModerationStatus.APPROVED
+                ).collectLatest { /* no-op */ }
+            }
+        }
+    }
+
+    fun declineAllPending() {
+        viewModelScope.launch(getDispatcherIo()) {
+            val items = listViewState.value.items
+            items.forEach { item ->
+                repository.updateQuestionStatus(
+                    item.questionId,
+                    ModerationStatus.DECLINED
+                ).collectLatest { /* no-op */ }
+            }
+        }
+    }
+
     fun onQuestionEvent(event: QuestionViewEvent) {
         when (event) {
             is QuestionViewEvent.OnOptionSelected -> {
@@ -127,6 +176,18 @@ class QuestionListVm(
             else -> {
                 Timber.d("Unhandled QuestionViewEvent in ListVM: ${event.javaClass.simpleName}")
             }
+        }
+    }
+
+    private fun filterQuestionsByStatus(
+        questions: List<QuestionOperationResponseBody>,
+        filter: QuestionListFilterType,
+    ): List<QuestionOperationResponseBody> {
+        return when (filter) {
+            QuestionListFilterType.ALL -> questions
+            QuestionListFilterType.APPROVED -> questions.filter { it.moderationStatus == ModerationStatus.APPROVED }
+            QuestionListFilterType.DECLINED -> questions.filter { it.moderationStatus == ModerationStatus.DECLINED }
+            QuestionListFilterType.PENDING -> questions.filter { it.moderationStatus == ModerationStatus.PENDING }
         }
     }
 }

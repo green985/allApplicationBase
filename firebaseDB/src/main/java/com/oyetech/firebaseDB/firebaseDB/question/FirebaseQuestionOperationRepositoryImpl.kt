@@ -55,4 +55,20 @@ class FirebaseQuestionOperationRepositoryImpl(
             error(GeneralException(e.message ?: "Question list fetch error"))
         }
     }
+
+    override fun updateQuestionStatus(
+        questionId: String,
+        status: com.oyetech.models.questionProject.questionOperation.ModerationStatus,
+    ): Flow<Unit> = flow {
+        try {
+            firestore
+                .collection(FirebaseDatabaseKeys.createQuestion)
+                .document(questionId)
+                .update("moderationStatus", status.name)
+                .await()
+            emit(Unit)
+        } catch (e: Exception) {
+            error(GeneralException(e.message ?: "Question status update error"))
+        }
+    }
 }

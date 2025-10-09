@@ -9,4 +9,10 @@ interface FirebaseQuestionOperationRepository {
 
     // Returns a list of questions. Emits once for now; can be extended to realtime updates.
     fun getQuestionList(): Flow<List<QuestionOperationResponseBody>>
+
+    // Update moderation status for a question
+    fun updateQuestionStatus(
+        questionId: String,
+        status: com.oyetech.models.questionProject.questionOperation.ModerationStatus,
+    ): Flow<Unit>
 }
