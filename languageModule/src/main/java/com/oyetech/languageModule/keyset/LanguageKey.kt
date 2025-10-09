@@ -97,6 +97,8 @@ object LanguageKey {
         get() =
             LocalLanguageHelper.getStringWithKey("internetConnectionErrorText")
     var login set(value) {} get() = LocalLanguageHelper.getStringWithKey("Login")
+    var accept set(value) {} get() = LocalLanguageHelper.getStringWithKey("accept")
+    var decline set(value) {} get() = LocalLanguageHelper.getStringWithKey("decline")
 
 
 }

@@ -33,6 +33,7 @@ data class QuestionViewUiState(
     val category: QuestionCategories? = options.inferCategory(),
     val isAnsweredByUser: Boolean = false,
     val isQuestionApproved: Boolean = false,
+    val questionApproveView: Boolean = false,
     val selectedAnswer: String? = null,
 ) : BaseUIState()
 
@@ -48,6 +49,10 @@ sealed class QuestionViewEvent : BaseEvent() {
 
     // Clear existing answer for a question
     data class OnDeleteAnswerClicked(val questionId: String) : QuestionViewEvent()
+
+    // Moderation actions
+    data class OnAcceptClicked(val questionId: String) : QuestionViewEvent()
+    data class OnDeclineClicked(val questionId: String) : QuestionViewEvent()
 }
 
 // UI -> Backend model
@@ -105,6 +110,7 @@ fun QuestionOperationResponseBody.toUiState(
         questionType = this.questionType,
         options = derivedOptions.toImmutableList(),
         isAnsweredByUser = false,
+        isQuestionApproved = this.isQuestionApproved,
         selectedAnswer = null,
     )
 }

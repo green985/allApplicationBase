@@ -16,6 +16,7 @@ data class QuestionOperationResponseBody(
     val questionTitle: String = "",
     val questionType: QuestionType = QuestionType.SINGLE_CHOICE,
     val moderationStatus: ModerationStatus = ModerationStatus.PENDING,
+    val isQuestionApproved: Boolean = false,
 
     // Taxonomy keys to classify question semantics (category/subCategory)
     val taxonomy: QuestionTaxonomyRef = QuestionTaxonomyRef(),

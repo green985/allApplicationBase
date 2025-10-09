@@ -41,14 +41,14 @@ class QuestionListVm(
                     filterType,
                 ) { questions, answers, filter ->
                     val filtered = filterQuestionsByStatus(questions, filter)
-                    overlayAnswers(filtered, answers)
+                    overlayAnswers(filtered, answers, filter)
                 }, refreshDataFlow = combine(
                     repository.getQuestionList(),
                     answerRepository.answersState,
                     filterType,
                 ) { questions, answers, filter ->
                     val filtered = filterQuestionsByStatus(questions, filter)
-                    overlayAnswers(filtered, answers)
+                    overlayAnswers(filtered, answers, filter)
                 })
         )
 
@@ -91,15 +91,20 @@ class QuestionListVm(
     private fun overlayAnswers(
         questions: List<QuestionOperationResponseBody>,
         answers: List<QueAnswer>,
+        filter: QuestionListFilterType,
     ): List<QuestionViewUiState> {
         val answerMap = answers.associateBy { it.questionId }
         return questions.map { q ->
-            val ui = q.toUiState(base = QuestionViewUiState(isLoading = false))
+            var ui = q.toUiState(base = QuestionViewUiState(isLoading = false))
             val ans = answerMap[q.questionId]
             if (ans != null) {
                 val selected = ans.selectedOptionIds?.firstOrNull()
-                ui.copy(isAnsweredByUser = selected != null, selectedAnswer = selected)
-            } else ui
+                ui = ui.copy(isAnsweredByUser = selected != null, selectedAnswer = selected)
+            }
+            if (filter == QuestionListFilterType.PENDING) {
+                ui = ui.copy(questionApproveView = true)
+            }
+            ui
         }
     }
 
@@ -170,6 +175,24 @@ class QuestionListVm(
                     if (uid.isBlank()) return@launch
                     answerRepository.deleteAnswer(uid, event.questionId)
                         .collectLatest { /* updated in repo state */ }
+                }
+            }
+
+            is QuestionViewEvent.OnAcceptClicked -> {
+                viewModelScope.launch(getDispatcherIo()) {
+                    repository.updateQuestionStatus(
+                        event.questionId,
+                        com.oyetech.models.questionProject.questionOperation.ModerationStatus.APPROVED
+                    ).collectLatest { /* no-op */ }
+                }
+            }
+
+            is QuestionViewEvent.OnDeclineClicked -> {
+                viewModelScope.launch(getDispatcherIo()) {
+                    repository.updateQuestionStatus(
+                        event.questionId,
+                        com.oyetech.models.questionProject.questionOperation.ModerationStatus.DECLINED
+                    ).collectLatest { /* no-op */ }
                 }
             }
 

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -46,6 +47,7 @@ fun QuestionViewScaffoldLayout(
             QuestionOptionsAreaContainer(uiState = uiState, onEvent = onEvent)
             QuestionUserInfoContainer(uiState = uiState, onEvent = onEvent)
             QuestionShareActionsContainer(uiState = uiState, onEvent = onEvent)
+            QuestionModerationActionsContainer(uiState = uiState, onEvent = onEvent)
         }
     }
 }
@@ -188,6 +190,42 @@ fun QuestionShareActionsContainer(
             .padding(vertical = QuestionProjectViewAttrs.spacingXs)
     ) {
         // EMPTY PLACEHOLDER (share, etc.)
+    }
+}
+
+@Composable
+fun QuestionModerationActionsContainer(
+    uiState: QuestionViewUiState,
+    onEvent: (QuestionViewEvent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (!uiState.questionApproveView) return
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = QuestionProjectViewAttrs.spacingSm),
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        androidx.compose.material3.Button(onClick = {
+            onEvent(
+                QuestionViewEvent.OnDeclineClicked(
+                    uiState.questionId
+                )
+            )
+        }) {
+            Text(text = LanguageKey.decline)
+        }
+        Spacer(modifier = Modifier.padding(horizontal = QuestionProjectViewAttrs.spacingSm))
+        androidx.compose.material3.Button(onClick = {
+            onEvent(
+                QuestionViewEvent.OnAcceptClicked(
+                    uiState.questionId
+                )
+            )
+        }) {
+            Text(text = LanguageKey.accept)
+        }
     }
 }
 

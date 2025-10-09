@@ -237,11 +237,17 @@ vs) — sonra yapılacak.
 kaldırılabilir).
 
 Öğrenilenler ve prensipler
-• UI State’te ImmutableList kullanmak stabil ve predictable bir render akışı sağlıyor.
-• Event’leri generic (OptionSelected) tutmak, yeni tipleri eklerken UI’ı büyütmeden genişlemeyi
+• UI State'te ImmutableList kullanmak stabil ve predictable bir render akışı sağlıyor.
+• Event'leri generic (OptionSelected) tutmak, yeni tipleri eklerken UI'ı büyütmeden genişlemeyi
 kolaylaştırıyor.
 • Repository tarafında Flow<Unit> + exception stratejisi, hata yönetiminde yalın ve net bir yapı
 sunuyor.
-• NavigationUseCase ViewModel’de tutulduğunda test ve soyutlama avantajı sağlıyor; UI tarafında
+• NavigationUseCase ViewModel'de tutulduğunda test ve soyutlama avantajı sağlıyor; UI tarafında
 navController ile bağlama setNavigator ile yapılmalı.
 • Koin viewModelOf kullanımı ile VM bağımlılık zinciri basit ve izlenebilir kalıyor.
+
+Kod yazım kuralları
+• Compose kodunda tam paket yolları (fully qualified names) kullanılmamalı:
+◦ YANLIŞ: androidx.compose.foundation.layout.Spacer, androidx.compose.material3.Button
+◦ DOĞRU: import ile eklenip direkt Spacer, Button kullanılmalı
+◦ Bu kural tüm Compose bileşenleri ve Material3 component'leri için geçerlidir.

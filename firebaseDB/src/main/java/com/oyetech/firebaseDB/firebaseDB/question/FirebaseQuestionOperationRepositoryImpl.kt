@@ -61,10 +61,17 @@ class FirebaseQuestionOperationRepositoryImpl(
         status: com.oyetech.models.questionProject.questionOperation.ModerationStatus,
     ): Flow<Unit> = flow {
         try {
+            val isApproved =
+                status == com.oyetech.models.questionProject.questionOperation.ModerationStatus.APPROVED
             firestore
                 .collection(FirebaseDatabaseKeys.createQuestion)
                 .document(questionId)
-                .update("moderationStatus", status.name)
+                .update(
+                    mapOf(
+                        "moderationStatus" to status.name,
+                        "isQuestionApproved" to isApproved,
+                    )
+                )
                 .await()
             emit(Unit)
         } catch (e: Exception) {
