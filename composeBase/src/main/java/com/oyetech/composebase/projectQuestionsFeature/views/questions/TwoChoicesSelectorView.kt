@@ -54,27 +54,22 @@ fun TwoChoicesSelectorView(
             val color = when (uiState.category) {
                 QuestionCategories.TWO_CHOICE -> when (option) {
                     QuestionOptionCatalog.TwoChoice.YES -> {
-                        Timber.d("YesNoSelector: YES selected")
                         QuestionAnswerColors.Yes
                     }
 
                     QuestionOptionCatalog.TwoChoice.NO -> {
-                        Timber.d("YesNoSelector: NO selected")
                         QuestionAnswerColors.No
                     }
 
                     QuestionOptionCatalog.TwoChoice.DOWN -> {
-                        Timber.d("YesNoSelector: NO selected")
                         QuestionAnswerColors.Down
                     }
 
                     QuestionOptionCatalog.TwoChoice.UP -> {
-                        Timber.d("YesNoSelector: NO selected")
                         QuestionAnswerColors.Up
                     }
 
                     QuestionOptionCatalog.TwoChoice.GOOD -> {
-                        Timber.d("YesNoSelector: NO selected")
                         QuestionAnswerColors.Good
                     }
 

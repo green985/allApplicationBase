@@ -109,7 +109,6 @@ High-level architecture
         - repository: orchestrates local/remote and exposes APIs to upper layers
 - UI/Foundation
     - composeBase provides shared Compose scaffolding and UI dependencies used by apps and features
-    - feature modules (e.g., wallpaperList, settingss, imageViewer) provide screen-level or
       domain-specific UI bundles that apps can include
 - Media and services
     - radioService and audioPlayerHelper use androidx.media to support playback; exoplayerModule
