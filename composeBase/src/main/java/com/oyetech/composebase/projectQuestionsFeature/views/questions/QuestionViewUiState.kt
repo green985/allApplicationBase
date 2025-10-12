@@ -31,10 +31,13 @@ data class QuestionViewUiState(
     val questionType: QuestionType = QuestionType.SINGLE_CHOICE,
     val options: ImmutableList<QueOption> = QuestionOptionCatalog.TwoChoice.YES_NO.toImmutableList(),
     val category: QuestionCategories? = options.inferCategory(),
+    val selectedAnswer: String? = null,
+
+    // Flags
     val isAnsweredByUser: Boolean = false,
     val isQuestionApproved: Boolean = false,
     val questionApproveView: Boolean = false,
-    val selectedAnswer: String? = null,
+    val questionApproveViewClicked: Boolean = false,
 ) : BaseUIState()
 
 sealed class QuestionViewEvent : BaseEvent() {
@@ -57,7 +60,6 @@ sealed class QuestionViewEvent : BaseEvent() {
 
 // UI -> Backend model
 fun QuestionViewUiState.toOperationBody(): QuestionOperationResponseBody {
-
     return QuestionOperationResponseBody(
         questionId = questionId,
         questionTitle = titleText,

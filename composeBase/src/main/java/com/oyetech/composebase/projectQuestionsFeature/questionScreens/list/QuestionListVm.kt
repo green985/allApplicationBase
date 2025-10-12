@@ -15,6 +15,7 @@ import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.models.questionProject.questionOperation.QuestionType
 import com.oyetech.tools.coroutineHelper.AppDispatchers
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
@@ -180,6 +181,7 @@ class QuestionListVm(
 
             is QuestionViewEvent.OnAcceptClicked -> {
                 viewModelScope.launch(getDispatcherIo()) {
+                    updateApproveViewClicked(event.questionId)
                     repository.updateQuestionStatus(
                         event.questionId,
                         com.oyetech.models.questionProject.questionOperation.ModerationStatus.APPROVED
@@ -189,6 +191,7 @@ class QuestionListVm(
 
             is QuestionViewEvent.OnDeclineClicked -> {
                 viewModelScope.launch(getDispatcherIo()) {
+                    updateApproveViewClicked(event.questionId)
                     repository.updateQuestionStatus(
                         event.questionId,
                         com.oyetech.models.questionProject.questionOperation.ModerationStatus.DECLINED
@@ -200,6 +203,20 @@ class QuestionListVm(
                 Timber.d("Unhandled QuestionViewEvent in ListVM: ${event.javaClass.simpleName}")
             }
         }
+    }
+
+    private fun updateApproveViewClicked(questionId: String) {
+        listViewState.value.items.find { it.questionId == questionId }?.let { item ->
+            val updated = item.copy(questionApproveViewClicked = true)
+            val currentList = listViewState.value.items.toMutableList()
+            val index = currentList.indexOf(item)
+            if (index != -1) {
+                currentList[index] = updated
+                listViewState.value =
+                    listViewState.value.copy(items = currentList.toImmutableList())
+            }
+        }
+
     }
 
     private fun filterQuestionsByStatus(

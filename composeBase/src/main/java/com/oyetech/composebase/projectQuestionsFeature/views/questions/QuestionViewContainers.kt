@@ -66,7 +66,6 @@ fun QuestionOptionsAreaContainer(
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             IconButton(onClick = { onEvent(QuestionViewEvent.OnDeleteAnswerClicked(uiState.questionId)) }) {
                 Icon(imageVector = Icons.Filled.Delete, contentDescription = "Delete Answer")
             }
@@ -199,32 +198,39 @@ fun QuestionModerationActionsContainer(
     onEvent: (QuestionViewEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (!uiState.questionApproveView) return
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = QuestionProjectViewAttrs.spacingSm),
-        horizontalArrangement = Arrangement.End,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        androidx.compose.material3.Button(onClick = {
-            onEvent(
-                QuestionViewEvent.OnDeclineClicked(
-                    uiState.questionId
-                )
-            )
-        }) {
-            Text(text = LanguageKey.decline)
-        }
-        Spacer(modifier = Modifier.padding(horizontal = QuestionProjectViewAttrs.spacingSm))
-        androidx.compose.material3.Button(onClick = {
-            onEvent(
-                QuestionViewEvent.OnAcceptClicked(
-                    uiState.questionId
-                )
-            )
-        }) {
-            Text(text = LanguageKey.accept)
+    if (uiState.questionApproveView) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(vertical = QuestionProjectViewAttrs.spacingSm),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            androidx.compose.material3.Button(
+                enabled = !uiState.questionApproveViewClicked,
+                onClick = {
+                    onEvent(
+                        QuestionViewEvent.OnDeclineClicked(
+                            uiState.questionId
+                        )
+                    )
+                }
+            ) {
+                Text(text = LanguageKey.decline)
+            }
+            Spacer(modifier = Modifier.padding(horizontal = QuestionProjectViewAttrs.spacingSm))
+            androidx.compose.material3.Button(
+                enabled = !uiState.questionApproveViewClicked,
+                onClick = {
+                    onEvent(
+                        QuestionViewEvent.OnAcceptClicked(
+                            uiState.questionId
+                        )
+                    )
+                }
+            ) {
+                Text(text = LanguageKey.accept)
+            }
         }
     }
 }
@@ -233,7 +239,11 @@ fun QuestionModerationActionsContainer(
 @Composable
 fun QuestionViewScaffoldLayout_Preview() {
     QuestionViewScaffoldLayout(
-        uiState = QuestionViewUiState(isLoading = false, titleText = "Sample Question"),
+        uiState = QuestionViewUiState(
+            questionApproveView = true,
+            isLoading = false,
+            titleText = "Sample Question"
+        ),
         onEvent = {}
     )
 }
