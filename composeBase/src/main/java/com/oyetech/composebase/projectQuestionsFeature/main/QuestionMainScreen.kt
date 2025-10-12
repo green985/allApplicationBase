@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
@@ -16,8 +17,6 @@ import com.oyetech.composebase.projectQuestionsFeature.theme.RadioAppTheme
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator.navHostScreenSetup
 import com.oyetech.domain.useCases.NavigationUseCase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 /**
@@ -32,8 +31,9 @@ fun QuestionMainScreen(
 ) {
     RadioAppTheme {
         val navController = rememberNavController()
+        val coroutineScope = rememberCoroutineScope()
         navigationUseCase.setNavigator { action ->
-            GlobalScope.launch(Dispatchers.Main) {
+            coroutineScope.launch {
                 if (action == "back") {
                     navController.navigateUp()
                 } else {
@@ -67,10 +67,10 @@ fun QuestionMainScreen(
 @Composable
 fun QuestionAppDebugRoot(navigationUseCase: NavigationUseCase) {
     val navController = rememberNavController()
-    val coroutineScope = androidx.compose.runtime.rememberCoroutineScope()
+    val coroutineScope = rememberCoroutineScope()
     // Hook NavigationUseCase to Compose navController in debug as well
     navigationUseCase.setNavigator { action ->
-        // Refactored: use composition-scoped coroutine instead of GlobalScope
+        // Use composition-scoped coroutine
         coroutineScope.launch {
             if (action == "back") {
                 navController.navigateUp()

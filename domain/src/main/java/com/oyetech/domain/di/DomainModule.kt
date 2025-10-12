@@ -1,6 +1,7 @@
 package com.oyetech.domain.di
 
 import com.oyetech.domain.helper.ActivityProviderUseCase
+import com.oyetech.domain.helper.ViewModelScopeProviderUseCase
 import com.oyetech.domain.radioOperationUseCases.remoteUseCase.RadioDataOperationUseCase
 import com.oyetech.domain.radioOperationUseCases.remoteUseCase.RadioStationListOperationUseCase
 import com.oyetech.domain.repository.messaging.MessagesAllOperationRepository
@@ -28,6 +29,7 @@ object DomainModule {
 
     val wallpaperDomainModule = module {
         singleOf(::ActivityProviderUseCase)
+        singleOf(::ViewModelScopeProviderUseCase)
         single { GlideOperationUseCase(get()) }
         singleOf(::AdsHelperUseCase)
         // singleOf(::ContentOperationUseCase)

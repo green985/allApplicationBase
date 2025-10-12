@@ -12,9 +12,13 @@ import com.oyetech.composebase.projectQuestionsFeature.theme.RadioAppTheme
 import com.oyetech.domain.useCases.NavigationUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.java.KoinJavaComponent
 
 class QuestionMainActivity : ComponentActivity() {
+
+    // Initialize ViewModel - this will set viewModelScope in ViewModelScopeProviderUseCase
+    private val mainActivityVm: QuestionMainActivityVm by viewModel()
 
     private val testEventNavigator: TestEventNavigator by KoinJavaComponent.inject(
         TestEventNavigator::class.java

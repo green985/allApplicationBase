@@ -149,9 +149,12 @@ Important files
 Genel mimari kararlar ve kurallar
 • Navigasyon: ViewModel içinde NavigationUseCase kullanımı ve navigationUseCase.setNavigator +
 navController.navigate/back deseni korundu.
-• DI: Koin ile viewModelOf(::YourVm) kullanımı. Firebase repo’ları da Koin modülüne eklendi.
+• DI: Koin ile viewModelOf(::YourVm) kullanımı. Firebase repo'ları da Koin modülüne eklendi.
 • İsimlendirme: QuestionApp* isimlendirme ve proje/dosya konumlandırmaları korundu.
 • UI State: UI katmanında ImmutableList kullanımı tercih edildi (kotlinx.collections.immutable).
+• CoroutineScope yönetimi: ViewModelScopeProviderUseCase ile MainActivity'nin viewModelScope'u
+tüm uygulama boyunca erişilebilir. GlobalScope veya application scope yerine activity lifecycle'a
+bağlı scope kullanımı tercih edilir.
 
 Ekranlar ve Navigasyon
 • AdminApproveQuestion:
@@ -244,6 +247,58 @@ sunuyor.
 • NavigationUseCase ViewModel'de tutulduğunda test ve soyutlama avantajı sağlıyor; UI tarafında
 navController ile bağlama setNavigator ile yapılmalı.
 • Koin viewModelOf kullanımı ile VM bağımlılık zinciri basit ve izlenebilir kalıyor.
+
+CoroutineScope Yönetimi ve ViewModelScopeProviderUseCase
+• ViewModelScopeProviderUseCase pattern'i:
+◦ ActivityProviderUseCase gibi çalışır, ancak Activity yerine CoroutineScope sağlar.
+◦ MainActivity'nin viewModelScope'u tüm uygulama genelinde kullanılabilir hale gelir.
+◦ Repository'ler ve use case'ler GlobalScope yerine bu scope'u kullanmalı.
+• Kullanım:
+◦ QuestionMainActivity'de QuestionMainActivityVm by viewModel() ile ViewModel oluşturulur.
+◦ ViewModel'in init bloğunda viewModelScopeProviderUseCase.setScope(viewModelScope) çağrılır.
+◦ Repository veya diğer componentlerde ViewModelScopeProviderUseCase inject edilir.
+◦ viewModelScopeProviderUseCase.getScope() ile scope alınır.
+• Avantajları:
+◦ Activity lifecycle'ına bağlı scope kullanımı memory leak'i önler.
+◦ Activity destroy olduğunda tüm coroutine'ler otomatik olarak iptal edilir.
+◦ GlobalScope veya application-level scope yerine daha kontrollü bir yapı sağlar.
+◦ Test edilebilirlik artar (scope mock edilebilir).
+• Fallback mekanizması:
+◦ MainActivity henüz hazır değilse (early initialization) applicationScope fallback olarak
+kullanılır.
+◦ Timber ile uyarı logları üretilir.
+• Repository'de kullanım örneği:
+◦ YANLIŞ (eski yöntem):
+
+  ```kotlin
+  class SomeRepositoryImpl() : SomeRepository {
+    fun doSomething() {
+        GlobalScope.launch { // Memory leak riski!
+            // işlemler
+        }
+    }
+}
+  ```
+
+◦ DOĞRU (yeni yöntem):
+
+  ```kotlin
+  class SomeRepositoryImpl(
+    private val viewModelScopeProviderUseCase: ViewModelScopeProviderUseCase
+) : SomeRepository {
+    fun doSomething() {
+        viewModelScopeProviderUseCase.getScope().launch {
+            // işlemler - activity destroy olduğunda otomatik iptal
+        }
+    }
+}
+  ```
+
+◦ DI module'de:
+
+  ```kotlin
+  single { SomeRepositoryImpl(get()) }
+  ```
 
 Kod yazım kuralları
 • Compose kodunda tam paket yolları (fully qualified names) kullanılmamalı:
