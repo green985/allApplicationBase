@@ -26,13 +26,18 @@ sealed class AdminApproveQuestionUiEvent : BaseUIEvent() {
 
 // View events
 sealed class AdminApproveQuestionEvent : BaseEvent() {
-    data object OnApproveAllClicked : AdminApproveQuestionEvent()
+    data class OnFilterSelected(val filterType: com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListFilterType) :
+        AdminApproveQuestionEvent()
+
+    data object OnApproveAll : AdminApproveQuestionEvent()
+    data object OnDeclineAll : AdminApproveQuestionEvent()
     data object OnRefreshClicked : AdminApproveQuestionEvent()
 }
 
 class AdminApproveQuestionVm(
     appDispatchers: AppDispatchers,
     private val navigationUseCase: NavigationUseCase,
+    val questionListVm: com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListVm,
 ) : BaseViewModel(appDispatchers) {
 
     val uiState = MutableStateFlow(AdminApproveQuestionUiState())
@@ -45,20 +50,22 @@ class AdminApproveQuestionVm(
     override fun onEvent(event: Any) {
         if (event is AdminApproveQuestionEvent) {
             when (event) {
-                AdminApproveQuestionEvent.OnApproveAllClicked -> approveAll()
+                is AdminApproveQuestionEvent.OnFilterSelected -> {
+                    questionListVm.setFilter(event.filterType)
+                }
+
+                AdminApproveQuestionEvent.OnApproveAll -> {
+                    questionListVm.approveAllPending()
+                }
+
+                AdminApproveQuestionEvent.OnDeclineAll -> {
+                    questionListVm.declineAllPending()
+                }
                 AdminApproveQuestionEvent.OnRefreshClicked -> refresh()
             }
         }
     }
 
-    private fun approveAll() {
-        viewModelScope.launch(getDispatcherIo()) {
-            // TODO: integrate repository to approve
-            uiState.updateState { copy(isLoading = true) }
-            // Simulate complete
-            uiState.updateState { copy(isLoading = false, pendingCountText = "0 pending") }
-        }
-    }
 
     private fun refresh() {
         viewModelScope.launch(getDispatcherIo()) {

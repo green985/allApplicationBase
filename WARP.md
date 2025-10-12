@@ -309,3 +309,106 @@ Kod yazım kuralları
 ◦ detekt.yml dosyasında Compose fonksiyonları için FunctionNaming kuralı devre dışı bırakıldı
 ◦ @Composable annotate edilmiş fonksiyonlar büyük harfle başlayabilir (Compose convention)
 ◦ Detekt config: ignoreAnnotated: ['Composable', 'androidx.compose.runtime.Composable']
+
+UI Event Pattern (KRİTİK)
+• Compose ekranlarda DAIMA sealed class Event pattern kullanılmalı:
+◦ YANLIŞ yaklaşım:
+
+  ```kotlin
+  @Composable
+  fun MyScreen(
+      onFilterSelected: (FilterType) -> Unit,
+      onApproveAll: () -> Unit,
+      onDeclineAll: () -> Unit
+  ) { /* ... */ }
+  ```
+
+◦ DOĞRU yaklaşım:
+
+  ```kotlin
+  sealed class MyScreenEvent : BaseEvent() {
+      data class OnFilterSelected(val filterType: FilterType) : MyScreenEvent()
+      data object OnApproveAll : MyScreenEvent()
+      data object OnDeclineAll : MyScreenEvent()
+  }
+  
+  @Composable
+  fun MyScreen(
+      onEvent: (MyScreenEvent) -> Unit
+  ) {
+      Button(onClick = { onEvent(MyScreenEvent.OnApproveAll) }) { Text("Approve") }
+  }
+  ```
+
+• Avantajları:
+◦ Tek bir lambda yerine birden fazla fonksiyon parametresi taşımaya gerek yok
+◦ Event'ler type-safe ve when expression ile exhaustive check yapılabilir
+◦ Yeni event eklerken fonksiyon imzası değişmez, geriye uyumlu
+◦ Event logging, analytics ve debugging kolaylaşır
+◦ ViewModel'de tüm event'ler tek bir onEvent fonksiyonunda handle edilir
+• Uygulama:
+◦ Tüm Screen ve UI component'lerde onClick, onSelect, onApprove gibi callback'ler yerine
+sealed Event sınıfları kullan
+◦ Preview/Test'lerde onEvent = {} tek parametre yeterli
+◦ Event içinde data taşınabilir (data class) veya parametre yok ise data object kullan
+
+Screen Setup Sorumlulukları (KRİTİK)
+• ScreenSetup Composable fonksiyonları SADECE bağlantı (wiring) yapar:
+◦ YANLIŞ yaklaşım (iş mantığı setup'ta):
+
+  ```kotlin
+  @Composable
+  fun MyScreenSetup() {
+      val vm1 = koinViewModel<Vm1>()
+      val vm2 = koinViewModel<Vm2>()
+      
+      MyScreen(
+          onEvent = { event ->
+              when (event) {
+                  is Event.Action1 -> vm2.doSomething() // YANLIŞ!
+                  is Event.Action2 -> vm1.handle(event) // YANLIŞ!
+                  else -> vm1.onEvent(event)
+              }
+          }
+      )
+  }
+  ```
+
+◦ DOĞRU yaklaşım (iş mantığı ViewModel'de):
+
+  ```kotlin
+  @Composable
+  fun MyScreenSetup() {
+      val vm = koinViewModel<MyVm>() // Vm içinde diğer VM'ler inject edilmiş
+      val uiState by vm.uiState.collectAsStateWithLifecycle()
+      
+      MyScreen(
+          uiState = uiState,
+          onEvent = { vm.onEvent(it) } // Sadece bağlantı!
+      )
+  }
+  
+  // ViewModel içinde:
+  class MyVm(
+      val otherVm: OtherVm // DI ile inject
+  ) : BaseViewModel() {
+      override fun onEvent(event: Any) {
+          when (event) {
+              is Event.Action1 -> otherVm.doSomething() // DOĞRU!
+              is Event.Action2 -> handleAction2()
+          }
+      }
+  }
+  ```
+
+• Kurallar:
+◦ ScreenSetup'ta hiçbir when/if iş mantığı OLMAMALI
+◦ onEvent bağlantısı DAIMA: onEvent = { vm.onEvent(it) }
+◦ İş mantığı (filtering, delegation, orchestration) DAIMA ViewModel'de
+◦ Birden fazla ViewModel gerekiyorsa, bunlar parent ViewModel'e inject edilmeli
+◦ ScreenSetup sadece: koinViewModel(), collectAsState(), ve bağlantı içermeli
+• Avantajları:
+◦ İş mantığı test edilebilir (ViewModel unit test)
+◦ UI katmanı sadece rendering yapar, logic içermez
+◦ ViewModel bağımlılıkları DI ile yönetilir, preview/compose test kolay
+◦ Kod okunabilirliği artar, sorumluluk ayrımı net

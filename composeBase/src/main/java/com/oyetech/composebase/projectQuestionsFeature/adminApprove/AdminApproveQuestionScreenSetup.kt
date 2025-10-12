@@ -36,23 +36,18 @@ fun AdminApproveQuestionScreenSetup(
     val vm = koinViewModel<AdminApproveQuestionVm>()
     val uiState by vm.uiState.collectAsStateWithLifecycle()
 
-    // List VM for moderation operations
-    val listVm =
-        koinViewModel<com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListVm>()
-    val listState by listVm.listViewState.collectAsStateWithLifecycle()
+    // List VM is injected into AdminApproveQuestionVm
+    val listState by vm.questionListVm.listViewState.collectAsStateWithLifecycle()
 
     AdminApproveQuestionScreen(
         uiState = uiState,
         listCount = listState.items.size,
-        onEvent = { event: AdminApproveQuestionEvent -> vm.onEvent(event) },
-        onFilterSelected = { listVm.setFilter(it) },
-        onApproveAll = { listVm.approveAllPending() },
-        onDeclineAll = { listVm.declineAllPending() },
+        onEvent = { vm.onEvent(it) },
         listContent = {
             com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListScreen(
                 contentPadding = it,
                 onEvent = {},
-                onQuestionEvent = { ev -> listVm.onQuestionEvent(ev) },
+                onQuestionEvent = { ev -> vm.questionListVm.onQuestionEvent(ev) },
                 listViewState = listState,
             )
         }
@@ -88,9 +83,6 @@ private fun AdminApproveQuestionContent(
     uiState: AdminApproveQuestionUiState,
     listCount: Int,
     onEvent: (AdminApproveQuestionEvent) -> Unit,
-    onFilterSelected: (com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListFilterType) -> Unit,
-    onApproveAll: () -> Unit,
-    onDeclineAll: () -> Unit,
     listContent: @Composable (PaddingValues) -> Unit,
 ) {
     Column(
@@ -111,12 +103,16 @@ private fun AdminApproveQuestionContent(
             horizontalArrangement = Arrangement.spacedBy(QuestionProjectViewAttrs.spacingSm)
         ) {
             tabs.forEach { (type, label) ->
-                Button(onClick = { onFilterSelected(type) }) { Text(label) }
+                Button(onClick = { onEvent(AdminApproveQuestionEvent.OnFilterSelected(type)) }) {
+                    Text(
+                        label
+                    )
+                }
             }
         }
 
         // Total count header
-        Text(text = "Total: ${'$'}listCount")
+        Text(text = "Total: $listCount questions")
 
         // List content area
         listContent(PaddingValues(0.dp))
@@ -128,8 +124,14 @@ private fun AdminApproveQuestionContent(
                 .padding(top = QuestionProjectViewAttrs.spacingMd),
             horizontalArrangement = Arrangement.spacedBy(QuestionProjectViewAttrs.spacingSm)
         ) {
-            Button(onClick = onApproveAll, enabled = !uiState.isLoading) { Text("Approve All") }
-            Button(onClick = onDeclineAll, enabled = !uiState.isLoading) { Text("Decline All") }
+            Button(
+                onClick = { onEvent(AdminApproveQuestionEvent.OnApproveAll) },
+                enabled = !uiState.isLoading
+            ) { Text("Approve All") }
+            Button(
+                onClick = { onEvent(AdminApproveQuestionEvent.OnDeclineAll) },
+                enabled = !uiState.isLoading
+            ) { Text("Decline All") }
         }
     }
 }
@@ -139,9 +141,6 @@ private fun AdminApproveQuestionScreen(
     uiState: AdminApproveQuestionUiState,
     listCount: Int,
     onEvent: (AdminApproveQuestionEvent) -> Unit,
-    onFilterSelected: (com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListFilterType) -> Unit,
-    onApproveAll: () -> Unit,
-    onDeclineAll: () -> Unit,
     listContent: @Composable (PaddingValues) -> Unit,
 ) {
     BaseScaffold(
@@ -156,9 +155,6 @@ private fun AdminApproveQuestionScreen(
                     uiState = uiState,
                     listCount = listCount,
                     onEvent = onEvent,
-                    onFilterSelected = onFilterSelected,
-                    onApproveAll = onApproveAll,
-                    onDeclineAll = onDeclineAll,
                     listContent = { inner -> listContent(inner) },
                 )
             }
@@ -173,9 +169,6 @@ private fun AdminApproveQuestionPreview() {
         uiState = AdminApproveQuestionUiState(),
         listCount = 0,
         onEvent = {},
-        onFilterSelected = {},
-        onApproveAll = {},
-        onDeclineAll = {},
         listContent = { }
     )
 }
