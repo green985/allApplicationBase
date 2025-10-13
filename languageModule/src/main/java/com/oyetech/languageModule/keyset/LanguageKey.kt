@@ -100,5 +100,11 @@ object LanguageKey {
     var accept set(value) {} get() = LocalLanguageHelper.getStringWithKey("accept")
     var decline set(value) {} get() = LocalLanguageHelper.getStringWithKey("decline")
 
-
+    // Admin question filter tabs
+    var all set(value) {} get() = LocalLanguageHelper.getStringWithKey("all")
+    var pending set(value) {} get() = LocalLanguageHelper.getStringWithKey("pending")
+    var approved set(value) {} get() = LocalLanguageHelper.getStringWithKey("approved")
+    var declined set(value) {} get() = LocalLanguageHelper.getStringWithKey("declined")
+    var approveAll set(value) {} get() = LocalLanguageHelper.getStringWithKey("approveAll")
+    var declineAll set(value) {} get() = LocalLanguageHelper.getStringWithKey("declineAll")
 }

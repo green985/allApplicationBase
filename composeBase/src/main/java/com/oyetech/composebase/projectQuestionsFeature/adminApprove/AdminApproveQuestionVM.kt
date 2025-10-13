@@ -17,6 +17,7 @@ data class AdminApproveQuestionUiState(
     val errorText: String = "",
     val isLoading: Boolean = false,
     val pendingCountText: String = "0 pending",
+    val currentFilterType: com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListFilterType = com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListFilterType.ALL,
 )
 
 // UI events
@@ -52,6 +53,7 @@ class AdminApproveQuestionVm(
             when (event) {
                 is AdminApproveQuestionEvent.OnFilterSelected -> {
                     questionListVm.setFilter(event.filterType)
+                    uiState.updateState { copy(currentFilterType = event.filterType) }
                 }
 
                 AdminApproveQuestionEvent.OnApproveAll -> {
@@ -61,11 +63,11 @@ class AdminApproveQuestionVm(
                 AdminApproveQuestionEvent.OnDeclineAll -> {
                     questionListVm.declineAllPending()
                 }
+
                 AdminApproveQuestionEvent.OnRefreshClicked -> refresh()
             }
         }
     }
-
 
     private fun refresh() {
         viewModelScope.launch(getDispatcherIo()) {

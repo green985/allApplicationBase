@@ -1,5 +1,6 @@
 package com.oyetech.composebase.projectQuestionsFeature.adminApprove
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -7,15 +8,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,7 +32,9 @@ import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.Ques
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListFilterType.DECLINED
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListFilterType.PENDING
 import com.oyetech.composebase.projectQuestionsFeature.theme.QuestionProjectViewAttrs
+import com.oyetech.languageModule.keyset.LanguageKey
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -78,6 +86,7 @@ private fun AdminApproveQuestionToolbar(title: String) {
     })
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun AdminApproveQuestionContent(
     uiState: AdminApproveQuestionUiState,
@@ -85,53 +94,92 @@ private fun AdminApproveQuestionContent(
     onEvent: (AdminApproveQuestionEvent) -> Unit,
     listContent: @Composable (PaddingValues) -> Unit,
 ) {
+    // Define tabs with filter types and localized labels
+    val tabs = listOf(
+        ALL to LanguageKey.all,
+        PENDING to LanguageKey.pending,
+        APPROVED to LanguageKey.approved,
+        DECLINED to LanguageKey.declined,
+    )
+
+    // Find current tab index
+    val currentTabIndex =
+        tabs.indexOfFirst { it.first == uiState.currentFilterType }.coerceAtLeast(0)
+    val pagerState = rememberPagerState(
+        initialPage = currentTabIndex,
+        pageCount = { tabs.size }
+    )
+    val coroutineScope = rememberCoroutineScope()
+
     Column(
         verticalArrangement = Arrangement.spacedBy(QuestionProjectViewAttrs.spacingMd),
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(QuestionProjectViewAttrs.paddingPage)
+        modifier = Modifier.fillMaxSize()
     ) {
-        // Tabs for filters
-        val tabs = listOf(
-            ALL to "All",
-            PENDING to "Pending",
-            APPROVED to "Approved",
-            DECLINED to "Declined",
-        )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(QuestionProjectViewAttrs.spacingSm)
+        // PrimaryTabRow for filter selection
+        PrimaryTabRow(
+            selectedTabIndex = pagerState.currentPage,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            tabs.forEach { (type, label) ->
-                Button(onClick = { onEvent(AdminApproveQuestionEvent.OnFilterSelected(type)) }) {
-                    Text(
-                        label
-                    )
-                }
+            tabs.forEachIndexed { index, (filterType, label) ->
+                Tab(
+                    selected = pagerState.currentPage == index,
+                    onClick = {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(index)
+                            onEvent(AdminApproveQuestionEvent.OnFilterSelected(filterType))
+                        }
+                    },
+                    text = { Text(label) }
+                )
             }
         }
 
-        // Total count header
-        Text(text = "Total: $listCount questions")
+        // HorizontalPager for tab content
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.weight(1f)
+        ) { page ->
+            val (filterType, _) = tabs[page]
 
-        // List content area
-        listContent(PaddingValues(0.dp))
+            // Sync pager page change with filter state
+            LaunchedEffect(page) {
+                onEvent(AdminApproveQuestionEvent.OnFilterSelected(filterType))
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(QuestionProjectViewAttrs.paddingPage)
+            ) {
+                // Total count header
+                Text(
+                    text = "Total: $listCount questions",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(bottom = QuestionProjectViewAttrs.spacingSm)
+                )
+
+                // List content area
+                listContent(PaddingValues(0.dp))
+            }
+        }
 
         // Bottom action buttons
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = QuestionProjectViewAttrs.spacingMd),
+                .padding(QuestionProjectViewAttrs.paddingPage),
             horizontalArrangement = Arrangement.spacedBy(QuestionProjectViewAttrs.spacingSm)
         ) {
             Button(
                 onClick = { onEvent(AdminApproveQuestionEvent.OnApproveAll) },
-                enabled = !uiState.isLoading
-            ) { Text("Approve All") }
+                enabled = !uiState.isLoading,
+                modifier = Modifier.weight(1f)
+            ) { Text(LanguageKey.approveAll) }
             Button(
                 onClick = { onEvent(AdminApproveQuestionEvent.OnDeclineAll) },
-                enabled = !uiState.isLoading
-            ) { Text("Decline All") }
+                enabled = !uiState.isLoading,
+                modifier = Modifier.weight(1f)
+            ) { Text(LanguageKey.declineAll) }
         }
     }
 }
