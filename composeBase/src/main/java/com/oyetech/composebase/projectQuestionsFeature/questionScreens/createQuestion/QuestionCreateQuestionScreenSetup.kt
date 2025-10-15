@@ -184,9 +184,10 @@ fun CategoriesView(
         listOf(
             QuestionCategories.TWO_CHOICE,
             QuestionCategories.THREE_CHOICE,
-            QuestionCategories.MULTI_CHOICE,
-            QuestionCategories.SCALE,
-            QuestionCategories.OPEN_ENDED,
+            // todo will be in next feature...
+//            QuestionCategories.MULTI_CHOICE,
+//            QuestionCategories.SCALE,
+//            QuestionCategories.OPEN_ENDED,
         ).forEach { cat ->
             val isSel = (selected == cat.asKey())
             CategoryChip(text = cat.name, selected = isSel) { onSelect(cat) }
