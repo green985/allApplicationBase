@@ -126,12 +126,17 @@ private fun AdminApproveQuestionContent(
                     onClick = {
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(index)
-                            onEvent(AdminApproveQuestionEvent.OnFilterSelected(filterType))
                         }
                     },
                     text = { Text(label) }
                 )
             }
+        }
+
+        // Sync pager page change once
+        LaunchedEffect(pagerState.currentPage) {
+            val (filterType, _) = tabs[pagerState.currentPage]
+            onEvent(AdminApproveQuestionEvent.OnFilterSelected(filterType))
         }
 
         // HorizontalPager for tab content
@@ -140,11 +145,6 @@ private fun AdminApproveQuestionContent(
             modifier = Modifier.weight(1f)
         ) { page ->
             val (filterType, _) = tabs[page]
-
-            // Sync pager page change with filter state
-            LaunchedEffect(page) {
-                onEvent(AdminApproveQuestionEvent.OnFilterSelected(filterType))
-            }
 
             Column(
                 modifier = Modifier
