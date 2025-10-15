@@ -165,10 +165,6 @@ class AdminApproveQuestionVm(
 UiState içinde **HER ZAMAN** ImmutableList kullan:
 
 ```kotlin
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
-
 data class QuestionListUiState(
     val questions: ImmutableList<QuestionOperationResponseBody> = persistentListOf(),
     val tags: ImmutableList<String> = persistentListOf(),

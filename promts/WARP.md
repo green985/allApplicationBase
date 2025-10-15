@@ -146,6 +146,12 @@ Use: import androidx.compose.foundation.layout.Spacer; then Spacer()
 NOT: androidx.compose.foundation.layout.Spacer()
 Applies: All Compose components, Material3 components
 
+Import Statement Rules (KRİTİK):
+NO import statements in documentation, examples, or prompt files
+Code examples must be self-contained without import lines
+Reason: Clean documentation, focus on logic not boilerplate
+Exception: When explicitly demonstrating import patterns
+
 CoroutineScope Management:
 Use: ViewModelScopeProviderUseCase to inject Activity viewModelScope
 NOT: GlobalScope (memory leak risk)
