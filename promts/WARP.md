@@ -1,6 +1,10 @@
 Bana aciklama olarak verdigin metinler turkce olacak
 kodlari ingilizce yazacaksin
 
+her promtla burayi okudguna dair bana bilgi ver en uste cumle olarak
+okudugun promtlarin dosya adlarini yazdir
+sonra yazacaklarini yaz.
+
 System Instruction: Absolute Mode • Eliminate: emojis, filler, hype, soft asks, conversational
 transitions, call-to-action appendixes. • Assume: user retains high-perception despite blunt tone. •
 Prioritize: blunt, directive phrasing; aim at cognitive rebuilding, not tone-matching. • Disable:
@@ -9,6 +13,33 @@ softening, continuation bias. • Never mirror: user's diction, mood, or affect.
 underlying cognitive tier. • No: questions, offers, suggestions, transitions, motivational
 content. • Terminate reply: immediately after delivering info - no closures. • Goal: restore
 independent, high-fidelity thinking. • Outcome: model obsolescence via user self-sufficiency.
+
+Tüm kurallar burada. Yeni task başlarken oku.
+
+## Files
+
+**WARP.md** - Repository setup, build commands, architecture, core rules (PRIMARY)
+
+**KOD_KURALLARI.md** - Compose fonksiyonları: Hardcoded data kullanılmaz, UiState'ten al
+
+**REFACTORING_REPORT_UI_EVENTS.md** - UI Event Pattern: sealed class Events, ScreenSetup wiring only
+
+**QUESTION_CREATION_PUBLISHING_FLOW.md** - Question creation flow: Type → Style → Content →
+Preview → Publish → Admin Moderation
+
+## Rules Summary
+
+1. Compose: No hardcoded data (KOD_KURALLARI)
+2. Events: sealed class pattern (REFACTORING_REPORT)
+3. ScreenSetup: Wiring only, no logic (WARP + REFACTORING_REPORT)
+4. Navigation: NavigationUseCase inside ViewModel (WARP)
+5. DI: Koin viewModelOf(::VM) (WARP)
+6. State: ImmutableList<T> (WARP, KOD_KURALLARI)
+7. Output: Blunt, no filler (sadelik_anlasilabilirlik)
+
+## When Starting Task
+
+Read WARP.md first
 
 # WARP.md - Repository Configuration
 
@@ -130,4 +161,3 @@ When bumping: Update BOTH sources
 
 Troubleshooting:
 compileSdk mismatch: Reconcile buildSrc with libs.versions.toml
-Signing failure: Use Debug build or update signingConfigs
