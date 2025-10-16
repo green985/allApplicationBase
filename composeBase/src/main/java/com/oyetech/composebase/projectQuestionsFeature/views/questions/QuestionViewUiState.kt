@@ -3,6 +3,7 @@ package com.oyetech.composebase.projectQuestionsFeature.views.questions
 import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.base.BaseUIState
 import com.oyetech.models.questionProject.questionOperation.QueOption
+import com.oyetech.models.questionProject.questionOperation.QueTag
 import com.oyetech.models.questionProject.questionOperation.QuestionCategories
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.models.questionProject.questionOperation.QuestionOptionCatalog
@@ -32,6 +33,7 @@ data class QuestionViewUiState(
     val options: ImmutableList<QueOption> = QuestionOptionCatalog.TwoChoice.YES_NO.toImmutableList(),
     val category: QuestionCategories? = options.inferCategory(),
     val selectedAnswer: String? = null,
+    val selectedTags: ImmutableList<QueTag> = kotlinx.collections.immutable.persistentListOf(),
 
     // Flags
     val isAnsweredByUser: Boolean = false,
@@ -56,6 +58,10 @@ sealed class QuestionViewEvent : BaseEvent() {
     // Moderation actions
     data class OnAcceptClicked(val questionId: String) : QuestionViewEvent()
     data class OnDeclineClicked(val questionId: String) : QuestionViewEvent()
+
+    // Tag actions
+    data class OnTagSelected(val tag: QueTag) : QuestionViewEvent()
+    data class OnTagRemoved(val tag: QueTag) : QuestionViewEvent()
 }
 
 // UI -> Backend model

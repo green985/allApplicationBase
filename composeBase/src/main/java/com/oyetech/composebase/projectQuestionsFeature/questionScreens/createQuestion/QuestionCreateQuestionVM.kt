@@ -19,6 +19,7 @@ import com.oyetech.models.questionProject.questionOperation.TwoChoiceSubCategory
 import com.oyetech.models.questionProject.questionOperation.asKey
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -60,6 +61,24 @@ class QuestionCreateQuestionVm(
                 is QuestionViewEvent.OnOptionSelected -> {
                     // todo will be removed, create question doesnt have answer selection
                     Timber.d("Option selected CreateQuestionVM: ${event.optionId} for question ${event.questionId}")
+                }
+
+                is QuestionViewEvent.OnTagSelected -> {
+                    val currentTags = questionUiState.value.selectedTags
+
+                    if (!currentTags.any { it.id == event.tag.id }) {
+                        questionUiState.updateState {
+                            copy(selectedTags = (currentTags + event.tag).toImmutableList())
+                        }
+                    }
+                }
+
+                is QuestionViewEvent.OnTagRemoved -> {
+                    val currentTags = questionUiState.value.selectedTags
+                    questionUiState.updateState {
+                        copy(selectedTags = currentTags.filterNot { it.id == event.tag.id }
+                            .toImmutableList())
+                    }
                 }
 
                 else -> {}

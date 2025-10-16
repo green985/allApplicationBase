@@ -26,6 +26,7 @@ import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.CreateQuestionYesNoView
+import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionTagsAreaContainer
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import com.oyetech.models.questionProject.questionOperation.QuestionCategories
@@ -138,6 +139,11 @@ private fun QuestionCreateScreen(
                             )
                         )
                     }
+                )
+
+                QuestionTagsAreaContainer(
+                    selectedTags = questionUiState.selectedTags,
+                    onEvent = onEvent
                 )
 
                 CreateQuestionYesNoView(
