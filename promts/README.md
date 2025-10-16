@@ -9,14 +9,6 @@ Tüm kurallar burada. Yeni task başlarken oku.
 **KOD_KURALLARI.md** - Compose fonksiyonları: Hardcoded data kullanılmaz, UiState'ten al,
 ImmutableList
 
-**KOD_KURALLARI2.md** - Question Project Architecture: Models, Repository, ViewModels, Screens,
-Status management
-
-**REFACTORING_REPORT_UI_EVENTS.md** - UI Event Pattern: sealed class Events, ScreenSetup wiring only
-
-**QUESTION_CREATION_PUBLISHING_FLOW.md** - Question creation flow: Type → Style → Content →
-Preview → Publish → Admin Moderation
-
 ## Rules Summary
 
 1. Compose: No hardcoded data (KOD_KURALLARI)
@@ -27,7 +19,6 @@ Preview → Publish → Admin Moderation
 6. State: ImmutableList<T> (WARP, KOD_KURALLARI, KOD_KURALLARI2)
 7. Output: Blunt, no filler (sadelik_anlasilabilirlik)
 8. Import: NO import lines in docs/examples (WARP)
-9. Status: APPROVED cannot be deleted directly (KOD_KURALLARI2)
 
 ## When Starting Task
 

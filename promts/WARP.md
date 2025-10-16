@@ -95,40 +95,6 @@ Important Files:
 - gradle/libs.versions.toml: Version catalog
 - android_commons.gradle: Common Android config
 
-## Question Project Architecture
-
-Model Hierarchy:
-QuestionOperationResponseBody: questionId, title, type, taxonomy, options, constraints, metadata,
-version, createdAt
-QueOption: id, text, value?, order
-QueConstraints: required?, minSelections?, maxSelections?, minValue?, maxValue?, step?
-QueAnswer: questionId, type, selectedOptionIds?, numericValue?, textValue?, userId, submittedAt
-
-Question Types:
-TWO_CHOICE: YES/NO, UP/DOWN, GOOD/BAD
-THREE_CHOICE: LOW/MED/HIGH, AGREE/NEUTRAL/DISAGREE
-MULTI_CHOICE, SCALE, OPEN_ENDED
-
-Repository:
-getQuestionList(): Flow<List<QuestionOperationResponseBody>>
-getQuestionsByStatus(status): Flow<List<...>>
-createQuestion(body): Flow<Unit>
-approveQuestion(questionId, adminId): Flow<Unit>
-declineQuestion(questionId, adminId, reason): Flow<Unit>
-approveAllPendingQuestions(adminId): Flow<Unit>
-
-ViewModels:
-QuestionListVm extends BaseListViewModel<QuestionViewUiState>
-AdminApproveQuestionVm orchestrates QuestionListVm via DI
-QuestionCreateQuestionVm handles creation + preview
-
-Screens:
-QuestionTypeSelectionScreenSetup (NEW)
-QuestionStyleSelectionScreenSetup (NEW)
-QuestionCreateQuestionScreenSetup (extends existing)
-QuestionPreviewScreenSetup (NEW)
-AdminApproveQuestionScreenSetup (extends existing)
-
 ## Core Rules
 
 UI Event Pattern: Use sealed class Events, NOT multiple callbacks
@@ -142,7 +108,7 @@ All logic: ViewModel.onEvent() handles routing
 Multiple VMs: Inject into parent ViewModel via Koin, NOT ScreenSetup
 
 Compose Import Rules:
-Use: import androidx.compose.foundation.layout.Spacer; then Spacer()
+Use: Spacer()
 NOT: androidx.compose.foundation.layout.Spacer()
 Applies: All Compose components, Material3 components
 
