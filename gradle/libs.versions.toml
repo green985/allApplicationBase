@@ -8,6 +8,7 @@ appcompat = "1.7.0"
 core-ktx = "1.16.0"
 kotlin-gradle-plugin = "2.2.20"
 lifecycle = "2.7.0"
+material-icons-extended = "1.7.8"
 media = "1.7.1"
 activity-compose = "1.9.2"
 material3 = "1.4.0"
@@ -31,6 +32,7 @@ ui-tooling = "1.9.2"
 
 [libraries]
 
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "material-icons-extended" }
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
 
@@ -60,7 +62,8 @@ glide-compose = { module = "com.github.bumptech.glide:compose", version.ref = "g
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinx-collections-immutable" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
-androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "ui-tooling" }
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+androides-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "ui-tooling" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "agp" }

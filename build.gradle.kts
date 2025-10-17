@@ -22,6 +22,10 @@ detekt {
     buildUponDefaultConfig = true
 }
 
+dependencies {
+    detektPlugins(libs.detekt.formatting)
+}
+
 subprojects {
     apply(plugin = "io.gitlab.arturbosch.detekt")
 

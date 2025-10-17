@@ -62,6 +62,7 @@ sealed class QuestionViewEvent : BaseEvent() {
 
     // Tag actions
     data class OnTagSelected(val tag: QueTag) : QuestionViewEvent()
+    data class OnTagSelectedForCreateQuestion(val tag: QueTag) : QuestionViewEvent()
     data class OnTagRemoved(val tag: QueTag) : QuestionViewEvent()
 }
 

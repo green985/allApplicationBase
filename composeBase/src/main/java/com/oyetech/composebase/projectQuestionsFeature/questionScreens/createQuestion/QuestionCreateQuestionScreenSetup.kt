@@ -147,8 +147,8 @@ private fun QuestionCreateScreen(
                 )
 
                 QuestionTagsAreaContainer(
-                    selectedTags = questionUiState.selectedTags,
-                    onEvent = onEvent
+                    uiState = questionUiState,
+                    onEvent = onEvent, isCreateQuestion = true
                 )
 
                 CreateQuestionYesNoView(

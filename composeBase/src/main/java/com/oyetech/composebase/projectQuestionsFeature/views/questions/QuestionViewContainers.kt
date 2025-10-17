@@ -41,9 +41,14 @@ fun QuestionViewScaffoldLayout(
                 .background(MaterialTheme.colorScheme.background)
         ) {
             QuestionHeaderContainer(uiState = uiState, onEvent = onEvent)
+            QuestionTagsAreaContainer(
+                uiState = uiState,
+                onEvent = onEvent
+            )
             QuestionTitleDescriptionContainer(uiState = uiState, onEvent = onEvent)
             QuestionAnswerAreaContainer(uiState = uiState, onEvent = onEvent)
             QuestionOptionsAreaContainer(uiState = uiState, onEvent = onEvent)
+
             QuestionUserInfoContainer(uiState = uiState, onEvent = onEvent)
             QuestionShareActionsContainer(uiState = uiState, onEvent = onEvent)
             QuestionModerationActionsContainer(uiState = uiState, onEvent = onEvent)

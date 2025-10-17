@@ -40,6 +40,7 @@ dependencies {
     implementation(libs.paging.compose)
     implementation(libs.navigation.compose)
     implementation(libs.navigation.runtime.ktx)
+    implementation(libs.androidx.material.icons.extended)
 
     implementation(libs.koin.core)
     implementation(libs.koin.androidx.compose)
@@ -56,7 +57,4 @@ dependencies {
     implementation(project(Modules.model))
     implementation(project(Modules.radioService))
     implementation(project(Modules.languageModule))
-    debugImplementation(libs.androidx.ui.tooling)
-
-    implementation("androidx.compose.material:material-icons-extended:1.7.8")
 }

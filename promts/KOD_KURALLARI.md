@@ -226,3 +226,11 @@ Ancak veri listesi, seçenekler, konfigürasyonlar HER ZAMAN UiState'ten.
 | Hardcoded text | `"Submit"` | `submitButtonText: String` |
 
 **Kural:** Compose = **sadece render**. Data = **UiState'ten**. Liste = **ImmutableList**.
+
+modifier: Modifier = Modifier, compose fonksiyonlarinin en ustunde olacak
+
+## ornek
+
+@Composable
+fun QuestionTagsAreaContainer(
+modifier: Modifier = Modifier,

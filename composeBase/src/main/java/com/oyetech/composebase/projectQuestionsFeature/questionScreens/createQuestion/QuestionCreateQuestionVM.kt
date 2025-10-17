@@ -107,7 +107,7 @@ class QuestionCreateQuestionVm(
                     Timber.d("Option selected CreateQuestionVM: ${event.optionId} for question ${event.questionId}")
                 }
 
-                is QuestionViewEvent.OnTagSelected -> {
+                is QuestionViewEvent.OnTagSelectedForCreateQuestion -> {
                     val currentTags = questionUiState.value.selectedTags
 
                     if (!currentTags.any { it.id == event.tag.id }) {
@@ -115,6 +115,12 @@ class QuestionCreateQuestionVm(
                             copy(selectedTags = (currentTags + event.tag).toImmutableList())
                         }
                     }
+                }
+
+                is QuestionViewEvent.OnTagSelected -> {
+                    Timber.d("Tag selected in CreateQuestionVM: ${event.tag.id}")
+                    // todo will be impelemts
+                    // navigate for question list with filter tag
                 }
 
                 is QuestionViewEvent.OnTagRemoved -> {
