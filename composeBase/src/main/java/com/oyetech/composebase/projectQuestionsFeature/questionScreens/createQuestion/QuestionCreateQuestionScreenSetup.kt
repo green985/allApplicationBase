@@ -40,10 +40,15 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun QuestionCreateScreenSetup(
     modifier: Modifier = Modifier,
+    questionId: String = "",
 ) {
     val vm = koinViewModel<QuestionCreateQuestionVm>()
     val uiState by vm.uiState.collectAsStateWithLifecycle()
     val questionUiState by vm.questionUiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(questionId) {
+        vm.initWithQuestionId(questionId)
+    }
 
     QuestionCreateScreen(
         uiState = uiState,

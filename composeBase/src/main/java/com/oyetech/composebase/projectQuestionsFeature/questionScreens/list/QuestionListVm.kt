@@ -199,6 +199,12 @@ class QuestionListVm(
                 }
             }
 
+            is QuestionViewEvent.OnEditClicked -> {
+                val route =
+                    "${com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.QuestionCreateQuestionPage.route}?questionId=${event.questionId}"
+                navigationUseCase.navigate(route)
+            }
+
             else -> {
                 Timber.d("Unhandled QuestionViewEvent in ListVM: ${event.javaClass.simpleName}")
             }

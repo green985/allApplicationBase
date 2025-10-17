@@ -56,6 +56,23 @@ class FirebaseQuestionOperationRepositoryImpl(
         }
     }
 
+    override fun getQuestionById(questionId: String): Flow<QuestionOperationResponseBody> = flow {
+        try {
+            val snapshot = firestore
+                .collection(FirebaseDatabaseKeys.createQuestion)
+                .document(questionId)
+                .get()
+                .await()
+
+            val question = snapshot.toObject(QuestionOperationResponseBody::class.java)
+                ?: error(GeneralException("Question not found"))
+
+            emit(question.copy(questionId = snapshot.id))
+        } catch (e: Exception) {
+            error(GeneralException(e.message ?: "Question fetch error"))
+        }
+    }
+
     override fun updateQuestionStatus(
         questionId: String,
         status: com.oyetech.models.questionProject.questionOperation.ModerationStatus,

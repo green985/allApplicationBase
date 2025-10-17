@@ -9,6 +9,7 @@ import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionV
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent.SubmitClicked
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent.TitleChanged
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
+import com.oyetech.composebase.projectQuestionsFeature.views.questions.toUiState
 import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
@@ -42,6 +43,49 @@ class QuestionCreateQuestionVm(
     )
 
     val questionUiState = MutableStateFlow(QuestionViewUiState())
+    private var editingQuestionId: String = ""
+
+    fun initWithQuestionId(questionId: String) {
+        if (questionId.isNotBlank()) {
+            editingQuestionId = questionId
+            loadQuestion(questionId)
+        }
+    }
+
+    private fun loadQuestion(questionId: String) {
+        uiState.updateState { copy(isLoading = true, errorText = "") }
+        viewModelScope.launch(getDispatcherIo()) {
+            questionRepository.getQuestionById(questionId)
+                .asResult()
+                .collectLatest { result ->
+                    result.fold(
+                        onSuccess = { question ->
+                            Timber.d("Question loaded: ${question.questionId}")
+                            questionUiState.value = question.toUiState()
+                            uiState.updateState {
+                                copy(
+                                    isLoading = false,
+                                    taxonomy = question.taxonomy,
+                                    toolbarTitleText = "Edit Question"
+                                )
+                            }
+                        },
+                        onFailure = { e ->
+                            Timber.e(e)
+                            uiState.updateState {
+                                copy(
+                                    isLoading = false,
+                                    errorText = e.message ?: LanguageKey.generalErrorText
+                                )
+                            }
+                            snackbarDelegate.triggerSnackbarState(
+                                message = e.message ?: LanguageKey.generalErrorText
+                            )
+                        }
+                    )
+                }
+        }
+    }
 
     override fun onEvent(event: Any) {
         if (event is QuestionViewEvent) {
@@ -128,11 +172,15 @@ class QuestionCreateQuestionVm(
         uiState.updateState { copy(isLoading = true, errorText = "") }
         viewModelScope.launch(getDispatcherIo()) {
             val taxonomy = uiState.value.taxonomy
+            val questionIdToUse =
+                if (editingQuestionId.isNotBlank()) editingQuestionId else currentQuestion.questionId
             val body = QuestionTaxonomyFactory.buildQuestion(
                 title = currentQuestion.titleText,
                 taxonomy = taxonomy,
-                questionId = currentQuestion.questionId
-            )
+                questionId = questionIdToUse
+            ).copy(tags = currentQuestion.selectedTags.toList())
+
+            Timber.d("Submitting question: $body")
             questionRepository.createQuestion(body)
                 .asResult()
                 .collectLatest { result ->

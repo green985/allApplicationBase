@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -203,33 +202,44 @@ fun QuestionModerationActionsContainer(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(vertical = QuestionProjectViewAttrs.spacingSm),
-            horizontalArrangement = Arrangement.End,
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            androidx.compose.material3.Button(
-                enabled = !uiState.questionApproveViewClicked,
+            androidx.compose.material3.OutlinedButton(
                 onClick = {
-                    onEvent(
-                        QuestionViewEvent.OnDeclineClicked(
-                            uiState.questionId
-                        )
-                    )
+                    onEvent(QuestionViewEvent.OnEditClicked(uiState.questionId))
                 }
             ) {
-                Text(text = LanguageKey.decline)
+                Text(text = "Edit")
             }
-            Spacer(modifier = Modifier.padding(horizontal = QuestionProjectViewAttrs.spacingSm))
-            androidx.compose.material3.Button(
-                enabled = !uiState.questionApproveViewClicked,
-                onClick = {
-                    onEvent(
-                        QuestionViewEvent.OnAcceptClicked(
-                            uiState.questionId
-                        )
-                    )
-                }
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(QuestionProjectViewAttrs.spacingSm)
             ) {
-                Text(text = LanguageKey.accept)
+                androidx.compose.material3.Button(
+                    enabled = !uiState.questionApproveViewClicked,
+                    onClick = {
+                        onEvent(
+                            QuestionViewEvent.OnDeclineClicked(
+                                uiState.questionId
+                            )
+                        )
+                    }
+                ) {
+                    Text(text = LanguageKey.decline)
+                }
+                androidx.compose.material3.Button(
+                    enabled = !uiState.questionApproveViewClicked,
+                    onClick = {
+                        onEvent(
+                            QuestionViewEvent.OnAcceptClicked(
+                                uiState.questionId
+                            )
+                        )
+                    }
+                ) {
+                    Text(text = LanguageKey.accept)
+                }
             }
         }
     }

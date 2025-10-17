@@ -31,8 +31,18 @@ fun NavGraphBuilder.questionAppNavigation(navController: NavController) {
         UserListScreenSetup()
     }
 
-    composable(QuestionAppProjectRoutes.QuestionCreateQuestionPage.route) {
-        QuestionCreateScreenSetup()
+    composable(
+        route = "${QuestionAppProjectRoutes.QuestionCreateQuestionPage.route}?" +
+                "${ScreenKey.questionId}={questionId}",
+        arguments = listOf(
+            navArgument(ScreenKey.questionId) {
+                defaultValue = ""
+                nullable = true
+            }
+        )
+    ) { entry ->
+        val questionId = entry.arguments?.getString(ScreenKey.questionId) ?: ""
+        QuestionCreateScreenSetup(questionId = questionId)
     }
 
     composable(QuestionAppProjectRoutes.AdminApproveQuestion.route) {

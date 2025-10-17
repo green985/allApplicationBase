@@ -58,6 +58,7 @@ sealed class QuestionViewEvent : BaseEvent() {
     // Moderation actions
     data class OnAcceptClicked(val questionId: String) : QuestionViewEvent()
     data class OnDeclineClicked(val questionId: String) : QuestionViewEvent()
+    data class OnEditClicked(val questionId: String) : QuestionViewEvent()
 
     // Tag actions
     data class OnTagSelected(val tag: QueTag) : QuestionViewEvent()
