@@ -125,3 +125,20 @@ fun <T> MutableStateFlow<GenericListState<T>>.updateErrorMore(errorMessage: Thro
     }
     return this.value
 }
+
+fun <T> MutableStateFlow<GenericListState<T>>.updateSingleItem(
+    predicate: (T) -> Boolean,
+    transform: (T) -> T
+): GenericListState<T> {
+    val currentList = this.value.items.toMutableList()
+    val index = currentList.indexOfFirst(predicate)
+
+    if (index != -1) {
+        currentList[index] = transform(currentList[index])
+        this.updateState {
+            copy(items = currentList.toImmutableList())
+        }
+    }
+
+    return this.value
+}

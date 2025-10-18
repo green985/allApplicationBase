@@ -10,6 +10,7 @@ Created by Erdi Özbek
 
 object LanguageKey {
     // QuestionYesNoView keys
+    var questionUpdatedSuccessfullyText set(value) {} get() = LocalLanguageHelper.getStringWithKey("questionUpdatedSuccessfullyText")
     var questionAddedSuccessfullyText set(value) {} get() = LocalLanguageHelper.getStringWithKey("questionAddedSuccessfullyText")
     var answerYes set(value) {} get() = LocalLanguageHelper.getStringWithKey("answerYes")
     var answerNo set(value) {} get() = LocalLanguageHelper.getStringWithKey("answerNo")

@@ -95,4 +95,19 @@ class FirebaseQuestionOperationRepositoryImpl(
             error(GeneralException(e.message ?: "Question status update error"))
         }
     }
+
+    override fun updateQuestion(body: QuestionOperationResponseBody): Flow<Unit> = flow {
+        try {
+            firestore.runTransactionWithTimeout { transaction ->
+                val docRef = firestore
+                    .collection(FirebaseDatabaseKeys.createQuestion)
+                    .document(body.questionId)
+                transaction.set(docRef, body)
+            }
+            Timber.d("Question updated: ${body.questionId}")
+            emit(Unit)
+        } catch (e: Exception) {
+            error(GeneralException(e.message ?: "Question update error"))
+        }
+    }
 }

@@ -3,6 +3,7 @@ package com.oyetech.composebase.projectQuestionsFeature.questionScreens.list
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.baseGenericList.BaseListViewModel
 import com.oyetech.composebase.base.baseGenericList.GenericListState
+import com.oyetech.composebase.base.baseGenericList.updateSingleItem
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
@@ -29,6 +30,7 @@ class QuestionListVm(
     private val repository: FirebaseQuestionOperationRepository,
     private val userRepository: FirebaseUserRepository,
     private val answerRepository: FirebaseQuestionAnswerRepository,
+    private val questionUpdateEventBus: com.oyetech.composebase.projectQuestionsFeature.events.QuestionUpdateEventBus,
 ) : BaseListViewModel<QuestionViewUiState>(appDispatchers) {
 
     val uiState = MutableStateFlow(QuestionListUiState())
@@ -69,6 +71,14 @@ class QuestionListVm(
             if (uid.isNotBlank()) {
                 answerRepository.getAnswersByUser(uid)
                     .collectLatest { /* repo updates its own state */ }
+            }
+        }
+
+        // Listen for question updates
+        viewModelScope.launch(getDispatcherIo()) {
+            questionUpdateEventBus.questionUpdatedEvent.collectLatest { questionId ->
+                Timber.d("Question updated event received: $questionId")
+                updateSingleQuestionInList(questionId)
             }
         }
     }
@@ -207,6 +217,51 @@ class QuestionListVm(
 
             else -> {
                 Timber.d("Unhandled QuestionViewEvent in ListVM: ${event.javaClass.simpleName}")
+            }
+        }
+    }
+
+    private fun updateSingleQuestionInList(questionId: String) {
+        viewModelScope.launch(getDispatcherIo()) {
+            try {
+                repository.getQuestionById(questionId)
+                    .collectLatest { updatedQuestion ->
+                        Timber.d("Fetched updated question: ${updatedQuestion.questionId}")
+
+                        val currentFilter = filterType.value
+                        val currentAnswers = answerRepository.answersState.value
+
+                        listViewState.updateSingleItem(
+                            predicate = { it.questionId == questionId },
+                            transform = { _ ->
+                                var updatedUiState = updatedQuestion.toUiState(
+                                    base = QuestionViewUiState(isLoading = false)
+                                )
+
+                                // Apply answer overlay
+                                val answerMap = currentAnswers.associateBy { it.questionId }
+                                val ans = answerMap[questionId]
+                                if (ans != null) {
+                                    val selected = ans.selectedOptionIds?.firstOrNull()
+                                    updatedUiState = updatedUiState.copy(
+                                        isAnsweredByUser = selected != null,
+                                        selectedAnswer = selected
+                                    )
+                                }
+
+                                // Apply moderation view flag
+                                if (currentFilter == QuestionListFilterType.PENDING) {
+                                    updatedUiState = updatedUiState.copy(questionApproveView = true)
+                                }
+
+                                updatedUiState
+                            }
+                        )
+
+                        Timber.d("Updated question $questionId in list")
+                    }
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to update question $questionId in list")
             }
         }
     }

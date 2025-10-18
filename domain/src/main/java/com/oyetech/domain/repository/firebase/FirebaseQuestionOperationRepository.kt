@@ -18,4 +18,7 @@ interface FirebaseQuestionOperationRepository {
         questionId: String,
         status: com.oyetech.models.questionProject.questionOperation.ModerationStatus,
     ): Flow<Unit>
+
+    // Update a question completely
+    fun updateQuestion(body: QuestionOperationResponseBody): Flow<Unit>
 }

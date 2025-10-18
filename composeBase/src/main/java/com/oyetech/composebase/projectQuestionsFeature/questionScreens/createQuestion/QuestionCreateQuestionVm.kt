@@ -33,6 +33,7 @@ class QuestionCreateQuestionVm(
     private val navigationUseCase: NavigationUseCase,
     private val questionRepository: FirebaseQuestionOperationRepository,
     private val snackbarDelegate: SnackbarDelegate,
+    private val questionUpdateEventBus: com.oyetech.composebase.projectQuestionsFeature.events.QuestionUpdateEventBus,
 ) : BaseViewModel(appDispatchers) {
 
     val uiState = MutableStateFlow(QuestionCreateQuestionScreenUiState())
@@ -188,18 +189,34 @@ class QuestionCreateQuestionVm(
                 questionId = questionIdToUse
             ).copy(tags = currentQuestion.selectedTags.toList())
 
-            Timber.d("Submitting question: $body")
-            questionRepository.createQuestion(body)
-                .asResult()
+            val isEditMode = editingQuestionId.isNotBlank()
+            Timber.d("Submitting question (edit=$isEditMode): $body")
+
+            val operation = if (isEditMode) {
+                questionRepository.updateQuestion(body)
+            } else {
+                questionRepository.createQuestion(body)
+            }
+
+            operation.asResult()
                 .collectLatest { result ->
                     result.fold(
                         onSuccess = {
-                            Timber.d("Question created")
+                            val message = if (isEditMode) {
+                                LanguageKey.questionUpdatedSuccessfullyText
+                            } else {
+                                LanguageKey.questionAddedSuccessfullyText
+                            }
+                            Timber.d(message)
                             uiState.updateState { copy(isLoading = false, isSubmitted = true) }
+
+                            // Emit event if editing existing question
+                            if (isEditMode) {
+                                questionUpdateEventBus.emitQuestionUpdated(editingQuestionId)
+                            }
+                            
                             navigationUseCase.navigate("back")
-                            snackbarDelegate.triggerSnackbarState(
-                                message = LanguageKey.questionAddedSuccessfullyText
-                            )
+                            snackbarDelegate.triggerSnackbarState(message = message)
                         },
                         onFailure = {
                             Timber.d(it)
