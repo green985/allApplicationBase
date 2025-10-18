@@ -122,5 +122,6 @@ fun QuestionOperationResponseBody.toUiState(
         isAnsweredByUser = false,
         isQuestionApproved = this.isQuestionApproved,
         selectedAnswer = null,
+        selectedTags = this.tags.toImmutableList()
     )
 }

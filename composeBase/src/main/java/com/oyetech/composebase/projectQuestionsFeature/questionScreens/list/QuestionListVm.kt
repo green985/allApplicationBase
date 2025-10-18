@@ -3,6 +3,7 @@ package com.oyetech.composebase.projectQuestionsFeature.questionScreens.list
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.baseGenericList.BaseListViewModel
 import com.oyetech.composebase.base.baseGenericList.GenericListState
+import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.toUiState
@@ -43,14 +44,16 @@ class QuestionListVm(
                 ) { questions, answers, filter ->
                     val filtered = filterQuestionsByStatus(questions, filter)
                     overlayAnswers(filtered, answers, filter)
-                }, refreshDataFlow = combine(
+                },
+                refreshDataFlow = combine(
                     repository.getQuestionList(),
                     answerRepository.answersState,
                     filterType,
                 ) { questions, answers, filter ->
                     val filtered = filterQuestionsByStatus(questions, filter)
                     overlayAnswers(filtered, answers, filter)
-                })
+                }
+            )
         )
 
     init {
@@ -60,9 +63,6 @@ class QuestionListVm(
                 Timber.d("Filter changed to: ${it.name}")
             }
         }
-
-
-
 
         viewModelScope.launch(getDispatcherIo()) {
             val uid = userRepository.getUserId()
@@ -184,7 +184,7 @@ class QuestionListVm(
                     updateApproveViewClicked(event.questionId)
                     repository.updateQuestionStatus(
                         event.questionId,
-                        com.oyetech.models.questionProject.questionOperation.ModerationStatus.APPROVED
+                        ModerationStatus.APPROVED
                     ).collectLatest { /* no-op */ }
                 }
             }
@@ -194,14 +194,14 @@ class QuestionListVm(
                     updateApproveViewClicked(event.questionId)
                     repository.updateQuestionStatus(
                         event.questionId,
-                        com.oyetech.models.questionProject.questionOperation.ModerationStatus.DECLINED
+                        ModerationStatus.DECLINED
                     ).collectLatest { /* no-op */ }
                 }
             }
 
             is QuestionViewEvent.OnEditClicked -> {
                 val route =
-                    "${com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.QuestionCreateQuestionPage.route}?questionId=${event.questionId}"
+                    "${QuestionAppProjectRoutes.QuestionCreateQuestionPage.route}?questionId=${event.questionId}"
                 navigationUseCase.navigate(route)
             }
 
@@ -222,7 +222,6 @@ class QuestionListVm(
                     listViewState.value.copy(items = currentList.toImmutableList())
             }
         }
-
     }
 
     private fun filterQuestionsByStatus(
