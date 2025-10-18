@@ -15,8 +15,9 @@ object EmailValidationHelper {
     }
 
     fun isValidEmailSectionEvenForEmpty(email: String?): Boolean {
-        if (email.isNullOrEmpty())
+        if (email.isNullOrEmpty()) {
             return true
+        }
 
         return isValidEmail(email)
     }

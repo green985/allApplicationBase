@@ -73,10 +73,6 @@ fun <T : Any> BasePagingListScreen(
 
             }
 
-            else -> {
-                Timber.d("Else")
-            }
-
         }
 
         LazyColumn(modifier = modifier, state = state, reverseLayout = reverseLayout) {

@@ -43,7 +43,6 @@ object ExoPlayerModuleDi {
         // singleOf(::ExoPlayerRepositoryImp)
 
         single<ExoPlayerOperationRepository> { ExoPlayerRepositoryImp(get(), get()) }
-
     }
 }
 
@@ -75,7 +74,9 @@ fun provideDefaultExtractorsFactory(): DefaultExtractorsFactory {
     return DefaultExtractorsFactory()
 }
 
-fun provideDefaultHlsDataSourceFactory(defaultExtractorsFactory: DefaultDataSource.Factory): DefaultHlsDataSourceFactory {
+fun provideDefaultHlsDataSourceFactory(
+    defaultExtractorsFactory: DefaultDataSource.Factory
+): DefaultHlsDataSourceFactory {
     return DefaultHlsDataSourceFactory(defaultExtractorsFactory)
 }
 

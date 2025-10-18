@@ -126,8 +126,10 @@ class QuestionCreateQuestionVm(
                 is QuestionViewEvent.OnTagRemoved -> {
                     val currentTags = questionUiState.value.selectedTags
                     questionUiState.updateState {
-                        copy(selectedTags = currentTags.filterNot { it.id == event.tag.id }
-                            .toImmutableList())
+                        copy(
+                            selectedTags = currentTags.filterNot { it.id == event.tag.id }
+                                .toImmutableList()
+                        )
                     }
                 }
 
@@ -179,7 +181,7 @@ class QuestionCreateQuestionVm(
         viewModelScope.launch(getDispatcherIo()) {
             val taxonomy = uiState.value.taxonomy
             val questionIdToUse =
-                if (editingQuestionId.isNotBlank()) editingQuestionId else currentQuestion.questionId
+                editingQuestionId.ifBlank { currentQuestion.questionId }
             val body = QuestionTaxonomyFactory.buildQuestion(
                 title = currentQuestion.titleText,
                 taxonomy = taxonomy,

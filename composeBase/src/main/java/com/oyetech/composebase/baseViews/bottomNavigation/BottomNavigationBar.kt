@@ -29,10 +29,7 @@ fun BottomNavigationBar(
     navController: NavHostController = rememberNavController(),
     navItems: List<BottomNavigationItem> = emptyList(),
 ) {
-
     val selectedItem by vm.selectedItem.collectAsState()
-
-
 
     LaunchedEffect(Unit) {
         vm.uiEvent.collectLatest { event ->
@@ -43,7 +40,6 @@ fun BottomNavigationBar(
                         item = navItems[event.index]
                     )
                 }
-
             }
         }
     }
@@ -70,7 +66,6 @@ fun BottomNavigationBar(
             )
         }
     }
-
 }
 
 private fun performBottomNavigation(
