@@ -44,7 +44,7 @@ fun QuestionTagsAreaContainer(
         ) {
             if (isCreateQuestion) {
 
-                QuestionTagCatalog.ALL.forEach { tag ->
+                QuestionTagCatalog.createQuestionTagList.forEach { tag ->
                     val isSelected = uiState.selectedTags.any { it.id == tag.id }
 
                     FilterChip(

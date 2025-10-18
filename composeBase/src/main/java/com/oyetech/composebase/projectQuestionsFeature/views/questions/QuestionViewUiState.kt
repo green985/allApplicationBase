@@ -2,6 +2,7 @@ package com.oyetech.composebase.projectQuestionsFeature.views.questions
 
 import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.base.BaseUIState
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType
 import com.oyetech.models.questionProject.questionOperation.ModerationStatus
 import com.oyetech.models.questionProject.questionOperation.QueOption
 import com.oyetech.models.questionProject.questionOperation.QueTag
@@ -46,7 +47,7 @@ data class QuestionViewUiState(
     val isAdminApprovedView: Boolean = false,
     val adminOperationClicked: Boolean = false,
     val moderationStatus: ModerationStatus = ModerationStatus.PENDING,
-    val adminFilterType: com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType = com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.NONE,
+    val adminFilterType: QuestionListAdminFilterType = QuestionListAdminFilterType.NONE,
 ) : BaseUIState()
 
 sealed class QuestionViewEvent : BaseEvent() {
