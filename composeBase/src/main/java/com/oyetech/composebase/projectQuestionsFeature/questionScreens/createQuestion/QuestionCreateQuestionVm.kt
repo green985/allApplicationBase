@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
+import com.oyetech.composebase.helpers.general.GeneralSettings
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent.CancelClicked
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent.SubmitClicked
@@ -33,7 +34,7 @@ class QuestionCreateQuestionVm(
     private val navigationUseCase: NavigationUseCase,
     private val questionRepository: FirebaseQuestionOperationRepository,
     private val snackbarDelegate: SnackbarDelegate,
-    private val questionUpdateEventBus: com.oyetech.composebase.projectQuestionsFeature.events.QuestionUpdateEventBus,
+    private val questionUseCase: com.oyetech.domain.useCases.QuestionUseCase,
 ) : BaseViewModel(appDispatchers) {
 
     val uiState = MutableStateFlow(QuestionCreateQuestionScreenUiState())
@@ -212,11 +213,13 @@ class QuestionCreateQuestionVm(
 
                             // Emit event if editing existing question
                             if (isEditMode) {
-                                questionUpdateEventBus.emitQuestionUpdated(editingQuestionId)
+                                questionUseCase.emitQuestionUpdated(editingQuestionId)
                             }
-                            
+
                             navigationUseCase.navigate("back")
-                            snackbarDelegate.triggerSnackbarState(message = message)
+                            if (!GeneralSettings.isDebug()) {
+                                snackbarDelegate.triggerSnackbarState(message = message)
+                            }
                         },
                         onFailure = {
                             Timber.d(it)
