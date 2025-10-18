@@ -2,6 +2,7 @@ package com.oyetech.composebase.projectQuestionsFeature.questionScreens.list
 
 import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
+import com.oyetech.models.questionProject.questionOperation.QueTag
 
 // Minimal UI state (toolbar, etc.)
 data class QuestionListUiState(
@@ -16,8 +17,7 @@ sealed class QuestionListEvent : BaseEvent() {
         QuestionListEvent()
 
     data class OnTagFilterChanged(
-        val tag: com.oyetech.models.questionProject.questionOperation.QueTag? = null,
+        val tag: QueTag? = null,
         val adminFilterType: QuestionListAdminFilterType? = null,
-    ) :
-        QuestionListEvent()
+    ) : QuestionListEvent()
 }
