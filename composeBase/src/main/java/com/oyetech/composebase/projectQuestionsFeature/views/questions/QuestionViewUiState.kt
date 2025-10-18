@@ -56,16 +56,15 @@ sealed class QuestionViewEvent : BaseEvent() {
     object CancelClicked : QuestionViewEvent()
     object OnErrorDismiss : QuestionViewEvent()
 
-    // Extended selection with questionId
+    // Options actions
     data class OnOptionSelected(val questionId: String, val optionId: String) : QuestionViewEvent()
 
-    // Clear existing answer for a question
     data class OnDeleteAnswerClicked(val questionId: String) : QuestionViewEvent()
 
     // Moderation actions
+    data class OnEditClicked(val questionId: String) : QuestionViewEvent()
     data class OnAcceptClicked(val questionId: String) : QuestionViewEvent()
     data class OnDeclineClicked(val questionId: String) : QuestionViewEvent()
-    data class OnEditClicked(val questionId: String) : QuestionViewEvent()
     data class OnPendingClicked(val questionId: String) : QuestionViewEvent()
 
     // Tag actions
