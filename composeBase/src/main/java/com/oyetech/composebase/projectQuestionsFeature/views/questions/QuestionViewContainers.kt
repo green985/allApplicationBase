@@ -266,11 +266,18 @@ fun QuestionAdminActionsContainer(
             verticalAlignment = Alignment.CenterVertically
         ) {
             androidx.compose.material3.OutlinedButton(
+                enabled = true,
                 onClick = {
                     onEvent(QuestionViewEvent.OnMarkAsPending(uiState.questionId))
                 }
             ) {
-                Text(text = "Mark as Pending")
+                Text(
+                    text = if (uiState.markedAsPendingClicked) {
+                        "Pending"
+                    } else {
+                        "Mark as Pending"
+                    }
+                )
             }
         }
     }

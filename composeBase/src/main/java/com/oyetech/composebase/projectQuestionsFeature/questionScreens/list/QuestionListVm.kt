@@ -214,6 +214,7 @@ class QuestionListVm(
             }
 
             is QuestionViewEvent.OnMarkAsPending -> {
+                updateMarkedAsPendingClicked(event.questionId)
                 viewModelScope.launch(getDispatcherIo()) {
                     repository.updateQuestionStatus(
                         event.questionId,
@@ -231,6 +232,19 @@ class QuestionListVm(
     private fun updateApproveViewClicked(questionId: String) {
         listViewState.value.items.find { it.questionId == questionId }?.let { item ->
             val updated = item.copy(questionApproveViewClicked = true)
+            val currentList = listViewState.value.items.toMutableList()
+            val index = currentList.indexOf(item)
+            if (index != -1) {
+                currentList[index] = updated
+                listViewState.value =
+                    listViewState.value.copy(items = currentList.toImmutableList())
+            }
+        }
+    }
+
+    private fun updateMarkedAsPendingClicked(questionId: String) {
+        listViewState.value.items.find { it.questionId == questionId }?.let { item ->
+            val updated = item.copy(markedAsPendingClicked = true)
             val currentList = listViewState.value.items.toMutableList()
             val index = currentList.indexOf(item)
             if (index != -1) {
