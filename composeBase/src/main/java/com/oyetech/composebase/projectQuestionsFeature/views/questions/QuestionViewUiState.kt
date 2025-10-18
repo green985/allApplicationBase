@@ -2,6 +2,7 @@ package com.oyetech.composebase.projectQuestionsFeature.views.questions
 
 import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.base.BaseUIState
+import com.oyetech.models.questionProject.questionOperation.ModerationStatus
 import com.oyetech.models.questionProject.questionOperation.QueOption
 import com.oyetech.models.questionProject.questionOperation.QueTag
 import com.oyetech.models.questionProject.questionOperation.QuestionCategories
@@ -35,14 +36,17 @@ data class QuestionViewUiState(
     val selectedAnswer: String? = null,
     val selectedTags: ImmutableList<QueTag> = kotlinx.collections.immutable.persistentListOf(),
 
-    // Flags
     val isAnsweredByUser: Boolean = false,
-    val isQuestionApproved: Boolean = false,
-    val questionApproveView: Boolean = false,
-    val questionApproveViewClicked: Boolean = false,
+    // Flags
+
+    // admin flags
     val isAdminView: Boolean = false,
-    val isApproved: Boolean = false,
+    val isQuestionApproved: Boolean = false,
+    val isQuestionPendingView: Boolean = false,
+    val questionApproveViewClicked: Boolean = false,
+    val isAdminApprovedView: Boolean = false,
     val markedAsPendingClicked: Boolean = false,
+    val moderationStatus: ModerationStatus = ModerationStatus.PENDING,
 ) : BaseUIState()
 
 sealed class QuestionViewEvent : BaseEvent() {
@@ -126,6 +130,7 @@ fun QuestionOperationResponseBody.toUiState(
         isAnsweredByUser = false,
         isQuestionApproved = this.isQuestionApproved,
         selectedAnswer = null,
-        selectedTags = this.tags.toImmutableList()
+        selectedTags = this.tags.toImmutableList(),
+        moderationStatus = this.moderationStatus
     )
 }

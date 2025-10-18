@@ -27,10 +27,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListFilterType.ALL
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListFilterType.APPROVED
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListFilterType.DECLINED
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListFilterType.PENDING
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.ALL
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.APPROVED
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.DECLINED
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.PENDING
 import com.oyetech.composebase.projectQuestionsFeature.theme.QuestionProjectViewAttrs
 import com.oyetech.languageModule.keyset.LanguageKey
 import kotlinx.coroutines.flow.collectLatest

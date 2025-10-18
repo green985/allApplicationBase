@@ -203,7 +203,7 @@ fun QuestionModerationActionsContainer(
     onEvent: (QuestionViewEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (uiState.questionApproveView) {
+    if (uiState.isAdminView) {
         Row(
             modifier = modifier
                 .fillMaxWidth()
@@ -257,27 +257,40 @@ fun QuestionAdminActionsContainer(
     onEvent: (QuestionViewEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (uiState.isAdminView && uiState.isApproved) {
-        Row(
+    if (uiState.isAdminView) {
+        Column(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(vertical = QuestionProjectViewAttrs.spacingSm),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
+                .padding(vertical = QuestionProjectViewAttrs.spacingSm)
         ) {
-            androidx.compose.material3.OutlinedButton(
-                enabled = true,
-                onClick = {
-                    onEvent(QuestionViewEvent.OnMarkAsPending(uiState.questionId))
-                }
-            ) {
-                Text(
-                    text = if (uiState.markedAsPendingClicked) {
-                        "Pending"
-                    } else {
-                        "Mark as Pending"
+            Text(
+                text = "Status: ${uiState.moderationStatus.name}",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = QuestionProjectViewAttrs.spacingXs)
+            )
+
+            if (uiState.isAdminApprovedView) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    androidx.compose.material3.OutlinedButton(
+                        enabled = !uiState.markedAsPendingClicked,
+                        onClick = {
+                            onEvent(QuestionViewEvent.OnMarkAsPending(uiState.questionId))
+                        }
+                    ) {
+                        Text(
+                            text = if (uiState.markedAsPendingClicked) {
+                                "Marked as Pending"
+                            } else {
+                                "Mark as Pending"
+                            }
+                        )
                     }
-                )
+                }
             }
         }
     }
@@ -288,7 +301,7 @@ fun QuestionAdminActionsContainer(
 fun QuestionViewScaffoldLayout_Preview() {
     QuestionViewScaffoldLayout(
         uiState = QuestionViewUiState(
-            questionApproveView = true,
+            isQuestionPendingView = true,
             isLoading = false,
             titleText = "Sample Question"
         ),

@@ -33,7 +33,7 @@ class QuestionListVm(
 ) : BaseListViewModel<QuestionViewUiState>(appDispatchers) {
 
     val uiState = MutableStateFlow(QuestionListUiState())
-    private val filterType = MutableStateFlow(QuestionListFilterType.ALL)
+    private val filterType = MutableStateFlow(QuestionListAdminFilterType.ALL)
 
     override val listViewState: MutableStateFlow<GenericListState<QuestionViewUiState>> =
         MutableStateFlow(
@@ -94,7 +94,7 @@ class QuestionListVm(
     private fun overlayAnswers(
         questions: List<QuestionOperationResponseBody>,
         answers: List<QueAnswer>,
-        filter: QuestionListFilterType,
+        filter: QuestionListAdminFilterType,
     ): List<QuestionViewUiState> {
         val answerMap = answers.associateBy { it.questionId }
         return questions.map { q ->
@@ -104,27 +104,33 @@ class QuestionListVm(
                 val selected = ans.selectedOptionIds?.firstOrNull()
                 ui = ui.copy(isAnsweredByUser = selected != null, selectedAnswer = selected)
             }
-            if (filter == QuestionListFilterType.PENDING) {
-                ui = ui.copy(questionApproveView = true)
-            }
-            if (filter == QuestionListFilterType.APPROVED) {
+            if (filter == QuestionListAdminFilterType.ALL) {
                 ui = ui.copy(
                     isAdminView = true,
-                    isApproved = true
                 )
             }
+            if (filter == QuestionListAdminFilterType.PENDING) {
+                ui = ui.copy(isQuestionPendingView = true, isAdminView = true)
+            }
+            if (filter == QuestionListAdminFilterType.APPROVED) {
+                ui = ui.copy(
+                    isAdminView = true,
+                    isAdminApprovedView = true
+                )
+            }
+
             ui
         }
     }
 
-    fun setFilter(newFilter: QuestionListFilterType) {
+    fun setFilter(newFilter: QuestionListAdminFilterType) {
         filterType.value = newFilter
         uiState.value = uiState.value.copy(
             toolbarTitleText = when (newFilter) {
-                QuestionListFilterType.ALL -> "All Questions"
-                QuestionListFilterType.APPROVED -> "Approved Questions"
-                QuestionListFilterType.DECLINED -> "Declined Questions"
-                QuestionListFilterType.PENDING -> "Pending Questions"
+                QuestionListAdminFilterType.ALL -> "All Questions"
+                QuestionListAdminFilterType.APPROVED -> "Approved Questions"
+                QuestionListAdminFilterType.DECLINED -> "Declined Questions"
+                QuestionListAdminFilterType.PENDING -> "Pending Questions"
             }
         )
     }
@@ -257,13 +263,13 @@ class QuestionListVm(
 
     private fun filterQuestionsByStatus(
         questions: List<QuestionOperationResponseBody>,
-        filter: QuestionListFilterType,
+        filter: QuestionListAdminFilterType,
     ): List<QuestionOperationResponseBody> {
         return when (filter) {
-            QuestionListFilterType.ALL -> questions
-            QuestionListFilterType.APPROVED -> questions.filter { it.moderationStatus == ModerationStatus.APPROVED }
-            QuestionListFilterType.DECLINED -> questions.filter { it.moderationStatus == ModerationStatus.DECLINED }
-            QuestionListFilterType.PENDING -> questions.filter { it.moderationStatus == ModerationStatus.PENDING }
+            QuestionListAdminFilterType.ALL -> questions
+            QuestionListAdminFilterType.APPROVED -> questions.filter { it.moderationStatus == ModerationStatus.APPROVED }
+            QuestionListAdminFilterType.DECLINED -> questions.filter { it.moderationStatus == ModerationStatus.DECLINED }
+            QuestionListAdminFilterType.PENDING -> questions.filter { it.moderationStatus == ModerationStatus.PENDING }
         }
     }
 }

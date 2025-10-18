@@ -17,7 +17,7 @@ data class AdminApproveQuestionUiState(
     val errorText: String = "",
     val isLoading: Boolean = false,
     val pendingCountText: String = "0 pending",
-    val currentFilterType: com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListFilterType = com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListFilterType.ALL,
+    val currentFilterType: com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType = com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.ALL,
 )
 
 // UI events
@@ -27,7 +27,7 @@ sealed class AdminApproveQuestionUiEvent : BaseUIEvent() {
 
 // View events
 sealed class AdminApproveQuestionEvent : BaseEvent() {
-    data class OnFilterSelected(val filterType: com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListFilterType) :
+    data class OnFilterSelected(val filterType: com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType) :
         AdminApproveQuestionEvent()
 
     data object OnApproveAll : AdminApproveQuestionEvent()
