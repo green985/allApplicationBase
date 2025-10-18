@@ -107,6 +107,12 @@ class QuestionListVm(
             if (filter == QuestionListFilterType.PENDING) {
                 ui = ui.copy(questionApproveView = true)
             }
+            if (filter == QuestionListFilterType.APPROVED) {
+                ui = ui.copy(
+                    isAdminView = true,
+                    isApproved = true
+                )
+            }
             ui
         }
     }
@@ -205,6 +211,15 @@ class QuestionListVm(
                 val route =
                     "${QuestionAppProjectRoutes.QuestionCreateQuestionPage.route}?questionId=${event.questionId}"
                 navigationUseCase.navigate(route)
+            }
+
+            is QuestionViewEvent.OnMarkAsPending -> {
+                viewModelScope.launch(getDispatcherIo()) {
+                    repository.updateQuestionStatus(
+                        event.questionId,
+                        ModerationStatus.PENDING
+                    ).collectLatest { /* no-op */ }
+                }
             }
 
             else -> {

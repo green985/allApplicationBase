@@ -40,6 +40,9 @@ data class QuestionViewUiState(
     val isQuestionApproved: Boolean = false,
     val questionApproveView: Boolean = false,
     val questionApproveViewClicked: Boolean = false,
+    val isAdminView: Boolean = false,
+    val isApproved: Boolean = false,
+    val markedAsPendingClicked: Boolean = false,
 ) : BaseUIState()
 
 sealed class QuestionViewEvent : BaseEvent() {
@@ -59,6 +62,7 @@ sealed class QuestionViewEvent : BaseEvent() {
     data class OnAcceptClicked(val questionId: String) : QuestionViewEvent()
     data class OnDeclineClicked(val questionId: String) : QuestionViewEvent()
     data class OnEditClicked(val questionId: String) : QuestionViewEvent()
+    data class OnMarkAsPending(val questionId: String) : QuestionViewEvent()
 
     // Tag actions
     data class OnTagSelected(val tag: QueTag) : QuestionViewEvent()

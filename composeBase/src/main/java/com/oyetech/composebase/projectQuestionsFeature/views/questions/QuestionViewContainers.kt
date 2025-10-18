@@ -52,6 +52,7 @@ fun QuestionViewScaffoldLayout(
             QuestionUserInfoContainer(uiState = uiState, onEvent = onEvent)
             QuestionShareActionsContainer(uiState = uiState, onEvent = onEvent)
             QuestionModerationActionsContainer(uiState = uiState, onEvent = onEvent)
+            QuestionAdminActionsContainer(uiState = uiState, onEvent = onEvent)
         }
     }
 }
@@ -245,6 +246,31 @@ fun QuestionModerationActionsContainer(
                 ) {
                     Text(text = LanguageKey.accept)
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun QuestionAdminActionsContainer(
+    uiState: QuestionViewUiState,
+    onEvent: (QuestionViewEvent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (uiState.isAdminView && uiState.isApproved) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(vertical = QuestionProjectViewAttrs.spacingSm),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            androidx.compose.material3.OutlinedButton(
+                onClick = {
+                    onEvent(QuestionViewEvent.OnMarkAsPending(uiState.questionId))
+                }
+            ) {
+                Text(text = "Mark as Pending")
             }
         }
     }
