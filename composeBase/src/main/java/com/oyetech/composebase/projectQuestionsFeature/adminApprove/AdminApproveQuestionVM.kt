@@ -1,55 +1,24 @@
 package com.oyetech.composebase.projectQuestionsFeature.adminApprove
 
 import androidx.lifecycle.viewModelScope
-import com.oyetech.composebase.base.BaseEvent
-import com.oyetech.composebase.base.BaseUIEvent
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.NONE
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionFilterOperationHelper
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListVm
 import com.oyetech.domain.useCases.NavigationUseCase
-import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.tools.coroutineHelper.AppDispatchers
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-// UI state for Admin Approve Questions
-data class AdminApproveQuestionUiState(
-    val errorText: String = "",
-    val isLoading: Boolean = false,
-    val pendingCountText: String = "0 pending",
-    val currentFilterType: QuestionListAdminFilterType = NONE,
-    val tabs: ImmutableList<Pair<QuestionListAdminFilterType, String>> = persistentListOf(
-        QuestionListAdminFilterType.NONE to LanguageKey.all,
-        QuestionListAdminFilterType.APPROVED_ADMIN to LanguageKey.approved,
-        QuestionListAdminFilterType.DECLINED_ADMIN to LanguageKey.declined,
-        QuestionListAdminFilterType.PENDING_ADMIN to LanguageKey.pending,
-    ),
-)
-
-// UI events
-sealed class AdminApproveQuestionUiEvent : BaseUIEvent() {
-    data object OnIdle : AdminApproveQuestionUiEvent()
-}
-
-// View events
-sealed class AdminApproveQuestionEvent : BaseEvent() {
-    data class OnFilterSelected(val filterType: QuestionListAdminFilterType) :
-        AdminApproveQuestionEvent()
-
-    data object OnApproveAll : AdminApproveQuestionEvent()
-    data object OnDeclineAll : AdminApproveQuestionEvent()
-    data object OnRefreshClicked : AdminApproveQuestionEvent()
-}
 
 class AdminApproveQuestionVm(
     appDispatchers: AppDispatchers,
     private val navigationUseCase: NavigationUseCase,
-    val questionListVm: com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListVm,
+    val questionListVm: QuestionListVm,
+    val filterHelper: QuestionFilterOperationHelper,
 ) : BaseViewModel(appDispatchers) {
 
     val uiState = MutableStateFlow(AdminApproveQuestionUiState())
@@ -59,12 +28,25 @@ class AdminApproveQuestionVm(
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
+    init {
+        viewModelScope.launch(getDispatcherIo()) {
+            filterHelper.queFilter.collectLatest { filter ->
+                questionListVm.setAdminFilter(filter.adminFilterType)
+                questionListVm.setTagFilter(filter.selectedTagFilter)
+            }
+        }
+    }
+
     override fun onEvent(event: Any) {
         if (event is AdminApproveQuestionEvent) {
             when (event) {
                 is AdminApproveQuestionEvent.OnFilterSelected -> {
                     questionListVm.setAdminFilter(event.filterType)
                     uiState.updateState { copy(currentFilterType = event.filterType) }
+                }
+
+                is AdminApproveQuestionEvent.OnTagFilterChanged -> {
+                    filterHelper.setTagFilter(event.tag)
                 }
 
                 AdminApproveQuestionEvent.OnApproveAll -> {

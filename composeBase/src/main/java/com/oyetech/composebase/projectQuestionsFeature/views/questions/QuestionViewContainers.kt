@@ -20,9 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.ALL
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.APPROVED_ADMIN
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.DECLINED_ADMIN
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.NONE
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.PENDING_ADMIN
 import com.oyetech.composebase.projectQuestionsFeature.theme.QuestionProjectViewAttrs
 import com.oyetech.languageModule.keyset.LanguageKey
@@ -209,7 +209,7 @@ fun QuestionAdminActionsContainer(
     val adminFilterType = uiState.adminFilterType
 
     when (adminFilterType) {
-        NONE -> {
+        ALL -> {
             // Show only status
             Column(
                 modifier = modifier
@@ -346,7 +346,7 @@ fun QuestionAdminActionsContainer(
             }
         }
 
-        NONE -> {
+        ALL -> {
             // Show nothing
         }
     }

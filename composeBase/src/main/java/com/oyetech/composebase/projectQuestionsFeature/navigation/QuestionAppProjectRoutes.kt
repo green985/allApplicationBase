@@ -6,7 +6,7 @@ import com.oyetech.composebase.navigator.Route
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.MessageConversationList
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.QuestionAppHomepage
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.QuestionAppSettings
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.QuestionList
+import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.QuestionPager
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.UserList
 import com.oyetech.languageModule.keyset.LanguageKey
 
@@ -25,6 +25,7 @@ object QuestionAppProjectRoutes {
     val UserList = Route("question/UserList")
     val AdminApproveQuestion = Route("question/AdminApproveQuestion")
     val QuestionList = Route("question/QuestionList")
+    val QuestionPager = Route("question/QuestionPager")
     val UserProfile = Route("question/UserProfile")
     val MessageDetail = Route("question/MessageDetail")
     val CompleteProfileScreen = Route("question/CompleteProfileScreen")
@@ -48,7 +49,7 @@ sealed class QuestionAppNavItem {
 
     object TabQuestionList :
         BottomNavigationItem(
-            path = QuestionList.route.toString(),
+            path = QuestionPager.route.toString(),
             titleText = LanguageKey.home,
             icon = R.drawable.ic_tab_all_radio
         )

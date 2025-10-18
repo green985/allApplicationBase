@@ -13,8 +13,6 @@ data class QuestionListUiState(
 sealed class QuestionListEvent : BaseEvent() {
     data object OnRefreshClicked : QuestionListEvent()
     data class OnItemClicked(val item: QuestionViewUiState) : QuestionListEvent()
-    data class OnAdminFilterChanged(val filterType: QuestionListAdminFilterType) :
-        QuestionListEvent()
 
     data class OnTagFilterChanged(
         val tag: QueTag? = null,

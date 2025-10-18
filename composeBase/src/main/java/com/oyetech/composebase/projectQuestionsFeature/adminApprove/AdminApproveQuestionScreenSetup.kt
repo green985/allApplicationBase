@@ -27,6 +27,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListEvent
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListScreen
 import com.oyetech.composebase.projectQuestionsFeature.theme.QuestionProjectViewAttrs
 import com.oyetech.languageModule.keyset.LanguageKey
 import kotlinx.coroutines.flow.collectLatest
@@ -49,13 +51,19 @@ fun AdminApproveQuestionScreenSetup(
         listCount = listState.items.size,
         onEvent = { vm.onEvent(it) },
         listContent = {
-            com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListScreen(
+            QuestionListScreen(
                 contentPadding = it,
-                onEvent = { ev -> vm.questionListVm.onEvent(ev) },
+                onEvent = { ev ->
+                    when (ev) {
+                        is QuestionListEvent.OnTagFilterChanged -> {
+                            vm.onEvent(AdminApproveQuestionEvent.OnTagFilterChanged(ev.tag))
+                        }
+
+                        else -> vm.questionListVm.onEvent(ev)
+                    }
+                },
                 onQuestionEvent = { ev -> vm.questionListVm.onQuestionEvent(ev) },
                 listViewState = listState,
-                currentFilter = listUiState.currentFilter,
-                isAdminMode = true,
             )
         }
     )

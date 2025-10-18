@@ -62,7 +62,7 @@ private fun AdminFilterRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             val filters = listOf(
-                QuestionListAdminFilterType.NONE to "All",
+                QuestionListAdminFilterType.ALL to "All",
                 QuestionListAdminFilterType.PENDING_ADMIN to "Pending",
                 QuestionListAdminFilterType.APPROVED_ADMIN to "Approved",
                 QuestionListAdminFilterType.DECLINED_ADMIN to "Declined",

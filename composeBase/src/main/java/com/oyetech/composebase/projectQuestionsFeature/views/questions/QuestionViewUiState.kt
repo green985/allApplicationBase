@@ -47,7 +47,7 @@ data class QuestionViewUiState(
     val isAdminApprovedView: Boolean = false,
     val adminOperationClicked: Boolean = false,
     val moderationStatus: ModerationStatus = ModerationStatus.PENDING,
-    val adminFilterType: QuestionListAdminFilterType = QuestionListAdminFilterType.NONE,
+    val adminFilterType: QuestionListAdminFilterType = QuestionListAdminFilterType.ALL,
 ) : BaseUIState()
 
 sealed class QuestionViewEvent : BaseEvent() {

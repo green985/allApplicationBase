@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+@Suppress("TooManyFunctions")
 class QuestionListVm(
     appDispatchers: AppDispatchers,
     private val navigationUseCase: NavigationUseCase,
@@ -88,7 +89,6 @@ class QuestionListVm(
             when (event) {
                 QuestionListEvent.OnRefreshClicked -> refreshList()
                 is QuestionListEvent.OnItemClicked -> onItemClicked(event.item)
-                is QuestionListEvent.OnAdminFilterChanged -> setAdminFilter(event.filterType)
                 is QuestionListEvent.OnTagFilterChanged -> setTagFilter(event.tag)
             }
         }
@@ -250,7 +250,7 @@ class QuestionListVm(
         filter: QuestionListAdminFilterType,
     ): List<QuestionOperationResponseBody> {
         return when (filter) {
-            QuestionListAdminFilterType.NONE -> questions
+            QuestionListAdminFilterType.ALL -> questions
             QuestionListAdminFilterType.APPROVED_ADMIN ->
                 questions.filter { it.moderationStatus == ModerationStatus.APPROVED }
 
