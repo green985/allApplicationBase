@@ -27,10 +27,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.ALL
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.APPROVED
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.DECLINED
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.PENDING
 import com.oyetech.composebase.projectQuestionsFeature.theme.QuestionProjectViewAttrs
 import com.oyetech.languageModule.keyset.LanguageKey
 import kotlinx.coroutines.flow.collectLatest
@@ -95,12 +91,7 @@ private fun AdminApproveQuestionContent(
     listContent: @Composable (PaddingValues) -> Unit,
 ) {
     // Define tabs with filter types and localized labels
-    val tabs = listOf(
-        ALL to LanguageKey.all,
-        PENDING to LanguageKey.pending,
-        APPROVED to LanguageKey.approved,
-        DECLINED to LanguageKey.declined,
-    )
+    val tabs = uiState.tabs
 
     // Find current tab index
     val currentTabIndex =

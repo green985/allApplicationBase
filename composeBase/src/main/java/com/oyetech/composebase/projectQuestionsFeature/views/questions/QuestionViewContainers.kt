@@ -20,6 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.ALL_ADMIN
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.APPROVED_ADMIN
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.DECLINED_ADMIN
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.NONE
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.PENDING_ADMIN
 import com.oyetech.composebase.projectQuestionsFeature.theme.QuestionProjectViewAttrs
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.questionProject.questionOperation.QuestionType
@@ -51,7 +56,6 @@ fun QuestionViewScaffoldLayout(
 
             QuestionUserInfoContainer(uiState = uiState, onEvent = onEvent)
             QuestionShareActionsContainer(uiState = uiState, onEvent = onEvent)
-            QuestionModerationActionsContainer(uiState = uiState, onEvent = onEvent)
             QuestionAdminActionsContainer(uiState = uiState, onEvent = onEvent)
         }
     }
@@ -198,79 +202,43 @@ fun QuestionShareActionsContainer(
 }
 
 @Composable
-fun QuestionModerationActionsContainer(
-    uiState: QuestionViewUiState,
-    onEvent: (QuestionViewEvent) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    if (uiState.isAdminView) {
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(vertical = QuestionProjectViewAttrs.spacingSm),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            androidx.compose.material3.OutlinedButton(
-                onClick = {
-                    onEvent(QuestionViewEvent.OnEditClicked(uiState.questionId))
-                }
-            ) {
-                Text(text = "Edit")
-            }
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(QuestionProjectViewAttrs.spacingSm)
-            ) {
-                androidx.compose.material3.Button(
-                    enabled = !uiState.questionApproveViewClicked,
-                    onClick = {
-                        onEvent(
-                            QuestionViewEvent.OnDeclineClicked(
-                                uiState.questionId
-                            )
-                        )
-                    }
-                ) {
-                    Text(text = LanguageKey.decline)
-                }
-                androidx.compose.material3.Button(
-                    enabled = !uiState.questionApproveViewClicked,
-                    onClick = {
-                        onEvent(
-                            QuestionViewEvent.OnAcceptClicked(
-                                uiState.questionId
-                            )
-                        )
-                    }
-                ) {
-                    Text(text = LanguageKey.accept)
-                }
-            }
-        }
-    }
-}
-
-@Composable
 fun QuestionAdminActionsContainer(
     uiState: QuestionViewUiState,
     onEvent: (QuestionViewEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (uiState.isAdminView) {
-        Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(vertical = QuestionProjectViewAttrs.spacingSm)
-        ) {
-            Text(
-                text = "Status: ${uiState.moderationStatus.name}",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(bottom = QuestionProjectViewAttrs.spacingXs)
-            )
+    val adminFilterType = uiState.adminFilterType
 
-            if (uiState.isAdminApprovedView) {
+    when (adminFilterType) {
+        ALL_ADMIN -> {
+            // Show only status
+            Column(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(vertical = QuestionProjectViewAttrs.spacingSm)
+            ) {
+                Text(
+                    text = "Status: ${uiState.moderationStatus.name}",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+
+        APPROVED_ADMIN -> {
+            // Show status + Mark as Pending button
+            Column(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(vertical = QuestionProjectViewAttrs.spacingSm)
+            ) {
+                Text(
+                    text = "Status: ${uiState.moderationStatus.name}",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(bottom = QuestionProjectViewAttrs.spacingXs)
+                )
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End,
@@ -292,6 +260,73 @@ fun QuestionAdminActionsContainer(
                     }
                 }
             }
+        }
+
+        PENDING_ADMIN -> {
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(vertical = QuestionProjectViewAttrs.spacingSm),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                androidx.compose.material3.OutlinedButton(
+                    onClick = {
+                        onEvent(QuestionViewEvent.OnEditClicked(uiState.questionId))
+                    }
+                ) {
+                    Text(text = "Edit")
+                }
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(QuestionProjectViewAttrs.spacingSm)
+                ) {
+                    androidx.compose.material3.Button(
+                        enabled = !uiState.questionApproveViewClicked,
+                        onClick = {
+                            onEvent(
+                                QuestionViewEvent.OnDeclineClicked(
+                                    uiState.questionId
+                                )
+                            )
+                        }
+                    ) {
+                        Text(text = LanguageKey.decline)
+                    }
+                    androidx.compose.material3.Button(
+                        enabled = !uiState.questionApproveViewClicked,
+                        onClick = {
+                            onEvent(
+                                QuestionViewEvent.OnAcceptClicked(
+                                    uiState.questionId
+                                )
+                            )
+                        }
+                    ) {
+                        Text(text = LanguageKey.accept)
+                    }
+                }
+            }
+        }
+
+
+        DECLINED_ADMIN -> {
+            // Show only status
+            Column(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(vertical = QuestionProjectViewAttrs.spacingSm)
+            ) {
+                Text(
+                    text = "Status: ${uiState.moderationStatus.name}",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+
+        NONE -> {
+            // Show nothing
         }
     }
 }

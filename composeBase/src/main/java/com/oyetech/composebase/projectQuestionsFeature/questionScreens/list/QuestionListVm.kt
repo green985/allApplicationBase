@@ -33,7 +33,7 @@ class QuestionListVm(
 ) : BaseListViewModel<QuestionViewUiState>(appDispatchers) {
 
     val uiState = MutableStateFlow(QuestionListUiState())
-    private val filterType = MutableStateFlow(QuestionListAdminFilterType.ALL)
+    private val adminFilterType = MutableStateFlow(QuestionListAdminFilterType.NONE)
 
     override val listViewState: MutableStateFlow<GenericListState<QuestionViewUiState>> =
         MutableStateFlow(
@@ -41,7 +41,7 @@ class QuestionListVm(
                 dataFlow = combine(
                     questionUseCase.getQuestionListWithUpdates(),
                     answerRepository.answersState,
-                    filterType,
+                    adminFilterType,
                 ) { questions, answers, filter ->
                     val filtered = filterQuestionsByStatus(questions, filter)
 
@@ -50,7 +50,7 @@ class QuestionListVm(
                 refreshDataFlow = combine(
                     questionUseCase.getQuestionListWithUpdates(),
                     answerRepository.answersState,
-                    filterType,
+                    adminFilterType,
                 ) { questions, answers, filter ->
                     val filtered = filterQuestionsByStatus(questions, filter)
                     overlayAnswers(filtered, answers, filter)
@@ -61,7 +61,7 @@ class QuestionListVm(
     init {
         // Fetch user answers on start
         viewModelScope.launch(getDispatcherIo()) {
-            filterType.collectLatest {
+            adminFilterType.collectLatest {
                 Timber.d("Filter changed to: ${it.name}")
             }
         }
@@ -104,35 +104,14 @@ class QuestionListVm(
                 val selected = ans.selectedOptionIds?.firstOrNull()
                 ui = ui.copy(isAnsweredByUser = selected != null, selectedAnswer = selected)
             }
-            if (filter == QuestionListAdminFilterType.ALL) {
-                ui = ui.copy(
-                    isAdminView = true,
-                )
-            }
-            if (filter == QuestionListAdminFilterType.PENDING) {
-                ui = ui.copy(isQuestionPendingView = true, isAdminView = true)
-            }
-            if (filter == QuestionListAdminFilterType.APPROVED) {
-                ui = ui.copy(
-                    isAdminView = true,
-                    isAdminApprovedView = true
-                )
-            }
 
+            ui = ui.copy(adminFilterType = filter)
             ui
         }
     }
 
     fun setFilter(newFilter: QuestionListAdminFilterType) {
-        filterType.value = newFilter
-        uiState.value = uiState.value.copy(
-            toolbarTitleText = when (newFilter) {
-                QuestionListAdminFilterType.ALL -> "All Questions"
-                QuestionListAdminFilterType.APPROVED -> "Approved Questions"
-                QuestionListAdminFilterType.DECLINED -> "Declined Questions"
-                QuestionListAdminFilterType.PENDING -> "Pending Questions"
-            }
-        )
+        adminFilterType.value = newFilter
     }
 
     fun approveAllPending() {
@@ -266,10 +245,16 @@ class QuestionListVm(
         filter: QuestionListAdminFilterType,
     ): List<QuestionOperationResponseBody> {
         return when (filter) {
-            QuestionListAdminFilterType.ALL -> questions
-            QuestionListAdminFilterType.APPROVED -> questions.filter { it.moderationStatus == ModerationStatus.APPROVED }
-            QuestionListAdminFilterType.DECLINED -> questions.filter { it.moderationStatus == ModerationStatus.DECLINED }
-            QuestionListAdminFilterType.PENDING -> questions.filter { it.moderationStatus == ModerationStatus.PENDING }
+            QuestionListAdminFilterType.NONE -> questions
+            QuestionListAdminFilterType.ALL_ADMIN -> questions
+            QuestionListAdminFilterType.APPROVED_ADMIN ->
+                questions.filter { it.moderationStatus == ModerationStatus.APPROVED }
+
+            QuestionListAdminFilterType.DECLINED_ADMIN ->
+                questions.filter { it.moderationStatus == ModerationStatus.DECLINED }
+
+            QuestionListAdminFilterType.PENDING_ADMIN ->
+                questions.filter { it.moderationStatus == ModerationStatus.PENDING }
         }
     }
 }

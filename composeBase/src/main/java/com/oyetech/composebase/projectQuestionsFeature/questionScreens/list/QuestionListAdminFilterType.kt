@@ -1,8 +1,9 @@
 package com.oyetech.composebase.projectQuestionsFeature.questionScreens.list
 
 enum class QuestionListAdminFilterType {
-    ALL,
-    APPROVED,
-    DECLINED,
-    PENDING,
+    NONE,
+    ALL_ADMIN,
+    APPROVED_ADMIN,
+    DECLINED_ADMIN,
+    PENDING_ADMIN,
 }

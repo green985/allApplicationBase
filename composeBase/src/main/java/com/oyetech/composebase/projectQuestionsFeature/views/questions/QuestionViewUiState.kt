@@ -47,6 +47,7 @@ data class QuestionViewUiState(
     val isAdminApprovedView: Boolean = false,
     val markedAsPendingClicked: Boolean = false,
     val moderationStatus: ModerationStatus = ModerationStatus.PENDING,
+    val adminFilterType: com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType = com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.NONE,
 ) : BaseUIState()
 
 sealed class QuestionViewEvent : BaseEvent() {

@@ -5,8 +5,13 @@ import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.base.BaseUIEvent
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.NONE
 import com.oyetech.domain.useCases.NavigationUseCase
+import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.tools.coroutineHelper.AppDispatchers
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +22,13 @@ data class AdminApproveQuestionUiState(
     val errorText: String = "",
     val isLoading: Boolean = false,
     val pendingCountText: String = "0 pending",
-    val currentFilterType: com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType = com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.ALL,
+    val currentFilterType: QuestionListAdminFilterType = NONE,
+    val tabs: ImmutableList<Pair<QuestionListAdminFilterType, String>> = persistentListOf(
+        QuestionListAdminFilterType.ALL_ADMIN to LanguageKey.all,
+        QuestionListAdminFilterType.APPROVED_ADMIN to LanguageKey.approved,
+        QuestionListAdminFilterType.DECLINED_ADMIN to LanguageKey.declined,
+        QuestionListAdminFilterType.PENDING_ADMIN to LanguageKey.pending,
+    ),
 )
 
 // UI events
@@ -27,7 +38,7 @@ sealed class AdminApproveQuestionUiEvent : BaseUIEvent() {
 
 // View events
 sealed class AdminApproveQuestionEvent : BaseEvent() {
-    data class OnFilterSelected(val filterType: com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType) :
+    data class OnFilterSelected(val filterType: QuestionListAdminFilterType) :
         AdminApproveQuestionEvent()
 
     data object OnApproveAll : AdminApproveQuestionEvent()
