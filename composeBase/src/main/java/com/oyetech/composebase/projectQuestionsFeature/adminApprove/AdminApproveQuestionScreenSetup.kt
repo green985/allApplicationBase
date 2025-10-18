@@ -42,6 +42,7 @@ fun AdminApproveQuestionScreenSetup(
 
     // List VM is injected into AdminApproveQuestionVm
     val listState by vm.questionListVm.listViewState.collectAsStateWithLifecycle()
+    val listUiState by vm.questionListVm.uiState.collectAsStateWithLifecycle()
 
     AdminApproveQuestionScreen(
         uiState = uiState,
@@ -50,9 +51,11 @@ fun AdminApproveQuestionScreenSetup(
         listContent = {
             com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListScreen(
                 contentPadding = it,
-                onEvent = {},
+                onEvent = { ev -> vm.questionListVm.onEvent(ev) },
                 onQuestionEvent = { ev -> vm.questionListVm.onQuestionEvent(ev) },
                 listViewState = listState,
+                currentFilter = listUiState.currentFilter,
+                isAdminMode = true,
             )
         }
     )

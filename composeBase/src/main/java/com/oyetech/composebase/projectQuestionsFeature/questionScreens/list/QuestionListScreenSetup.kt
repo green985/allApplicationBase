@@ -46,6 +46,8 @@ fun QuestionListScreenSetup(
                 onEvent = { vm.onEvent(it) },
                 onQuestionEvent = { vm.onQuestionEvent(it) },
                 listViewState = listViewState,
+                currentFilter = uiState.currentFilter,
+                isAdminMode = false,
             )
 
             if (listViewState.isLoadingInitial) {
@@ -79,6 +81,8 @@ fun QuestionListScreen(
     onEvent: (QuestionListEvent) -> Unit,
     onQuestionEvent: (QuestionViewEvent) -> Unit = {},
     listViewState: GenericListState<QuestionViewUiState>,
+    currentFilter: QueFilter = QueFilter.DEFAULT,
+    isAdminMode: Boolean = false,
 ) {
     val lazyListState = rememberLazyListState()
     Column(
@@ -86,6 +90,12 @@ fun QuestionListScreen(
             .fillMaxSize()
             .padding(contentPadding)
     ) {
+        QuestionFilterBar(
+            currentFilter = currentFilter,
+            onEvent = onEvent,
+            isAdminMode = isAdminMode
+        )
+
         Box(modifier = Modifier.weight(1f)) {
             LazyColumn(
                 modifier = Modifier.padding(4.dp),
@@ -115,5 +125,7 @@ private fun QuestionListPreview() {
         contentPadding = PaddingValues(),
         onEvent = {},
         listViewState = GenericListState(items = emptyList<QuestionViewUiState>().toImmutableList()),
+        currentFilter = QueFilter.DEFAULT,
+        isAdminMode = false,
     )
 }

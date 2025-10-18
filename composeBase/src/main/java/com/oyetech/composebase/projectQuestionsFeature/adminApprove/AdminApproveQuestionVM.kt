@@ -63,7 +63,7 @@ class AdminApproveQuestionVm(
         if (event is AdminApproveQuestionEvent) {
             when (event) {
                 is AdminApproveQuestionEvent.OnFilterSelected -> {
-                    questionListVm.setFilter(event.filterType)
+                    questionListVm.setAdminFilter(event.filterType)
                     uiState.updateState { copy(currentFilterType = event.filterType) }
                 }
 
