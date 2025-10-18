@@ -173,8 +173,8 @@ class QuestionListVm(
             }
 
             is QuestionViewEvent.OnAcceptClicked -> {
+                updateAdminOperationClicked(event.questionId)
                 viewModelScope.launch(getDispatcherIo()) {
-                    updateApproveViewClicked(event.questionId)
                     repository.updateQuestionStatus(
                         event.questionId,
                         ModerationStatus.APPROVED
@@ -183,8 +183,8 @@ class QuestionListVm(
             }
 
             is QuestionViewEvent.OnDeclineClicked -> {
+                updateAdminOperationClicked(event.questionId)
                 viewModelScope.launch(getDispatcherIo()) {
-                    updateApproveViewClicked(event.questionId)
                     repository.updateQuestionStatus(
                         event.questionId,
                         ModerationStatus.DECLINED
@@ -198,8 +198,8 @@ class QuestionListVm(
                 navigationUseCase.navigate(route)
             }
 
-            is QuestionViewEvent.OnMarkAsPending -> {
-                updateMarkedAsPendingClicked(event.questionId)
+            is QuestionViewEvent.OnPendingClicked -> {
+                updateAdminOperationClicked(event.questionId)
                 viewModelScope.launch(getDispatcherIo()) {
                     repository.updateQuestionStatus(
                         event.questionId,
@@ -214,22 +214,9 @@ class QuestionListVm(
         }
     }
 
-    private fun updateApproveViewClicked(questionId: String) {
+    private fun updateAdminOperationClicked(questionId: String) {
         listViewState.value.items.find { it.questionId == questionId }?.let { item ->
-            val updated = item.copy(questionApproveViewClicked = true)
-            val currentList = listViewState.value.items.toMutableList()
-            val index = currentList.indexOf(item)
-            if (index != -1) {
-                currentList[index] = updated
-                listViewState.value =
-                    listViewState.value.copy(items = currentList.toImmutableList())
-            }
-        }
-    }
-
-    private fun updateMarkedAsPendingClicked(questionId: String) {
-        listViewState.value.items.find { it.questionId == questionId }?.let { item ->
-            val updated = item.copy(markedAsPendingClicked = true)
+            val updated = item.copy(adminOperationClicked = true)
             val currentList = listViewState.value.items.toMutableList()
             val index = currentList.indexOf(item)
             if (index != -1) {

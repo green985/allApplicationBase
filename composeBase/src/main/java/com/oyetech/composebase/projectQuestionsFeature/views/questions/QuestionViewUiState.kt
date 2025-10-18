@@ -43,9 +43,8 @@ data class QuestionViewUiState(
     val isAdminView: Boolean = false,
     val isQuestionApproved: Boolean = false,
     val isQuestionPendingView: Boolean = false,
-    val questionApproveViewClicked: Boolean = false,
     val isAdminApprovedView: Boolean = false,
-    val markedAsPendingClicked: Boolean = false,
+    val adminOperationClicked: Boolean = false,
     val moderationStatus: ModerationStatus = ModerationStatus.PENDING,
     val adminFilterType: com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType = com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.NONE,
 ) : BaseUIState()
@@ -67,7 +66,7 @@ sealed class QuestionViewEvent : BaseEvent() {
     data class OnAcceptClicked(val questionId: String) : QuestionViewEvent()
     data class OnDeclineClicked(val questionId: String) : QuestionViewEvent()
     data class OnEditClicked(val questionId: String) : QuestionViewEvent()
-    data class OnMarkAsPending(val questionId: String) : QuestionViewEvent()
+    data class OnPendingClicked(val questionId: String) : QuestionViewEvent()
 
     // Tag actions
     data class OnTagSelected(val tag: QueTag) : QuestionViewEvent()

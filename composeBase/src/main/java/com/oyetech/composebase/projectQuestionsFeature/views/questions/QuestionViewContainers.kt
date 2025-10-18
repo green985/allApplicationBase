@@ -245,13 +245,13 @@ fun QuestionAdminActionsContainer(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     androidx.compose.material3.OutlinedButton(
-                        enabled = !uiState.markedAsPendingClicked,
+                        enabled = !uiState.adminOperationClicked,
                         onClick = {
-                            onEvent(QuestionViewEvent.OnMarkAsPending(uiState.questionId))
+                            onEvent(QuestionViewEvent.OnPendingClicked(uiState.questionId))
                         }
                     ) {
                         Text(
-                            text = if (uiState.markedAsPendingClicked) {
+                            text = if (uiState.adminOperationClicked) {
                                 "Marked as Pending"
                             } else {
                                 "Mark as Pending"
@@ -282,7 +282,7 @@ fun QuestionAdminActionsContainer(
                     horizontalArrangement = Arrangement.spacedBy(QuestionProjectViewAttrs.spacingSm)
                 ) {
                     androidx.compose.material3.Button(
-                        enabled = !uiState.questionApproveViewClicked,
+                        enabled = !uiState.adminOperationClicked,
                         onClick = {
                             onEvent(
                                 QuestionViewEvent.OnDeclineClicked(
@@ -294,7 +294,7 @@ fun QuestionAdminActionsContainer(
                         Text(text = LanguageKey.decline)
                     }
                     androidx.compose.material3.Button(
-                        enabled = !uiState.questionApproveViewClicked,
+                        enabled = !uiState.adminOperationClicked,
                         onClick = {
                             onEvent(
                                 QuestionViewEvent.OnAcceptClicked(
@@ -311,7 +311,7 @@ fun QuestionAdminActionsContainer(
 
 
         DECLINED_ADMIN -> {
-            // Show only status
+            // Show status + Send to Pending button
             Column(
                 modifier = modifier
                     .fillMaxWidth()
@@ -320,8 +320,30 @@ fun QuestionAdminActionsContainer(
                 Text(
                     text = "Status: ${uiState.moderationStatus.name}",
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(bottom = QuestionProjectViewAttrs.spacingXs)
                 )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    androidx.compose.material3.OutlinedButton(
+                        enabled = !uiState.adminOperationClicked,
+                        onClick = {
+                            onEvent(QuestionViewEvent.OnPendingClicked(uiState.questionId))
+                        }
+                    ) {
+                        Text(
+                            text = if (uiState.adminOperationClicked) {
+                                "Sent to Pending"
+                            } else {
+                                "Send to Pending"
+                            }
+                        )
+                    }
+                }
             }
         }
 
