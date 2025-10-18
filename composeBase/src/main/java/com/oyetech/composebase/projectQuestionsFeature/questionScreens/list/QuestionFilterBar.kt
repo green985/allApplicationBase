@@ -28,7 +28,9 @@ fun QuestionFilterBar(
         if (isAdminMode) {
             AdminFilterRow(
                 currentAdminFilter = currentFilter.adminFilterType,
-                onFilterChanged = { onEvent(QuestionListEvent.OnAdminFilterChanged(it)) }
+                onFilterChanged = {
+                    onEvent(QuestionListEvent.OnTagFilterChanged(adminFilterType = it))
+                }
             )
         }
 

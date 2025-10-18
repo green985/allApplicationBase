@@ -251,7 +251,6 @@ class QuestionListVm(
     ): List<QuestionOperationResponseBody> {
         return when (filter) {
             QuestionListAdminFilterType.NONE -> questions
-            QuestionListAdminFilterType.ALL_ADMIN -> questions
             QuestionListAdminFilterType.APPROVED_ADMIN ->
                 questions.filter { it.moderationStatus == ModerationStatus.APPROVED }
 

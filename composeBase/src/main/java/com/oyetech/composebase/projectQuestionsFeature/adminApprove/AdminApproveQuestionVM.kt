@@ -24,7 +24,7 @@ data class AdminApproveQuestionUiState(
     val pendingCountText: String = "0 pending",
     val currentFilterType: QuestionListAdminFilterType = NONE,
     val tabs: ImmutableList<Pair<QuestionListAdminFilterType, String>> = persistentListOf(
-        QuestionListAdminFilterType.ALL_ADMIN to LanguageKey.all,
+        QuestionListAdminFilterType.NONE to LanguageKey.all,
         QuestionListAdminFilterType.APPROVED_ADMIN to LanguageKey.approved,
         QuestionListAdminFilterType.DECLINED_ADMIN to LanguageKey.declined,
         QuestionListAdminFilterType.PENDING_ADMIN to LanguageKey.pending,

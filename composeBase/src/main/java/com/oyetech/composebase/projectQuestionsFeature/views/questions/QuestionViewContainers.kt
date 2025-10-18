@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.ALL_ADMIN
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.APPROVED_ADMIN
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.DECLINED_ADMIN
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.NONE
@@ -210,7 +209,7 @@ fun QuestionAdminActionsContainer(
     val adminFilterType = uiState.adminFilterType
 
     when (adminFilterType) {
-        ALL_ADMIN -> {
+        NONE -> {
             // Show only status
             Column(
                 modifier = modifier

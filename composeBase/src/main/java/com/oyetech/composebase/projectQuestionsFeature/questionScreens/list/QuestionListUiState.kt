@@ -15,6 +15,9 @@ sealed class QuestionListEvent : BaseEvent() {
     data class OnAdminFilterChanged(val filterType: QuestionListAdminFilterType) :
         QuestionListEvent()
 
-    data class OnTagFilterChanged(val tag: com.oyetech.models.questionProject.questionOperation.QueTag?) :
+    data class OnTagFilterChanged(
+        val tag: com.oyetech.models.questionProject.questionOperation.QueTag? = null,
+        val adminFilterType: QuestionListAdminFilterType? = null,
+    ) :
         QuestionListEvent()
 }
