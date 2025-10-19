@@ -28,6 +28,7 @@ import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionV
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import kotlinx.collections.immutable.toImmutableList
 import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 
 @Composable
 fun QuestionListWithParamsScreenSetup(
@@ -36,6 +37,7 @@ fun QuestionListWithParamsScreenSetup(
     adminFilterTypeStr: String? = null,
     innerPadding: PaddingValues = PaddingValues(0.dp),
 ) {
+    Timber.d("QuestionListWithParamsScreenSetup_$questionTagId-$adminFilterTypeStr")
     val vm =
         koinViewModel<QuestionListVm>(key = "QuestionListWithParamsScreenSetup_$questionTagId-$adminFilterTypeStr")
     val uiState by vm.uiState.collectAsStateWithLifecycle()
@@ -52,7 +54,7 @@ fun QuestionListWithParamsScreenSetup(
             val filterType = try {
                 QuestionListAdminFilterType.valueOf(adminFilterTypeStr)
             } catch (e: Exception) {
-                QuestionListAdminFilterType.ALL
+                QuestionListAdminFilterType.APPROVED_ADMIN
             }
             vm.setAdminFilter(filterType)
         }

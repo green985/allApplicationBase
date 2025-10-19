@@ -42,12 +42,11 @@ data class QuestionViewUiState(
 
     // admin flags
     val isAdminView: Boolean = false,
-    val isQuestionApproved: Boolean = false,
     val isQuestionPendingView: Boolean = false,
     val isAdminApprovedView: Boolean = false,
     val adminOperationClicked: Boolean = false,
     val moderationStatus: ModerationStatus = ModerationStatus.PENDING,
-    val adminFilterType: QuestionListAdminFilterType = QuestionListAdminFilterType.ALL,
+    val adminFilterType: QuestionListAdminFilterType = QuestionListAdminFilterType.APPROVED_ADMIN,
 ) : BaseUIState()
 
 sealed class QuestionViewEvent : BaseEvent() {
@@ -128,7 +127,6 @@ fun QuestionOperationResponseBody.toUiState(
         questionType = this.questionType,
         options = derivedOptions.toImmutableList(),
         isAnsweredByUser = false,
-        isQuestionApproved = this.isQuestionApproved,
         selectedAnswer = null,
         selectedTags = this.tags.toImmutableList(),
         moderationStatus = this.moderationStatus

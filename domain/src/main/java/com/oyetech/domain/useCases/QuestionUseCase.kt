@@ -2,7 +2,9 @@ package com.oyetech.domain.useCases
 
 import com.oyetech.domain.repository.firebase.FirebaseQuestionAnswerRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
+import com.oyetech.models.questionProject.questionOperation.ModerationStatus
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
+import com.oyetech.models.questionProject.questionOperation.QueTag
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -28,9 +30,12 @@ class QuestionUseCase(
         _questionUpdatedEvent.emit(questionId)
     }
 
-    fun getQuestionListWithUpdates(): Flow<List<QuestionOperationResponseBody>> {
+    fun getQuestionListWithUpdates(
+        moderationStatus: ModerationStatus? = ModerationStatus.APPROVED,
+        tag: QueTag? = null,
+    ): Flow<List<QuestionOperationResponseBody>> {
         return combine(
-            questionRepository.getQuestionList(),
+            questionRepository.getQuestionsFiltered(moderationStatus, tag),
             _questionUpdatedEvent,
         ) { questions, updatedQuestionId ->
             Timber.d("Question list update triggered. Updated ID: $updatedQuestionId")
@@ -56,6 +61,11 @@ class QuestionUseCase(
                 questions
             }
         }
+        // todo will be take a look
+//            .map {
+//            overlayAnswers(it, answerRepository.answersState.value)
+//        }
+
     }
 
     fun overlayAnswers(

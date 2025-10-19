@@ -11,6 +11,7 @@ import com.oyetech.domain.repository.firebase.FirebaseQuestionAnswerRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.useCases.NavigationUseCase
+import com.oyetech.domain.useCases.QuestionUseCase
 import com.oyetech.models.questionProject.questionOperation.ModerationStatus
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QueTag
@@ -18,10 +19,12 @@ import com.oyetech.models.questionProject.questionOperation.QuestionOperationRes
 import com.oyetech.models.questionProject.questionOperation.QuestionType
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -32,7 +35,7 @@ class QuestionListVm(
     private val repository: FirebaseQuestionOperationRepository,
     private val userRepository: FirebaseUserRepository,
     private val answerRepository: FirebaseQuestionAnswerRepository,
-    private val questionUseCase: com.oyetech.domain.useCases.QuestionUseCase,
+    private val questionUseCase: QuestionUseCase,
 ) : BaseListViewModel<QuestionViewUiState>(appDispatchers) {
 
     val uiState = MutableStateFlow(QuestionListUiState())
@@ -41,25 +44,8 @@ class QuestionListVm(
     override val listViewState: MutableStateFlow<GenericListState<QuestionViewUiState>> =
         MutableStateFlow(
             GenericListState(
-                dataFlow = combine(
-                    questionUseCase.getQuestionListWithUpdates(),
-                    answerRepository.answersState,
-                    queFilter.filterNotNull(),
-                ) { questions, answers, filter ->
-                    val adminFiltered = filterQuestionsByStatus(questions, filter.adminFilterType)
-                    val tagFiltered = filterQuestionsByTag(adminFiltered, filter.selectedTagFilter)
-
-                    overlayAnswers(tagFiltered, answers, filter.adminFilterType)
-                },
-                refreshDataFlow = combine(
-                    questionUseCase.getQuestionListWithUpdates(),
-                    answerRepository.answersState,
-                    queFilter.filterNotNull(),
-                ) { questions, answers, filter ->
-                    val adminFiltered = filterQuestionsByStatus(questions, filter.adminFilterType)
-                    val tagFiltered = filterQuestionsByTag(adminFiltered, filter.selectedTagFilter)
-                    overlayAnswers(tagFiltered, answers, filter.adminFilterType)
-                }
+                dataFlow = getQuestionDataFlow(),
+                refreshDataFlow = getQuestionDataFlow()
             )
         )
 
@@ -85,6 +71,17 @@ class QuestionListVm(
         }
     }
 
+    fun getQuestionDataFlow(): Flow<List<QuestionViewUiState>> {
+        return queFilter.filterNotNull().flatMapLatest {
+            questionUseCase.getQuestionListWithUpdates(
+                moderationStatus = it.adminFilterType.toModerationStatusOrNull(),
+                tag = it.selectedTagFilter
+            )
+        }.combine(answerRepository.answersState) { questions, answers ->
+            overlayAnswers(questions, answers)
+        }
+    }
+
     override fun onEvent(event: Any) {
         if (event is QuestionListEvent) {
             when (event) {
@@ -105,7 +102,6 @@ class QuestionListVm(
     private fun overlayAnswers(
         questions: List<QuestionOperationResponseBody>,
         answers: List<QueAnswer>,
-        filter: QuestionListAdminFilterType,
     ): List<QuestionViewUiState> {
         val answerMap = answers.associateBy { it.questionId }
         return questions.map { q ->
@@ -116,18 +112,31 @@ class QuestionListVm(
                 ui = ui.copy(isAnsweredByUser = selected != null, selectedAnswer = selected)
             }
 
-            ui = ui.copy(adminFilterType = filter)
             ui
         }
     }
 
     fun setAdminFilter(filterType: QuestionListAdminFilterType) {
-        val filter = queFilter.value ?: QueFilter.DEFAULT
+        val filter = queFilter.value
+        if (filter == null) {
+            queFilter.value = QueFilter(adminFilterType = filterType, selectedTagFilter = null)
+            return
+        }
+
+        if (filter.adminFilterType == filterType) return
         queFilter.value = filter.copy(adminFilterType = filterType)
     }
 
     fun setTagFilter(tag: QueTag?) {
-        val filter = queFilter.value ?: QueFilter.DEFAULT
+        val filter = queFilter.value
+        if (filter == null) {
+            queFilter.value = QueFilter(
+                adminFilterType = QuestionListAdminFilterType.APPROVED_ADMIN,
+                selectedTagFilter = tag
+            )
+            return
+        }
+        if (filter.selectedTagFilter == tag) return
         queFilter.value = filter.copy(selectedTagFilter = tag)
     }
 
@@ -221,35 +230,6 @@ class QuestionListVm(
                 listViewState.value =
                     listViewState.value.copy(items = currentList.toImmutableList())
             }
-        }
-    }
-
-    private fun filterQuestionsByStatus(
-        questions: List<QuestionOperationResponseBody>,
-        filter: QuestionListAdminFilterType,
-    ): List<QuestionOperationResponseBody> {
-        Timber.d("Filtering questions by status: ${filter.name}")
-        return when (filter) {
-            QuestionListAdminFilterType.ALL -> questions
-            QuestionListAdminFilterType.APPROVED_ADMIN ->
-                questions.filter { it.moderationStatus == ModerationStatus.APPROVED }
-
-            QuestionListAdminFilterType.DECLINED_ADMIN ->
-                questions.filter { it.moderationStatus == ModerationStatus.DECLINED }
-
-            QuestionListAdminFilterType.PENDING_ADMIN ->
-                questions.filter { it.moderationStatus == ModerationStatus.PENDING }
-        }
-    }
-
-    private fun filterQuestionsByTag(
-        questions: List<QuestionOperationResponseBody>,
-        tagFilter: QueTag?,
-    ): List<QuestionOperationResponseBody> {
-        Timber.d("Filtering questions by tag: ${tagFilter?.name ?: "None"}")
-        if (tagFilter == null) return questions
-        return questions.filter { question ->
-            question.tags?.any { it.id == tagFilter.id } == true
         }
     }
 }

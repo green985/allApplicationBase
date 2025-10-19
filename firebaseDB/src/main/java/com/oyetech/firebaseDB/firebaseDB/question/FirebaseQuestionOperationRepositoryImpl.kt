@@ -6,6 +6,8 @@ import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepositor
 import com.oyetech.firebaseDB.firebaseDB.helper.runTransactionWithTimeout
 import com.oyetech.models.errors.exceptionHelper.GeneralException
 import com.oyetech.models.firebaseModels.databaseKeys.FirebaseDatabaseKeys
+import com.oyetech.models.questionProject.questionOperation.ModerationStatus
+import com.oyetech.models.questionProject.questionOperation.QueTag
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -56,6 +58,42 @@ class FirebaseQuestionOperationRepositoryImpl(
         }
     }
 
+    override fun getQuestionsFiltered(
+        moderationStatus: ModerationStatus?,
+        tag: QueTag?,
+    ): Flow<List<QuestionOperationResponseBody>> = flow {
+        try {
+            var query: Query = firestore
+                .collection(FirebaseDatabaseKeys.createQuestion)
+
+            val status = moderationStatus
+            // Apply moderation filter if explicitly provided or defaulted
+            if (status != null && status != ModerationStatus.ALL) {
+                query = query.whereEqualTo("moderationStatus", status.name)
+            }
+
+            // Apply tag filter if provided (array-contains requires full object equality)
+            if (tag != null) {
+                query = query.whereArrayContains("tags", tag)
+            }
+
+            // Order by createdAt desc
+            query = query.orderBy("createdAt", Query.Direction.DESCENDING)
+
+            val snapshot = query.get().await()
+
+            val questionList = snapshot.documents.mapNotNull { doc ->
+                val obj = doc.toObject(QuestionOperationResponseBody::class.java)
+                obj?.copy(questionId = doc.id)
+            }
+            Timber.d("Filtered questions fetched: ${questionList.size} items")
+            Timber.d("Filters - ModerationStatus: ${status?.name}, Tag: ${tag?.name ?: "None"}")
+            emit(questionList)
+        } catch (e: Exception) {
+            error(GeneralException(e.message ?: "Question filtered list fetch error"))
+        }
+    }
+
     override fun getQuestionById(questionId: String): Flow<QuestionOperationResponseBody> = flow {
         try {
             val snapshot = firestore
@@ -75,18 +113,15 @@ class FirebaseQuestionOperationRepositoryImpl(
 
     override fun updateQuestionStatus(
         questionId: String,
-        status: com.oyetech.models.questionProject.questionOperation.ModerationStatus,
+        status: ModerationStatus,
     ): Flow<Unit> = flow {
         try {
-            val isApproved =
-                status == com.oyetech.models.questionProject.questionOperation.ModerationStatus.APPROVED
             firestore
                 .collection(FirebaseDatabaseKeys.createQuestion)
                 .document(questionId)
                 .update(
                     mapOf(
                         "moderationStatus" to status.name,
-                        "isQuestionApproved" to isApproved,
                     )
                 )
                 .await()

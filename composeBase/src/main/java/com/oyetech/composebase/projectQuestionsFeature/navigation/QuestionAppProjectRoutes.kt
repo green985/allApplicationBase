@@ -24,7 +24,6 @@ object QuestionAppProjectRoutes {
     val MessageConversationList = Route("question/MessageConversationList")
     val UserList = Route("question/UserList")
     val AdminApproveQuestion = Route("question/AdminApproveQuestion")
-    val QuestionList = Route("question/QuestionList")
     val QuestionListWithParams = Route("question/QuestionListWithParams")
     val QuestionPager = Route("question/QuestionPager")
     val UserProfile = Route("question/UserProfile")
