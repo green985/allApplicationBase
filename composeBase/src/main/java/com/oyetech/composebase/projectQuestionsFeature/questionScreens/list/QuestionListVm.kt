@@ -21,6 +21,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -35,7 +36,7 @@ class QuestionListVm(
 ) : BaseListViewModel<QuestionViewUiState>(appDispatchers) {
 
     val uiState = MutableStateFlow(QuestionListUiState())
-    private val queFilter = MutableStateFlow(QueFilter.DEFAULT)
+    private val queFilter = MutableStateFlow<QueFilter?>(null)
 
     override val listViewState: MutableStateFlow<GenericListState<QuestionViewUiState>> =
         MutableStateFlow(
@@ -43,7 +44,7 @@ class QuestionListVm(
                 dataFlow = combine(
                     questionUseCase.getQuestionListWithUpdates(),
                     answerRepository.answersState,
-                    queFilter,
+                    queFilter.filterNotNull(),
                 ) { questions, answers, filter ->
                     val adminFiltered = filterQuestionsByStatus(questions, filter.adminFilterType)
                     val tagFiltered = filterQuestionsByTag(adminFiltered, filter.selectedTagFilter)
@@ -53,7 +54,7 @@ class QuestionListVm(
                 refreshDataFlow = combine(
                     questionUseCase.getQuestionListWithUpdates(),
                     answerRepository.answersState,
-                    queFilter,
+                    queFilter.filterNotNull(),
                 ) { questions, answers, filter ->
                     val adminFiltered = filterQuestionsByStatus(questions, filter.adminFilterType)
                     val tagFiltered = filterQuestionsByTag(adminFiltered, filter.selectedTagFilter)
@@ -65,7 +66,7 @@ class QuestionListVm(
     init {
         // Fetch user answers on start
         viewModelScope.launch(getDispatcherIo()) {
-            queFilter.collectLatest { filter ->
+            queFilter.filterNotNull().collectLatest { filter ->
                 Timber.d(
                     "Filter changed - " +
                             "Admin: ${filter.adminFilterType.name}, Tag: ${filter.selectedTagFilter?.name}"
@@ -121,39 +122,17 @@ class QuestionListVm(
     }
 
     fun setAdminFilter(filterType: QuestionListAdminFilterType) {
-        queFilter.value = queFilter.value.copy(adminFilterType = filterType)
+        val filter = queFilter.value ?: QueFilter.DEFAULT
+        queFilter.value = filter.copy(adminFilterType = filterType)
     }
 
     fun setTagFilter(tag: QueTag?) {
-        queFilter.value = queFilter.value.copy(selectedTagFilter = tag)
+        val filter = queFilter.value ?: QueFilter.DEFAULT
+        queFilter.value = filter.copy(selectedTagFilter = tag)
     }
 
     fun clearAllFilters() {
-        queFilter.value = QueFilter.DEFAULT
-    }
-
-    fun approveAllPending() {
-        viewModelScope.launch(getDispatcherIo()) {
-            val items = listViewState.value.items
-            items.forEach { item ->
-                repository.updateQuestionStatus(
-                    item.questionId,
-                    ModerationStatus.APPROVED
-                ).collectLatest { /* no-op */ }
-            }
-        }
-    }
-
-    fun declineAllPending() {
-        viewModelScope.launch(getDispatcherIo()) {
-            val items = listViewState.value.items
-            items.forEach { item ->
-                repository.updateQuestionStatus(
-                    item.questionId,
-                    ModerationStatus.DECLINED
-                ).collectLatest { /* no-op */ }
-            }
-        }
+        queFilter.value = null
     }
 
     fun onQuestionEvent(event: QuestionViewEvent) {
