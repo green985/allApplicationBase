@@ -1,5 +1,6 @@
 package com.oyetech.firebaseDB.firebaseDB.question
 
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
@@ -8,6 +9,7 @@ import com.oyetech.models.errors.exceptionHelper.GeneralException
 import com.oyetech.models.firebaseModels.databaseKeys.FirebaseDatabaseKeys
 import com.oyetech.models.questionProject.questionOperation.ModerationStatus
 import com.oyetech.models.questionProject.questionOperation.QueTag
+import com.oyetech.models.questionProject.questionOperation.QuestionApprovedListType
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -144,5 +146,80 @@ class FirebaseQuestionOperationRepositoryImpl(
         } catch (e: Exception) {
             error(GeneralException(e.message ?: "Question update error"))
         }
+    }
+
+    override fun getApprovedQuestionsSorted(
+        type: QuestionApprovedListType,
+        limit: Int,
+    ): Flow<List<QuestionOperationResponseBody>> = flow {
+        try {
+            when (type) {
+                QuestionApprovedListType.ALL, QuestionApprovedListType.RECENTLY_ADDED -> {
+                    var query: Query = firestore
+                        .collection(FirebaseDatabaseKeys.createQuestion)
+                        .whereEqualTo("moderationStatus", ModerationStatus.APPROVED.name)
+                        .orderBy("createdAt", Query.Direction.DESCENDING)
+                    if (limit > 0) query = query.limit(limit.toLong())
+                    val snapshot = query.get().await()
+                    val items = snapshot.documents.mapNotNull { d ->
+                        d.toObject(QuestionOperationResponseBody::class.java)
+                            ?.copy(questionId = d.id)
+                    }
+                    emit(items)
+                }
+
+                QuestionApprovedListType.RECENTLY_ANSWERED -> {
+                    emit(getMostRecentlyAnsweredInternal(limit))
+                }
+            }
+        } catch (e: Exception) {
+            error(GeneralException(e.message ?: "Approved questions fetch error"))
+        }
+    }
+
+    override fun getMostRecentlyAnsweredQuestions(limit: Int): Flow<List<QuestionOperationResponseBody>> =
+        flow {
+            try {
+                emit(getMostRecentlyAnsweredInternal(limit))
+            } catch (e: Exception) {
+                error(GeneralException(e.message ?: "Most recently answered fetch error"))
+            }
+        }
+
+    private suspend fun getMostRecentlyAnsweredInternal(limit: Int): List<QuestionOperationResponseBody> {
+        // 1) Fetch newest answers globally
+        val answersSnap = firestore
+            .collectionGroup("answers")
+            .orderBy("submittedAt", Query.Direction.DESCENDING)
+            .limit(limit.toLong().coerceAtLeast(10L))
+            .get()
+            .await()
+
+        // 2) Distinct questionIds preserving order
+        val questionIdsOrdered = answersSnap.documents
+            .mapNotNull { it.getString("questionId") }
+            .distinct()
+            .take(limit)
+
+        if (questionIdsOrdered.isEmpty()) return emptyList()
+
+        // 3) Fetch questions by id batches of 10 (whereIn limit)
+        val result = mutableListOf<QuestionOperationResponseBody>()
+        questionIdsOrdered.chunked(10).forEach { batch ->
+            val snap = firestore
+                .collection(FirebaseDatabaseKeys.createQuestion)
+                .whereIn(FieldPath.documentId(), batch)
+                .get()
+                .await()
+            val items = snap.documents.mapNotNull { d ->
+                d.toObject(QuestionOperationResponseBody::class.java)?.copy(questionId = d.id)
+            }
+            // filter only approved
+            result += items.filter { it.moderationStatus == ModerationStatus.APPROVED }
+        }
+
+        // 4) Sort result by latest answer order
+        val orderIndex = questionIdsOrdered.withIndex().associate { it.value to it.index }
+        return result.sortedBy { orderIndex[it.questionId] ?: Int.MAX_VALUE }
     }
 }

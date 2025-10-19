@@ -29,4 +29,13 @@ interface FirebaseQuestionOperationRepository {
 
     // Update a question completely
     fun updateQuestion(body: QuestionOperationResponseBody): Flow<Unit>
+
+    // Approved questions listing with sort types (ALL, RECENTLY_ADDED, RECENTLY_ANSWERED)
+    fun getApprovedQuestionsSorted(
+        type: com.oyetech.models.questionProject.questionOperation.QuestionApprovedListType,
+        limit: Int = 50,
+    ): Flow<List<QuestionOperationResponseBody>>
+
+    // Fast path: fetch most recently answered approved questions (by answers submittedAt)
+    fun getMostRecentlyAnsweredQuestions(limit: Int = 50): Flow<List<QuestionOperationResponseBody>>
 }
