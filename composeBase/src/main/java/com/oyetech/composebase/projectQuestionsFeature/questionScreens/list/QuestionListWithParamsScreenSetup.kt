@@ -36,7 +36,8 @@ fun QuestionListWithParamsScreenSetup(
     adminFilterTypeStr: String? = null,
     innerPadding: PaddingValues = PaddingValues(0.dp),
 ) {
-    val vm = koinViewModel<QuestionListVm>()
+    val vm =
+        koinViewModel<QuestionListVm>(key = "QuestionListWithParamsScreenSetup_$questionTagId-$adminFilterTypeStr")
     val uiState by vm.uiState.collectAsStateWithLifecycle()
     val listViewState by vm.listViewState.collectAsStateWithLifecycle()
 

@@ -44,7 +44,5 @@ sealed class AdminApproveQuestionEvent : BaseEvent() {
     ) :
         AdminApproveQuestionEvent()
 
-    data object OnApproveAll : AdminApproveQuestionEvent()
-    data object OnDeclineAll : AdminApproveQuestionEvent()
     data object OnRefreshClicked : AdminApproveQuestionEvent()
 }
