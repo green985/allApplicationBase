@@ -249,6 +249,7 @@ class QuestionListVm(
         questions: List<QuestionOperationResponseBody>,
         filter: QuestionListAdminFilterType,
     ): List<QuestionOperationResponseBody> {
+        Timber.d("Filtering questions by status: ${filter.name}")
         return when (filter) {
             QuestionListAdminFilterType.ALL -> questions
             QuestionListAdminFilterType.APPROVED_ADMIN ->
@@ -266,6 +267,7 @@ class QuestionListVm(
         questions: List<QuestionOperationResponseBody>,
         tagFilter: QueTag?,
     ): List<QuestionOperationResponseBody> {
+        Timber.d("Filtering questions by tag: ${tagFilter?.name ?: "None"}")
         if (tagFilter == null) return questions
         return questions.filter { question ->
             question.tags?.any { it.id == tagFilter.id } == true

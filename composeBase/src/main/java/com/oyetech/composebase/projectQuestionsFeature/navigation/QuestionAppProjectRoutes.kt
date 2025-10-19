@@ -7,7 +7,7 @@ import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppPro
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.QuestionAppHomepage
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.QuestionAppSettings
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.QuestionPager
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.UserList
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListNavigationHelper
 import com.oyetech.languageModule.keyset.LanguageKey
 
 /**
@@ -25,6 +25,7 @@ object QuestionAppProjectRoutes {
     val UserList = Route("question/UserList")
     val AdminApproveQuestion = Route("question/AdminApproveQuestion")
     val QuestionList = Route("question/QuestionList")
+    val QuestionListWithParams = Route("question/QuestionListWithParams")
     val QuestionPager = Route("question/QuestionPager")
     val UserProfile = Route("question/UserProfile")
     val MessageDetail = Route("question/MessageDetail")
@@ -70,7 +71,8 @@ sealed class QuestionAppNavItem {
 
     object QuestionAppUserListTab :
         BottomNavigationItem(
-            path = UserList.route.toString(),
+            path = QuestionListNavigationHelper.buildQuestionListWithParamsRoute("knowledge")
+                .toString(),
             title = R.string.nav_item_settings,
             icon = R.drawable.ic_settings
         )

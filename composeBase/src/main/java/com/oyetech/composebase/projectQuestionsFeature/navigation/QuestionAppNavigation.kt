@@ -8,6 +8,7 @@ import com.oyetech.composebase.projectQuestionsFeature.adminApprove.AdminApprove
 import com.oyetech.composebase.projectQuestionsFeature.homeScreen.QuestionsHomeScreenSetup
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.createQuestion.QuestionCreateScreenSetup
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListScreenSetup
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListWithParamsScreenSetup
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionPagerScreenSetup
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListScreenSetup
 import com.oyetech.composebase.sharedScreens.navigation.ScreenKey
@@ -57,6 +58,29 @@ fun NavGraphBuilder.questionAppNavigation(navController: NavController) {
 
     composable(QuestionAppProjectRoutes.QuestionPager.route) {
         QuestionPagerScreenSetup()
+    }
+
+    composable(
+        route = "${QuestionAppProjectRoutes.QuestionListWithParams.route}?" +
+                "${ScreenKey.questionTag}={questionTag}" +
+                "&${ScreenKey.adminFilterType}={adminFilterType}",
+        arguments = listOf(
+            navArgument(ScreenKey.questionTag) {
+                defaultValue = ""
+                nullable = true
+            },
+            navArgument(ScreenKey.adminFilterType) {
+                defaultValue = ""
+                nullable = true
+            }
+        )
+    ) { entry ->
+        val questionTag = entry.arguments?.getString(ScreenKey.questionTag)
+        val adminFilterType = entry.arguments?.getString(ScreenKey.adminFilterType)
+        QuestionListWithParamsScreenSetup(
+            questionTagId = questionTag,
+            adminFilterTypeStr = adminFilterType
+        )
     }
 
     // Complete Profile
