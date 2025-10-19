@@ -65,7 +65,6 @@ fun QuestionCreateScreenSetup(
                 }
 
                 is QuestionCreateQuestionUiEvent.OnSubmitError -> {
-
                 }
             }
         }
@@ -148,11 +147,13 @@ private fun QuestionCreateScreen(
 
                 QuestionTagsAreaContainer(
                     uiState = questionUiState,
-                    onEvent = onEvent, isCreateQuestion = true
+                    onEvent = onEvent,
+                    isCreateQuestion = true
                 )
 
                 CreateQuestionYesNoView(
-                    uiState = questionUiState, onEvent = onEvent
+                    uiState = questionUiState,
+                    onEvent = onEvent
                 )
             }
         }
@@ -170,11 +171,15 @@ private fun CategoryChip(
         modifier = Modifier
             .padding(horizontal = 6.dp, vertical = 4.dp)
             .then(
-                if (selected) Modifier.border(
-                    width = 2.dp,
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = RoundedCornerShape(12.dp)
-                ) else Modifier
+                if (selected) {
+                    Modifier.border(
+                        width = 2.dp,
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                } else {
+                    Modifier
+                }
             )
     ) {
         Text(text = text, style = MaterialTheme.typography.bodyMedium)
