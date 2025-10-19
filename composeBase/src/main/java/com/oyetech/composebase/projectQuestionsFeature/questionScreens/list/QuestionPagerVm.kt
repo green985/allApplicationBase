@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 
 class QuestionPagerVm(
     appDispatchers: AppDispatchers,
-    val questionListVm: QuestionListVm,
 ) : BaseViewModel(appDispatchers) {
 
     private val _uiState = MutableStateFlow(QuestionPagerUiState())
