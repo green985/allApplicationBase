@@ -31,6 +31,7 @@ import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionV
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import kotlinx.collections.immutable.toImmutableList
 import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 
 @Composable
 fun QuestionPagerScreenSetup(
@@ -104,6 +105,7 @@ fun QuestionPagerScreen(
             state = pagerState,
             modifier = Modifier.weight(1f)
         ) { page ->
+            Timber.d("Displaying page: $page")
             QuestionListContent(
                 listViewState = listViewState,
                 onQuestionEvent = onQuestionEvent

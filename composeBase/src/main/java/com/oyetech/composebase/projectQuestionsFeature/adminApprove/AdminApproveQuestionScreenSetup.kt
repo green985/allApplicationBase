@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionFilterBar
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListEvent
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListScreen
 import com.oyetech.composebase.projectQuestionsFeature.theme.QuestionProjectViewAttrs
@@ -56,14 +57,19 @@ fun AdminApproveQuestionScreenSetup(
                 onEvent = { ev ->
                     when (ev) {
                         is QuestionListEvent.OnTagFilterChanged -> {
-                            vm.onEvent(AdminApproveQuestionEvent.OnTagFilterChanged(ev.tag))
+                            vm.onEvent(
+                                AdminApproveQuestionEvent.OnTagFilterChanged(
+                                    ev.tag,
+                                    ev.adminFilterType
+                                )
+                            )
                         }
 
                         else -> vm.questionListVm.onEvent(ev)
                     }
                 },
                 onQuestionEvent = { ev -> vm.questionListVm.onQuestionEvent(ev) },
-                listViewState = listState,
+                listViewState = listState, uiState = null,
             )
         }
     )
@@ -201,6 +207,22 @@ private fun AdminApproveQuestionScreen(
                     .fillMaxSize()
                     .padding(top = innerPadding.calculateTopPadding())
             ) {
+                QuestionFilterBar(
+                    currentFilter = uiState.currentFilter,
+                    onEvent = { event ->
+                        when (event) {
+                            is QuestionListEvent.OnTagFilterChanged -> {
+                                onEvent(AdminApproveQuestionEvent.OnTagFilterChanged(event.tag))
+                            }
+
+                            else -> {}
+                        }
+                    },
+                    isAdminMode = false
+                )
+
+
+
                 AdminApproveQuestionContent(
                     uiState = uiState,
                     listCount = listCount,

@@ -2,8 +2,10 @@ package com.oyetech.composebase.projectQuestionsFeature.adminApprove
 
 import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.base.BaseUIEvent
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QueFilter
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType
 import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.models.questionProject.questionOperation.QueTag
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -12,6 +14,10 @@ data class AdminApproveQuestionUiState(
     val errorText: String = "",
     val isLoading: Boolean = false,
     val pendingCountText: String = "0 pending",
+    val currentFilter: QueFilter = QueFilter.DEFAULT,
+    val currentPage: Int = 0,
+
+
     val currentFilterType: QuestionListAdminFilterType = QuestionListAdminFilterType.ALL,
     val tabs: ImmutableList<Pair<QuestionListAdminFilterType, String>> = persistentListOf(
         QuestionListAdminFilterType.ALL to LanguageKey.all,
@@ -31,7 +37,11 @@ sealed class AdminApproveQuestionEvent : BaseEvent() {
     data class OnFilterSelected(val filterType: QuestionListAdminFilterType) :
         AdminApproveQuestionEvent()
 
-    data class OnTagFilterChanged(val tag: com.oyetech.models.questionProject.questionOperation.QueTag?) :
+
+    data class OnTagFilterChanged(
+        val tag: QueTag? = null,
+        val adminFilterType: QuestionListAdminFilterType? = null,
+    ) :
         AdminApproveQuestionEvent()
 
     data object OnApproveAll : AdminApproveQuestionEvent()

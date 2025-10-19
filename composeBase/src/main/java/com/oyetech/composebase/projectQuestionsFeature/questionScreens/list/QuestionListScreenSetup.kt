@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
@@ -37,18 +36,12 @@ fun QuestionListScreenSetup(
     val uiState by vm.uiState.collectAsStateWithLifecycle()
     val listViewState by vm.listViewState.collectAsStateWithLifecycle()
 
-    BaseScaffold(
-        topBar = { QuestionListToolbar(uiState.toolbarTitleText) },
-        modifier = Modifier.fillMaxSize(),
-        content = { innerPadding ->
-            QuestionListScreen(
-                contentPadding = innerPadding,
-                onEvent = { vm.onEvent(it) },
-                onQuestionEvent = { vm.onQuestionEvent(it) },
-                listViewState = listViewState,
-            )
-
-        }
+    QuestionListScreen(
+        contentPadding = PaddingValues(0.dp),
+        uiState = uiState,
+        onEvent = { vm.onEvent(it) },
+        onQuestionEvent = { vm.onQuestionEvent(it) },
+        listViewState = listViewState,
     )
 }
 
@@ -67,6 +60,7 @@ private fun QuestionListToolbar(title: String) {
 @Composable
 fun QuestionListScreen(
     contentPadding: PaddingValues,
+    uiState: QuestionListUiState? = null,
     onEvent: (QuestionListEvent) -> Unit,
     onQuestionEvent: (QuestionViewEvent) -> Unit = {},
     listViewState: GenericListState<QuestionViewUiState>,
