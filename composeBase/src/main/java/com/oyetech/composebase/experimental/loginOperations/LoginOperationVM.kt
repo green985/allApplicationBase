@@ -223,16 +223,6 @@ class LoginOperationVM(
         }
         viewModelScope.launch(getDispatcherIo()) {
             val userData = firebaseUserRepository.userDataStateFlow.value
-            if (userData == null) {
-                loginOperationState.updateState {
-                    copy(
-                        isLoading = false,
-                        isError = true,
-                        errorMessage = "User not found"
-                    )
-                }
-                return@launch
-            }
 
             val editedUserData = userData.copy(
                 username = loginOperationState.value.displayName,

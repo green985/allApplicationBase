@@ -7,7 +7,6 @@ import androidx.navigation.navArgument
 import com.oyetech.composebase.projectQuestionsFeature.adminApprove.AdminApproveQuestionScreenSetup
 import com.oyetech.composebase.projectQuestionsFeature.homeScreen.QuestionsHomeScreenSetup
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.createQuestion.QuestionCreateScreenSetup
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListScreenSetup
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListWithParamsScreenSetup
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionPagerScreenSetup
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListScreenSetup
@@ -51,11 +50,7 @@ fun NavGraphBuilder.questionAppNavigation(navController: NavController) {
     composable(QuestionAppProjectRoutes.AdminApproveQuestion.route) {
         AdminApproveQuestionScreenSetup()
     }
-
-    composable(QuestionAppProjectRoutes.QuestionList.route) {
-        QuestionListScreenSetup()
-    }
-
+    
     composable(QuestionAppProjectRoutes.QuestionPager.route) {
         QuestionPagerScreenSetup()
     }

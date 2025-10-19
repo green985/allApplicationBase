@@ -63,15 +63,6 @@ fun QuestionListWithParamsScreenSetup(
         onQuestionEvent = { vm.onQuestionEvent(it) },
     )
 
-    if (listViewState.isLoadingInitial) {
-        LoadingScreenFullSize()
-    }
-    if (listViewState.isErrorInitial) {
-        ErrorScreenFullSize(errorMessage = listViewState.errorMessage, withoutAlpha = true)
-    }
-    if (listViewState.isEmptyList) {
-        ErrorScreenFullSize(errorMessage = "No questions found", withoutAlpha = true)
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -116,6 +107,16 @@ fun QuestionListWithParamsContent(
                     }
                 )
             }
+        }
+
+        if (listViewState.isLoadingInitial) {
+            LoadingScreenFullSize()
+        }
+        if (listViewState.isErrorInitial) {
+            ErrorScreenFullSize(errorMessage = listViewState.errorMessage, withoutAlpha = true)
+        }
+        if (listViewState.isEmptyList) {
+            ErrorScreenFullSize(errorMessage = "No questions found", withoutAlpha = true)
         }
     }
 }

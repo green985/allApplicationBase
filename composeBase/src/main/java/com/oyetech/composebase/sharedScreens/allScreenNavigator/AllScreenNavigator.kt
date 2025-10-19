@@ -20,7 +20,7 @@ object AllScreenNavigator {
 
     val generalListOfScreen = emptyList<String>().toMutableList<String>().apply {
         add(QuestionAppProjectRoutes.QuestionCreateQuestionPage.route)
-        add(QuestionAppProjectRoutes.QuestionList.route)
+        add(QuestionAppProjectRoutes.QuestionPager.route)
         add(QuestionAppProjectRoutes.AdminApproveQuestion.route)
     }
 

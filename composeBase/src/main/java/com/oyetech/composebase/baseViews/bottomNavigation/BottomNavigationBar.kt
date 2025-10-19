@@ -89,6 +89,6 @@ fun navigateToBottomBarRoute(navController: NavHostController, route: String) {
     }
 }
 
-private tailrec fun findStartDestination(graph: NavDestination): Int {
+private fun findStartDestination(graph: NavDestination): Int {
     return if (graph is NavGraph) graph.startDestinationId else graph.id
 }

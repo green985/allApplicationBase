@@ -3,21 +3,17 @@ package com.oyetech.composebase.projectQuestionsFeature.adminApprove
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionFilterOperationHelper
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 
 class AdminApproveQuestionVm(
     appDispatchers: AppDispatchers,
     private val navigationUseCase: NavigationUseCase,
-    val filterHelper: QuestionFilterOperationHelper,
 ) : BaseViewModel(appDispatchers) {
 
     val uiState = MutableStateFlow(AdminApproveQuestionUiState())
@@ -29,9 +25,6 @@ class AdminApproveQuestionVm(
 
     init {
         viewModelScope.launch(getDispatcherIo()) {
-            filterHelper.queFilter.collectLatest { filter ->
-                Timber.d("AdminApproveQuestionVm: Current filter updated: $filter")
-            }
         }
     }
 
@@ -43,7 +36,7 @@ class AdminApproveQuestionVm(
                 }
 
                 is AdminApproveQuestionEvent.OnTagFilterChanged -> {
-                    filterHelper.setTagFilter(event.tag)
+
                 }
 
 

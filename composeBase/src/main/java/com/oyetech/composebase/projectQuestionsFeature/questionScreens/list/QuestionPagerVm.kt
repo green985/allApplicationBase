@@ -7,13 +7,11 @@ import com.oyetech.tools.coroutineHelper.AppDispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class QuestionPagerVm(
     appDispatchers: AppDispatchers,
     val questionListVm: QuestionListVm,
-    val filterHelper: QuestionFilterOperationHelper,
 ) : BaseViewModel(appDispatchers) {
 
     private val _uiState = MutableStateFlow(QuestionPagerUiState())
@@ -21,10 +19,6 @@ class QuestionPagerVm(
 
     init {
         viewModelScope.launch(getDispatcherIo()) {
-            filterHelper.queFilter.collectLatest { filter ->
-                _uiState.value = _uiState.value.copy(currentFilter = filter)
-                syncFilterToListVm(filter)
-            }
         }
     }
 
@@ -32,16 +26,11 @@ class QuestionPagerVm(
         if (event is QuestionPagerEvent) {
             when (event) {
                 is QuestionPagerEvent.OnTagFilterChanged -> {
-                    filterHelper.setTagFilter(event.tag)
                 }
             }
         }
     }
 
-    private fun syncFilterToListVm(filter: QueFilter) {
-        questionListVm.setAdminFilter(filter.adminFilterType)
-        questionListVm.setTagFilter(filter.selectedTagFilter)
-    }
 }
 
 data class QuestionPagerUiState(

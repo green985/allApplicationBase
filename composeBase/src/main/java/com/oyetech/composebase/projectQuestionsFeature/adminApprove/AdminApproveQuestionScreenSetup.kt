@@ -19,13 +19,14 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListWithParamsScreenSetup
 import com.oyetech.composebase.projectQuestionsFeature.theme.QuestionProjectViewAttrs
+import com.oyetech.composebase.sharedViews.app.ApplicationLogoPlaceholder
+import com.oyetech.languageModule.keyset.LanguageKey
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -80,8 +81,6 @@ private fun AdminApproveQuestionContent(
     val tabs = uiState.tabs
 
     // Find current tab index
-    val currentTabIndex =
-        tabs.indexOfFirst { it.first == uiState.currentFilterType }.coerceAtLeast(0)
     val pagerState = rememberPagerState(
         initialPage = 0,
         pageCount = { tabs.size }
@@ -110,17 +109,6 @@ private fun AdminApproveQuestionContent(
             }
         }
 
-
-        LaunchedEffect(pagerState) {
-            snapshotFlow { pagerState.currentPage }
-                .collect { currentPage ->
-                    val (filterType, _) = tabs[pagerState.currentPage]
-                    onEvent(AdminApproveQuestionEvent.OnFilterSelected(filterType))
-                    pagerState.animateScrollToPage(currentPage)
-                }
-        }
-
-
         // HorizontalPager for tab content
         HorizontalPager(
             state = pagerState,
@@ -134,7 +122,11 @@ private fun AdminApproveQuestionContent(
                     .fillMaxSize()
                     .padding(QuestionProjectViewAttrs.paddingPage)
             ) {
-                QuestionListWithParamsScreenSetup(adminFilterTypeStr = filterType.name)
+                if (pagerState.settledPage == page) {
+                    QuestionListWithParamsScreenSetup(adminFilterTypeStr = filterType.name)
+                } else {
+                    ApplicationLogoPlaceholder()
+                }
             }
         }
     }
@@ -146,29 +138,13 @@ private fun AdminApproveQuestionScreen(
     onEvent: (AdminApproveQuestionEvent) -> Unit,
 ) {
     BaseScaffold(
-        topBar = { AdminApproveQuestionToolbar("Admin: Approve Questions") },
+        topBar = { AdminApproveQuestionToolbar(LanguageKey.adminApproveScreen) },
         content = { innerPadding ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(top = innerPadding.calculateTopPadding())
             ) {
-//                QuestionFilterBar(
-//                    currentFilter = uiState.currentFilter,
-//                    onEvent = { event ->
-//                        when (event) {
-//                            is QuestionListEvent.OnTagFilterChanged -> {
-//                                onEvent(AdminApproveQuestionEvent.OnTagFilterChanged(event.tag))
-//                            }
-//
-//                            else -> {}
-//                        }
-//                    },
-//                    isAdminMode = false
-//                )
-//
-
-
                 AdminApproveQuestionContent(
                     uiState = uiState,
                     onEvent = onEvent,
