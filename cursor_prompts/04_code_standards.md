@@ -134,6 +134,124 @@ data class QuestionOperationResponseBody(
 )
 ```
 
+## BaseListViewModel Standards
+
+### BaseListViewModel Structure
+
+```kotlin
+abstract class BaseListViewModel<T>(
+    appDispatchers: AppDispatchers,
+) : BaseViewModel(appDispatchers) {
+
+    val listViewState = MutableStateFlow(ListViewState<T>())
+
+    abstract suspend fun loadInitialData()
+    abstract suspend fun loadMoreData()
+    abstract suspend fun refreshData()
+
+    fun onRefresh() {
+        viewModelScope.launch(getDispatcherIo()) {
+            listViewState.update { it.copy(isRefreshing = true) }
+            refreshData()
+            listViewState.update { it.copy(isRefreshing = false) }
+        }
+    }
+
+    fun onLoadMore() {
+        if (listViewState.value.canLoadMore && !listViewState.value.isLoadingMore) {
+            viewModelScope.launch(getDispatcherIo()) {
+                listViewState.update { it.copy(isLoadingMore = true) }
+                loadMoreData()
+                listViewState.update { it.copy(isLoadingMore = false) }
+            }
+        }
+    }
+}
+```
+
+### ListViewState Pattern
+
+```kotlin
+data class ListViewState<T>(
+    val items: ImmutableList<T> = persistentListOf(),
+    val isLoadingInitial: Boolean = false,
+    val isLoadingMore: Boolean = false,
+    val isRefreshing: Boolean = false,
+    val hasError: Boolean = false,
+    val errorMessage: String? = null,
+    val isEmptyList: Boolean = false,
+    val canLoadMore: Boolean = true,
+)
+```
+
+### List Screen UI Pattern
+
+```kotlin
+@Composable
+fun QuestionListScreen(
+    modifier: Modifier = Modifier,
+    uiState: ListViewState<QuestionOperationResponseBody>,
+    onEvent: (QuestionListEvent) -> Unit,
+) {
+    // Initial loading screen
+    if (uiState.isLoadingInitial) {
+        LoadingScreenFullSize()
+        return
+    }
+
+    // Initial error screen
+    if (uiState.hasError) {
+        ErrorScreenFullSize(
+            errorMessage = uiState.errorMessage ?: "An error occurred",
+            withoutAlpha = true
+        )
+        return
+    }
+
+    // Empty list screen
+    if (uiState.isEmptyList) {
+        ErrorScreenFullSize(
+            errorMessage = "No questions found",
+            withoutAlpha = true
+        )
+        return
+    }
+
+    // Main content
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(uiState.items) { question ->
+            QuestionCard(
+                question = question,
+                onEvent = onEvent
+            )
+        }
+
+        // Load more indicator
+        if (uiState.isLoadingMore) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+        }
+    }
+}
+```
+
+### Implementation Example
+
+```kotlin
+```
+
 ## Error Handling Standards
 
 ### Exception Types
@@ -184,7 +302,7 @@ data class QuestionListUiState(
 ### Event Pattern
 
 ```kotlin
-sealed class QuestionListEvent {
+sealed class QuestionListEvent : BaseEvent() {
     object LoadQuestions : QuestionListEvent()
     data class FilterByTag(val tagId: String) : QuestionListEvent()
     data class SelectQuestion(val questionId: String) : QuestionListEvent()
