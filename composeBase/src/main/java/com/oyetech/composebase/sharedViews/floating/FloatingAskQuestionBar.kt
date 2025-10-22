@@ -6,25 +6,48 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
-import org.koin.compose.koinInject
+import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.koin.androidx.compose.koinViewModel
 
+/**
+ * Floating Action Button for creating new questions
+ *
+ * Displays a FAB with Add icon when user is logged in.
+ * Handles navigation to create question screen.
+ */
 @Composable
 fun FloatingAskQuestionBar(
-    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    val loginOperationVM = koinInject<LoginOperationVM>()
-    val loginUiState by loginOperationVM.loginOperationState.collectAsState()
+    val vm = koinViewModel<FloatingAskQuestionBarVm>()
+    val uiState by vm.uiState.collectAsStateWithLifecycle()
 
-    if (loginUiState.isLogin) {
+    FloatingAskQuestionBarContent(
+        modifier = modifier,
+        uiState = uiState,
+        onEvent = vm::onEvent
+    )
+}
+
+@Composable
+private fun FloatingAskQuestionBarContent(
+    modifier: Modifier = Modifier,
+    uiState: FloatingAskQuestionBarUiState,
+    onEvent: (FloatingAskQuestionBarEvent) -> Unit,
+) {
+    if (uiState.isVisible) {
         FloatingActionButton(
-            onClick = onClick,
+            onClick = { onEvent(FloatingAskQuestionBarEvent.OnFabClicked) },
+            modifier = modifier,
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
         ) {
-            Icon(imageVector = Icons.Default.Add, contentDescription = "Ask Question")
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Ask Question"
+            )
         }
     }
 }

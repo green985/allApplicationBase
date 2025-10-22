@@ -24,6 +24,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.projectQuestionsFeature.theme.QuestionProjectViewAttrs
 import com.oyetech.composebase.sharedViews.app.ApplicationLogoPlaceholder
+import com.oyetech.composebase.sharedViews.floating.FloatingAskQuestionBar
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
@@ -37,6 +38,9 @@ fun QuestionPagerScreenSetup(
 
     BaseScaffold(
         topBar = { QuestionPagerToolbar("Questions") },
+        floatingActionButton = {
+            FloatingAskQuestionBar()
+        },
         modifier = Modifier.fillMaxSize(),
         content = { innerPadding ->
             QuestionPagerScreen(
