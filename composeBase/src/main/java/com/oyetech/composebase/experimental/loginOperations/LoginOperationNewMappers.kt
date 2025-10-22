@@ -66,7 +66,7 @@ fun LoginOperationVM.mapToProfileValue(userData: FirebaseUserProfileModel?) {
         } else {
             Timber.d("LoginOperationVM mapToProfileValue fail$userData")
             viewModelScope.launch(Dispatchers.Main) {
-                navigationUseCase.navigate(com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.CompleteProfileScreen.route)
+                navigationUseCase.navigateTo(com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.CompleteProfileScreen.route)
                 loginOperationState.updateState {
                     LoginOperationUiState(isRegistrationCompleteNeeded = true)
                 }

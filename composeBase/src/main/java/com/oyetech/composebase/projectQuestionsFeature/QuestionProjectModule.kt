@@ -6,6 +6,7 @@ import com.oyetech.composebase.projectQuestionsFeature.questionScreens.createQue
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListVm
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionPagerVm
 import com.oyetech.composebase.sharedScreens.settings.FacSettingsVm
+import com.oyetech.composebase.sharedScreens.userProfile.userProfileDesign.UserProfileVm2
 import com.oyetech.composebase.sharedViews.floating.FloatingAskQuestionBarVm
 import com.oyetech.domain.useCases.QuestionUseCase
 import org.koin.androidx.viewmodel.dsl.viewModelOf
@@ -23,5 +24,6 @@ object QuestionProjectModule {
         viewModelOf(::QuestionPagerVm)
         viewModelOf(::AdminApproveQuestionVm)
         viewModelOf(::FloatingAskQuestionBarVm)
+        viewModelOf(::UserProfileVm2)
     }
 }

@@ -59,7 +59,7 @@ class FloatingAskQuestionBarVm(
     }
 
     private fun navigateToCreateQuestion() {
-        navigationUseCase.navigate(QuestionAppProjectRoutes.QuestionCreateQuestionPage.route)
+        navigationUseCase.navigateTo(QuestionAppProjectRoutes.QuestionCreateQuestionPage.route)
     }
 }
 

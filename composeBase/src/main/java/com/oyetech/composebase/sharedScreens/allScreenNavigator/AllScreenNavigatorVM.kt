@@ -26,12 +26,12 @@ class AllScreenNavigatorVM(
             when (event) {
                 is AllScreenNavigatorEvent.OnNavigateToQuestionStart -> {
                     // Handle idle event if needed
-                    navigationUseCase.navigate(AllScreenNavigator.questionAppStart)
+                    navigationUseCase.navigateTo(AllScreenNavigator.questionAppStart)
                 }
 
                 is NavigateListItemClicked -> {
                     // Handle item click event
-                    navigationUseCase.navigate(event.navigationRoute)
+                    navigationUseCase.navigateTo(event.navigationRoute)
                 }
             }
         }

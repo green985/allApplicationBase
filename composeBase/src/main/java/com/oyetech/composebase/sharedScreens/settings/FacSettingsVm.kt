@@ -100,13 +100,13 @@ class FacSettingsVm(
                 FacSettingsUiEvent.NavigateToProfile -> {
                     val uid = firebaseUserRepository.getUserId()
                     if (uid.isNotBlank()) {
-                        navigationUseCase.navigate("${QuestionAppProjectRoutes.UserProfile.route}?${ScreenKey.receiverUserId}=$uid")
+                        navigationUseCase.navigateTo("${QuestionAppProjectRoutes.UserProfile.route}?${ScreenKey.receiverUserId}=$uid")
                     }
                 }
 
                 FacSettingsUiEvent.AdminApproveQuestionsClicked -> {
                     // Debug-only navigation to Admin Approve screen under Question project
-                    navigationUseCase.navigate(QuestionAppProjectRoutes.AdminApproveQuestion.route)
+                    navigationUseCase.navigateTo(QuestionAppProjectRoutes.AdminApproveQuestion.route)
                 }
             }
         }

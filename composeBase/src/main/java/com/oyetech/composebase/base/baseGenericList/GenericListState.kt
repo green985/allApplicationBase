@@ -128,7 +128,7 @@ fun <T> MutableStateFlow<GenericListState<T>>.updateErrorMore(errorMessage: Thro
 
 fun <T> MutableStateFlow<GenericListState<T>>.updateSingleItem(
     predicate: (T) -> Boolean,
-    transform: (T) -> T
+    transform: (T) -> T,
 ): GenericListState<T> {
     val currentList = this.value.items.toMutableList()
     val index = currentList.indexOfFirst(predicate)

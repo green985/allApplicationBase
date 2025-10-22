@@ -7,7 +7,6 @@ import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppPro
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.QuestionAppHomepage
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.QuestionAppSettings
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.QuestionPager
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListNavigationHelper
 import com.oyetech.languageModule.keyset.LanguageKey
 
 /**
@@ -27,6 +26,7 @@ object QuestionAppProjectRoutes {
     val QuestionListWithParams = Route("question/QuestionListWithParams")
     val QuestionPager = Route("question/QuestionPager")
     val UserProfile = Route("question/UserProfile")
+    val User2Profile = Route("question/User2Profile/{receiverId}")
     val MessageDetail = Route("question/MessageDetail")
     val CompleteProfileScreen = Route("question/CompleteProfileScreen")
 
@@ -34,7 +34,7 @@ object QuestionAppProjectRoutes {
         QuestionAppNavItem.TabQuestionAppHomepage,
         QuestionAppNavItem.TabQuestionList,
         QuestionAppNavItem.QuestionAppSettingsTab,
-        QuestionAppNavItem.QuestionAppUserListTab,
+        QuestionAppNavItem.UserProfileTab,
         QuestionAppNavItem.QuestionAppMessageTab,
     )
 }
@@ -68,9 +68,9 @@ sealed class QuestionAppNavItem {
             icon = R.drawable.ic_settings
         )
 
-    object QuestionAppUserListTab :
+    object UserProfileTab :
         BottomNavigationItem(
-            path = QuestionListNavigationHelper.buildQuestionListWithParamsRoute("knowledge")
+            path = QuestionAppProjectRoutes.User2Profile.route
                 .toString(),
             title = R.string.nav_item_settings,
             icon = R.drawable.ic_settings

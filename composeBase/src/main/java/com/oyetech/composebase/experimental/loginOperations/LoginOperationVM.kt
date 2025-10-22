@@ -231,7 +231,7 @@ class LoginOperationVM(
             )
             firebaseUserRepository.updateUserProperty(editedUserData)
             uiEvent.emit(LoginOperationUiEvent.OnLoginSuccess)
-            navigationUseCase.navigate("back")
+            navigationUseCase.navigateTo("back")
         }
         return false
     }

@@ -212,7 +212,7 @@ class QuestionListVm(
             is QuestionViewEvent.OnEditClicked -> {
                 val route =
                     "${QuestionAppProjectRoutes.QuestionCreateQuestionPage.route}?questionId=${event.questionId}"
-                navigationUseCase.navigate(route)
+                navigationUseCase.navigateTo(route)
             }
 
             is QuestionViewEvent.OnPendingClicked -> {

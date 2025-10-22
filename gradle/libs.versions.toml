@@ -29,6 +29,7 @@ google-services = "4.4.2"
 crashlytics-gradle = "3.0.2"
 kover = "0.5.0"
 ui-tooling = "1.9.2"
+ui-tooling-version = "1.9.4"
 
 [libraries]
 
@@ -64,6 +65,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 androides-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "ui-tooling" }
+androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "ui-tooling-version" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "agp" }

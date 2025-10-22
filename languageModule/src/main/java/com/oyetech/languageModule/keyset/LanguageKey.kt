@@ -109,4 +109,12 @@ object LanguageKey {
     var declined set(value) {} get() = LocalLanguageHelper.getStringWithKey("declined")
     var approveAll set(value) {} get() = LocalLanguageHelper.getStringWithKey("approveAll")
     var declineAll set(value) {} get() = LocalLanguageHelper.getStringWithKey("declineAll")
+
+    // User Profile keys
+    var usersAnswers set(value) {} get() = LocalLanguageHelper.getStringWithKey("usersAnswers")
+    var usersQuestions set(value) {} get() = LocalLanguageHelper.getStringWithKey("usersQuestions")
+    var userProfile set(value) {} get() = LocalLanguageHelper.getStringWithKey("userProfile")
+    var loginToViewProfile set(value) {} get() = LocalLanguageHelper.getStringWithKey("loginToViewProfile")
+    var profileNotFound set(value) {} get() = LocalLanguageHelper.getStringWithKey("profileNotFound")
+    var messageUser set(value) {} get() = LocalLanguageHelper.getStringWithKey("messageUser")
 }

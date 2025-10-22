@@ -11,7 +11,7 @@ class NavigationUseCase {
     }
 
     @MainThread
-    fun navigate(route: String) {
+    fun navigateTo(route: String) {
         navigateToInternal?.invoke(route)
     }
 }

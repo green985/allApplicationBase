@@ -34,7 +34,7 @@ fun QuestionsHomeScreenSetup(
                 Text(text = LanguageKey.home)
                 Button(onClick = {
                     // Use NavigationUseCase pattern as requested
-                    navigationUseCase.navigate(QuestionAppProjectRoutes.QuestionCreateQuestionPage.route)
+                    navigationUseCase.navigateTo(QuestionAppProjectRoutes.QuestionCreateQuestionPage.route)
                 }) {
                     Text(text = "Create Question")
                 }

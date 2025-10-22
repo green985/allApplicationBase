@@ -159,7 +159,7 @@ class MessageConversationListVm(
                         listViewState.value.items.find { it.conversationId == event.conversationId }?.username
                             ?: ""
 
-                    navigationUseCase.navigate(
+                    navigationUseCase.navigateTo(
                         QuestionAppProjectRoutes.MessageDetail.withArgs(
                             ScreenKey.conversationId to event.conversationId,
                             ScreenKey.receiverUserId to event.userId,
@@ -199,7 +199,7 @@ class MessageConversationListVm(
             listViewState.value.items.find { it.conversationId == conversationId }?.username
                 ?: ""
 
-        navigationUseCase.navigate(
+        navigationUseCase.navigateTo(
             QuestionAppProjectRoutes.MessageDetail.withArgs(
                 ScreenKey.conversationId to conversationId,
                 ScreenKey.receiverUserId to userId,
