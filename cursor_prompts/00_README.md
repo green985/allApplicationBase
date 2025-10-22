@@ -4,14 +4,15 @@
 
 ### When to Load Which Documentation
 
-| Task Type                | Load Files                                     | Reason                                     |
-|--------------------------|------------------------------------------------|--------------------------------------------|
-| **UI/Compose Changes**   | `compose_rules.md` + `project_context.md`      | Focus on UI patterns and project structure |
-| **Architecture Changes** | `project_context.md` + `architecture_rules.md` | Need full project understanding            |
-| **New Features**         | `project_context.md` + `code_standards.md`     | Understand project + coding patterns       |
-| **Bug Fixes**            | `code_standards.md` + `compose_rules.md`       | Focus on existing patterns                 |
-| **Database Changes**     | `project_context.md` + `architecture_rules.md` | Need data layer understanding              |
-| **Navigation Changes**   | `compose_rules.md` + `project_context.md`      | UI + routing patterns                      |
+| Task Type                 | Load Files                                     | Reason                                     |
+|---------------------------|------------------------------------------------|--------------------------------------------|
+| **UI/Compose Changes**    | `compose_rules.md` + `project_context.md`      | Focus on UI patterns and project structure |
+| **Architecture Changes**  | `project_context.md` + `architecture_rules.md` | Need full project understanding            |
+| **New Features**          | `project_context.md` + `code_standards.md`     | Understand project + coding patterns       |
+| **Bug Fixes**             | `code_standards.md` + `compose_rules.md`       | Focus on existing patterns                 |
+| **Database Changes**      | `project_context.md` + `architecture_rules.md` | Need data layer understanding              |
+| **Navigation Changes**    | `compose_rules.md` + `project_context.md`      | UI + routing patterns                      |
+| **State Race Conditions** | `08_stateflow_mapping_pattern.md`              | StateFlow mapping patterns                 |
 
 ### File Structure
 
@@ -23,6 +24,7 @@
 - `05_self_enforcement.md` - Rules for AI to follow documentation
 - `06_floating_action_button_pattern.md` - FAB implementation pattern
 - `07_import_corrections_index.md` - Correct import paths reference
+- `08_stateflow_mapping_pattern.md` - StateFlow mapping to avoid race conditions
 
 ### Loading Strategy
 

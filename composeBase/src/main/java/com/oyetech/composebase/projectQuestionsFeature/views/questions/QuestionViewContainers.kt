@@ -206,26 +206,20 @@ fun QuestionAdminActionsContainer(
     onEvent: (QuestionViewEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    if (!uiState.isAdminView) {
+        return
+    }
     val adminFilterType = uiState.adminFilterType
 
     when (adminFilterType) {
         ALL -> {
             // Show only status
-            Column(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(vertical = QuestionProjectViewAttrs.spacingSm)
-            ) {
-                Text(
-                    text = "Status: ${uiState.moderationStatus.name}",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
         }
 
         APPROVED_ADMIN -> {
             // Show status + Mark as Pending button
+            QuestionStatusContainer(modifier, uiState)
+
             Column(
                 modifier = modifier
                     .fillMaxWidth()
@@ -262,6 +256,8 @@ fun QuestionAdminActionsContainer(
         }
 
         PENDING_ADMIN -> {
+            QuestionStatusContainer(modifier, uiState)
+
             Row(
                 modifier = modifier
                     .fillMaxWidth()
@@ -310,6 +306,8 @@ fun QuestionAdminActionsContainer(
 
 
         DECLINED_ADMIN -> {
+            QuestionStatusContainer(modifier, uiState)
+
             // Show status + Send to Pending button
             Column(
                 modifier = modifier
@@ -345,10 +343,24 @@ fun QuestionAdminActionsContainer(
                 }
             }
         }
+    }
+}
 
-        ALL -> {
-            // Show nothing
-        }
+@Composable
+private fun QuestionStatusContainer(
+    modifier: Modifier,
+    uiState: QuestionViewUiState,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = QuestionProjectViewAttrs.spacingSm)
+    ) {
+        Text(
+            text = "Status: ${uiState.moderationStatus.name}",
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 

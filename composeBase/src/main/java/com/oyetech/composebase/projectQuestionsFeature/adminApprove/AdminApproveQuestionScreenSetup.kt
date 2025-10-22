@@ -123,7 +123,10 @@ private fun AdminApproveQuestionContent(
                     .padding(QuestionProjectViewAttrs.paddingPage)
             ) {
                 if (pagerState.settledPage == page) {
-                    QuestionListWithParamsScreenSetup(adminFilterTypeStr = filterType.name)
+                    QuestionListWithParamsScreenSetup(
+                        adminFilterTypeStr = filterType.name,
+                        isAdminMode = true
+                    )
                 } else {
                     ApplicationLogoPlaceholder()
                 }

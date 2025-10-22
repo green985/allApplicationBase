@@ -35,6 +35,7 @@ fun QuestionListWithParamsScreenSetup(
     modifier: Modifier = Modifier,
     questionTagId: String? = null,
     adminFilterTypeStr: String? = null,
+    isAdminMode: Boolean = false,
     innerPadding: PaddingValues = PaddingValues(0.dp),
 ) {
     Timber.d("QuestionListWithParamsScreenSetup_$questionTagId-$adminFilterTypeStr")
@@ -58,11 +59,15 @@ fun QuestionListWithParamsScreenSetup(
             }
             vm.setAdminFilter(filterType)
         }
+
+        if (isAdminMode) {
+            vm.onQuestionEvent(QuestionViewEvent.SetAdminMode(true))
+        }
     }
     QuestionListWithParamsContent(
         contentPadding = innerPadding,
         listViewState = listViewState,
-        onQuestionEvent = { vm.onQuestionEvent(it) },
+        onQuestionEvent = vm::onQuestionEvent,
     )
 
 }

@@ -62,6 +62,10 @@ sealed class QuestionViewEvent : BaseEvent() {
     data class OnDeleteAnswerClicked(val questionId: String) : QuestionViewEvent()
 
     // Moderation actions
+    data class SetAdminMode(val isAdminView: Boolean) : QuestionViewEvent()
+    data class SetAdminFilterType(val adminFilterType: QuestionListAdminFilterType) :
+        QuestionViewEvent()
+
     data class OnEditClicked(val questionId: String) : QuestionViewEvent()
     data class OnAcceptClicked(val questionId: String) : QuestionViewEvent()
     data class OnDeclineClicked(val questionId: String) : QuestionViewEvent()

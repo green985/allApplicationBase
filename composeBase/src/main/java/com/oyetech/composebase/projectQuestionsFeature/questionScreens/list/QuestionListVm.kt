@@ -40,6 +40,8 @@ class QuestionListVm(
 
     val uiState = MutableStateFlow(QuestionListUiState())
     private val queFilter = MutableStateFlow<QueFilter?>(null)
+    private val adminViewState = MutableStateFlow(false)
+    private val adminFilterType = MutableStateFlow(QuestionListAdminFilterType.APPROVED_ADMIN)
 
     override val listViewState: MutableStateFlow<GenericListState<QuestionViewUiState>> =
         MutableStateFlow(
@@ -79,6 +81,14 @@ class QuestionListVm(
             )
         }.combine(answerRepository.answersState) { questions, answers ->
             overlayAnswers(questions, answers)
+        }.combine(adminViewState) { questions, isAdminView ->
+            questions.map { question ->
+                question.copy(isAdminView = isAdminView)
+            }
+        }.combine(adminFilterType) { questions, filterType ->
+            questions.map { question ->
+                question.copy(adminFilterType = filterType)
+            }
         }
     }
 
@@ -117,6 +127,7 @@ class QuestionListVm(
     }
 
     fun setAdminFilter(filterType: QuestionListAdminFilterType) {
+        adminFilterType.value = filterType
         val filter = queFilter.value
         if (filter == null) {
             queFilter.value = QueFilter(adminFilterType = filterType, selectedTagFilter = null)
@@ -214,9 +225,23 @@ class QuestionListVm(
                 }
             }
 
-            else -> {
-                Timber.d("Unhandled QuestionViewEvent in ListVM: ${event.javaClass.simpleName}")
+            QuestionViewEvent.CancelClicked -> TODO()
+            QuestionViewEvent.OnErrorDismiss -> TODO()
+            is QuestionViewEvent.OnTagRemoved -> TODO()
+            is QuestionViewEvent.OnTagSelected -> TODO()
+            is QuestionViewEvent.OnTagSelectedForCreateQuestion -> TODO()
+            is QuestionViewEvent.SetAdminMode -> {
+                adminViewState.value = event.isAdminView
+                Timber.d("Admin view mode set to: ${event.isAdminView}")
             }
+
+            is QuestionViewEvent.SetAdminFilterType -> {
+                adminFilterType.value = event.adminFilterType
+                Timber.d("Admin view mode set to: ${event.adminFilterType}")
+            }
+
+            QuestionViewEvent.SubmitClicked -> TODO()
+            is QuestionViewEvent.TitleChanged -> TODO()
         }
     }
 
