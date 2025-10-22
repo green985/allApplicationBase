@@ -21,10 +21,22 @@
 - `03_architecture_rules.md` - Clean architecture, MVVM patterns
 - `04_code_standards.md` - General coding standards and patterns
 - `05_self_enforcement.md` - Rules for AI to follow documentation
+- `06_floating_action_button_pattern.md` - FAB implementation pattern
+- `07_import_corrections_index.md` - Correct import paths reference
 
 ### Loading Strategy
 
 1. **Always load** `00_README.md` first
-2. **Select relevant files** based on task type
-3. **Never skip** documentation loading
-4. **Reference specific rules** when making changes
+2. **Always load** `07_import_corrections_index.md` for correct imports
+3. **Select relevant files** based on task type
+4. **Never skip** documentation loading
+5. **Reference specific rules** when making changes
+
+### Import Reference
+
+**ALWAYS** consult `07_import_corrections_index.md` when:
+
+- Creating new files
+- Adding imports
+- Getting import errors
+- Using asResult, BaseEvent, koinViewModel, or navigation

@@ -24,6 +24,54 @@ import androidx.compose.*
 import androidx.compose.foundation.*
 ```
 
+## Correct Import Paths
+
+### Common Import Corrections
+
+| Wrong Import                                      | Correct Import                                      | Context                  |
+|---------------------------------------------------|-----------------------------------------------------|--------------------------|
+| `import com.oyetech.tools.helpers.asResult`       | `import com.oyetech.tools.coroutineHelper.asResult` | Flow extensions          |
+| `import com.oyetech.models.utils.const.BaseEvent` | `import com.oyetech.composebase.base.BaseEvent`     | Base event class         |
+| `import org.koin.compose.koinViewModel`           | `import org.koin.androidx.compose.koinViewModel`    | Koin ViewModel injection |
+
+### Navigation UseCase
+
+```kotlin
+// WRONG
+navigationUseCase.navigateTo(QuestionAppProjectRoutes.QuestionCreateQuestionPage)
+
+// CORRECT
+navigationUseCase.navigate(QuestionAppProjectRoutes.QuestionCreateQuestionPage.route)
+```
+
+### Typical ViewModel Imports
+
+```kotlin
+import androidx.lifecycle.viewModelScope
+import com.oyetech.composebase.base.BaseViewModel
+import com.oyetech.tools.coroutineHelper.AppDispatchers
+import com.oyetech.tools.coroutineHelper.asResult
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+```
+
+### Typical Compose Imports
+
+```kotlin
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.koin.androidx.compose.koinViewModel
+```
+
+### Event Class Imports
+
+```kotlin
+import com.oyetech.composebase.base.BaseEvent
+```
+
 ## Naming Conventions
 
 ### Classes
