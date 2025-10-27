@@ -1,0 +1,89 @@
+[versions]
+compile-sdk = "36"
+kotlin = "2.2.20"
+agp = "8.7.0"
+compose-bom = "2025.09.01"
+koin-bom = "3.5.0"
+appcompat = "1.7.0"
+core-ktx = "1.16.0"
+kotlin-gradle-plugin = "2.2.20"
+lifecycle = "2.7.0"
+material-icons-extended = "1.7.8"
+media = "1.7.1"
+activity-compose = "1.9.2"
+material3 = "1.4.0"
+material = "1.9.2"
+foundation = "1.9.2"
+runtime = "1.7.7"
+navigation = "2.8.6"
+paging = "3.3.5"
+glide-compose = "1.0.0-beta01"
+kotlinx-collections-immutable = "0.3.8"
+kotlinx-serialization-json = "1.6.3"
+timber = "4.7.1"
+ksp = "2.2.20-2.0.3"
+ktlint = "13.1.0"
+detekt = "1.23.7"
+lsparanoid = "0.5.2"
+google-services = "4.4.2"
+crashlytics-gradle = "3.0.2"
+kover = "0.5.0"
+ui-tooling = "1.9.2"
+ui-tooling-version = "1.9.4"
+
+[libraries]
+
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "material-icons-extended" }
+compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
+koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
+
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
+androidx-media = { module = "androidx.media:media", version.ref = "media" }
+
+activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
+compose-ui = { module = "androidx.compose.ui:ui" }
+compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
+compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
+compose-material = { module = "androidx.compose.material:material", version.ref = "material" }
+compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "foundation" }
+compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "runtime" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin-gradle-plugin" }
+navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
+navigation-runtime-ktx = { module = "androidx.navigation:navigation-runtime-ktx", version.ref = "navigation" }
+paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
+
+koin-core = { module = "io.insert-koin:koin-core" }
+koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose" }
+koin-androidx-compose-navigation = { module = "io.insert-koin:koin-androidx-compose-navigation" }
+
+glide-compose = { module = "com.github.bumptech.glide:compose", version.ref = "glide-compose" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinx-collections-immutable" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+androides-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "ui-tooling" }
+androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "ui-tooling-version" }
+
+[plugins]
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-test = { id = "com.android.test", version.ref = "agp" }
+
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize" }
+
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+lsparanoid = { id = "org.lsposed.lsparanoid", version.ref = "lsparanoid" }
+google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
+crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics-gradle" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+safe-args = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation" }
+fooJayResolver = { id = "org.gradle.toolchains.foojay-resolver-convention", version = "0.9.0" }
