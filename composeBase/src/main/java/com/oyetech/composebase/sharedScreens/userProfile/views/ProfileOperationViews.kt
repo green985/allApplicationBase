@@ -30,7 +30,7 @@ fun ProfileBiograpyhyInputArea(
     )
 }
 
-@Preview(showSystemUi = true, showBackground = true)
+@Preview(showBackground = true)
 @Composable
 private fun ProfileBiographyInputAreaPreview() {
     ProfileBiograpyhyInputArea(

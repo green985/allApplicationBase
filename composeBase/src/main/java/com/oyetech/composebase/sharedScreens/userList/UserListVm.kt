@@ -107,7 +107,7 @@ class UserListVm(
 
                 is OnUserClick -> {
                     val itemDetail = listViewState.value.items[event.index]
-                    navigationUseCase.navigate(
+                    navigationUseCase.navigateTo(
                         QuestionAppProjectRoutes.MessageDetail.withArgs(
                             ScreenKey.receiverUserId to itemDetail.userId,
                         )

@@ -11,21 +11,24 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -37,8 +40,12 @@ import com.bumptech.glide.integration.compose.GlideSubcomposition
 import com.bumptech.glide.integration.compose.RequestState
 import com.bumptech.glide.integration.compose.placeholder
 import com.oyetech.composebase.baseViews.dotIndicator.DotsIndicatorSmallAnim
+import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
+import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.sharedScreens.userProfile.views.ProfileBiograpyhyInputArea
+import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.tools.contextHelper.getApplicationLogo
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -53,13 +60,18 @@ private const val BoxHeightPercent = 0.4f
 @Composable
 fun User2ProfileScreenSetup(
     modifier: Modifier = Modifier,
-    navigationRoute: (navigationRoute: String) -> Unit = {},
+    receiverId: String = "",
+    viewModel: UserProfileVm2,
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     User2ProfileScreen(
         modifier = modifier,
-        navigationRoute = navigationRoute,
-        uiState = getDefaulUiState(),
-        receiverUserId = "adasd"
+        uiState = uiState,
+        receiverUserId = receiverId,
+        onEvent = { event ->
+            viewModel.onEvent(event)
+        }
     )
 }
 
@@ -68,15 +80,14 @@ fun User2ProfileScreenSetup(
 @Composable
 fun User2ProfileScreen(
     modifier: Modifier = Modifier,
-    navigationRoute: (navigationRoute: String) -> Unit = {},
     receiverUserId: String,
-    uiState: UserProfileUiState = UserProfileUiState(),
-    onEvent: UserProfileUiEvent.() -> Unit = { }, // Default empty event handler
+    uiState: UserProfileUiState2 = UserProfileUiState2(),
+    onEvent: (UserProfileUiEvent2) -> Unit = { },
 ) {
     Scaffold(topBar = {
         TopAppBar(title = {
             Text(
-                text = uiState.username,
+                text = if (uiState.isNotLogin) LanguageKey.userProfile else uiState.username,
                 modifier = Modifier.padding(start = 16.dp),
                 style = MaterialTheme.typography.headlineSmall
             )
@@ -86,51 +97,129 @@ fun User2ProfileScreen(
             Modifier
                 .padding(contentPadding)
         ) {
-            UserImageListView(imageList = uiState.userImageList, onImageClick = {
-                onEvent.invoke(
-                    UserProfileUiEvent.OnImageClick(
-                        uiState.userImageList.firstOrNull() ?: FirebaseUserImageModel()
+            when {
+                uiState.isLoading -> {
+                    LoadingScreenFullSize()
+                }
+
+                uiState.isNotLogin -> {
+                    LoginRequiredContent(
+                        modifier = Modifier.fillMaxSize(),
+                        onLoginClick = { onEvent(UserProfileUiEvent2.OnLoginButtonClicked) }
                     )
-                )
-            })
+                }
 
-            Row(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // biography or other user details
-                ProfileBiograpyhyInputArea(
-                    isEditMode = false,
-                    biographyText = uiState.biographyText,
-                    onBiographyTextChange = {
-                        onEvent(UserProfileUiEvent.OnBiographyTextChange(it))
-                    })
-            }
+                uiState.isError -> {
+                    ErrorScreenFullSize(
+                        modifier = Modifier.fillMaxSize(),
+                        errorMessage = uiState.errorMessage
+                    )
+                }
 
-            Spacer(Modifier.weight(1f))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 32.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                IconButton(onClick = {
-                    onEvent.invoke(UserProfileUiEvent.OnMessageUserClick(receiverUserId))
-                }) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.Send,
-                        contentDescription = "Message User",
-                        modifier = Modifier.size(60.dp)
+                else -> {
+                    ProfileContent(
+                        modifier = Modifier.fillMaxSize(),
+                        uiState = uiState,
+                        receiverUserId = receiverUserId,
+                        onEvent = onEvent
                     )
                 }
             }
-
         }
     }
 }
+
+@Composable
+private fun LoginRequiredContent(
+    modifier: Modifier = Modifier,
+    onLoginClick: () -> Unit,
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = LanguageKey.loginToViewProfile,
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.padding(16.dp)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = onLoginClick,
+            shape = RoundedCornerShape(8.dp)
+        ) {
+            Text(text = LanguageKey.login)
+        }
+    }
+}
+
+@Composable
+private fun ProfileContent(
+    modifier: Modifier = Modifier,
+    uiState: UserProfileUiState2,
+    receiverUserId: String,
+    onEvent: (UserProfileUiEvent2) -> Unit,
+) {
+    Column(modifier = modifier) {
+        // Biography
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .padding(top = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ProfileBiograpyhyInputArea(
+                isEditMode = false,
+                biographyText = uiState.biographyText,
+                onBiographyTextChange = {
+                    onEvent(UserProfileUiEvent2.OnBiographyTextChange(it))
+                }
+            )
+        }
+
+        // Question List Type Selector
+        if (uiState.questionListTypes.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(16.dp))
+            QuestionListTypeSelector(
+                questionListTypes = uiState.questionListTypes,
+                currentType = uiState.currentQuestionListType,
+                onTypeChanged = { type ->
+                    onEvent(UserProfileUiEvent2.OnQuestionListTypeChanged(type))
+                }
+            )
+        }
+
+    }
+
+}
+
+@Composable
+private fun QuestionListTypeSelector(
+    questionListTypes: ImmutableList<QuestionListTypeItem>,
+    currentType: QuestionListType,
+    onTypeChanged: (QuestionListType) -> Unit,
+) {
+    SingleChoiceSegmentedButtonRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+    ) {
+        questionListTypes.forEach { item ->
+            SegmentedButton(
+                selected = currentType == item.type,
+                onClick = { onTypeChanged(item.type) },
+                shape = SegmentedButtonDefaults.itemShape(
+                    index = questionListTypes.indexOf(item),
+                    count = questionListTypes.size
+                ), icon = {}
+            ) {
+                Text(text = item.title)
+            }
+        }
+    }
+}
+
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -223,16 +312,22 @@ private fun UserImageListView(
 fun User2ProfileScreenPreview() {
     User2ProfileScreen(
         receiverUserId = "erdiOzbek",
-        navigationRoute = {}, uiState = getDefaulUiState()
+        uiState = getDefaultUiState2()
     )
 }
 
-@Composable
-private fun getDefaulUiState() = UserProfileUiState(
-    username = "Erdi Özbeffffk",
+private fun getDefaultUiState2() = UserProfileUiState2(
+    username = "Erdi Özbek",
     biographyText = "This is a sample biography text for preview purposes.",
-    userImageList = persistentListOf(
-        FirebaseUserImageModel("https://picsum.photos/2000", "image1"),
-        FirebaseUserImageModel("https://picsum.photos/3000", "image2")
-    )
+    currentQuestionListType = QuestionListType.USERS_ANSWERS,
+    questionListTypes = persistentListOf(
+        QuestionListTypeItem(
+            type = QuestionListType.USERS_ANSWERS,
+            title = LanguageKey.usersAnswers
+        ),
+        QuestionListTypeItem(
+            type = QuestionListType.USERS_QUESTIONS,
+            title = LanguageKey.usersQuestions
+        )
+    ),
 )
