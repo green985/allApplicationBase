@@ -13,7 +13,6 @@ class HelloFunction : HttpFunction {
 
     override fun service(request: HttpRequest, response: HttpResponse) {
         val writer: BufferedWriter = response.writer
-
         when (request.method) {
             "GET" -> handleGet(request, writer)
             "POST" -> handlePost(request, writer)
