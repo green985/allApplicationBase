@@ -37,14 +37,16 @@ fun QuestionListWithParamsScreenSetup(
     adminFilterTypeStr: String? = null,
     isAdminMode: Boolean = false,
     innerPadding: PaddingValues = PaddingValues(0.dp),
+    questionListType: String? = null,
+    userId: String? = null,
 ) {
-    Timber.d("QuestionListWithParamsScreenSetup_$questionTagId-$adminFilterTypeStr")
+    Timber.d("QuestionListWithParamsScreenSetup_$questionTagId-$adminFilterTypeStr-$questionListType-$userId")
     val vm =
-        koinViewModel<QuestionListVm>(key = "QuestionListWithParamsScreenSetup_$questionTagId-$adminFilterTypeStr")
+        koinViewModel<QuestionListVm>(key = "QuestionListWithParamsScreenSetup_$questionTagId-$adminFilterTypeStr-$questionListType-$userId")
     val uiState by vm.uiState.collectAsStateWithLifecycle()
     val listViewState by vm.listViewState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(questionTagId, adminFilterTypeStr) {
+    LaunchedEffect(questionTagId, adminFilterTypeStr, questionListType, userId) {
         if (questionTagId != null) {
             val tag = com.oyetech.models.questionProject.questionOperation.QuestionTagCatalog
                 .createQuestionTagList.find { it.id == questionTagId }
@@ -58,6 +60,10 @@ fun QuestionListWithParamsScreenSetup(
                 QuestionListAdminFilterType.APPROVED_ADMIN
             }
             vm.setAdminFilter(filterType)
+        }
+
+        if (questionListType != null && userId != null) {
+            vm.setUserFilter(questionListType, userId)
         }
 
         if (isAdminMode) {

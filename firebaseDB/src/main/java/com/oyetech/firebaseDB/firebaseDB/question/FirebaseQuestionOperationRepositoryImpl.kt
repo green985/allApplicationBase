@@ -222,4 +222,73 @@ class FirebaseQuestionOperationRepositoryImpl(
         val orderIndex = questionIdsOrdered.withIndex().associate { it.value to it.index }
         return result.sortedBy { orderIndex[it.questionId] ?: Int.MAX_VALUE }
     }
+
+    override fun getUserQuestions(userId: String): Flow<List<QuestionOperationResponseBody>> =
+        flow {
+            try {
+                val snapshot = firestore
+                    .collection(FirebaseDatabaseKeys.createQuestion)
+                    .whereEqualTo("createdBy", userId)
+                    .whereEqualTo("moderationStatus", "APPROVED")
+                    .orderBy("createdAt", Query.Direction.DESCENDING)
+                    .get()
+                    .await()
+
+                val questionList = snapshot.documents.mapNotNull { doc ->
+                    doc.toObject(QuestionOperationResponseBody::class.java)
+                        ?.copy(questionId = doc.id)
+                }
+                Timber.d("User questions fetched: ${questionList.size} items for userId: $userId")
+                emit(questionList)
+            } catch (e: Exception) {
+                error(GeneralException(e.message ?: "User questions fetch error"))
+            }
+        }
+
+    override fun getUserAnsweredQuestions(userId: String): Flow<List<QuestionOperationResponseBody>> =
+        flow {
+            try {
+                // 1) Fetch answers by userId
+                val answersSnap = firestore
+                    .collectionGroup("answers")
+                    .whereEqualTo("userId", userId)
+                    .whereEqualTo("moderationStatus", "APPROVED")
+                    .orderBy("submittedAt", Query.Direction.DESCENDING)
+                    .get()
+                    .await()
+
+                // 2) Extract distinct questionIds
+                val questionIds = answersSnap.documents
+                    .mapNotNull { it.getString("questionId") }
+                    .distinct()
+
+                if (questionIds.isEmpty()) {
+                    emit(emptyList())
+                    return@flow
+                }
+
+                // 3) Fetch questions by id batches of 10
+                val result = mutableListOf<QuestionOperationResponseBody>()
+                questionIds.chunked(10).forEach { batch ->
+                    val snap = firestore
+                        .collection(FirebaseDatabaseKeys.createQuestion)
+                        .whereIn(FieldPath.documentId(), batch)
+                        .get()
+                        .await()
+                    val items = snap.documents.mapNotNull { d ->
+                        d.toObject(QuestionOperationResponseBody::class.java)
+                            ?.copy(questionId = d.id)
+                    }
+                    result += items
+                }
+
+                // 4) Sort by answer submission order
+                val orderIndex = questionIds.withIndex().associate { it.value to it.index }
+                val sorted = result.sortedBy { orderIndex[it.questionId] ?: Int.MAX_VALUE }
+                Timber.d("User answered questions fetched: ${sorted.size} items for userId: $userId")
+                emit(sorted)
+            } catch (e: Exception) {
+                error(GeneralException(e.message ?: "User answered questions fetch error"))
+            }
+        }
 }

@@ -74,11 +74,31 @@ class QuestionListVm(
     }
 
     fun getQuestionDataFlow(): Flow<List<QuestionViewUiState>> {
-        return queFilter.filterNotNull().flatMapLatest {
-            questionUseCase.getQuestionListWithUpdates(
-                moderationStatus = it.adminFilterType.toModerationStatusOrNull(),
-                tag = it.selectedTagFilter
-            )
+        return queFilter.filterNotNull().flatMapLatest { filter ->
+            when (filter.questionListType) {
+                "USERS_QUESTIONS" -> {
+                    if (filter.userId.isNullOrBlank()) {
+                        kotlinx.coroutines.flow.flowOf(emptyList())
+                    } else {
+                        repository.getUserQuestions(filter.userId)
+                    }
+                }
+
+                "USERS_ANSWERS" -> {
+                    if (filter.userId.isNullOrBlank()) {
+                        kotlinx.coroutines.flow.flowOf(emptyList())
+                    } else {
+                        repository.getUserAnsweredQuestions(filter.userId)
+                    }
+                }
+
+                else -> {
+                    questionUseCase.getQuestionListWithUpdates(
+                        moderationStatus = filter.adminFilterType.toModerationStatusOrNull(),
+                        tag = filter.selectedTagFilter
+                    )
+                }
+            }
         }.combine(answerRepository.answersState) { questions, answers ->
             overlayAnswers(questions, answers)
         }.combine(adminViewState) { questions, isAdminView ->
@@ -153,6 +173,18 @@ class QuestionListVm(
 
     fun clearAllFilters() {
         queFilter.value = null
+    }
+
+    fun setUserFilter(questionListType: String, userId: String) {
+        val filter = queFilter.value
+        if (filter == null) {
+            queFilter.value = QueFilter(
+                questionListType = questionListType,
+                userId = userId
+            )
+            return
+        }
+        queFilter.value = filter.copy(questionListType = questionListType, userId = userId)
     }
 
     fun onQuestionEvent(event: QuestionViewEvent) {

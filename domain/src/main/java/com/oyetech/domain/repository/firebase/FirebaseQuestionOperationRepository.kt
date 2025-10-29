@@ -38,4 +38,10 @@ interface FirebaseQuestionOperationRepository {
 
     // Fast path: fetch most recently answered approved questions (by answers submittedAt)
     fun getMostRecentlyAnsweredQuestions(limit: Int = 50): Flow<List<QuestionOperationResponseBody>>
+
+    // Get questions created by a specific user
+    fun getUserQuestions(userId: String): Flow<List<QuestionOperationResponseBody>>
+
+    // Get questions answered by a specific user
+    fun getUserAnsweredQuestions(userId: String): Flow<List<QuestionOperationResponseBody>>
 }

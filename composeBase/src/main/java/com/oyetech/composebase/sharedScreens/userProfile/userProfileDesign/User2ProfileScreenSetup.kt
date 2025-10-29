@@ -1,5 +1,6 @@
 package com.oyetech.composebase.sharedScreens.userProfile.userProfileDesign
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -42,12 +43,15 @@ import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.dotIndicator.DotsIndicatorSmallAnim
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListWithParamsScreenSetup
 import com.oyetech.composebase.sharedScreens.userProfile.views.ProfileBiographyInputArea
+import com.oyetech.composebase.sharedViews.app.ApplicationLogoPlaceholder
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.tools.contextHelper.getApplicationLogo
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -81,7 +85,6 @@ fun User2ProfileScreenSetup(
         onEvent = onEvent
     )
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -160,12 +163,21 @@ private fun LoginRequiredContent(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ProfileContent(
     modifier: Modifier = Modifier,
     uiState: UserProfileUiState2,
     onEvent: (UserProfileUiEvent2) -> Unit,
 ) {
+    val pagerState = rememberPagerState(
+        initialPage = uiState.questionListTypes.indexOf(
+            uiState.questionListTypes.find { it.type == uiState.currentQuestionListType }
+        ).coerceAtLeast(0),
+        pageCount = { uiState.questionListTypes.size }
+    )
+    val coroutineScope = androidx.compose.runtime.rememberCoroutineScope()
+
     Column(modifier = modifier) {
         // Biography
         Row(
@@ -183,20 +195,52 @@ private fun ProfileContent(
             )
         }
 
-        // Question List Type Selector
+        // Question List Type Selector with HorizontalPager
         if (uiState.questionListTypes.isNotEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))
-            QuestionListTypeSelector(
-                questionListTypes = uiState.questionListTypes,
-                currentType = uiState.currentQuestionListType,
-                onTypeChanged = { type ->
-                    onEvent(UserProfileUiEvent2.OnQuestionListTypeChanged(type))
+            SingleChoiceSegmentedButtonRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ) {
+                uiState.questionListTypes.forEachIndexed { index, item ->
+                    SegmentedButton(
+                        selected = pagerState.currentPage == index,
+                        onClick = {
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(index)
+                            }
+                            onEvent(UserProfileUiEvent2.OnQuestionListTypeChanged(item.type))
+                        },
+                        shape = SegmentedButtonDefaults.itemShape(
+                            index = index,
+                            count = uiState.questionListTypes.size
+                        ), icon = {}
+                    ) {
+                        Text(text = item.title)
+                    }
                 }
-            )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // HorizontalPager for content
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.weight(1f)
+            ) { page ->
+                val listType = uiState.questionListTypes[page].type
+                if (pagerState.settledPage == page) {
+                    QuestionListWithParamsScreenSetup(
+                        questionListType = listType.name,
+                        userId = uiState.userId
+                    )
+                } else {
+                    ApplicationLogoPlaceholder()
+                }
+            }
         }
-
     }
-
 }
 
 @Composable
@@ -224,7 +268,6 @@ private fun QuestionListTypeSelector(
         }
     }
 }
-
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -282,7 +325,6 @@ private fun UserImageListView(
                                 }
                                 // painter also comes from GlideSubcompositionScope
                                 is RequestState.Success -> {
-
                                     Image(
                                         modifier = Modifier
                                             .fillMaxSize()
@@ -295,7 +337,6 @@ private fun UserImageListView(
                         }
                     }
                 }
-
             }
         }
         Row(

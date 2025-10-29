@@ -71,7 +71,7 @@ class UserProfileVm2(
     }
 
     private suspend fun loadUserProfile(userId: String) {
-        _uiState.updateState { copy(isLoading = true) }
+        _uiState.updateState { copy(isLoading = true, userId = userId) }
 
         firebaseUserRepository.getUserProfileWithUserId(userId).asResult().collect { result ->
             result.fold(
@@ -80,7 +80,8 @@ class UserProfileVm2(
                         copy(
                             isLoading = false,
                             username = user.username ?: "",
-                            isNotLogin = false
+                            isNotLogin = false,
+                            userId = userId
                         )
                     }
                 },
@@ -90,7 +91,8 @@ class UserProfileVm2(
                         copy(
                             isLoading = false,
                             isError = true,
-                            errorMessage = "Failed to load user profile"
+                            errorMessage = "Failed to load user profile",
+                            userId = userId
                         )
                     }
                 }
@@ -105,11 +107,13 @@ class UserProfileVm2(
             result.fold(
                 onSuccess = { user ->
                     if (user != null) {
+                        val currentUserId = firebaseUserRepository.getUserId()
                         _uiState.updateState {
                             copy(
                                 isLoading = false,
                                 username = user.username ?: "",
-                                isNotLogin = false
+                                isNotLogin = false,
+                                userId = currentUserId
                             )
                         }
                     } else {
@@ -189,6 +193,7 @@ data class UserProfileUiState2(
     val userImageList: ImmutableList<FirebaseUserImageModel> = persistentListOf(),
     val questionListTypes: ImmutableList<QuestionListTypeItem> = persistentListOf(),
     val currentQuestionListType: QuestionListType = QuestionListType.USERS_ANSWERS,
+    val userId: String = "",
 )
 
 /**
