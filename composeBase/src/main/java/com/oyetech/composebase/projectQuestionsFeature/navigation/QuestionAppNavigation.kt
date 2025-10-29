@@ -13,11 +13,7 @@ import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageC
 import com.oyetech.composebase.sharedScreens.navigation.ScreenKey
 import com.oyetech.composebase.sharedScreens.settings.FacSettingsScreenSetup
 import com.oyetech.composebase.sharedScreens.userList.UserListScreenSetup
-import com.oyetech.composebase.sharedScreens.userProfile.UserProfileScreenSetup
 import com.oyetech.composebase.sharedScreens.userProfile.userProfileDesign.User2ProfileScreenSetup
-import com.oyetech.composebase.sharedScreens.userProfile.userProfileDesign.UserProfileVm2
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Suppress("LongMethod")
 fun NavGraphBuilder.questionAppNavigation(navController: NavController) {
@@ -54,7 +50,7 @@ fun NavGraphBuilder.questionAppNavigation(navController: NavController) {
     composable(QuestionAppProjectRoutes.AdminApproveQuestion.route) {
         AdminApproveQuestionScreenSetup()
     }
-    
+
     composable(QuestionAppProjectRoutes.QuestionPager.route) {
         QuestionPagerScreenSetup()
     }
@@ -123,26 +119,6 @@ fun NavGraphBuilder.questionAppNavigation(navController: NavController) {
         )
     ) { entry ->
         val receiverUserId = entry.arguments?.getString(ScreenKey.receiverUserId) ?: ""
-        UserProfileScreenSetup(receiverUserId = receiverUserId)
-    }
-
-    // User2Profile route with receiverId parameter
-    composable(
-        route = QuestionAppProjectRoutes.User2Profile.route,
-        arguments = listOf(
-            navArgument("receiverId") {
-                defaultValue = ""
-                nullable = true
-            }
-        )
-    ) { entry ->
-        val receiverId = entry.arguments?.getString("receiverId") ?: ""
-        val viewModel = koinViewModel<UserProfileVm2> {
-            parametersOf(receiverId)
-        }
-        User2ProfileScreenSetup(
-            receiverId = receiverId,
-            viewModel = viewModel
-        )
+        User2ProfileScreenSetup(receiverUserId = receiverUserId)
     }
 }

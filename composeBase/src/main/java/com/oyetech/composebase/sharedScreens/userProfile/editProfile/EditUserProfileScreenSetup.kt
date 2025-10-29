@@ -25,7 +25,7 @@ import com.oyetech.composebase.helpers.viewProperties.ImagePickerHandler
 import com.oyetech.composebase.sharedScreens.userProfile.EditProfileEvent
 import com.oyetech.composebase.sharedScreens.userProfile.EditProfileEvent.OnImageSlotClick
 import com.oyetech.composebase.sharedScreens.userProfile.EditProfileUiState
-import com.oyetech.composebase.sharedScreens.userProfile.views.ProfileBiograpyhyInputArea
+import com.oyetech.composebase.sharedScreens.userProfile.views.ProfileBiographyInputArea
 import com.oyetech.domain.repository.firebase.FirebaseStorageRepository
 import org.koin.compose.koinInject
 import timber.log.Timber
@@ -154,7 +154,7 @@ fun EditUserProfileScreen(
 
 
                 Spacer(modifier = Modifier.padding(8.dp))
-                ProfileBiograpyhyInputArea(
+                ProfileBiographyInputArea(
                     isEditMode = true,
                     biographyText = uiState.biographyText,
                     onBiographyTextChange = { onEvent(EditProfileEvent.OnBiographyTextChange(it)) }

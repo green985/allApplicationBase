@@ -15,8 +15,9 @@ Created by Erdi Özbek
  **/
 
 @Composable
-fun ProfileBiograpyhyInputArea(
-    isEditMode: Boolean = false, biographyText: String,
+fun ProfileBiographyInputArea(
+    isEditMode: Boolean = false,
+    biographyText: String,
     onBiographyTextChange: (biographyText: String) -> Unit = {},
 ) {
     OutlinedTextField(
@@ -33,7 +34,7 @@ fun ProfileBiograpyhyInputArea(
 @Preview(showBackground = true)
 @Composable
 private fun ProfileBiographyInputAreaPreview() {
-    ProfileBiograpyhyInputArea(
+    ProfileBiographyInputArea(
         biographyText = "This is a sample biography text.",
         onBiographyTextChange = {}
     )

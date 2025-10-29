@@ -42,12 +42,14 @@ import com.bumptech.glide.integration.compose.placeholder
 import com.oyetech.composebase.baseViews.dotIndicator.DotsIndicatorSmallAnim
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
-import com.oyetech.composebase.sharedScreens.userProfile.views.ProfileBiograpyhyInputArea
+import com.oyetech.composebase.sharedScreens.userProfile.views.ProfileBiographyInputArea
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.tools.contextHelper.getApplicationLogo
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 /**
 Created by Erdi Özbek
@@ -60,18 +62,23 @@ private const val BoxHeightPercent = 0.4f
 @Composable
 fun User2ProfileScreenSetup(
     modifier: Modifier = Modifier,
-    receiverId: String = "",
-    viewModel: UserProfileVm2,
+    receiverUserId: String = "",
 ) {
+    val viewModel = koinViewModel<UserProfileVm2> {
+        parametersOf(
+            receiverUserId
+        )
+    }
     val uiState by viewModel.uiState.collectAsState()
+    val onEvent: (UserProfileUiEvent2) -> Unit = { event ->
+        viewModel.onEvent(event)
+    }
 
     User2ProfileScreen(
         modifier = modifier,
         uiState = uiState,
-        receiverUserId = receiverId,
-        onEvent = { event ->
-            viewModel.onEvent(event)
-        }
+        receiverUserId = receiverUserId,
+        onEvent = onEvent
     )
 }
 
@@ -169,7 +176,7 @@ private fun ProfileContent(
                 .padding(top = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ProfileBiograpyhyInputArea(
+            ProfileBiographyInputArea(
                 isEditMode = false,
                 biographyText = uiState.biographyText,
                 onBiographyTextChange = {

@@ -70,7 +70,7 @@ sealed class QuestionAppNavItem {
 
     object UserProfileTab :
         BottomNavigationItem(
-            path = QuestionAppProjectRoutes.User2Profile.route
+            path = QuestionAppProjectRoutes.UserProfile.route
                 .toString(),
             title = R.string.nav_item_settings,
             icon = R.drawable.ic_settings
