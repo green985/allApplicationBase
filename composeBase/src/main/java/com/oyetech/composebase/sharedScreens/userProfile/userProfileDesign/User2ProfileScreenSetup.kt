@@ -20,7 +20,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -39,6 +38,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideSubcomposition
 import com.bumptech.glide.integration.compose.RequestState
 import com.bumptech.glide.integration.compose.placeholder
+import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.dotIndicator.DotsIndicatorSmallAnim
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
@@ -91,7 +91,7 @@ fun User2ProfileScreen(
     uiState: UserProfileUiState2 = UserProfileUiState2(),
     onEvent: (UserProfileUiEvent2) -> Unit = { },
 ) {
-    Scaffold(topBar = {
+    BaseScaffold(topBar = {
         TopAppBar(title = {
             Text(
                 text = if (uiState.isNotLogin) LanguageKey.userProfile else uiState.username,
@@ -127,7 +127,6 @@ fun User2ProfileScreen(
                     ProfileContent(
                         modifier = Modifier.fillMaxSize(),
                         uiState = uiState,
-                        receiverUserId = receiverUserId,
                         onEvent = onEvent
                     )
                 }
@@ -165,7 +164,6 @@ private fun LoginRequiredContent(
 private fun ProfileContent(
     modifier: Modifier = Modifier,
     uiState: UserProfileUiState2,
-    receiverUserId: String,
     onEvent: (UserProfileUiEvent2) -> Unit,
 ) {
     Column(modifier = modifier) {
