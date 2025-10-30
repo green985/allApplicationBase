@@ -4,11 +4,14 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,6 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
+import com.oyetech.composebase.helpers.general.GeneralSettings
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.CreateQuestionYesNoView
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionTagsAreaContainer
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
@@ -151,6 +156,18 @@ private fun QuestionCreateScreen(
                     isCreateQuestion = true
                 )
 
+                if (GeneralSettings.isAdmin()) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    AdminAutoApproveCheckbox(
+                        isChecked = uiState.isAutoApprove,
+                        onCheckedChange = { checked ->
+                            onCreateEvent(
+                                QuestionCreateQuestionEvent.OnAutoApproveChanged(checked)
+                            )
+                        }
+                    )
+                }
+
                 CreateQuestionYesNoView(
                     uiState = questionUiState,
                     onEvent = onEvent
@@ -158,6 +175,29 @@ private fun QuestionCreateScreen(
             }
         }
     )
+}
+
+@Composable
+private fun AdminAutoApproveCheckbox(
+    isChecked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Checkbox(
+            checked = isChecked,
+            onCheckedChange = onCheckedChange
+        )
+        Text(
+            text = "Auto-approve (Admin)",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(start = 8.dp)
+        )
+    }
 }
 
 @Composable

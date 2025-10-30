@@ -17,6 +17,7 @@ data class QuestionCreateQuestionScreenUiState(
     val toolbarTitleText: String = "Create Question",
     val isSubmitEnabled: Boolean = false,
     val isSubmitted: Boolean = false,
+    val isAutoApprove: Boolean = false,
 
     // Taxonomy selection for create screen
     val taxonomy: QuestionTaxonomyRef =
@@ -40,6 +41,8 @@ sealed class QuestionCreateQuestionEvent : BaseEvent() {
 
     data class OnThreeChoiceSubSelected(val sub: ThreeChoiceSubCategories) :
         QuestionCreateQuestionEvent()
+
+    data class OnAutoApproveChanged(val isAutoApprove: Boolean) : QuestionCreateQuestionEvent()
 }
 
 // UI Events (one-shot)

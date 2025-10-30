@@ -210,6 +210,9 @@ fun QuestionAdminActionsContainer(
         return
     }
     val adminFilterType = uiState.adminFilterType
+    if (adminFilterType != ALL) {
+        QuestionStatusContainer(modifier, uiState)
+    }
 
     when (adminFilterType) {
         ALL -> {
@@ -218,20 +221,12 @@ fun QuestionAdminActionsContainer(
 
         APPROVED_ADMIN -> {
             // Show status + Mark as Pending button
-            QuestionStatusContainer(modifier, uiState)
 
             Column(
                 modifier = modifier
                     .fillMaxWidth()
                     .padding(vertical = QuestionProjectViewAttrs.spacingSm)
             ) {
-                Text(
-                    text = "Status: ${uiState.moderationStatus.name}",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(bottom = QuestionProjectViewAttrs.spacingXs)
-                )
-
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End,
@@ -256,7 +251,6 @@ fun QuestionAdminActionsContainer(
         }
 
         PENDING_ADMIN -> {
-            QuestionStatusContainer(modifier, uiState)
 
             Row(
                 modifier = modifier
@@ -306,7 +300,6 @@ fun QuestionAdminActionsContainer(
 
 
         DECLINED_ADMIN -> {
-            QuestionStatusContainer(modifier, uiState)
 
             // Show status + Send to Pending button
             Column(
@@ -314,12 +307,6 @@ fun QuestionAdminActionsContainer(
                     .fillMaxWidth()
                     .padding(vertical = QuestionProjectViewAttrs.spacingSm)
             ) {
-                Text(
-                    text = "Status: ${uiState.moderationStatus.name}",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(bottom = QuestionProjectViewAttrs.spacingXs)
-                )
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),

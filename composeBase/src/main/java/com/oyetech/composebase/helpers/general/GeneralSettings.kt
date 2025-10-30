@@ -43,4 +43,8 @@ object GeneralSettings {
         return true
     }
 
+    fun isAdmin(): Boolean {
+        return isDebug()
+    }
+
 }

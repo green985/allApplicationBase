@@ -14,6 +14,7 @@ import com.oyetech.composebase.projectQuestionsFeature.views.questions.toUiState
 import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.models.questionProject.questionOperation.ModerationStatus
 import com.oyetech.models.questionProject.questionOperation.QuestionCategories
 import com.oyetech.models.questionProject.questionOperation.QuestionTaxonomyFactory
 import com.oyetech.models.questionProject.questionOperation.ThreeChoiceSubCategoryKeys
@@ -172,6 +173,10 @@ class QuestionCreateQuestionVm(
                 uiState.updateState { copy(taxonomy = taxonomy.copy(subCategoryKey = event.sub.asKey())) }
             }
 
+            is QuestionCreateQuestionEvent.OnAutoApproveChanged -> {
+                uiState.updateState { copy(isAutoApprove = event.isAutoApprove) }
+            }
+
             QuestionCreateQuestionEvent.OnSubmit -> submit()
             else -> {}
         }
@@ -197,12 +202,22 @@ class QuestionCreateQuestionVm(
             val taxonomy = uiState.value.taxonomy
             val questionIdToUse =
                 editingQuestionId.ifBlank { currentQuestion.questionId }
+
+            val moderationStatus = if (uiState.value.isAutoApprove) {
+                ModerationStatus.APPROVED
+            } else {
+                ModerationStatus.PENDING
+            }
+
             val body = QuestionTaxonomyFactory.buildQuestion(
                 title = currentQuestion.titleText,
                 taxonomy = taxonomy,
                 questionId = questionIdToUse,
                 createdBy = userId
-            ).copy(tags = currentQuestion.selectedTags.toList())
+            ).copy(
+                tags = currentQuestion.selectedTags.toList(),
+                moderationStatus = moderationStatus
+            )
 
             val isEditMode = editingQuestionId.isNotBlank()
             Timber.d("Submitting question (edit=$isEditMode): $body")
