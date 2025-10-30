@@ -10,6 +10,7 @@ object QuestionTaxonomyFactory {
         title: String,
         taxonomy: QuestionTaxonomyRef,
         questionId: String = "",
+        createdBy: String = "",
     ): QuestionOperationResponseBody {
         val category = categoryFromKey(taxonomy.categoryKey)
         val opts: List<QueOption> = when (category) {
@@ -81,6 +82,7 @@ object QuestionTaxonomyFactory {
                 "subCategoryKey" to (taxonomy.subCategoryKey ?: ""),
             ),
             version = 1,
+            createdBy = createdBy,
             createdAt = null,
         )
     }

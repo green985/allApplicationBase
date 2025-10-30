@@ -35,6 +35,7 @@ class QuestionCreateQuestionVm(
     private val questionRepository: FirebaseQuestionOperationRepository,
     private val snackbarDelegate: SnackbarDelegate,
     private val questionUseCase: com.oyetech.domain.useCases.QuestionUseCase,
+    private val firebaseUserRepository: com.oyetech.domain.repository.firebase.FirebaseUserRepository,
 ) : BaseViewModel(appDispatchers) {
 
     val uiState = MutableStateFlow(QuestionCreateQuestionScreenUiState())
@@ -179,6 +180,18 @@ class QuestionCreateQuestionVm(
     private fun submit() {
         val currentQuestion = questionUiState.value
         if (currentQuestion.titleText.isBlank()) return
+
+        val userId = firebaseUserRepository.getUserId()
+        if (userId.isBlank()) {
+            uiState.updateState {
+                copy(
+                    isLoading = false,
+                    errorText = "User not logged in. Please login to create a question."
+                )
+            }
+            return
+        }
+
         uiState.updateState { copy(isLoading = true, errorText = "") }
         viewModelScope.launch(getDispatcherIo()) {
             val taxonomy = uiState.value.taxonomy
@@ -187,7 +200,8 @@ class QuestionCreateQuestionVm(
             val body = QuestionTaxonomyFactory.buildQuestion(
                 title = currentQuestion.titleText,
                 taxonomy = taxonomy,
-                questionId = questionIdToUse
+                questionId = questionIdToUse,
+                createdBy = userId
             ).copy(tags = currentQuestion.selectedTags.toList())
 
             val isEditMode = editingQuestionId.isNotBlank()
