@@ -3,6 +3,8 @@ package com.oyetech.composebase.sharedScreens.userProfile.userProfileDesign
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
+import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
+import com.oyetech.composebase.sharedScreens.navigation.ScreenKey
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
@@ -42,9 +44,10 @@ class UserProfileVm2(
     }
 
     private suspend fun initializeProfile() {
+        val isFromTab = receiverId.isEmpty()
         _uiState.updateState {
             copy(
-                isNotLogin = receiverId.isEmpty(),
+                isFromTab = isFromTab,
                 questionListTypes = buildQuestionListTypes(),
                 currentQuestionListType = QuestionListType.USERS_ANSWERS
             )
@@ -76,12 +79,15 @@ class UserProfileVm2(
         firebaseUserRepository.getUserProfileWithUserId(userId).asResult().collect { result ->
             result.fold(
                 onSuccess = { user ->
+                    val currentUserId = firebaseUserRepository.getUserId()
+                    val isOwnProfile = currentUserId == userId
                     _uiState.updateState {
                         copy(
                             isLoading = false,
                             username = user.username ?: "",
                             isNotLogin = false,
-                            userId = userId
+                            userId = userId,
+                            isOwnProfile = isOwnProfile
                         )
                     }
                 },
@@ -113,7 +119,8 @@ class UserProfileVm2(
                                 isLoading = false,
                                 username = user.username ?: "",
                                 isNotLogin = false,
-                                userId = currentUserId
+                                userId = currentUserId,
+                                isOwnProfile = true
                             )
                         }
                     } else {
@@ -164,18 +171,30 @@ class UserProfileVm2(
                     copy(biographyText = event.newText)
                 }
             }
+
+            is UserProfileUiEvent2.OnEditProfileClick -> {
+                navigateToEditProfile()
+            }
         }
     }
 
     private fun navigateToLogin() {
         viewModelScope.launch {
-            navigationUseCase.navigateTo("login")
+            navigationUseCase.navigateTo(QuestionAppProjectRoutes.CompleteProfileScreen.route)
         }
     }
 
     private fun navigateToMessage(receiverUserId: String) {
         viewModelScope.launch {
-            navigationUseCase.navigateTo("messageDetail/$receiverUserId")
+            val route =
+                "${QuestionAppProjectRoutes.MessageDetail.route}?${ScreenKey.receiverUserId}=$receiverUserId"
+            navigationUseCase.navigateTo(route)
+        }
+    }
+
+    private fun navigateToEditProfile() {
+        viewModelScope.launch {
+            navigationUseCase.navigateTo(QuestionAppProjectRoutes.EditProfile.route)
         }
     }
 }
@@ -194,6 +213,8 @@ data class UserProfileUiState2(
     val questionListTypes: ImmutableList<QuestionListTypeItem> = persistentListOf(),
     val currentQuestionListType: QuestionListType = QuestionListType.USERS_ANSWERS,
     val userId: String = "",
+    val isOwnProfile: Boolean = false,
+    val isFromTab: Boolean = false,
 )
 
 /**
@@ -221,4 +242,5 @@ sealed class UserProfileUiEvent2 {
     data class OnMessageUserClick(val receiverUserId: String) : UserProfileUiEvent2()
     data class OnImageClick(val imageModel: FirebaseUserImageModel) : UserProfileUiEvent2()
     data class OnBiographyTextChange(val newText: String) : UserProfileUiEvent2()
+    data object OnEditProfileClick : UserProfileUiEvent2()
 }

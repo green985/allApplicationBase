@@ -17,9 +17,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -95,13 +99,25 @@ fun User2ProfileScreen(
     onEvent: (UserProfileUiEvent2) -> Unit = { },
 ) {
     BaseScaffold(topBar = {
-        TopAppBar(title = {
-            Text(
-                text = if (uiState.isNotLogin) LanguageKey.userProfile else uiState.username,
-                modifier = Modifier.padding(start = 16.dp),
-                style = MaterialTheme.typography.headlineSmall
-            )
-        })
+        TopAppBar(
+            title = {
+                Text(
+                    text = if (uiState.isNotLogin) LanguageKey.userProfile else uiState.username,
+                    modifier = Modifier.padding(start = 16.dp),
+                    style = MaterialTheme.typography.headlineSmall
+                )
+            },
+            actions = {
+                if (uiState.isOwnProfile && !uiState.isNotLogin) {
+                    IconButton(onClick = { onEvent(UserProfileUiEvent2.OnEditProfileClick) }) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit Profile"
+                        )
+                    }
+                }
+            }
+        )
     }) { contentPadding ->
         Column(
             Modifier
@@ -113,10 +129,16 @@ fun User2ProfileScreen(
                 }
 
                 uiState.isNotLogin -> {
-                    LoginRequiredContent(
-                        modifier = Modifier.fillMaxSize(),
-                        onLoginClick = { onEvent(UserProfileUiEvent2.OnLoginButtonClicked) }
-                    )
+                    if (uiState.isFromTab) {
+                        NotLoginFromTabContent(
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        LoginRequiredContent(
+                            modifier = Modifier.fillMaxSize(),
+                            onLoginClick = { onEvent(UserProfileUiEvent2.OnLoginButtonClicked) }
+                        )
+                    }
                 }
 
                 uiState.isError -> {
@@ -134,6 +156,29 @@ fun User2ProfileScreen(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun NotLoginFromTabContent(
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.error.copy(alpha = 0.2f)),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Please login to view your profile",
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(16.dp)
+            )
         }
     }
 }

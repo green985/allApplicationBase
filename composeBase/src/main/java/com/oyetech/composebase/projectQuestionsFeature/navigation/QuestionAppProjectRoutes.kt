@@ -29,6 +29,7 @@ object QuestionAppProjectRoutes {
     val User2Profile = Route("question/User2Profile/{receiverId}")
     val MessageDetail = Route("question/MessageDetail")
     val CompleteProfileScreen = Route("question/CompleteProfileScreen")
+    val EditProfile = Route("question/EditProfile")
 
     val questionApplicationBottomTabNavList = listOf(
         QuestionAppNavItem.TabQuestionAppHomepage,
