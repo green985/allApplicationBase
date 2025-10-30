@@ -252,7 +252,6 @@ class FirebaseQuestionOperationRepositoryImpl(
                 val answersSnap = firestore
                     .collectionGroup("answers")
                     .whereEqualTo("userId", userId)
-                    .whereEqualTo("moderationStatus", "APPROVED")
                     .orderBy("submittedAt", Query.Direction.DESCENDING)
                     .get()
                     .await()
