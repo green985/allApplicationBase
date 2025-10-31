@@ -46,10 +46,10 @@ class MessageDetailVm(
                 dataFlow = messagingAllOperationRepository.getMessagesFromRemoteAndInsertToLocal(
                     conversationId
                 ).mapFromLocalToUiState(),
-                loadMoreDataFlow = messagingAllOperationRepository.getMessageListWithConversationIdWithMessageId(
+                loadMoreFlow = messagingAllOperationRepository.getMessageListWithConversationIdWithMessageId(
                     conversationId
                 ).mapFromLocalToUiState(),
-                triggerLoadMore = { loadMessageConversation() },
+                onLoadMore = { loadMessageConversation() },
                 skipInitialLoading = true
             )
         )

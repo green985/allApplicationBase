@@ -80,6 +80,5 @@ fun EditUserProfile2ScreenPreview() {
     EditUserProfileScreen(
         uiState = getDefaultUiState(),
         onEvent = { },
-        navigationRoute = {}
     )
 }

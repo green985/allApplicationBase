@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.flowOf
 
 data class GenericListState<T>(
     val dataFlow: Flow<List<T>>? = null,
-
+    val pageIndex: Int = 1,
     val items: ImmutableList<T> = emptyList<T>().toImmutableList(),
     val isRefreshEnable: Boolean = false,
     val isRefreshing: Boolean = false,
@@ -19,19 +19,25 @@ data class GenericListState<T>(
     val isErrorInitial: Boolean = false,
     val isErrorMore: Boolean = false,
     val isEmptyList: Boolean = false,
+    val endOfList: Boolean = false,
     val errorMessage: String = "",
+    val errorMessageInitial: String? = "",
+    val errorMessageMore: String? = "",
     val skipInitialLoading: Boolean = false,
 
     val itemSortType: ItemSortType = ItemSortType.DefaultSortType,
 
     val refreshDataFlow: Flow<List<T>> = flowOf(emptyList()),
-    val loadMoreDataFlow: Flow<List<T>> = flowOf(emptyList()),
+    val loadMoreFlow: Flow<List<T>> = flowOf(emptyList()),
 
-    val triggerRefresh: (() -> Unit)? = null,
-    val triggerLoadMore: (() -> Unit)? = null,
+    val onRefresh: (() -> Unit)? = null,
+    val onLoadMore: (() -> Unit)? = null,
+    val onRetryInitial: (() -> Unit)? = null,
+    val onRetryMore: (() -> Unit)? = null,
+
+
     val triggerScrollToPosition: ((Int) -> Unit)? = null,
-
-    )
+)
 
 fun <T> MutableStateFlow<GenericListState<T>>.makeEmptyListState(): GenericListState<T> {
     this.updateState {

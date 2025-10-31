@@ -43,7 +43,7 @@ class UserListVm(
                 isRefreshEnable = true,
                 dataFlow = firebaseUserListOperationRepository.getRandomUsersFromDatabase()
                     .mapToUiState(),
-                triggerRefresh = { refreshList() }
+                onRefresh = { refreshList() }
             )
         )
 

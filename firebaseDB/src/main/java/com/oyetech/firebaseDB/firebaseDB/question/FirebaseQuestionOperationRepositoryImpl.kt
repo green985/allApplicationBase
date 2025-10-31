@@ -92,6 +92,7 @@ class FirebaseQuestionOperationRepositoryImpl(
             Timber.d("Filters - ModerationStatus: ${status?.name}, Tag: ${tag?.name ?: "None"}")
             emit(questionList)
         } catch (e: Exception) {
+            e.printStackTrace()
             error(GeneralException(e.message ?: "Question filtered list fetch error"))
         }
     }

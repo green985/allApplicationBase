@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,12 +28,14 @@ import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.Ques
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.PENDING_ADMIN
 import com.oyetech.composebase.projectQuestionsFeature.theme.QuestionProjectViewAttrs
 import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.models.questionProject.questionOperation.QueOption
 import com.oyetech.models.questionProject.questionOperation.QuestionType
 
 /**
  * Skeleton containers for Question UI. Keep contents empty for now.
  * Receives uiState and onEvent for future wiring.
  */
+@Suppress("TooManyFunctions")
 @Composable
 fun QuestionViewScaffoldLayout(
     uiState: QuestionViewUiState,
@@ -165,7 +169,7 @@ fun QuestionAnswerAreaContainer(
     }
 }
 
-private fun reorderTwoOptionsConsistently(uiState: QuestionViewUiState): List<com.oyetech.models.questionProject.questionOperation.QueOption> {
+private fun reorderTwoOptionsConsistently(uiState: QuestionViewUiState): List<QueOption> {
     val opts = uiState.options.toList()
     return if (uiState.questionId.hashCode() % 2 == 0) opts else opts.reversed()
 }
@@ -232,7 +236,7 @@ fun QuestionAdminActionsContainer(
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    androidx.compose.material3.OutlinedButton(
+                    OutlinedButton(
                         enabled = !uiState.adminOperationClicked,
                         onClick = {
                             onEvent(QuestionViewEvent.OnPendingClicked(uiState.questionId))
@@ -259,7 +263,7 @@ fun QuestionAdminActionsContainer(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                androidx.compose.material3.OutlinedButton(
+                OutlinedButton(
                     onClick = {
                         onEvent(QuestionViewEvent.OnEditClicked(uiState.questionId))
                     }
@@ -270,7 +274,7 @@ fun QuestionAdminActionsContainer(
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(QuestionProjectViewAttrs.spacingSm)
                 ) {
-                    androidx.compose.material3.Button(
+                    Button(
                         enabled = !uiState.adminOperationClicked,
                         onClick = {
                             onEvent(
@@ -282,7 +286,7 @@ fun QuestionAdminActionsContainer(
                     ) {
                         Text(text = LanguageKey.decline)
                     }
-                    androidx.compose.material3.Button(
+                    Button(
                         enabled = !uiState.adminOperationClicked,
                         onClick = {
                             onEvent(
@@ -313,7 +317,7 @@ fun QuestionAdminActionsContainer(
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    androidx.compose.material3.OutlinedButton(
+                    OutlinedButton(
                         enabled = !uiState.adminOperationClicked,
                         onClick = {
                             onEvent(QuestionViewEvent.OnPendingClicked(uiState.questionId))

@@ -63,7 +63,7 @@ abstract class BaseListViewModel<T>(
         Timber.d("loadMore")
         loadMoreJob?.cancel()
         loadMoreJob = viewModelScope.launch(dispatchers.io) {
-            listViewState.value.loadMoreDataFlow
+            listViewState.value.loadMoreFlow
                 .asResult()
                 .collectLatest { result ->
                     result.fold({ list ->

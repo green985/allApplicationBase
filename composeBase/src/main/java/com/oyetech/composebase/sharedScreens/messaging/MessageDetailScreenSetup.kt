@@ -71,7 +71,7 @@ fun MessageDetailScreenSetup(
     val listViewState by vm.listViewState.collectAsStateWithLifecycle()
 
     val lazyColumnState: LoadableLazyColumnState =
-        rememberLoadableLazyColumnState(onLoadMore = { listViewState.triggerLoadMore?.invoke() })
+        rememberLoadableLazyColumnState(onLoadMore = { listViewState.onLoadMore?.invoke() })
 
     val uiState by vm.uiState.collectAsStateWithLifecycle()
 
