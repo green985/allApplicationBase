@@ -80,6 +80,11 @@ class ListOperationDelegate<T>(
     fun loadMore(isRetry: Boolean = false) {
         Timber.d("loadMore called, isRetry: $isRetry")
 
+        if (listUiState.value.endOfList) {
+            Timber.d("End of list already reached, not loading more")
+            return
+        }
+
         listUiState.update {
             it.copy(
                 isLoadingMore = true,
