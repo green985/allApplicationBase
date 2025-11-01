@@ -44,4 +44,10 @@ interface FirebaseQuestionOperationRepository {
 
     // Get questions answered by a specific user
     fun getUserAnsweredQuestions(userId: String): Flow<List<QuestionOperationResponseBody>>
+    suspend fun getQuestionsFilteredPage(
+        moderationStatus: ModerationStatus?,
+        tag: QueTag?,
+        afterCreatedAtMs: Long?,
+        limit: Int = 10,
+    ): List<QuestionOperationResponseBody>?
 }

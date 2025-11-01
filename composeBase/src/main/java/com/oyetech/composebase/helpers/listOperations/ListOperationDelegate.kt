@@ -66,13 +66,27 @@ class ListOperationDelegate<T>(
                 }
             }?.collectLatest { list ->
                 Timber.d("Initial data loaded, size: ${list.size}")
-                listUiState.update {
-                    it.copy(
-                        isLoadingInitial = false,
-                        isErrorInitial = false,
-                        items = list.toImmutableList()
-                    )
+                if (list.isEmpty()) {
+                    Timber.d("Initial data is empty")
+                    listUiState.update {
+                        it.copy(
+                            isLoadingInitial = false,
+                            isErrorInitial = false,
+                            isEmptyList = true,
+                            items = list.toImmutableList()
+                        )
+                    }
+                } else {
+                    listUiState.update {
+                        it.copy(
+                            isLoadingInitial = false,
+                            isErrorInitial = false,
+                            items = list.toImmutableList()
+                        )
+                    }
                 }
+
+
             }
         }
     }
@@ -80,8 +94,23 @@ class ListOperationDelegate<T>(
     fun loadMore(isRetry: Boolean = false) {
         Timber.d("loadMore called, isRetry: $isRetry")
 
+        if (isRetry) {
+            Timber.d("Retrying load more after error")
+            listUiState.update {
+                it.copy(
+                    endOfList = false,
+                    isErrorMore = false
+                )
+            }
+        }
+
         if (listUiState.value.endOfList) {
             Timber.d("End of list already reached, not loading more")
+            return
+        }
+
+        if (listUiState.value.isErrorMore) {
+            Timber.d("Error enable for load more, not loading more")
             return
         }
 
@@ -102,6 +131,7 @@ class ListOperationDelegate<T>(
                     it.copy(
                         isLoadingMore = false,
                         isErrorMore = true,
+                        endOfList = true,
                         errorMessageMore = error.message ?: "Error loading more"
                     )
                 }

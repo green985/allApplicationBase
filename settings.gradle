@@ -61,10 +61,10 @@ include ':diModule'
 include ':subImpl:tools'
 
 
-include ':radioeveryonee'
+//include ':radioeveryonee'
 include ':quoteapplication'
 include ':quoteBaseline'
 include ':firebaseRealtime'
-include ':fac'
+//include ':fac'
 include ':notificationModule'
 include ':remoteProject'

@@ -3,6 +3,7 @@ package com.oyetech.composebase.projectQuestionsFeature.questionScreens.list
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.baseGenericList.GenericListState
+import com.oyetech.composebase.helpers.listOperations.GetQuestionsPagedByCreatedAtUseCase
 import com.oyetech.composebase.helpers.listOperations.ListOperationDelegate
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
@@ -27,7 +28,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -39,6 +39,7 @@ class QuestionListVm2(
     private val userRepository: FirebaseUserRepository,
     private val answerRepository: FirebaseQuestionAnswerRepository,
     private val questionUseCase: QuestionUseCase,
+    private val getQuestionsPagedByCreatedAtUseCase: GetQuestionsPagedByCreatedAtUseCase,
 ) : BaseViewModel(appDispatchers) {
 
     val uiState = MutableStateFlow(QuestionListUiState())
@@ -51,12 +52,7 @@ class QuestionListVm2(
         scope = viewModelScope,
         dispatcher = getDispatcherIo(),
         initialDataFlow = getQuestionDataFlow(isInitial = true),
-        loadMoreFlow = flow {
-            Timber.d("Load more not supported for questions")
-            delay(2000)
-            emit(emptyList())
-        }
-//        loadMoreFlow = getQuestionDataFlow(isInitial = false)
+        loadMoreFlow = getQuestionDataFlow(isInitial = false)
     )
 
     val listViewState: StateFlow<GenericListState<QuestionViewUiState>> =
@@ -105,10 +101,17 @@ class QuestionListVm2(
                 }
 
                 else -> {
-                    questionUseCase.getQuestionListWithUpdates(
+//                    questionUseCase.getQuestionListWithUpdates(
+//                        moderationStatus = filter.adminFilterType.toModerationStatusOrNull(),
+//                        tag = filter.selectedTagFilter
+//                    )
+                    getQuestionsPagedByCreatedAtUseCase.invoke(
+                        isInitial,
                         moderationStatus = filter.adminFilterType.toModerationStatusOrNull(),
                         tag = filter.selectedTagFilter
                     )
+
+
                 }
             }
         }.combine(answerRepository.answersState) { questions, answers ->

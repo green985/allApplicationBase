@@ -1,9 +1,9 @@
 package com.oyetech.composebase.projectQuestionsFeature
 
+import com.oyetech.composebase.helpers.listOperations.GetQuestionsPagedByCreatedAtUseCase
 import com.oyetech.composebase.projectQuestionsFeature.adminApprove.AdminApproveQuestionVm
 import com.oyetech.composebase.projectQuestionsFeature.main.QuestionMainActivityVm
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.createQuestion.QuestionCreateQuestionVm
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListVm
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListVm2
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionPagerVm
 import com.oyetech.composebase.sharedScreens.settings.FacSettingsVm
@@ -17,11 +17,11 @@ import org.koin.dsl.module
 object QuestionProjectModule {
     val module = module {
         singleOf(::QuestionUseCase)
+        singleOf(::GetQuestionsPagedByCreatedAtUseCase)
         viewModelOf(::QuestionMainActivityVm)
         viewModelOf(::QuestionCreateQuestionVm)
         viewModelOf(::FacSettingsVm)
 
-        viewModelOf(::QuestionListVm)
         viewModelOf(::QuestionListVm2)
         viewModelOf(::QuestionPagerVm)
         viewModelOf(::AdminApproveQuestionVm)

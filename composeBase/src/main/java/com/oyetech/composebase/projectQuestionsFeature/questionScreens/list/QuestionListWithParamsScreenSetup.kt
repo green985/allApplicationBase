@@ -26,6 +26,7 @@ import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionV
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import kotlinx.collections.immutable.toImmutableList
 import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 
 @Composable
 @Suppress("LongParameterList")
@@ -83,7 +84,8 @@ fun QuestionListWithParamsContent(
     onQuestionEvent: (QuestionViewEvent) -> Unit = {},
 ) {
     val lazyListState = rememberLazyListState()
-    InfiniteListHandler(lazyListState) {
+    InfiniteListHandler(lazyListState, listViewState.isLoadingMore) {
+        Timber.d("QuestionListWithParamsContent: onLoadMore triggered")
         listViewState.onLoadMore?.invoke()
     }
 
@@ -96,11 +98,17 @@ fun QuestionListWithParamsContent(
             if (listViewState.isLoadingInitial) {
                 LoadingScreenFullSize()
             } else if (listViewState.isErrorInitial) {
-                ErrorScreenFullSize(errorMessage = listViewState.errorMessage, withoutAlpha = true)
-            } else if (listViewState.isEmptyList) {
-                ErrorScreenFullSize(errorMessage = "No questions found", withoutAlpha = true)
+                ErrorScreenFullSize(
+                    errorMessage = listViewState.errorMessage,
+                    withoutAlpha = true,
+                    onRetry = listViewState.onRetryInitial
+                )
             } else if (listViewState.items.isEmpty()) {
-                ErrorScreenFullSize(errorMessage = "No questions found", withoutAlpha = true)
+                ErrorScreenFullSize(
+                    errorMessage = listViewState.emptyErrorMessage,
+                    withoutAlpha = true,
+                    onRetry = listViewState.onRetryInitial
+                )
             } else {
                 LazyColumn(
                     modifier = Modifier.padding(4.dp),

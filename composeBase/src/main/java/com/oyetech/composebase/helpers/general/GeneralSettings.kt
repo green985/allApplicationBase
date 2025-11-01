@@ -47,4 +47,8 @@ object GeneralSettings {
         return isDebug()
     }
 
+    fun listSize(): Int {
+        return 10
+    }
+
 }

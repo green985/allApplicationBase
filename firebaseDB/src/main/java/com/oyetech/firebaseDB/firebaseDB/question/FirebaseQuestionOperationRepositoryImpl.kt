@@ -23,6 +23,47 @@ class FirebaseQuestionOperationRepositoryImpl(
     private val firestore: FirebaseFirestore,
 ) : FirebaseQuestionOperationRepository {
 
+
+    override suspend fun getQuestionsFilteredPage(
+        moderationStatus: ModerationStatus?,
+        tag: QueTag?,
+        afterCreatedAtMs: Long?,
+        limit: Int,
+    ): List<QuestionOperationResponseBody>? {
+        try {
+
+            var query: Query = firestore
+                .collection(FirebaseDatabaseKeys.createQuestion)
+
+            val status = moderationStatus
+            if (status != null && status != ModerationStatus.ALL) {
+                query = query.whereEqualTo("moderationStatus", status.name)
+            }
+            if (tag != null) {
+                query = query.whereArrayContains("tags", tag)
+            }
+
+            query = query.orderBy("createdAt", Query.Direction.DESCENDING)
+
+            if (afterCreatedAtMs != null) {
+                val seconds = afterCreatedAtMs / 1000
+                val ts = com.google.firebase.Timestamp(seconds, 0)
+                query = query.startAfter(ts)
+            }
+
+            val snapshot = query.limit(limit.toLong()).get().await()
+            val questionList = snapshot.documents.mapNotNull { doc ->
+                val obj = doc.toObject(QuestionOperationResponseBody::class.java)
+                obj?.copy(questionId = doc.id)
+            }
+            return questionList
+        } catch (e: Exception) {
+            Timber.d("Error fetching filtered questions page: ${e.message}")
+            return null
+        }
+
+    }
+
     @Suppress("TooGenericExceptionThrown")
     override fun createQuestion(body: QuestionOperationResponseBody): Flow<Unit> = flow {
         try {

@@ -21,11 +21,10 @@ data class GenericListState<T>(
     val isEmptyList: Boolean = false,
     val endOfList: Boolean = false,
     val errorMessage: String = "",
+    val emptyErrorMessage: String = "",
     val errorMessageInitial: String? = "",
     val errorMessageMore: String? = "",
     val skipInitialLoading: Boolean = false,
-
-    val itemSortType: ItemSortType = ItemSortType.DefaultSortType,
 
     val refreshDataFlow: Flow<List<T>> = flowOf(emptyList()),
     val loadMoreFlow: Flow<List<T>> = flowOf(emptyList()),
@@ -34,7 +33,6 @@ data class GenericListState<T>(
     val onLoadMore: (() -> Unit)? = null,
     val onRetryInitial: (() -> Unit)? = null,
     val onRetryMore: (() -> Unit)? = null,
-
 
     val triggerScrollToPosition: ((Int) -> Unit)? = null,
 )
