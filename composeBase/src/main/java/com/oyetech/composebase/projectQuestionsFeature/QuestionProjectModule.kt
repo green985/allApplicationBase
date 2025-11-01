@@ -11,13 +11,14 @@ import com.oyetech.composebase.sharedScreens.userProfile.userProfileDesign.UserP
 import com.oyetech.composebase.sharedViews.floating.FloatingAskQuestionBarVm
 import com.oyetech.domain.useCases.QuestionUseCase
 import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 object QuestionProjectModule {
     val module = module {
         singleOf(::QuestionUseCase)
-        singleOf(::GetQuestionsPagedByCreatedAtUseCase)
+        factoryOf(::GetQuestionsPagedByCreatedAtUseCase)
         viewModelOf(::QuestionMainActivityVm)
         viewModelOf(::QuestionCreateQuestionVm)
         viewModelOf(::FacSettingsVm)

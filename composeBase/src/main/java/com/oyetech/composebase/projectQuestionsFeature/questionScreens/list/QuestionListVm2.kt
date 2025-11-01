@@ -59,25 +59,6 @@ class QuestionListVm2(
         listOperationDelegate.listUiState
 
     init {
-        // Fetch user answers on start
-        viewModelScope.launch(getDispatcherIo()) {
-            queFilter.filterNotNull().collectLatest { filter ->
-                Timber.d(
-                    "Filter changed - " +
-                            "Admin: ${filter.adminFilterType.name}, Tag: ${filter.selectedTagFilter?.name}"
-                )
-                uiState.value = uiState.value.copy(currentFilter = filter)
-            }
-        }
-        // todo will be fixed later...
-        // Fetch user answers on start
-        viewModelScope.launch(getDispatcherIo()) {
-            val uid = userRepository.getUserId()
-            if (uid.isNotBlank()) {
-                answerRepository.getAnswersByUser(uid)
-                    .collectLatest { /* repo updates its own state */ }
-            }
-        }
 
         viewModelScope.launch(getDispatcherIo()) {
             questionItemsFlow(listOperationDelegate).filter { it.isNotEmpty() }
@@ -100,38 +81,42 @@ class QuestionListVm2(
     }
 
     private fun Flow<List<QuestionViewUiState>>.getQuestionTransformerFlow(): Flow<List<QuestionViewUiState>> {
-        return this.combine(answerRepository.answersState) { questions, answers ->
-            Timber.d("Combining answers with admin view: ${answers.size}")
-            if (questions.isEmpty()) {
-                return@combine questions
-            }
-            questions.map { question ->
-                var ui = question
-                val ans =
-                    answers.find { answ -> answ.questionId == question.questionId }
-                if (ans != null) {
-                    val selected = ans.selectedOptionIds?.firstOrNull()
-                    ui = ui.copy(
-                        isAnsweredByUser = selected != null,
+        val answersIndexedFlow =
+            answerRepository.answersState
+                .map { list -> list.associateBy { it.questionId } }
+                .distinctUntilChanged()
+
+        return combine(this, answersIndexedFlow) { questions, answersIdx ->
+            if (questions.isEmpty()) return@combine questions
+
+            questions.map { q ->
+                val ans = q.questionId?.let { answersIdx[it] }
+                val selected = ans?.selectedOptionIds?.firstOrNull()
+                val newIsAnswered = selected != null
+
+                if (q.isAnsweredByUser != newIsAnswered || q.selectedAnswer != selected) {
+                    q.copy(
+                        isAnsweredByUser = newIsAnswered,
                         selectedAnswer = selected
                     )
-                }
-                ui
+                } else q
             }
-        }.combine(adminViewState) { questions, isAdminView ->
-            questions.map { question ->
-                question.copy(isAdminView = isAdminView)
-            }
-        }.combine(adminFilterType) { questions, filterType ->
-            Timber.d("Combining adminFilterType with admin view: ${questions.size}")
-            questions.map { question ->
-                question.copy(adminFilterType = filterType)
-            }
+        }.combine(adminViewState) { qs, isAdminView ->
+            if (qs.isEmpty()) return@combine qs
+            qs.map { if (it.isAdminView != isAdminView) it.copy(isAdminView = isAdminView) else it }
+        }.combine(adminFilterType) { qs, filterType ->
+            if (qs.isEmpty()) return@combine qs
+            qs.map { if (it.adminFilterType != filterType) it.copy(adminFilterType = filterType) else it }
         }
     }
 
     fun getQuestionDataFlow(isInitial: Boolean): Flow<List<QuestionViewUiState>> {
         return queFilter.filterNotNull().flatMapLatest { filter ->
+            Timber.d(
+                "Filter changed - " +
+                        "Admin: ${filter.adminFilterType.name}, Tag: ${filter.selectedTagFilter?.name}"
+            )
+            uiState.value = uiState.value.copy(currentFilter = filter)
             when (filter.questionListType) {
                 "USERS_QUESTIONS" -> {
                     if (filter.userId.isNullOrBlank()) {
@@ -178,23 +163,6 @@ class QuestionListVm2(
         // Branch based on future questionType when added to UI state
         when (item.questionType) {
             QuestionType.SINGLE_CHOICE -> {}
-        }
-    }
-
-    private fun overlayAnswers(
-        questions: List<QuestionOperationResponseBody>,
-        answers: List<QueAnswer>,
-    ): List<QuestionViewUiState> {
-        val answerMap = answers.associateBy { it.questionId }
-        return questions.map { q ->
-            var ui = q.toUiState(base = QuestionViewUiState(isLoading = false))
-            val ans = answerMap[q.questionId]
-            if (ans != null) {
-                val selected = ans.selectedOptionIds?.firstOrNull()
-                ui = ui.copy(isAnsweredByUser = selected != null, selectedAnswer = selected)
-            }
-
-            ui
         }
     }
 
