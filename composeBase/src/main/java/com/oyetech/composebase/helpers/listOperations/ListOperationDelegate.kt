@@ -23,6 +23,7 @@ class ListOperationDelegate<T>(
     private val dispatcher: CoroutineDispatcher,
     initialDataFlow: Flow<List<T>>,
     loadMoreFlow: Flow<List<T>>,
+    private val keySelector: (T) -> Any,
 ) {
 
     val listUiState = MutableStateFlow(
@@ -49,6 +50,7 @@ class ListOperationDelegate<T>(
             it.copy(
                 isLoadingInitial = true,
                 isErrorInitial = false,
+                isEmptyList = false,
                 items = persistentListOf()
             )
         }
@@ -93,7 +95,9 @@ class ListOperationDelegate<T>(
 
     fun loadMore(isRetry: Boolean = false) {
         Timber.d("loadMore called, isRetry: $isRetry")
-
+        if (listUiState.value.isLoadingMore) {
+            return
+        }
         if (isRetry) {
             Timber.d("Retrying load more after error")
             listUiState.update {
@@ -137,14 +141,18 @@ class ListOperationDelegate<T>(
                 }
             }?.collectLatest { result ->
                 if (result.isNotEmpty()) {
-                    val oldList = listUiState.value.items.toPersistentList()
-                    val newList = result.toPersistentList()
-                    val combinedList = (oldList + newList).toPersistentList()
-                    Timber.d("Load more completed, old size: ${oldList.size}, new size: ${newList.size}")
+                    val oldList = listUiState.value.items
+                    val combined = (oldList + result)
+
+                    // 🔹 keySelector ile duplicate filtreleme
+                    val distinctList = combined
+                        .distinctBy { keySelector(it) }
+                        .toPersistentList()
+                    Timber.d("Load more completed, old size: ${oldList.size}, new size: ${distinctList.size}")
                     listUiState.update {
                         it.copy(
                             isLoadingMore = false,
-                            items = combinedList,
+                            items = distinctList,
                             isErrorMore = false
                         )
                     }

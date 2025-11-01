@@ -17,7 +17,8 @@ class ListViewOperationVM constructor(
         scope = viewModelScope,
         dispatcher = getDispatcherIo(),
         initialDataFlow = exampleEndlessDataFlowUseCase.getExampleDataFlow(isInitial = true),
-        loadMoreFlow = exampleEndlessDataFlowUseCase.getExampleDataFlow(isInitial = false)
+        loadMoreFlow = exampleEndlessDataFlowUseCase.getExampleDataFlow(isInitial = false),
+        { it.id }
     )
 
     val listUiState: StateFlow<GenericListState<ExampleObject>> = listOperationDelegate.listUiState

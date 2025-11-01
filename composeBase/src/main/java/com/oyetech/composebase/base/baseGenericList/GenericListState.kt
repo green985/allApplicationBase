@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.flowOf
 
 data class GenericListState<T>(
     val dataFlow: Flow<List<T>>? = null,
-    val pageIndex: Int = 1,
     val items: ImmutableList<T> = emptyList<T>().toImmutableList(),
     val isRefreshEnable: Boolean = false,
     val isRefreshing: Boolean = false,

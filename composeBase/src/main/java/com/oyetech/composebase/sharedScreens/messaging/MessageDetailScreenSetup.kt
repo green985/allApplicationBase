@@ -33,9 +33,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.base.baseGenericList.GenericListState
-import com.oyetech.composebase.base.baseGenericList.LoadableLazyColumnState
-import com.oyetech.composebase.base.baseGenericList.rememberLoadableLazyColumnState
-import com.oyetech.composebase.base.baseGenericList.safeScrollToItem
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailUiEvent.OnConversationCreated
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailUiEvent.OnMessageIdle
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailUiEvent.OnNewMessage
@@ -70,8 +67,6 @@ fun MessageDetailScreenSetup(
     }
     val listViewState by vm.listViewState.collectAsStateWithLifecycle()
 
-    val lazyColumnState: LoadableLazyColumnState =
-        rememberLoadableLazyColumnState(onLoadMore = { listViewState.onLoadMore?.invoke() })
 
     val uiState by vm.uiState.collectAsStateWithLifecycle()
 
@@ -94,7 +89,7 @@ fun MessageDetailScreenSetup(
                 is OnNewMessage -> {
                     Timber.d("MessageDetailUiEvent.OnMessageSendSuccess " + event.toString())
                     delay(100)
-                    safeScrollToItem(lazyColumnState.lazyListState, 0)
+//                    safeScrollToItem(, 0)
                 }
 
                 OnConversationCreated -> {
@@ -160,7 +155,7 @@ private fun MessageDetailToolbar(messageDetailUiState: MessageDetailScreenUiStat
 private fun MessageDetailToolbarPreview() {
     MessageDetailToolbar(
         messageDetailUiState =
-        MessageDetailScreenUiState(toolbarTitleText = "deneme texttt")
+            MessageDetailScreenUiState(toolbarTitleText = "deneme texttt")
     )
 
 }
@@ -229,7 +224,8 @@ private fun MessageDetailContentView(
 @Preview(showBackground = true)
 @Composable
 private fun MessageDetailPreview() {
-    MessageDetailScreen(uiState = MessageDetailScreenUiState(
+    MessageDetailScreen(
+        uiState = MessageDetailScreenUiState(
         isLoading = false,
         onMessageSendTriggered = false,
         errorText = "",

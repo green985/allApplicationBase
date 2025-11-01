@@ -52,7 +52,8 @@ class QuestionListVm2(
         scope = viewModelScope,
         dispatcher = getDispatcherIo(),
         initialDataFlow = getQuestionDataFlow(isInitial = true),
-        loadMoreFlow = getQuestionDataFlow(isInitial = false)
+        loadMoreFlow = getQuestionDataFlow(isInitial = false),
+        keySelector = { it.questionId }
     )
 
     val listViewState: StateFlow<GenericListState<QuestionViewUiState>> =
