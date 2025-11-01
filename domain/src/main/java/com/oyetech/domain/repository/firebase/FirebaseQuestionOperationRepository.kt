@@ -9,9 +9,6 @@ interface FirebaseQuestionOperationRepository {
     // Creates a question in Firestore (transactional). Emits Unit on success; throws on failure.
     fun createQuestion(body: QuestionOperationResponseBody): Flow<Unit>
 
-    // Returns a list of questions. Emits once for now; can be extended to realtime updates.
-    fun getQuestionList(): Flow<List<QuestionOperationResponseBody>>
-
     // Filtered list by moderation status and/or tag. Defaults to APPROVED when moderationStatus is null.
     fun getQuestionsFiltered(
         moderationStatus: ModerationStatus? = ModerationStatus.APPROVED,
@@ -29,15 +26,6 @@ interface FirebaseQuestionOperationRepository {
 
     // Update a question completely
     fun updateQuestion(body: QuestionOperationResponseBody): Flow<Unit>
-
-    // Approved questions listing with sort types (ALL, RECENTLY_ADDED, RECENTLY_ANSWERED)
-    fun getApprovedQuestionsSorted(
-        type: com.oyetech.models.questionProject.questionOperation.QuestionApprovedListType,
-        limit: Int = 50,
-    ): Flow<List<QuestionOperationResponseBody>>
-
-    // Fast path: fetch most recently answered approved questions (by answers submittedAt)
-    fun getMostRecentlyAnsweredQuestions(limit: Int = 50): Flow<List<QuestionOperationResponseBody>>
 
     // Get questions created by a specific user
     fun getUserQuestions(userId: String): Flow<List<QuestionOperationResponseBody>>

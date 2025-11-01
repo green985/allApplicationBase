@@ -13,7 +13,6 @@ import com.oyetech.domain.repository.firebase.FirebaseQuestionAnswerRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.useCases.NavigationUseCase
-import com.oyetech.domain.useCases.QuestionUseCase
 import com.oyetech.models.questionProject.questionOperation.ModerationStatus
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QueTag
@@ -31,14 +30,13 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LongParameterList")
 class QuestionListVm2(
     appDispatchers: AppDispatchers,
     private val navigationUseCase: NavigationUseCase,
     private val repository: FirebaseQuestionOperationRepository,
     private val userRepository: FirebaseUserRepository,
     private val answerRepository: FirebaseQuestionAnswerRepository,
-    private val questionUseCase: QuestionUseCase,
     private val getQuestionsPagedByCreatedAtUseCase: GetQuestionsPagedByCreatedAtUseCase,
 ) : BaseViewModel(appDispatchers) {
 
@@ -102,17 +100,11 @@ class QuestionListVm2(
                 }
 
                 else -> {
-//                    questionUseCase.getQuestionListWithUpdates(
-//                        moderationStatus = filter.adminFilterType.toModerationStatusOrNull(),
-//                        tag = filter.selectedTagFilter
-//                    )
                     getQuestionsPagedByCreatedAtUseCase.invoke(
                         isInitial,
                         moderationStatus = filter.adminFilterType.toModerationStatusOrNull(),
                         tag = filter.selectedTagFilter
                     )
-
-
                 }
             }
         }.combine(answerRepository.answersState) { questions, answers ->
