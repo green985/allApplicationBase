@@ -38,4 +38,16 @@ interface FirebaseQuestionOperationRepository {
         afterCreatedAtMs: Long?,
         limit: Int = 10,
     ): List<QuestionOperationResponseBody>?
+
+    suspend fun getUserQuestionsPage(
+        userId: String,
+        afterCreatedAtMs: Long?,
+        limit: Int,
+    ): List<QuestionOperationResponseBody>
+
+    suspend fun getUserAnsweredQuestionsPage(
+        userId: String,
+        afterSubmittedAtMs: Long?,
+        limit: Int,
+    ): Pair<List<QuestionOperationResponseBody>, Long?>
 }

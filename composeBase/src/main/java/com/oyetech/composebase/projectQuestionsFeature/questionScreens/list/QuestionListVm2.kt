@@ -3,9 +3,10 @@ package com.oyetech.composebase.projectQuestionsFeature.questionScreens.list
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.baseGenericList.GenericListState
-import com.oyetech.composebase.helpers.listOperations.GetQuestionsPagedByCreatedAtUseCase
 import com.oyetech.composebase.helpers.listOperations.ListOperationDelegate
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.usecases.GetQuestionsPagedByCreatedAtUseCase
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.usecases.GetUserQuestionsPagedByCreatedAtUseCase
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.toUiState
@@ -40,6 +41,7 @@ class QuestionListVm2(
     private val userRepository: FirebaseUserRepository,
     private val answerRepository: FirebaseQuestionAnswerRepository,
     private val getQuestionsPagedByCreatedAtUseCase: GetQuestionsPagedByCreatedAtUseCase,
+    private val getUserQuestionsPagedByCreatedAtUseCase: GetUserQuestionsPagedByCreatedAtUseCase,
 ) : BaseViewModel(appDispatchers) {
 
     val uiState = MutableStateFlow(QuestionListUiState())
@@ -122,7 +124,8 @@ class QuestionListVm2(
                     if (filter.userId.isNullOrBlank()) {
                         kotlinx.coroutines.flow.flowOf(emptyList())
                     } else {
-                        repository.getUserQuestions(filter.userId)
+                        getUserQuestionsPagedByCreatedAtUseCase.updateUser(filter.userId)
+                        getUserQuestionsPagedByCreatedAtUseCase(isInitial)
                     }
                 }
 

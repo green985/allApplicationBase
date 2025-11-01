@@ -31,7 +31,7 @@ fun GeneralOperationScreenSetup(
     val generalPlaygroundVm = koinViewModel<GeneralPlaygroundVm>()
 
     generalPlaygroundVm.initt()
-
+    viewModel.hashCode()
     val loginOperationVM = koinInject<LoginOperationVM>()
 
     val loginUiState by loginOperationVM.loginOperationState.collectAsState()

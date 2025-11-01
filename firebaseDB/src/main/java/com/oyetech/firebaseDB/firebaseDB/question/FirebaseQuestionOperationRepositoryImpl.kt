@@ -238,4 +238,88 @@ class FirebaseQuestionOperationRepositoryImpl(
                 error(GeneralException(e.message ?: "User answered questions fetch error"))
             }
         }
+
+    override suspend fun getUserQuestionsPage(
+        userId: String,
+        afterCreatedAtMs: Long?,
+        limit: Int,
+    ): List<QuestionOperationResponseBody> {
+        var query: Query =
+            firestore.collection(FirebaseDatabaseKeys.createQuestion)
+                .whereEqualTo("createdBy", userId)
+                .whereEqualTo("moderationStatus", ModerationStatus.APPROVED.name)
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .orderBy(FieldPath.documentId())
+
+        if (afterCreatedAtMs != null) {
+            val seconds = afterCreatedAtMs / 1000
+            val ts = com.google.firebase.Timestamp(seconds, 0)
+            query = query.startAfter(ts)
+        }
+
+        val snap = query.limit(limit.toLong()).get().await()
+        return snap.documents.mapNotNull { d ->
+            d.toObject(QuestionOperationResponseBody::class.java)?.copy(questionId = d.id)
+        }
+    }
+
+    override suspend fun getUserAnsweredQuestionsPage(
+        userId: String,
+        afterSubmittedAtMs: Long?,
+        limit: Int,
+    ): Pair<List<QuestionOperationResponseBody>, Long?> {
+        var answersQuery: Query = firestore
+            .collectionGroup("answers")
+            .whereEqualTo("userId", userId)
+            .orderBy("submittedAt", Query.Direction.DESCENDING)
+
+        if (afterSubmittedAtMs != null) {
+            val seconds = afterSubmittedAtMs / 1000
+            val ts = com.google.firebase.Timestamp(seconds, 0)
+            answersQuery = answersQuery.startAfter(ts)
+        }
+
+        val answersSnap = answersQuery.limit(limit.toLong()).get().await()
+        if (answersSnap.documents.isEmpty()) {
+            return Pair(emptyList(), null)
+        }
+
+        val questionIds = answersSnap.documents
+            .mapNotNull { it.getString("questionId") }
+            .distinct()
+
+        val bySubmitted = answersSnap.documents
+            .mapNotNull { d ->
+                val qid = d.getString("questionId") ?: return@mapNotNull null
+                val ts = d.getTimestamp("submittedAt") ?: return@mapNotNull null
+                Pair(qid, ts.toDate().time)
+            }
+            .distinctBy { it.first }
+
+        val result = mutableListOf<QuestionOperationResponseBody>()
+        questionIds.chunked(10).forEach { batch ->
+            val qsnap = firestore
+                .collection(FirebaseDatabaseKeys.createQuestion)
+                .whereIn(FieldPath.documentId(), batch)
+                .get()
+                .await()
+            val items = qsnap.documents.mapNotNull { d ->
+                d.toObject(QuestionOperationResponseBody::class.java)?.copy(questionId = d.id)
+            }
+            result += items
+        }
+
+        val orderIndex =
+            bySubmitted.withIndex().associate { it.value.first to Pair(it.index, it.value.second) }
+        val sorted = result.sortedWith(
+            compareByDescending<QuestionOperationResponseBody> { q ->
+                orderIndex[q.questionId]?.second ?: 0L
+            }.thenBy { q ->
+                q.questionId ?: ""
+            }
+        )
+
+        val lastCursor = bySubmitted.lastOrNull()?.second
+        return Pair(sorted, lastCursor)
+    }
 }

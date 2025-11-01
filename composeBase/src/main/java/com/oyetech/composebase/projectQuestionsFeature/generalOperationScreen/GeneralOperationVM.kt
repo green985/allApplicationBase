@@ -9,6 +9,7 @@ import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.useCases.helpers.AppReviewOperationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -74,14 +75,17 @@ class GeneralOperationVM(
     }
 
     private fun getUserAnswers() {
-        viewModelScope.launch(getDispatcherIo()) {
-            val uid = userRepository.getUserId()
-            if (uid.isNotBlank()) {
-                answerRepository.getAnswersByUser(uid)
-                    .collectLatest { /* repo updates its own state */ }
+        var x: Job? = null
+        x = viewModelScope.launch(getDispatcherIo()) {
+            userRepository.userDataStateFlow.collectLatest {
+                if (it.userId.isNotBlank()) {
+                    answerRepository.getAnswersByUser(it.userId)
+                        .collectLatest {
+                            /* repo updates its own state */
+                            x?.cancel()
+                        }
+                }
             }
         }
     }
-
-
 }
