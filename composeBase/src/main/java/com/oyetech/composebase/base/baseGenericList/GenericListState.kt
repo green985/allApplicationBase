@@ -24,6 +24,7 @@ data class GenericListState<T>(
     val errorMessageInitial: String? = "",
     val errorMessageMore: String? = "",
     val skipInitialLoading: Boolean = false,
+    val endFlowOperation: Boolean = true,
 
     val refreshDataFlow: Flow<List<T>> = flowOf(emptyList()),
     val loadMoreFlow: Flow<List<T>> = flowOf(emptyList()),

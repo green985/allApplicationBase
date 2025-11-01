@@ -88,7 +88,9 @@ class ListOperationDelegate<T>(
                     }
                 }
 
-
+                if (listUiState.value.endFlowOperation) {
+                    loadDataJob?.cancel()
+                }
             }
         }
     }
@@ -166,6 +168,10 @@ class ListOperationDelegate<T>(
                             endOfList = true
                         )
                     }
+                }
+
+                if (listUiState.value.endFlowOperation) {
+                    loadMoreJob?.cancel()
                 }
             }
         }

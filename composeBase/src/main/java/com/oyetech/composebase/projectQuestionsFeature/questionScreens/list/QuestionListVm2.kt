@@ -19,14 +19,16 @@ import com.oyetech.models.questionProject.questionOperation.QueTag
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.models.questionProject.questionOperation.QuestionType
 import com.oyetech.tools.coroutineHelper.AppDispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -45,7 +47,6 @@ class QuestionListVm2(
     private val adminViewState = MutableStateFlow(false)
     private val adminFilterType = MutableStateFlow(QuestionListAdminFilterType.APPROVED_ADMIN)
 
-
     private val listOperationDelegate = ListOperationDelegate(
         scope = viewModelScope,
         dispatcher = getDispatcherIo(),
@@ -56,7 +57,6 @@ class QuestionListVm2(
 
     val listViewState: StateFlow<GenericListState<QuestionViewUiState>> =
         listOperationDelegate.listUiState
-
 
     init {
         // Fetch user answers on start
@@ -76,6 +76,56 @@ class QuestionListVm2(
             if (uid.isNotBlank()) {
                 answerRepository.getAnswersByUser(uid)
                     .collectLatest { /* repo updates its own state */ }
+            }
+        }
+
+        viewModelScope.launch(getDispatcherIo()) {
+            questionItemsFlow(listOperationDelegate).filter { it.isNotEmpty() }
+                .getQuestionTransformerFlow()
+                .collectLatest { questions ->
+                    Timber.d("Combining question items flow with transformed questions: ${questions.size}")
+                    if (questions.isNotEmpty()) {
+                        listOperationDelegate.updateList(questions)
+                    }
+                }
+        }
+    }
+
+    fun questionItemsFlow(
+        listOperationDelegate: ListOperationDelegate<QuestionViewUiState>,
+    ): kotlinx.coroutines.flow.Flow<List<QuestionViewUiState>> {
+        return listOperationDelegate.listUiState
+            .map { it.items }
+            .distinctUntilChanged()
+    }
+
+    private fun Flow<List<QuestionViewUiState>>.getQuestionTransformerFlow(): Flow<List<QuestionViewUiState>> {
+        return this.combine(answerRepository.answersState) { questions, answers ->
+            Timber.d("Combining answers with admin view: ${answers.size}")
+            if (questions.isEmpty()) {
+                return@combine questions
+            }
+            questions.map { question ->
+                var ui = question
+                val ans =
+                    answers.find { answ -> answ.questionId == question.questionId }
+                if (ans != null) {
+                    val selected = ans.selectedOptionIds?.firstOrNull()
+                    ui = ui.copy(
+                        isAnsweredByUser = selected != null,
+                        selectedAnswer = selected
+                    )
+                }
+                ui
+            }
+        }.combine(adminViewState) { questions, isAdminView ->
+            questions.map { question ->
+                question.copy(isAdminView = isAdminView)
+            }
+        }.combine(adminFilterType) { questions, filterType ->
+            Timber.d("Combining adminFilterType with admin view: ${questions.size}")
+            questions.map { question ->
+                question.copy(adminFilterType = filterType)
             }
         }
     }
@@ -106,17 +156,10 @@ class QuestionListVm2(
                         tag = filter.selectedTagFilter
                     )
                 }
-            }
-        }.combine(answerRepository.answersState) { questions, answers ->
-            overlayAnswers(questions, answers)
-        }.combine(adminViewState) { questions, isAdminView ->
-            questions.map { question ->
-                question.copy(isAdminView = isAdminView)
-            }
-        }.combine(adminFilterType) { questions, filterType ->
-            delay(1000)
-            questions.map { question ->
-                question.copy(adminFilterType = filterType)
+            }.map { questionsList: List<QuestionOperationResponseBody> ->
+                questionsList.map { question ->
+                    question.toUiState(base = QuestionViewUiState(isLoading = false))
+                }
             }
         }
     }
@@ -159,7 +202,8 @@ class QuestionListVm2(
         adminFilterType.value = filterType
         val filter = queFilter.value
         if (filter == null) {
-            queFilter.value = QueFilter(adminFilterType = filterType, selectedTagFilter = null)
+            queFilter.value =
+                QueFilter(adminFilterType = filterType, selectedTagFilter = null)
             return
         }
 
@@ -218,7 +262,7 @@ class QuestionListVm2(
                     answerRepository.submitAnswer(answer)
                         .collectLatest { /* updated in repo state */ }
                 }
-                Timber.d("Option selected: ${'$'}{event.optionId} for question ${'$'}{event.questionId}")
+                Timber.d("Option selected: ${event.optionId} for question: ${event.questionId}")
             }
 
             is QuestionViewEvent.OnDeleteAnswerClicked -> {
