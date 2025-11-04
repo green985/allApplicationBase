@@ -35,15 +35,11 @@ fun EditUserProfileScreenSetup(
     )
 }
 
-fun getDefaultUiState(): EditProfileUiState {
-    return EditProfileUiState() // Replace with actual default state object
-}
-
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun EditUserProfileScreen(
     modifier: Modifier = Modifier,
-    uiState: EditProfileUiState = getDefaultUiState(),
+    uiState: EditProfileUiState = EditProfileUiState(),
     onEvent: EditProfileEvent.() -> Unit = { Timber.d("$this") }, // Default empty event handler
 ) {
     BaseScaffold(
