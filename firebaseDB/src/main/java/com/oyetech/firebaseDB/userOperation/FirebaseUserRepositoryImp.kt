@@ -10,9 +10,7 @@ import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
 import com.oyetech.models.firebaseModels.userModel.FirebaseUserPropertyModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
@@ -24,25 +22,28 @@ class FirebaseUserRepositoryImp(
         MutableStateFlow<FirebaseUserProfileModel>(FirebaseUserProfileModel())
 
     override suspend fun updateUserProperty(userData: FirebaseUserProfileModel) {
-        val isUsernameInUse = checkIsUsernameInUse(userData.username).firstOrNull() ?: false
-        Timber.d("isUsernameInUse: $isUsernameInUse")
-        if (isUsernameInUse) {
-            userDataStateFlow.value =
-                FirebaseUserProfileModel(errorException = Exception("Username is already in use"))
-            return
+        try {
+            val inUse = isUsernameInUse(username = userData.username)
+            if (inUse) {
+                userDataStateFlow.value =
+                    FirebaseUserProfileModel(errorException = Exception("Username is already in use"))
+                return
+            }
+
+            val toSave = userData.copy(errorException = null)
+            firestore
+                .collection(FirebaseUserDatabaseKey.USER_COLLECTION)
+                .document(userData.userId)
+                .set(toSave)
+                .addOnSuccessListener {
+                    userDataStateFlow.value = toSave
+                }
+                .addOnFailureListener { ex ->
+                    userDataStateFlow.value = FirebaseUserProfileModel(errorException = ex)
+                }
+        } catch (e: Exception) {
+            userDataStateFlow.value = FirebaseUserProfileModel(errorException = e)
         }
-
-        var newUserDataModel = userData
-
-        firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(userData.userId).set(
-            newUserDataModel,
-        ).addOnSuccessListener {
-            newUserDataModel = newUserDataModel.copy(errorException = null)
-            userDataStateFlow.value = newUserDataModel
-        }.addOnFailureListener { exception ->
-            userDataStateFlow.value = FirebaseUserProfileModel(errorException = exception)
-        }
-
     }
 
     fun createProfile(user: FirebaseUserProfileModel) {
@@ -51,71 +52,43 @@ class FirebaseUserRepositoryImp(
             .document(user.userId)
             .set(user)
             .addOnSuccessListener {
-                userDataStateFlow.value = user.copy()
+                userDataStateFlow.value = user
             }
             .addOnFailureListener { exception ->
                 userDataStateFlow.value =
                     FirebaseUserProfileModel(errorException = Exception(LanguageKey.createUserErrorMessage))
-                println("Error creating user: ${exception.message}")
+                Timber.e("Error creating user: ${exception.message}")
             }
     }
 
-    suspend fun checkIsUsernameInUse(username: String): Flow<Boolean> {
+    private suspend fun isUsernameInUse(username: String): Boolean {
         val result = firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION)
             .whereEqualTo("username", username)
-            .get().await()
-
-        return flowOf(!result.isEmpty)
+            .get()
+            .await()
+        return !result.isEmpty
     }
 
     override fun deleteUser(uid: String) {
-        try {
-            firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION)
-                .document(uid)
-                .delete()
-                .addOnSuccessListener {
-                    userDataStateFlow.value = FirebaseUserProfileModel()
-                }
-                .addOnFailureListener { exception ->
-                    userDataStateFlow.value =
-                        FirebaseUserProfileModel(errorException = Exception(LanguageKey.deleteUserErrorMessage))
-                }
-        } catch (e: Exception) {
-
-        }
-
+        firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION)
+            .document(uid)
+            .delete()
+            .addOnSuccessListener {
+                userDataStateFlow.value = FirebaseUserProfileModel()
+            }
+            .addOnFailureListener {
+                userDataStateFlow.value =
+                    FirebaseUserProfileModel(errorException = Exception(LanguageKey.deleteUserErrorMessage))
+            }
     }
 
     override fun getUserProfile(firebaseProfileUserModel: FirebaseUserProfileModel) {
         val uid = firebaseProfileUserModel.userId
-        firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(uid).get()
-            .addOnSuccessListener {
-                val userPropertyDoc = firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION)
-                    .document(uid).collection("userProperty").document("biography").get()
-                    .addOnSuccessListener {
-                        val userProperty = it.toObject(FirebaseUserPropertyModel::class.java)
-
-                        var userData = it.toObject(FirebaseUserProfileModel::class.java)
-
-                        userData = userData?.copy(
-                            biography = userProperty?.biography ?: "erororor",
-                            lastSignInTimestamp = firebaseProfileUserModel.lastSignInTimestamp,
-                            isAnonymous = firebaseProfileUserModel.isAnonymous
-                        )
-
-                        if (userData != null && userData.userId == uid) {
-                            userDataStateFlow.tryEmit(userData)
-                        } else {
-                            createProfile(firebaseProfileUserModel)
-                        }
-                    }.addOnFailureListener {
-                        userDataStateFlow.value =
-                            FirebaseUserProfileModel(errorException = it)
-                    }
-            }.addOnFailureListener {
-                userDataStateFlow.value =
-                    FirebaseUserProfileModel(errorException = it)
-            }
+        fetchAndEmitUserProfile(
+            uid = uid,
+            base = firebaseProfileUserModel,
+            afterAction = null
+        )
     }
 
     override fun getUserProfileForAutoLogin(
@@ -123,36 +96,53 @@ class FirebaseUserRepositoryImp(
         afterAction: ((Boolean) -> Unit),
     ) {
         val uid = firebaseProfileUserModel.userId
-        firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(uid).get()
-            .addOnSuccessListener { userData ->
-                val userPropertyDoc = firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION)
-                    .document(uid).collection("userProperty").document("biography").get()
-                    .addOnSuccessListener {
-                        val userProperty = it.toObject(FirebaseUserPropertyModel::class.java)
+        fetchAndEmitUserProfile(
+            uid = uid,
+            base = firebaseProfileUserModel,
+            afterAction = afterAction
+        )
+    }
 
-                        var userData = userData.toObject(FirebaseUserProfileModel::class.java)
+    private fun fetchAndEmitUserProfile(
+        uid: String,
+        base: FirebaseUserProfileModel,
+        afterAction: ((Boolean) -> Unit)?,
+    ) {
+        firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION)
+            .document(uid)
+            .get()
+            .addOnSuccessListener { userDoc ->
+                firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION)
+                    .document(uid)
+                    .collection("userProperty")
+                    .document("biography")
+                    .get()
+                    .addOnSuccessListener { propDoc ->
+                        val property = propDoc.toObject(FirebaseUserPropertyModel::class.java)
+                        val loaded = userDoc.toObject(FirebaseUserProfileModel::class.java)
 
-                        userData = userData?.copy(
-                            biography = userProperty?.biography ?: "erororor",
-                            lastSignInTimestamp = firebaseProfileUserModel.lastSignInTimestamp,
-                            isAnonymous = firebaseProfileUserModel.isAnonymous
+                        val merged = loaded?.copy(
+                            biography = property?.biography.orEmpty(),
+                            lastSignInTimestamp = base.lastSignInTimestamp,
+                            isAnonymous = base.isAnonymous
                         )
 
-
-                        if (userData != null && userData.userId == uid) {
-                            userDataStateFlow.value = (userData)
-                            afterAction.invoke(true)
+                        if (merged != null && merged.userId == uid) {
+                            userDataStateFlow.value = merged
+                            afterAction?.invoke(true)
+                        } else {
+                            createProfile(base)
+                            afterAction?.invoke(true)
                         }
-                    }.addOnFailureListener {
-                        userDataStateFlow.value =
-                            FirebaseUserProfileModel(errorException = it)
                     }
-
-
-            }.addOnFailureListener {
-                userDataStateFlow.value =
-                    FirebaseUserProfileModel(errorException = it)
-                afterAction.invoke(true)
+                    .addOnFailureListener { e ->
+                        userDataStateFlow.value = FirebaseUserProfileModel(errorException = e)
+                        afterAction?.invoke(false)
+                    }
+            }
+            .addOnFailureListener { e ->
+                userDataStateFlow.value = FirebaseUserProfileModel(errorException = e)
+                afterAction?.invoke(false)
             }
     }
 
@@ -169,8 +159,7 @@ class FirebaseUserRepositoryImp(
     }
 
     override fun isMyContent(contentUsername: String): Boolean {
-        val username = getUsername()
-        return username == contentUsername
+        return userDataStateFlow.value.username == contentUsername
     }
 
     override fun updateUserNotificationToken(notificationToken: String) {
@@ -178,36 +167,42 @@ class FirebaseUserRepositoryImp(
         val userDocRef =
             firestore.collection(FirebaseDatabaseKeys.userList)
                 .document(FirebaseDatabaseKeys.generalUserList)
-                .collection("users").document(userId)
+                .collection("users")
+                .document(userId)
 
         userDocRef.update("notificationToken", notificationToken)
-            .addOnSuccessListener {
-                Timber.d("Notification token updated successfully")
-            }
-            .addOnFailureListener { exception ->
-                Timber.e("Error updating notification token: ${exception.message}")
-            }
+            .addOnSuccessListener { Timber.d("Notification token updated successfully") }
+            .addOnFailureListener { exception -> Timber.e("Error updating notification token: ${exception.message}") }
     }
 
     override fun getUserProfileWithUserId(userId: String): Flow<FirebaseUserProfileModel> {
         return flow {
-            val userDoc = firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION)
-                .document(userId).get().await()
-            val userPropertyDoc = firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION)
-                .document(userId).collection("userProperty").document("biography").get().await()
+            try {
+                val userDoc = firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION)
+                    .document(userId)
+                    .get()
+                    .await()
 
-            var userProfile = userDoc.toObject(FirebaseUserProfileModel::class.java)
-            val userProperty = userPropertyDoc.toObject(FirebaseUserPropertyModel::class.java)
+                val userPropertyDoc = firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION)
+                    .document(userId)
+                    .collection("userProperty")
+                    .document("biography")
+                    .get()
+                    .await()
 
+                val profile = userDoc.toObject(FirebaseUserProfileModel::class.java)
+                val property = userPropertyDoc.toObject(FirebaseUserPropertyModel::class.java)
 
-            if (userProfile != null) {
-                userProfile = userProfile.copy(
-                    biography = userProperty?.biography ?: "",
-                )
-                userDataStateFlow.value = userProfile
-                emit(userProfile)
-            } else {
-                throw GeneralException("User profile not found for userId: $userId")
+                if (profile != null) {
+                    val merged = profile.copy(biography = property?.biography.orEmpty())
+                    userDataStateFlow.value = merged
+                    emit(merged)
+                } else {
+                    throw GeneralException("User profile not found for userId: $userId")
+                }
+            } catch (e: Exception) {
+                userDataStateFlow.value = FirebaseUserProfileModel(errorException = e)
+                throw e
             }
         }
     }

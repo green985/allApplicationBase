@@ -102,7 +102,7 @@ class GoogleLoginRepositoryImpl(
 
     }
 
-    private suspend fun signWithGoogle(autoLoginCheck: Boolean = false) {
+    private suspend fun signWithGoogle() {
         try {
             // Instantiate a Google sign-in request
             val googleIdOption = GetGoogleIdOption.Builder()
