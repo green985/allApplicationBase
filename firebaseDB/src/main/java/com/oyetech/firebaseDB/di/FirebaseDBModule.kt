@@ -13,6 +13,7 @@ import com.oyetech.domain.repository.firebase.FirebaseQuotesDebugOperationReposi
 import com.oyetech.domain.repository.firebase.FirebaseQuotesOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseStorageRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserListOperationRepository
+import com.oyetech.domain.repository.firebase.FirebaseUserPropertyRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.firebase.RadioAnalyticsOperationRepository
 import com.oyetech.domain.repository.helpers.FirebaseContactWithMeOperationRepository
@@ -29,6 +30,7 @@ import com.oyetech.firebaseDB.firebaseDB.question.FirebaseQuestionTagRepositoryI
 import com.oyetech.firebaseDB.firebaseDB.quotes.FirebaseQuotesOperationRepositoryImp
 import com.oyetech.firebaseDB.firebaseDB.radio.RadioAnalyticsOperationRepositoryImp
 import com.oyetech.firebaseDB.firebaseDB.userList.FirebaseUserListOperationRepositoryImpl
+import com.oyetech.firebaseDB.userOperation.FirebaseUserPropertyRepositoryImpl
 import com.oyetech.firebaseDB.userOperation.FirebaseUserRepositoryImp
 import org.koin.dsl.module
 
@@ -79,6 +81,7 @@ object FirebaseDBModule {
             )
         }
         single<FirebaseUserRepository> { FirebaseUserRepositoryImp(get()) }
+        single<FirebaseUserPropertyRepository> { FirebaseUserPropertyRepositoryImpl(get()) }
 
         single<FirebaseQuotesOperationRepository> {
             FirebaseQuotesOperationRepositoryImp(

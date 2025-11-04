@@ -7,6 +7,7 @@ import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.errors.exceptionHelper.GeneralException
 import com.oyetech.models.firebaseModels.databaseKeys.FirebaseDatabaseKeys
 import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
+import com.oyetech.models.firebaseModels.userModel.FirebaseUserPropertyModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.firstOrNull
@@ -89,19 +90,28 @@ class FirebaseUserRepositoryImp(
         val uid = firebaseProfileUserModel.userId
         firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(uid).get()
             .addOnSuccessListener {
-                var userData = it.toObject(FirebaseUserProfileModel::class.java)
+                val userPropertyDoc = firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION)
+                    .document(uid).collection("userProperty").document("biography").get()
+                    .addOnSuccessListener {
+                        val userProperty = it.toObject(FirebaseUserPropertyModel::class.java)
 
-                userData = userData?.copy(
-                    lastSignInTimestamp = firebaseProfileUserModel.lastSignInTimestamp,
-                    isAnonymous = firebaseProfileUserModel.isAnonymous
-                )
+                        var userData = it.toObject(FirebaseUserProfileModel::class.java)
 
-                if (userData != null && userData.userId == uid) {
-                    userDataStateFlow.tryEmit(userData)
-                } else {
-                    createProfile(firebaseProfileUserModel)
-                }
+                        userData = userData?.copy(
+                            biography = userProperty?.biography ?: "erororor",
+                            lastSignInTimestamp = firebaseProfileUserModel.lastSignInTimestamp,
+                            isAnonymous = firebaseProfileUserModel.isAnonymous
+                        )
 
+                        if (userData != null && userData.userId == uid) {
+                            userDataStateFlow.tryEmit(userData)
+                        } else {
+                            createProfile(firebaseProfileUserModel)
+                        }
+                    }.addOnFailureListener {
+                        userDataStateFlow.value =
+                            FirebaseUserProfileModel(errorException = it)
+                    }
             }.addOnFailureListener {
                 userDataStateFlow.value =
                     FirebaseUserProfileModel(errorException = it)
@@ -114,18 +124,30 @@ class FirebaseUserRepositoryImp(
     ) {
         val uid = firebaseProfileUserModel.userId
         firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION).document(uid).get()
-            .addOnSuccessListener {
-                var userData = it.toObject(FirebaseUserProfileModel::class.java)
+            .addOnSuccessListener { userData ->
+                val userPropertyDoc = firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION)
+                    .document(uid).collection("userProperty").document("biography").get()
+                    .addOnSuccessListener {
+                        val userProperty = it.toObject(FirebaseUserPropertyModel::class.java)
 
-                userData = userData?.copy(
-                    lastSignInTimestamp = firebaseProfileUserModel.lastSignInTimestamp,
-                    isAnonymous = firebaseProfileUserModel.isAnonymous
-                )
+                        var userData = userData.toObject(FirebaseUserProfileModel::class.java)
 
-                if (userData != null && userData.userId == uid) {
-                    userDataStateFlow.value = (userData)
-                    afterAction.invoke(true)
-                }
+                        userData = userData?.copy(
+                            biography = userProperty?.biography ?: "erororor",
+                            lastSignInTimestamp = firebaseProfileUserModel.lastSignInTimestamp,
+                            isAnonymous = firebaseProfileUserModel.isAnonymous
+                        )
+
+
+                        if (userData != null && userData.userId == uid) {
+                            userDataStateFlow.value = (userData)
+                            afterAction.invoke(true)
+                        }
+                    }.addOnFailureListener {
+                        userDataStateFlow.value =
+                            FirebaseUserProfileModel(errorException = it)
+                    }
+
 
             }.addOnFailureListener {
                 userDataStateFlow.value =
@@ -171,9 +193,18 @@ class FirebaseUserRepositoryImp(
         return flow {
             val userDoc = firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION)
                 .document(userId).get().await()
+            val userPropertyDoc = firestore.collection(FirebaseUserDatabaseKey.USER_COLLECTION)
+                .document(userId).collection("userProperty").document("biography").get().await()
 
-            val userProfile = userDoc.toObject(FirebaseUserProfileModel::class.java)
+            var userProfile = userDoc.toObject(FirebaseUserProfileModel::class.java)
+            val userProperty = userPropertyDoc.toObject(FirebaseUserPropertyModel::class.java)
+
+
             if (userProfile != null) {
+                userProfile = userProfile.copy(
+                    biography = userProperty?.biography ?: "",
+                )
+                userDataStateFlow.value = userProfile
                 emit(userProfile)
             } else {
                 throw GeneralException("User profile not found for userId: $userId")

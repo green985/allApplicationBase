@@ -1,5 +1,6 @@
 package com.oyetech.composebase.sharedScreens.userProfile.editProfile
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,16 +8,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.customViews.FormAcceptOperationViewSetup
+import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
+import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.sharedScreens.userProfile.EditProfileEvent
-import com.oyetech.composebase.sharedScreens.userProfile.EditProfileUiState
 import com.oyetech.composebase.sharedScreens.userProfile.views.ProfileBiographyInputArea
-import timber.log.Timber
+import org.koin.androidx.compose.koinViewModel
 
 /**
 Created by Erdi Özbek
@@ -28,10 +33,16 @@ Created by Erdi Özbek
 fun EditUserProfileScreenSetup(
     modifier: Modifier = Modifier,
 ) {
+    val viewModel = koinViewModel<EditProfileVm>()
+    val uiState by viewModel.uiState.collectAsState()
+    val onEvent: (EditProfileEvent) -> Unit = { event ->
+        viewModel.onEvent(event)
+    }
 
     EditUserProfileScreen(
         modifier = modifier,
-        uiState = getDefaultUiState(),
+        uiState = uiState,
+        onEvent = onEvent
     )
 }
 
@@ -40,7 +51,7 @@ fun EditUserProfileScreenSetup(
 fun EditUserProfileScreen(
     modifier: Modifier = Modifier,
     uiState: EditProfileUiState = EditProfileUiState(),
-    onEvent: EditProfileEvent.() -> Unit = { Timber.d("$this") }, // Default empty event handler
+    onEvent: (EditProfileEvent) -> Unit = { },
 ) {
     BaseScaffold(
         modifier = Modifier.fillMaxSize(),
@@ -54,17 +65,34 @@ fun EditUserProfileScreen(
             )
         },
         content = { innerPadding ->
-            Column(
+            Box(
                 modifier = Modifier
+                    .fillMaxSize()
                     .padding(innerPadding)
-                    .padding(16.dp)
             ) {
-                ProfileBiographyInputArea(
-                    isEditMode = true,
-                    biographyText = uiState.biographyText,
-                    onBiographyTextChange = { onEvent(EditProfileEvent.OnBiographyTextChange(it)) }
-                )
-                Spacer(modifier = Modifier.padding(8.dp))
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                ) {
+                    ProfileBiographyInputArea(
+                        isEditMode = true,
+                        biographyText = uiState.biographyText,
+                        onBiographyTextChange = { onEvent(EditProfileEvent.OnBiographyTextChange(it)) }
+                    )
+                    Spacer(modifier = Modifier.padding(8.dp))
+                }
+
+                if (uiState.isLoading) {
+                    LoadingScreenFullSize()
+                }
+
+                if (uiState.errorMessage.isNotEmpty()) {
+                    ErrorScreenFullSize(
+                        modifier = Modifier.align(Alignment.Center),
+                        errorMessage = uiState.errorMessage
+                    )
+                }
             }
         }
     )

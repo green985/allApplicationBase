@@ -1,7 +1,13 @@
 package com.oyetech.composebase.sharedScreens.userProfile.editProfile
 
-/**
-Created by Erdi Özbek
--21.04.2025-
--14:38-
- **/
+data class EditProfileUiState(
+    val biographyText: String = "",
+    val isLoading: Boolean = false,
+    val errorMessage: String = "",
+)
+
+fun getDefaultUiState() = EditProfileUiState(
+    biographyText = "Sample biography text",
+    isLoading = false,
+    errorMessage = "",
+)

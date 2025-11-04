@@ -18,6 +18,7 @@ import com.oyetech.composebase.sharedScreens.messaging.MessageDetailVm
 import com.oyetech.composebase.sharedScreens.messaging.MessageOperationVM
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListVm
 import com.oyetech.composebase.sharedScreens.userList.UserListVm
+import com.oyetech.composebase.sharedScreens.userProfile.editProfile.EditProfileVm
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -52,5 +53,6 @@ object ComposeMainModule {
         viewModelOf(::AllScreenNavigatorVM)
         viewModelOf(::MoonOperationVm)
         viewModelOf(::BottomNavigationVm)
+        viewModelOf(::EditProfileVm)
     }
 }

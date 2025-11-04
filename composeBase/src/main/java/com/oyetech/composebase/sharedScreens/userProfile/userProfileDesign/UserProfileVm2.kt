@@ -5,6 +5,7 @@ import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.composebase.sharedScreens.navigation.ScreenKey
+import com.oyetech.domain.repository.firebase.FirebaseUserPropertyRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
@@ -16,6 +17,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -30,6 +32,7 @@ import timber.log.Timber
 class UserProfileVm2(
     appDispatchers: AppDispatchers,
     private val firebaseUserRepository: FirebaseUserRepository,
+    private val firebaseUserPropertyRepository: FirebaseUserPropertyRepository,
     private val navigationUseCase: NavigationUseCase,
     private val receiverId: String = "",
 ) : BaseViewModel(appDispatchers) {
@@ -41,6 +44,16 @@ class UserProfileVm2(
         viewModelScope.launch(getDispatcherIo()) {
             initializeProfile()
         }
+
+        viewModelScope.launch(getDispatcherIo()) {
+            firebaseUserPropertyRepository.updateOperationSharedEvent.collectLatest {
+                Timber.d("Received update operation event: $it")
+                firebaseUserRepository.getUserProfileWithUserId(uiState.value.userId).collect({
+                    Timber.d("Refreshing user profile data due to update event.")
+                })
+            }
+        }
+
     }
 
     private suspend fun initializeProfile() {
@@ -86,6 +99,7 @@ class UserProfileVm2(
                             isLoading = false,
                             username = user.username ?: "",
                             isNotLogin = false,
+                            biographyText = user.biography,
                             userId = userId,
                             isOwnProfile = isOwnProfile
                         )
@@ -109,7 +123,7 @@ class UserProfileVm2(
     private suspend fun loadCurrentUserProfile() {
         _uiState.updateState { copy(isLoading = true) }
 
-        firebaseUserRepository.userDataStateFlow.asResult().collect { result ->
+        firebaseUserRepository.userDataStateFlow.asResult().collectLatest { result ->
             result.fold(
                 onSuccess = { user ->
                     if (user != null) {
@@ -119,6 +133,7 @@ class UserProfileVm2(
                                 isLoading = false,
                                 username = user.username ?: "",
                                 isNotLogin = false,
+                                biographyText = user.biography,
                                 userId = currentUserId,
                                 isOwnProfile = true
                             )
