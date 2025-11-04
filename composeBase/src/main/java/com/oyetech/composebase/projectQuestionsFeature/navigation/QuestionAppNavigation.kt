@@ -13,6 +13,7 @@ import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageC
 import com.oyetech.composebase.sharedScreens.navigation.ScreenKey
 import com.oyetech.composebase.sharedScreens.settings.FacSettingsScreenSetup
 import com.oyetech.composebase.sharedScreens.userList.UserListScreenSetup
+import com.oyetech.composebase.sharedScreens.userProfile.editProfile.EditUserProfileScreenSetup
 import com.oyetech.composebase.sharedScreens.userProfile.userProfileDesign.User2ProfileScreenSetup
 
 @Suppress("LongMethod")
@@ -53,6 +54,9 @@ fun NavGraphBuilder.questionAppNavigation(navController: NavController) {
 
     composable(QuestionAppProjectRoutes.QuestionPager.route) {
         QuestionPagerScreenSetup()
+    }
+    composable(QuestionAppProjectRoutes.EditProfile.route) {
+        EditUserProfileScreenSetup()
     }
 
     composable(
