@@ -18,7 +18,8 @@ import org.koin.dsl.module
 
 object QuestionProjectModule {
     val module = module {
-        singleOf(::QuestionUseCase)
+
+    singleOf(::QuestionUseCase)
         singleOf(::GetUserQuestionsPagedByCreatedAtUseCase)
         factoryOf(::GetQuestionsPagedByCreatedAtUseCase)
         viewModelOf(::QuestionMainActivityVm)

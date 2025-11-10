@@ -12,6 +12,7 @@ import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionV
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.toUiState
 import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
+import com.oyetech.domain.repository.question.QuestionSupabaseRepository
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.questionProject.questionOperation.ModerationStatus
@@ -22,6 +23,7 @@ import com.oyetech.models.questionProject.questionOperation.TwoChoiceSubCategory
 import com.oyetech.models.questionProject.questionOperation.asKey
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
+import com.oyetech.tools.randomHelper.RandomHelper
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -34,6 +36,7 @@ class QuestionCreateQuestionVm(
     appDispatchers: AppDispatchers,
     private val navigationUseCase: NavigationUseCase,
     private val questionRepository: FirebaseQuestionOperationRepository,
+    private val questionSupabaseRepository: QuestionSupabaseRepository,
     private val snackbarDelegate: SnackbarDelegate,
     private val questionUseCase: com.oyetech.domain.useCases.QuestionUseCase,
     private val firebaseUserRepository: com.oyetech.domain.repository.firebase.FirebaseUserRepository,
@@ -215,6 +218,7 @@ class QuestionCreateQuestionVm(
                 questionId = questionIdToUse,
                 createdBy = userId
             ).copy(
+                questionId = RandomHelper.generateGuid(),
                 tags = currentQuestion.selectedTags.toList(),
                 moderationStatus = moderationStatus
             )
@@ -225,7 +229,7 @@ class QuestionCreateQuestionVm(
             val operation = if (isEditMode) {
                 questionRepository.updateQuestion(body)
             } else {
-                questionRepository.createQuestion(body)
+                questionSupabaseRepository.createQuestion(body)
             }
 
             operation.asResult()

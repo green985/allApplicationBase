@@ -31,7 +31,7 @@ class GetUserAnsweredQuestionsPagedUseCase(
         }
 
         override fun extractCreatedAtEpochMs(item: QuestionOperationResponseBody): Long {
-            return item.createdAt?.time ?: 0L
+            return item.createdAt ?: 0L
         }
     }
 

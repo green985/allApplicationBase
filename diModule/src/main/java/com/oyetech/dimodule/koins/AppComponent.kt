@@ -3,7 +3,6 @@ package com.oyetech.dimodule.koins
 import com.oyetech.adshelper.di.AdsHelperModule
 import com.oyetech.composebase.di.ComposeMainModule
 import com.oyetech.composebase.projectQuestionsFeature.QuestionProjectModule
-import com.oyetech.cripto.privateKeys.WallpaperAppFragmentArgs
 import com.oyetech.domain.di.DomainModule
 import com.oyetech.domain.di.QuoteDomainModule
 import com.oyetech.domain.di.RadioDomainModule
@@ -18,15 +17,15 @@ import com.oyetech.notificationmodule.di.FirebaseNotificationModule
 import com.oyetech.quotes.QuotesLocalModuleDi
 import com.oyetech.radiooperationmodule.di.RadioOperationModuleDi
 import com.oyetech.radioservice.di.RadioServiceModule
+import com.oyetech.remote.di.QuestionSupabaseRemote
 import com.oyetech.remote.di.RadioModuleDI
 import com.oyetech.remote.di.RandomOperationModuleDI
-import com.oyetech.remote.di.WallpaperRemoteModule
 import com.oyetech.remote.di.dataSourceModule
 import com.oyetech.remote.firebaseCloudRemote.FirebaseCloudRemoteModule
 import com.oyetech.remote.quotesRemote.QuotesRemoteModule
+import com.oyetech.repository.di.QuestionRepositoryModule
 import com.oyetech.repository.di.RadioRepositoryDI
 import com.oyetech.repository.di.RepositoryModule
-import com.oyetech.repository.di.WallpaperRepositoryModule
 import com.oyetech.repository.quotesImp.QuotesImpModule
 import com.oyetech.reviewer.di.GoogleAppReviewerModule
 import com.oyetech.tools.di.CommonsModule
@@ -46,8 +45,7 @@ object AppComponent {
         KoinHelperInits.HelperModule,
         CommonsModule.module,
         dataSourceModule,
-        WallpaperRemoteModule.createWallpaperAppRemoteModule(WallpaperAppFragmentArgs.WALLPAPER_API_BASE_URL),
-        WallpaperRepositoryModule.wallpaperRepositoryModule,
+        QuestionRepositoryModule.questionRepositoryModule,
         DomainModule.wallpaperDomainModule,
 
         // Features modules
@@ -80,6 +78,7 @@ object AppComponent {
         QuoteDomainModule.module,
 
         QuestionProjectModule.module,
+        QuestionSupabaseRemote.createQuestionSupabaseRemoteModule(),
 
         )
 }
