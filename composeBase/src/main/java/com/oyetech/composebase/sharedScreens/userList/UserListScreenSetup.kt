@@ -117,13 +117,13 @@ fun UserListScreen(
                         if (listViewState.isErrorInitial) {
 
                             ErrorScreenFullSize(
-                                errorMessage = listViewState.errorMessage,
+                                errorText = listViewState.errorMessage,
                                 withoutAlpha = true
                             )
                         }
                         if (listViewState.isEmptyList) {
                             ErrorScreenFullSize(
-                                errorMessage = LanguageKey.conversationNotFound,
+                                errorText = LanguageKey.conversationNotFound,
                                 withoutAlpha = true
                             )
                         }

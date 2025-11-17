@@ -174,7 +174,7 @@ fun ErrorDialogFullScreen(
 @Suppress("FunctionName")
 @Composable
 fun ErrorScreenFullSize(
-    errorMessage: String = "",
+    errorText: String = "",
     onDismiss: (() -> Unit)? = null,
     onRetry: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
@@ -192,7 +192,7 @@ fun ErrorScreenFullSize(
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = errorMessage.toErrorMessage(),
+                text = errorText.toErrorMessage(),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.error
             )

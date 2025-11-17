@@ -13,7 +13,7 @@ fun PreviewLoadingScreenFullSize() {
 @Composable
 fun PreviewErrorScreenFullSize() {
     ErrorScreenFullSize(
-        errorMessage = "Something went wrong!",
+        errorText = "Something went wrong!",
         onDismiss = { /* Dismiss Action */ },
         onRetry = { /* Retry Action */ },
     )

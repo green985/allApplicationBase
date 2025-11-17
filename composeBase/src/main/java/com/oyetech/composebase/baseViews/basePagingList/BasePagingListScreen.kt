@@ -52,7 +52,7 @@ fun <T : Any> BasePagingListScreen(
                     (items.loadState.refresh as LoadState.Error).error.message
                 ErrorScreenFullSize(
                     modifier = modifier,
-                    errorMessage = errorMessage ?: "",
+                    errorText = errorMessage ?: "",
                     onRetry = { items.retry() }
                 )
             }
@@ -62,7 +62,7 @@ fun <T : Any> BasePagingListScreen(
                 if (items.itemCount == 0) {
                     ErrorScreenFullSize(
                         modifier = modifier,
-                        errorMessage = LanguageKey.emptyCommentError,
+                        errorText = LanguageKey.emptyCommentError,
                         onRetry = if (emptyListAgainButtonVisibility) {
                             { items.retry() }
                         } else {

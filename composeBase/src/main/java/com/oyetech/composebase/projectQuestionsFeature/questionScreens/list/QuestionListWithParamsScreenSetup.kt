@@ -99,13 +99,13 @@ fun QuestionListWithParamsContent(
                 LoadingScreenFullSize()
             } else if (listViewState.isErrorInitial) {
                 ErrorScreenFullSize(
-                    errorMessage = listViewState.errorMessage,
+                    errorText = listViewState.errorMessage,
                     withoutAlpha = true,
                     onRetry = listViewState.onRetryInitial
                 )
             } else if (listViewState.items.isEmpty()) {
                 ErrorScreenFullSize(
-                    errorMessage = listViewState.emptyErrorMessage,
+                    errorText = listViewState.emptyErrorMessage,
                     withoutAlpha = true,
                     onRetry = listViewState.onRetryInitial
                 )

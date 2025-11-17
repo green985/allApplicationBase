@@ -38,7 +38,7 @@ class QuestionFormViewModel(appDispatchers: AppDispatchers) : BaseViewModel(appD
         viewModelScope.launch {
             _uiState.update { currentState ->
                 val questionItems = questions.map { question ->
-                    question.toQuestionItemState()
+                    question.toQuestionViewUiStateForForm()
                 }.toImmutableList()
 
                 currentState.copy(
@@ -73,9 +73,6 @@ class QuestionFormViewModel(appDispatchers: AppDispatchers) : BaseViewModel(appD
             )
 
             is QuestionFormEvent.OnClearAnswer -> handleClearAnswer(event.questionId)
-            is QuestionFormEvent.OnCommentTextChanged -> handleCommentTextChanged(event.text)
-            is QuestionFormEvent.OnAddComment -> handleAddComment()
-            is QuestionFormEvent.OnDeleteComment -> handleDeleteComment(event.commentId)
             is QuestionFormEvent.OnErrorDismiss -> handleErrorDismiss()
         }
     }
@@ -111,10 +108,7 @@ class QuestionFormViewModel(appDispatchers: AppDispatchers) : BaseViewModel(appD
                     isLoading = false,
                     isSubmitted = true,
                     isLocked = true,
-                    submittedAt = System.currentTimeMillis(),
-                    questions = state.questions.map { question ->
-                        question.copy(isEnabled = false)
-                    }.toImmutableList()
+                    submittedAt = System.currentTimeMillis()
                 )
             }
 
@@ -127,10 +121,7 @@ class QuestionFormViewModel(appDispatchers: AppDispatchers) : BaseViewModel(appD
         viewModelScope.launch {
             _uiState.update { state ->
                 state.copy(
-                    isLocked = false,
-                    questions = state.questions.map { question ->
-                        question.copy(isEnabled = true)
-                    }.toImmutableList()
+                    isLocked = false
                 )
             }
             _uiEvent.emit(QuestionFormUiEvent.OnFormUnlocked)
@@ -141,10 +132,7 @@ class QuestionFormViewModel(appDispatchers: AppDispatchers) : BaseViewModel(appD
         viewModelScope.launch {
             _uiState.update { state ->
                 state.copy(
-                    isLocked = true,
-                    questions = state.questions.map { question ->
-                        question.copy(isEnabled = false)
-                    }.toImmutableList()
+                    isLocked = true
                 )
             }
             _uiEvent.emit(QuestionFormUiEvent.OnFormLocked)
@@ -162,15 +150,15 @@ class QuestionFormViewModel(appDispatchers: AppDispatchers) : BaseViewModel(appD
             val updatedQuestions = state.questions.map { question ->
                 if (question.questionId == questionId) {
                     question.copy(
-                        selectedOptionId = optionId,
-                        isAnswered = true
+                        selectedAnswer = optionId,
+                        isAnsweredByUser = true
                     )
                 } else {
                     question
                 }
             }.toImmutableList()
 
-            val allAnswered = updatedQuestions.all { it.isAnswered }
+            val allAnswered = updatedQuestions.all { it.isAnsweredByUser }
 
             state.copy(
                 questions = updatedQuestions,
@@ -180,17 +168,8 @@ class QuestionFormViewModel(appDispatchers: AppDispatchers) : BaseViewModel(appD
     }
 
     private fun handleQuestionExpanded(questionId: String, isExpanded: Boolean) {
-        _uiState.update { state ->
-            val updatedQuestions = state.questions.map { question ->
-                if (question.questionId == questionId) {
-                    question.copy(isExpanded = isExpanded)
-                } else {
-                    question
-                }
-            }.toImmutableList()
-
-            state.copy(questions = updatedQuestions)
-        }
+        // Note: QuestionViewUiState doesn't have isExpanded field
+        // This can be handled in the UI layer if needed
     }
 
     private fun handleClearAnswer(questionId: String) {
@@ -198,15 +177,15 @@ class QuestionFormViewModel(appDispatchers: AppDispatchers) : BaseViewModel(appD
             val updatedQuestions = state.questions.map { question ->
                 if (question.questionId == questionId) {
                     question.copy(
-                        selectedOptionId = null,
-                        isAnswered = false
+                        selectedAnswer = null,
+                        isAnsweredByUser = false
                     )
                 } else {
                     question
                 }
             }.toImmutableList()
 
-            val allAnswered = updatedQuestions.all { it.isAnswered }
+            val allAnswered = updatedQuestions.all { it.isAnsweredByUser }
 
             state.copy(
                 questions = updatedQuestions,
@@ -215,48 +194,7 @@ class QuestionFormViewModel(appDispatchers: AppDispatchers) : BaseViewModel(appD
         }
     }
 
-    private fun handleCommentTextChanged(text: String) {
-        _uiState.update { it.copy(commentInputText = text) }
-    }
-
-    private fun handleAddComment() {
-        viewModelScope.launch {
-            val currentState = _uiState.value
-            if (currentState.commentInputText.isBlank()) return@launch
-
-            // TODO: Call repository to add comment
-            // For now, add locally
-            val newComment = FormComment(
-                commentId = "comment_${System.currentTimeMillis()}",
-                userId = "current_user",
-                userName = "Current User",
-                commentText = currentState.commentInputText,
-                createdAt = System.currentTimeMillis()
-            )
-
-            _uiState.update { state ->
-                state.copy(
-                    comments = (state.comments + newComment).toImmutableList(),
-                    commentInputText = ""
-                )
-            }
-        }
-    }
-
-    private fun handleDeleteComment(commentId: String) {
-        viewModelScope.launch {
-            // TODO: Call repository to delete comment
-            _uiState.update { state ->
-                state.copy(
-                    comments = state.comments.filterNot { it.commentId == commentId }
-                        .toImmutableList()
-                )
-            }
-        }
-    }
-
     private fun handleErrorDismiss() {
         _uiState.update { it.copy(isError = false, errorText = "") }
     }
 }
-

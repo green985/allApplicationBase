@@ -65,7 +65,7 @@ data class QuestionFormScreenUiState(
     val formId: String,
     val title: String,
     val description: String,
-    val questions: ImmutableList<QuestionItemState>,
+    val questions: ImmutableList<QuestionViewUiState>, // Uses existing QuestionViewUiState
     val isSubmitted: Boolean,
     val isLocked: Boolean,
     val comments: ImmutableList<FormComment>,
@@ -74,18 +74,19 @@ data class QuestionFormScreenUiState(
 )
 ```
 
-#### QuestionItemState
+#### QuestionViewUiState (Reused from existing)
 
-Her bir soru için state:
+Her bir soru için mevcut `QuestionViewUiState` kullanılıyor:
 
 ```kotlin
-data class QuestionItemState(
+data class QuestionViewUiState(
     val questionId: String,
-    val questionTitle: String,
-    val questionData: QuestionOperationResponseBody,
-    val selectedOptionId: String?,
-    val isAnswered: Boolean,
-    val isEnabled: Boolean, // Locked durumunda false
+    val titleText: String,
+    val questionType: QuestionType,
+    val options: ImmutableList<QueOption>,
+    val selectedAnswer: String?,
+    val isAnsweredByUser: Boolean,
+    // ...
 )
 ```
 
@@ -148,12 +149,11 @@ sealed class QuestionFormUiEvent {
 - Kaç sorunun cevaplanmış olduğunu gösterir
 - Progress bar
 
-### 3. QuestionItemCard
+### 3. QuestionViewScaffoldLayout (Reused)
 
-- Her bir soru için card
-- Soru başlığı
-- Cevap seçenekleri (QuestionView component'i kullanılacak)
-- Cevaplandı badge'i
+- **Her bir soru için mevcut `QuestionViewScaffoldLayout` kullanılıyor**
+- Soru başlığı, cevap seçenekleri, tags vb. tüm soru UI'ı
+- `QuestionViewEvent` → `QuestionFormEvent` mapping yapılıyor
 
 ### 4. FormActionButtons
 
@@ -185,6 +185,28 @@ stateDiagram-v2
 ```
 
 ## 🔌 Integration Points
+
+### Using Existing QuestionViewUiState
+
+```kotlin
+// Questions list uses the existing QuestionViewUiState
+items(uiState.questions, key = { it.questionId }) { questionUiState ->
+    QuestionViewScaffoldLayout(
+        uiState = questionUiState,
+        onEvent = { questionEvent ->
+            // Map QuestionViewEvent to QuestionFormEvent
+            when (questionEvent) {
+                is QuestionViewEvent.OnOptionSelected -> {
+                    onEvent(QuestionFormEvent.OnQuestionAnswered(...))
+                }
+                is QuestionViewEvent.OnDeleteAnswerClicked -> {
+                    onEvent(QuestionFormEvent.OnClearAnswer(...))
+                }
+            }
+        }
+    )
+}
+```
 
 ### Repository Layer (TODO)
 
@@ -266,60 +288,60 @@ previewEmptyFormState()
 
 1. **Submit Validation:**
     - Title boş olamaz
-    - Tüm sorular cevaplanmış olmalı
+   - Tüm sorular cevaplanmış olmalı (`isAnsweredByUser = true`)
 
 2. **Comment Validation:**
     - Yorum boş olamaz
 
-## 🎯 Next Steps
+## 🎯 Key Changes
 
-### UI Integration
+### ✅ Removed QuestionItemState
 
-- [ ] Mevcut `QuestionViewUiState` component'ini `QuestionItemCard` içine entegre et
-- [ ] Question options rendering (YES/NO, Multiple Choice, etc.)
-- [ ] Custom error dialogs
+- Artık `QuestionItemState` yok
+- Bunun yerine mevcut `QuestionViewUiState` kullanılıyor
 
-### Backend Integration
+### ✅ Reusing Existing Components
 
-- [ ] Repository implementation
-- [ ] API calls
-- [ ] Error handling
-- [ ] Loading states
+- `QuestionViewScaffoldLayout` component'i direkt kullanılıyor
+- `QuestionViewEvent` eventleri `QuestionFormEvent`'e map ediliyor
+- Tüm soru rendering logic'i mevcut component'ten geliyor
 
-### Additional Features
+### ✅ Event Mapping
 
-- [ ] Draft save (otomatik kaydetme)
-- [ ] Answer validation rules
-- [ ] Required/Optional questions
-- [ ] Question dependencies (conditional questions)
-- [ ] Rich text support for description
-- [ ] Image attachments for comments
-- [ ] Real-time updates (Socket/Firebase)
+```kotlin
+QuestionViewEvent.OnOptionSelected
+→ QuestionFormEvent.OnQuestionAnswered
+
+QuestionViewEvent.OnDeleteAnswerClicked
+→ QuestionFormEvent.OnClearAnswer
+```
 
 ## 📚 Related Files
 
-- `QuestionViewUiState.kt` - Tek soru için state management
-- `QuestionOperationResponseBody.kt` - Backend model
-- `QueAnswer.kt` - Answer model
-- `QueOption.kt` - Option model
+- **`QuestionViewUiState.kt`** - Tek soru için state management (REUSED)
+- **`QuestionViewScaffoldLayout`** - Soru UI component (REUSED)
+- **`QuestionOperationResponseBody.kt`** - Backend model
+- **`QueAnswer.kt`** - Answer model
+- **`QueOption.kt`** - Option model
 
 ## 🐛 Known Issues / Limitations
 
-1. Question rendering şu an placeholder (gerçek QuestionView entegre edilecek)
+1. ~~Question rendering şu an placeholder~~ ✅ **FIXED**: Artık `QuestionViewScaffoldLayout`
+   kullanılıyor
 2. Repository layer mock
 3. User authentication entegrasyonu yok
 4. Offline support yok
 
 ## 💡 Tips
 
-1. **Immutable Collections:** `ImmutableList` kullanarak recomposition optimize edilmiş
-2. **Single Responsibility:** Her component kendi işini yapar
-3. **Preview Support:** Her durum için preview var
-4. **Type Safety:** Sealed class'lar ile type-safe event handling
+1. **Reusability:** Mevcut `QuestionViewUiState` ve `QuestionViewScaffoldLayout` tekrar kullanıldı
+2. **Immutable Collections:** `ImmutableList` kullanarak recomposition optimize edilmiş
+3. **Single Responsibility:** Her component kendi işini yapar
+4. **Preview Support:** Her durum için preview var
+5. **Type Safety:** Sealed class'lar ile type-safe event handling
 
 ---
 
 **Created:** 17.11.2025  
 **Author:** Erdi Özbek  
-**Version:** 1.0.0
-
+**Version:** 2.0.0 (Updated to use QuestionViewUiState)

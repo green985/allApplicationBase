@@ -90,7 +90,7 @@ fun EditUserProfileScreen(
                 if (uiState.errorMessage.isNotEmpty()) {
                     ErrorScreenFullSize(
                         modifier = Modifier.align(Alignment.Center),
-                        errorMessage = uiState.errorMessage
+                        errorText = uiState.errorMessage
                     )
                 }
             }

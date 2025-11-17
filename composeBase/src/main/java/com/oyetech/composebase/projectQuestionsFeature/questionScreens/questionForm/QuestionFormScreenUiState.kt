@@ -3,6 +3,7 @@ package com.oyetech.composebase.projectQuestionsFeature.questionScreens.question
 import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.base.BaseUIEvent
 import com.oyetech.composebase.base.BaseUIState
+import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -19,8 +20,7 @@ import kotlinx.collections.immutable.toImmutableList
  * 2. User answers all questions in the catalog
  * 3. Submit button appears when all questions are answered
  * 4. After submit, questions become locked (read-only with answers visible)
- * 5. Comments section appears below description
- * 6. User can edit the form (unlocks questions again)
+ * 5. User can edit the form (unlocks questions again)
  */
 
 data class QuestionFormScreenUiState(
@@ -33,50 +33,18 @@ data class QuestionFormScreenUiState(
     val title: String = "",
     val description: String = "",
 
-    // Questions catalog
-    val questions: ImmutableList<QuestionItemState> = persistentListOf(),
+    // Questions catalog - now using QuestionViewUiState
+    val questions: ImmutableList<QuestionViewUiState> = persistentListOf(),
 
     // Form state
     val isSubmitted: Boolean = false,
     val isLocked: Boolean = false, // Questions are locked after submit
     val submittedAt: Long? = null,
 
-    // Comments section (visible after submit)
-    val comments: ImmutableList<FormComment> = persistentListOf(),
-    val commentInputText: String = "",
-
     // Validation
     val canSubmit: Boolean = false, // All questions answered
     val validationErrors: ImmutableList<String> = persistentListOf(),
 ) : BaseUIState()
-
-/**
- * Individual question state within the form
- */
-data class QuestionItemState(
-    val questionId: String = "",
-    val questionTitle: String = "",
-    val questionData: QuestionOperationResponseBody,
-
-    // Answer state
-    val selectedOptionId: String? = null,
-    val isAnswered: Boolean = false,
-
-    // UI state
-    val isExpanded: Boolean = true,
-    val isEnabled: Boolean = true, // False when locked
-)
-
-/**
- * Comment data for the form
- */
-data class FormComment(
-    val commentId: String = "",
-    val userId: String = "",
-    val userName: String = "",
-    val commentText: String = "",
-    val createdAt: Long = 0L,
-)
 
 /**
  * Events for the form screen
@@ -101,11 +69,6 @@ sealed class QuestionFormEvent : BaseEvent() {
 
     data class OnClearAnswer(val questionId: String) : QuestionFormEvent()
 
-    // Comment actions
-    data class OnCommentTextChanged(val text: String) : QuestionFormEvent()
-    data object OnAddComment : QuestionFormEvent()
-    data class OnDeleteComment(val commentId: String) : QuestionFormEvent()
-
     // Error handling
     data object OnErrorDismiss : QuestionFormEvent()
 }
@@ -129,7 +92,7 @@ fun QuestionFormScreenUiState.validateForm(): List<String> {
         errors.add("Form title is required")
     }
 
-    val unansweredQuestions = questions.filter { !it.isAnswered }
+    val unansweredQuestions = questions.filter { !it.isAnsweredByUser }
     if (unansweredQuestions.isNotEmpty()) {
         errors.add("${unansweredQuestions.size} question(s) not answered")
     }
@@ -138,11 +101,11 @@ fun QuestionFormScreenUiState.validateForm(): List<String> {
 }
 
 fun QuestionFormScreenUiState.allQuestionsAnswered(): Boolean {
-    return questions.isNotEmpty() && questions.all { it.isAnswered }
+    return questions.isNotEmpty() && questions.all { it.isAnsweredByUser }
 }
 
 fun QuestionFormScreenUiState.getAnsweredCount(): Int {
-    return questions.count { it.isAnswered }
+    return questions.count { it.isAnsweredByUser }
 }
 
 fun QuestionFormScreenUiState.getTotalQuestions(): Int {
@@ -150,18 +113,22 @@ fun QuestionFormScreenUiState.getTotalQuestions(): Int {
 }
 
 // Conversion functions
-fun QuestionOperationResponseBody.toQuestionItemState(
+fun QuestionOperationResponseBody.toQuestionViewUiStateForForm(
     selectedOptionId: String? = null,
     isLocked: Boolean = false,
-): QuestionItemState {
-    return QuestionItemState(
+): QuestionViewUiState {
+    return QuestionViewUiState(
+        isLoading = false,
+        isError = false,
+        errorText = "",
         questionId = this.questionId,
-        questionTitle = this.questionTitle,
-        questionData = this,
-        selectedOptionId = selectedOptionId,
-        isAnswered = selectedOptionId != null,
-        isExpanded = true,
-        isEnabled = !isLocked
+        titleText = this.questionTitle,
+        questionType = this.questionType,
+        options = this.options.toImmutableList(),
+        selectedAnswer = selectedOptionId,
+        isAnsweredByUser = selectedOptionId != null,
+        selectedTags = this.tags.toImmutableList(),
+        moderationStatus = this.moderationStatus
     )
 }
 
@@ -171,40 +138,14 @@ fun previewQuestionFormScreenUiState(
     questionsCount: Int = 3,
 ): QuestionFormScreenUiState {
     val sampleQuestions = (1..questionsCount).map { index ->
-        QuestionItemState(
+        QuestionViewUiState(
+            isLoading = false,
             questionId = "question_$index",
-            questionTitle = "Sample Question $index: Do you agree with statement $index?",
-            questionData = QuestionOperationResponseBody(
-                questionId = "question_$index",
-                questionTitle = "Sample Question $index: Do you agree with statement $index?",
-            ),
-            selectedOptionId = if (isSubmitted || index == 1) "option_yes" else null,
-            isAnswered = isSubmitted || index == 1,
-            isExpanded = true,
-            isEnabled = !isSubmitted
+            titleText = "Sample Question $index: Do you agree with statement $index?",
+            selectedAnswer = if (isSubmitted || index == 1) "option_yes" else null,
+            isAnsweredByUser = isSubmitted || index == 1,
         )
     }.toImmutableList()
-
-    val sampleComments = if (isSubmitted) {
-        listOf(
-            FormComment(
-                commentId = "comment_1",
-                userId = "user_123",
-                userName = "John Doe",
-                commentText = "Great form! Very clear questions.",
-                createdAt = System.currentTimeMillis() - 3600000
-            ),
-            FormComment(
-                commentId = "comment_2",
-                userId = "user_456",
-                userName = "Jane Smith",
-                commentText = "I found question 2 a bit confusing.",
-                createdAt = System.currentTimeMillis() - 1800000
-            )
-        ).toImmutableList()
-    } else {
-        persistentListOf()
-    }
 
     return QuestionFormScreenUiState(
         isLoading = false,
@@ -218,9 +159,7 @@ fun previewQuestionFormScreenUiState(
         isSubmitted = isSubmitted,
         isLocked = isSubmitted,
         submittedAt = if (isSubmitted) System.currentTimeMillis() - 7200000 else null,
-        comments = sampleComments,
-        commentInputText = "",
-        canSubmit = sampleQuestions.all { it.isAnswered },
+        canSubmit = sampleQuestions.all { it.isAnsweredByUser },
         validationErrors = persistentListOf()
     )
 }
@@ -266,4 +205,3 @@ fun previewEmptyFormState(): QuestionFormScreenUiState {
         canSubmit = false
     )
 }
-

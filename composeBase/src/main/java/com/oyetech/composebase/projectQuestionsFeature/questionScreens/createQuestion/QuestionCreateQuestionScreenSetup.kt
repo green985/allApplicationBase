@@ -115,7 +115,7 @@ private fun QuestionCreateScreen(
                 }
                 if (uiState.errorText.isNotBlank()) {
                     ErrorScreenFullSize(
-                        errorMessage = uiState.errorText,
+                        errorText = uiState.errorText,
                         onDismiss = { onEvent(QuestionViewEvent.OnErrorDismiss) }
                     )
                 }

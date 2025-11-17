@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -30,11 +29,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,15 +41,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
+import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewScaffoldLayout
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
@@ -102,7 +98,6 @@ fun QuestionFormScreenSetup(
                 }
 
                 is QuestionFormUiEvent.OnNavigateBack -> {
-
                 }
             }
         }
@@ -125,7 +120,7 @@ fun QuestionFormScreen(
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     onEvent: (QuestionFormEvent) -> Unit = {},
 ) {
-    BaseScaffold(
+    Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Question Form") },
@@ -145,7 +140,7 @@ fun QuestionFormScreen(
 
             uiState.isError -> {
                 ErrorScreenFullSize(
-                    errorMessage = uiState.errorText,
+                    errorText = uiState.errorText,
                     onRetry = { onEvent(QuestionFormEvent.OnErrorDismiss) }
                 )
             }
@@ -204,31 +199,32 @@ private fun QuestionFormContent(
             )
         }
 
-        items(uiState.questions, key = { it.questionId }) { questionItem ->
+        items(uiState.questions, key = { it.questionId }) { questionUiState ->
+            // Use the existing QuestionViewScaffoldLayout for each question
             QuestionViewScaffoldLayout(
-                uiState = questionItem, onEvent = {}, modifier =
+                uiState = questionUiState,
+                onEvent = { questionEvent ->
+                    // Map QuestionViewEvent to QuestionFormEvent
+                    when (questionEvent) {
+                        is QuestionViewEvent.OnOptionSelected -> {
+                            onEvent(
+                                QuestionFormEvent.OnQuestionAnswered(
+                                    questionEvent.questionId,
+                                    questionEvent.optionId
+                                )
+                            )
+                        }
 
-            )
+                        is QuestionViewEvent.OnDeleteAnswerClicked -> {
+                            onEvent(QuestionFormEvent.OnClearAnswer(questionEvent.questionId))
+                        }
 
-
-
-            QuestionItemCard(
-                questionItem = questionItem,
-                isLocked = uiState.isLocked,
-                onAnswerSelected = { optionId ->
-                    onEvent(QuestionFormEvent.OnQuestionAnswered(questionItem.questionId, optionId))
+                        else -> {
+                            // Handle other events if needed
+                        }
+                    }
                 },
-                onClearAnswer = {
-                    onEvent(QuestionFormEvent.OnClearAnswer(questionItem.questionId))
-                },
-                onExpandToggle = { isExpanded ->
-                    onEvent(
-                        QuestionFormEvent.OnQuestionExpanded(
-                            questionItem.questionId,
-                            isExpanded
-                        )
-                    )
-                }
+                modifier = Modifier.padding(horizontal = 8.dp)
             )
         }
 
@@ -241,24 +237,6 @@ private fun QuestionFormContent(
                 onEdit = { onEvent(QuestionFormEvent.OnEditForm) },
                 onCancelEdit = { onEvent(QuestionFormEvent.OnCancelEdit) }
             )
-        }
-
-        // Comments Section (visible after submit)
-        if (uiState.isSubmitted) {
-            item {
-                Spacer(modifier = Modifier.height(24.dp))
-                CommentsSection(
-                    comments = uiState.comments,
-                    commentInputText = uiState.commentInputText,
-                    onCommentTextChanged = { text ->
-                        onEvent(QuestionFormEvent.OnCommentTextChanged(text))
-                    },
-                    onAddComment = { onEvent(QuestionFormEvent.OnAddComment) },
-                    onDeleteComment = { commentId ->
-                        onEvent(QuestionFormEvent.OnDeleteComment(commentId))
-                    }
-                )
-            }
         }
 
         // Bottom spacing
@@ -374,83 +352,6 @@ private fun ProgressSection(
 }
 
 /**
- * Individual question card
- */
-@Composable
-private fun QuestionItemCard(
-    questionItem: QuestionItemState,
-    isLocked: Boolean,
-    onAnswerSelected: (String) -> Unit,
-    onClearAnswer: () -> Unit,
-    onExpandToggle: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            // Question Title
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = questionItem.questionTitle,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.weight(1f)
-                )
-
-                if (questionItem.isAnswered) {
-                    Icon(
-                        Icons.Default.Check,
-                        contentDescription = "Answered",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Options (placeholder - will be replaced with actual question view)
-            AnimatedVisibility(visible = questionItem.isExpanded) {
-                Column {
-                    Text(
-                        text = "Question options will be rendered here",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-
-                    if (questionItem.selectedOptionId != null) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "Selected: ${questionItem.selectedOptionId}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-
-                    if (!isLocked && questionItem.isAnswered) {
-                        TextButton(onClick = onClearAnswer) {
-                            Text("Clear Answer")
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-/**
  * Action buttons section
  */
 @Composable
@@ -499,124 +400,6 @@ private fun FormActionButtons(
                     Spacer(modifier = Modifier.size(8.dp))
                     Text("Edit Form")
                 }
-            }
-        }
-    }
-}
-
-/**
- * Comments section
- */
-@Composable
-private fun CommentsSection(
-    comments: ImmutableList<FormComment>,
-    commentInputText: String,
-    onCommentTextChanged: (String) -> Unit,
-    onAddComment: () -> Unit,
-    onDeleteComment: (String) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text(
-                text = "Comments",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Comment input
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                OutlinedTextField(
-                    value = commentInputText,
-                    onValueChange = onCommentTextChanged,
-                    placeholder = { Text("Add a comment...") },
-                    modifier = Modifier.weight(1f)
-                )
-                Button(
-                    onClick = onAddComment,
-                    enabled = commentInputText.isNotBlank()
-                ) {
-                    Text("Add")
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Comments list
-            if (comments.isEmpty()) {
-                Text(
-                    text = "No comments yet",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            } else {
-                comments.forEach { comment ->
-                    CommentItem(
-                        comment = comment,
-                        onDelete = { onDeleteComment(comment.commentId) }
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-            }
-        }
-    }
-}
-
-/**
- * Individual comment item
- */
-@Composable
-private fun CommentItem(
-    comment: FormComment,
-    onDelete: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = comment.userName,
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = comment.commentText,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-            IconButton(onClick = onDelete) {
-                Icon(
-                    Icons.Default.Delete,
-                    contentDescription = "Delete comment",
-                    tint = MaterialTheme.colorScheme.error
-                )
             }
         }
     }

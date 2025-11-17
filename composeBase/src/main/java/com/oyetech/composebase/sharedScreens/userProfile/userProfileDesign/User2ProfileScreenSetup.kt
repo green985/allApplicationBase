@@ -144,7 +144,7 @@ fun User2ProfileScreen(
                 uiState.isError -> {
                     ErrorScreenFullSize(
                         modifier = Modifier.fillMaxSize(),
-                        errorMessage = uiState.errorMessage
+                        errorText = uiState.errorMessage
                     )
                 }
 
