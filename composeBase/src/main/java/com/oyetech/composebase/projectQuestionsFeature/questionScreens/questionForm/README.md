@@ -310,10 +310,10 @@ previewEmptyFormState()
 
 ```kotlin
 QuestionViewEvent.OnOptionSelected
-→ QuestionFormEvent.OnQuestionAnswered
+QuestionFormEvent.OnQuestionAnswered
 
 QuestionViewEvent.OnDeleteAnswerClicked
-→ QuestionFormEvent.OnClearAnswer
+QuestionFormEvent.OnClearAnswer
 ```
 
 ## 📚 Related Files
