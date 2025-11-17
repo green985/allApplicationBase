@@ -30,6 +30,7 @@ object QuestionAppProjectRoutes {
     val MessageDetail = Route("question/MessageDetail")
     val CompleteProfileScreen = Route("question/CompleteProfileScreen")
     val EditProfile = Route("question/EditProfile")
+    val QuestionFormScreen = Route("question/QuestionFormScreen")
 
     val questionApplicationBottomTabNavList = listOf(
         QuestionAppNavItem.TabQuestionAppHomepage,

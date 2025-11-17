@@ -39,9 +39,17 @@ fun QuestionsHomeScreenSetup(
                     Text(text = "Create Question")
                 }
 
+                // YENİ EKLENEN BUTON
+                Button(onClick = {
+                    navigationUseCase.navigateTo(QuestionAppProjectRoutes.QuestionFormScreen.route)
+                }) {
+                    Text(text = "Question Form")
+                }
+
                 LoginOperationSmallButtonSetup()
 
             }
+
         }
     )
 }

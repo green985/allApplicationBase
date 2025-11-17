@@ -82,6 +82,23 @@ fun NavGraphBuilder.questionAppNavigation(navController: NavController) {
         )
     }
 
+    // Question Form Screen
+    composable(
+        route = "${QuestionAppProjectRoutes.QuestionFormScreen.route}?" +
+                "${ScreenKey.formId}={formId}",
+        arguments = listOf(
+            navArgument(ScreenKey.formId) {
+                defaultValue = ""
+                nullable = true
+            }
+        )
+    ) { entry ->
+        val formId = entry.arguments?.getString(ScreenKey.formId) ?: ""
+        com.oyetech.composebase.projectQuestionsFeature.questionScreens.questionForm.QuestionFormScreenSetup(
+            formId = formId
+        )
+    }
+
     // Complete Profile
     composable(QuestionAppProjectRoutes.CompleteProfileScreen.route) {
         com.oyetech.composebase.experimental.loginOperations.CompleteProfileScreenSetup()
