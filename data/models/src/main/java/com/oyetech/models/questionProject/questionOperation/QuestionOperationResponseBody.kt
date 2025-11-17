@@ -1,6 +1,8 @@
 package com.oyetech.models.questionProject.questionOperation
 
 import androidx.annotation.Keep
+import com.google.firebase.firestore.ServerTimestamp
+import java.util.Date
 
 /**
 Created by Erdi Özbek
@@ -28,5 +30,6 @@ data class QuestionOperationResponseBody(
 
     val createdBy: String = "",
 
-    val createdAt: Long? = null,
+    val createdAt1: Long? = null,
+    @ServerTimestamp val createdAt: Date? = null,
 )

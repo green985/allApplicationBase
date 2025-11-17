@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.helpers.listOperations.ListOperationDelegate
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.usecases.GetQuestionsPagedByCreatedAtUseCase
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.usecases.GetUserQuestionsPagedByCreatedAtUseCase
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
@@ -14,8 +13,6 @@ import com.oyetech.domain.repository.firebase.FirebaseQuestionAnswerRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.useCases.NavigationUseCase
-import com.oyetech.models.questionProject.questionOperation.ModerationStatus
-import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QueTag
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.models.questionProject.questionOperation.QuestionType
@@ -34,7 +31,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @Suppress("TooManyFunctions", "LongParameterList")
-class QuestionListVm23(
+class QuestionListVm2(
     appDispatchers: AppDispatchers,
     private val navigationUseCase: NavigationUseCase,
     private val repository: FirebaseQuestionOperationRepository,
@@ -60,8 +57,13 @@ class QuestionListVm23(
     val listViewState: StateFlow<GenericListState<QuestionViewUiState>> =
         listOperationDelegate.listUiState
 
-    init {
+    private val questionEventHandlerUseCase = QuestionEventHandlerUseCase(
+        scope = viewModelScope,
+        adminViewState = adminViewState,
+        adminFilterType = adminFilterType
+    )
 
+    init {
         viewModelScope.launch(getDispatcherIo()) {
             questionItemsFlow(listOperationDelegate).filter { it.isNotEmpty() }
                 .getQuestionTransformerFlow()
@@ -212,104 +214,7 @@ class QuestionListVm23(
     }
 
     fun onQuestionEvent(event: QuestionViewEvent) {
-        when (event) {
-            is QuestionViewEvent.OnOptionSelected -> {
-                viewModelScope.launch(getDispatcherIo()) {
-                    val uid = userRepository.getUserId()
-                    if (uid.isBlank()) return@launch
-                    val alreadyAnswered = answerRepository.answersState.value.any {
-                        it.userId == uid && it.questionId == event.questionId
-                    }
-                    if (alreadyAnswered) return@launch
-                    val answer = QueAnswer(
-                        questionId = event.questionId,
-                        type = QuestionType.SINGLE_CHOICE,
-                        selectedOptionIds = listOf(event.optionId),
-                        numericValue = null,
-                        textValue = null,
-                        userId = uid,
-                        submittedAt = null,
-                    )
-                    answerRepository.submitAnswer(answer)
-                        .collectLatest { /* updated in repo state */ }
-                }
-                Timber.d("Option selected: ${event.optionId} for question: ${event.questionId}")
-            }
-
-            is QuestionViewEvent.OnDeleteAnswerClicked -> {
-                viewModelScope.launch(getDispatcherIo()) {
-                    val uid = userRepository.getUserId()
-                    if (uid.isBlank()) return@launch
-                    answerRepository.deleteAnswer(uid, event.questionId)
-                        .collectLatest { /* updated in repo state */ }
-                }
-            }
-
-            is QuestionViewEvent.OnAcceptClicked -> {
-                updateAdminOperationClicked(event.questionId)
-                viewModelScope.launch(getDispatcherIo()) {
-                    repository.updateQuestionStatus(
-                        event.questionId,
-                        ModerationStatus.APPROVED
-                    ).collectLatest { /* no-op */ }
-                }
-            }
-
-            is QuestionViewEvent.OnDeclineClicked -> {
-                updateAdminOperationClicked(event.questionId)
-                viewModelScope.launch(getDispatcherIo()) {
-                    repository.updateQuestionStatus(
-                        event.questionId,
-                        ModerationStatus.DECLINED
-                    ).collectLatest { /* no-op */ }
-                }
-            }
-
-            is QuestionViewEvent.OnEditClicked -> {
-                val route =
-                    "${QuestionAppProjectRoutes.QuestionCreateQuestionPage.route}?questionId=${event.questionId}"
-                navigationUseCase.navigateTo(route)
-            }
-
-            is QuestionViewEvent.OnPendingClicked -> {
-                updateAdminOperationClicked(event.questionId)
-                viewModelScope.launch(getDispatcherIo()) {
-                    repository.updateQuestionStatus(
-                        event.questionId,
-                        ModerationStatus.PENDING
-                    ).collectLatest { /* no-op */ }
-                }
-            }
-
-            QuestionViewEvent.CancelClicked -> TODO()
-            QuestionViewEvent.OnErrorDismiss -> TODO()
-            is QuestionViewEvent.OnTagRemoved -> TODO()
-            is QuestionViewEvent.OnTagSelected -> TODO()
-            is QuestionViewEvent.OnTagSelectedForCreateQuestion -> TODO()
-            is QuestionViewEvent.SetAdminMode -> {
-                adminViewState.value = event.isAdminView
-                Timber.d("Admin view mode set to: ${event.isAdminView}")
-            }
-
-            is QuestionViewEvent.SetAdminFilterType -> {
-                adminFilterType.value = event.adminFilterType
-                Timber.d("Admin view mode set to: ${event.adminFilterType}")
-            }
-
-            QuestionViewEvent.SubmitClicked -> TODO()
-            is QuestionViewEvent.TitleChanged -> TODO()
-        }
-    }
-
-    private fun updateAdminOperationClicked(questionId: String) {
-        listViewState.value.items.find { it.questionId == questionId }?.let { item ->
-            val updated = item.copy(adminOperationClicked = true)
-            val currentList = listViewState.value.items.toMutableList()
-            val index = currentList.indexOf(item)
-            if (index != -1) {
-                currentList[index] = updated
-                listOperationDelegate.updateList(currentList)
-            }
-        }
+        questionEventHandlerUseCase.handleQuestionEvent(event, listOperationDelegate)
     }
 }
+

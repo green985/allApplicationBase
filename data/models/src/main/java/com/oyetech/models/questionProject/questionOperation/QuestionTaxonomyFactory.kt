@@ -83,7 +83,7 @@ object QuestionTaxonomyFactory {
             ),
             version = 1,
             createdBy = createdBy,
-            createdAt = null,
+            createdAt1 = null,
         )
     }
 }

@@ -48,6 +48,7 @@ import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewScaffoldLayout
+import com.oyetech.composebase.projectQuestionsFeature.views.questions.toOperationBody
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
@@ -74,7 +75,7 @@ fun QuestionFormScreenSetup(
             formId = formId,
             title = "Sample Form Title",
             description = "This is a sample form description.",
-            questions = emptyList()
+            questions = previewQuestionFormScreenUiState().questions.map { it.toOperationBody() }
         )
     }
 
