@@ -27,7 +27,7 @@ data class GenericListState<T>(
     val endFlowOperation: Boolean = true,
 
     val refreshDataFlow: Flow<List<T>> = flowOf(emptyList()),
-    val loadMoreFlow: Flow<List<T>> = flowOf(emptyList()),
+    val loadMoreFlow: Flow<List<T>>? = flowOf(emptyList()),
 
     val onRefresh: (() -> Unit)? = null,
     val onLoadMore: (() -> Unit)? = null,

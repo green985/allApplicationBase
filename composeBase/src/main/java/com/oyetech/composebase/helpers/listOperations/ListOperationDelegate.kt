@@ -22,8 +22,8 @@ class ListOperationDelegate<T>(
     private val scope: CoroutineScope,
     private val dispatcher: CoroutineDispatcher,
     initialDataFlow: Flow<List<T>>,
-    loadMoreFlow: Flow<List<T>>,
     private val keySelector: (T) -> Any,
+    loadMoreFlow: Flow<List<T>>? = null,
 ) {
 
     val listUiState = MutableStateFlow(
