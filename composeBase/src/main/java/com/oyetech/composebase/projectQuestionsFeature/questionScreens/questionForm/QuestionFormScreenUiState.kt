@@ -142,8 +142,6 @@ fun previewQuestionFormScreenUiState(
             isLoading = false,
             questionId = "question_$index",
             titleText = "Sample Question $index: Do you agree with statement $index?",
-            selectedAnswer = if (isSubmitted || index == 1) "option_yes" else null,
-            isAnsweredByUser = isSubmitted || index == 1,
         )
     }.toImmutableList()
 

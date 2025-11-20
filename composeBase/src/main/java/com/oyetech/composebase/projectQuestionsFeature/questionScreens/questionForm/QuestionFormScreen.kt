@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
@@ -44,10 +44,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListWithParamsContent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
-import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewScaffoldLayout
+import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.toOperationBody
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
@@ -65,6 +67,7 @@ fun QuestionFormScreenSetup(
 ) {
     val viewModel = koinViewModel<QuestionFormViewModel>()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val listUiState by viewModel.listUiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(formId) {
@@ -106,6 +109,8 @@ fun QuestionFormScreenSetup(
 
     QuestionFormScreen(
         uiState = uiState,
+        listUiState = listUiState,
+        onQuestionEvent = { viewModel.onQuestionEvent(it) },
         snackbarHostState = snackbarHostState,
         onEvent = { viewModel.onEvent(it) }
     )
@@ -118,6 +123,8 @@ fun QuestionFormScreenSetup(
 @Composable
 fun QuestionFormScreen(
     uiState: QuestionFormScreenUiState,
+    listUiState: GenericListState<QuestionViewUiState> = GenericListState.empty(),
+    onQuestionEvent: (QuestionViewEvent) -> Unit = {},
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     onEvent: (QuestionFormEvent) -> Unit = {},
 ) {
@@ -149,6 +156,8 @@ fun QuestionFormScreen(
             else -> {
                 QuestionFormContent(
                     uiState = uiState,
+                    listUiState = listUiState,
+                    onQuestionEvent = onQuestionEvent,
                     onEvent = onEvent,
                     modifier = Modifier.padding(paddingValues)
                 )
@@ -163,6 +172,8 @@ fun QuestionFormScreen(
 @Composable
 private fun QuestionFormContent(
     uiState: QuestionFormScreenUiState,
+    listUiState: GenericListState<QuestionViewUiState>,
+    onQuestionEvent: (QuestionViewEvent) -> Unit = {},
     onEvent: (QuestionFormEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -200,32 +211,14 @@ private fun QuestionFormContent(
             )
         }
 
-        items(uiState.questions, key = { it.questionId }) { questionUiState ->
-            // Use the existing QuestionViewScaffoldLayout for each question
-            QuestionViewScaffoldLayout(
-                uiState = questionUiState,
-                onEvent = { questionEvent ->
-                    // Map QuestionViewEvent to QuestionFormEvent
-                    when (questionEvent) {
-                        is QuestionViewEvent.OnOptionSelected -> {
-                            onEvent(
-                                QuestionFormEvent.OnQuestionAnswered(
-                                    questionEvent.questionId,
-                                    questionEvent.optionId
-                                )
-                            )
-                        }
-
-                        is QuestionViewEvent.OnDeleteAnswerClicked -> {
-                            onEvent(QuestionFormEvent.OnClearAnswer(questionEvent.questionId))
-                        }
-
-                        else -> {
-                            // Handle other events if needed
-                        }
-                    }
-                },
-                modifier = Modifier.padding(horizontal = 8.dp)
+        items(1) {
+            QuestionListWithParamsContent(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp),
+                contentPadding = PaddingValues(horizontal = 0.dp),
+                listViewState = listUiState,
+                onQuestionEvent = onQuestionEvent
             )
         }
 
@@ -411,7 +404,12 @@ private fun FormActionButtons(
 @Composable
 private fun PreviewQuestionFormScreen() {
     QuestionFormScreen(
-        uiState = previewQuestionFormScreenUiState(isSubmitted = false, questionsCount = 3)
+        uiState = previewQuestionFormScreenUiState(isSubmitted = false, questionsCount = 3),
+        listUiState = GenericListState<QuestionViewUiState>()
+            .copy(items = previewQuestionFormScreenUiState(questionsCount = 3).questions),
+        onQuestionEvent = TODO(),
+        snackbarHostState = TODO(),
+        onEvent = TODO(),
     )
 }
 

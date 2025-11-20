@@ -71,6 +71,7 @@ fun QuestionListWithParamsScreenSetup(
         }
     }
     QuestionListWithParamsContent(
+        modifier = Modifier.fillMaxSize(),
         contentPadding = innerPadding,
         listViewState = listViewState,
         onQuestionEvent = vm::onQuestionEvent,
@@ -79,6 +80,7 @@ fun QuestionListWithParamsScreenSetup(
 
 @Composable
 fun QuestionListWithParamsContent(
+    modifier: Modifier = Modifier,
     contentPadding: PaddingValues,
     listViewState: GenericListState<QuestionViewUiState>,
     onQuestionEvent: (QuestionViewEvent) -> Unit = {},
@@ -90,8 +92,7 @@ fun QuestionListWithParamsContent(
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = modifier
             .padding(contentPadding)
     ) {
         Box(modifier = Modifier.weight(1f)) {

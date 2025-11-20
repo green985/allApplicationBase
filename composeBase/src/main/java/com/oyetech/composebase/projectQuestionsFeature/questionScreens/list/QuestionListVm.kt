@@ -13,6 +13,7 @@ import com.oyetech.domain.repository.firebase.FirebaseQuestionAnswerRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.useCases.NavigationUseCase
+import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QueTag
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.models.questionProject.questionOperation.QuestionType
@@ -64,9 +65,13 @@ class QuestionListVm2(
     )
 
     init {
+        questionItemsFlow(listOperationDelegate).obserseQuestionAnswerToList()
+    }
+
+    private fun Flow<List<QuestionViewUiState>>.obserseQuestionAnswerToList() {
         viewModelScope.launch(getDispatcherIo()) {
-            questionItemsFlow(listOperationDelegate).filter { it.isNotEmpty() }
-                .getQuestionTransformerFlow()
+            this@obserseQuestionAnswerToList.filter { it.isNotEmpty() }
+                .getQuestionTransformerFlow(answerRepository.answersState)
                 .collectLatest { questions ->
                     Timber.d("Combining question items flow with transformed questions: ${questions.size}")
                     if (questions.isNotEmpty()) {
@@ -84,28 +89,8 @@ class QuestionListVm2(
             .distinctUntilChanged()
     }
 
-    private fun Flow<List<QuestionViewUiState>>.getQuestionTransformerFlow(): Flow<List<QuestionViewUiState>> {
-        val answersIndexedFlow =
-            answerRepository.answersState
-                .map { list -> list.associateBy { it.questionId } }
-                .distinctUntilChanged()
-
-        return combine(this, answersIndexedFlow) { questions, answersIdx ->
-            if (questions.isEmpty()) return@combine questions
-
-            questions.map { q ->
-                val ans = q.questionId?.let { answersIdx[it] }
-                val selected = ans?.selectedOptionIds?.firstOrNull()
-                val newIsAnswered = selected != null
-
-                if (q.isAnsweredByUser != newIsAnswered || q.selectedAnswer != selected) {
-                    q.copy(
-                        isAnsweredByUser = newIsAnswered,
-                        selectedAnswer = selected
-                    )
-                } else q
-            }
-        }.combine(adminViewState) { qs, isAdminView ->
+    private fun Flow<List<QuestionViewUiState>>.getQuestionTransformerFlow(answersState: StateFlow<List<QueAnswer>>): Flow<List<QuestionViewUiState>> {
+        return questionAnswerOverlayFlow(answersState).combine(adminViewState) { qs, isAdminView ->
             if (qs.isEmpty()) return@combine qs
             qs.map { if (it.isAdminView != isAdminView) it.copy(isAdminView = isAdminView) else it }
         }.combine(adminFilterType) { qs, filterType ->
@@ -217,4 +202,3 @@ class QuestionListVm2(
         questionEventHandlerUseCase.handleQuestionEvent(event, listOperationDelegate)
     }
 }
-

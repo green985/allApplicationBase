@@ -13,8 +13,13 @@ import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QuestionType
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -104,7 +109,10 @@ class QuestionEventHandlerUseCase(
     private fun handleOptionSelected(event: QuestionViewEvent.OnOptionSelected) {
         scope.launch(appDispatchers.io) {
             val uid = userRepository.getUserId()
-            if (uid.isBlank()) return@launch
+            if (uid.isBlank()) {
+                Timber.d("User ID is blank, cannot submit answer")
+                return@launch
+            }
             val alreadyAnswered = answerRepository.answersState.value.any {
                 it.userId == uid && it.questionId == event.questionId
             }
@@ -157,5 +165,33 @@ class QuestionEventHandlerUseCase(
     private fun setAdminFilterType(filterType: QuestionListAdminFilterType) {
         adminFilterType.value = filterType
         Timber.d("Admin filter type set to: $filterType")
+    }
+}
+
+
+fun Flow<List<QuestionViewUiState>>.questionAnswerOverlayFlow(
+    answersState: StateFlow<List<QueAnswer>>,
+): Flow<List<QuestionViewUiState>> {
+    val answersIndexedFlow =
+        answersState
+            .map { list -> list.associateBy { it.questionId } }
+            .distinctUntilChanged()
+
+
+    return combine(this, answersIndexedFlow) { questions, answersIdx ->
+        if (questions.isEmpty()) return@combine questions
+
+        questions.map { q ->
+            val ans = q.questionId?.let { answersIdx[it] }
+            val selected = ans?.selectedOptionIds?.firstOrNull()
+            val newIsAnswered = selected != null
+
+            if (q.isAnsweredByUser != newIsAnswered || q.selectedAnswer != selected) {
+                q.copy(
+                    isAnsweredByUser = newIsAnswered,
+                    selectedAnswer = selected
+                )
+            } else q
+        }
     }
 }

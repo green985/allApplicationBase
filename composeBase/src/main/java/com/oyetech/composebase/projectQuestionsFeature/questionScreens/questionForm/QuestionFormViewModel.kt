@@ -2,15 +2,31 @@ package com.oyetech.composebase.projectQuestionsFeature.questionScreens.question
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
+import com.oyetech.composebase.base.baseGenericList.GenericListState
+import com.oyetech.composebase.helpers.listOperations.ListOperationDelegate
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionEventHandlerUseCase
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.questionAnswerOverlayFlow
+import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
+import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
+import com.oyetech.domain.repository.firebase.FirebaseQuestionAnswerRepository
+import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 /**
  * Created by Erdi Özbek
@@ -18,13 +34,51 @@ import kotlinx.coroutines.launch
  *
  * ViewModel for Question Form Screen
  */
-class QuestionFormViewModel(appDispatchers: AppDispatchers) : BaseViewModel(appDispatchers) {
+class QuestionFormViewModel(
+    appDispatchers: AppDispatchers,
+    private val navigationUseCase: NavigationUseCase,
+    private val answerRepository: FirebaseQuestionAnswerRepository,
+) : BaseViewModel(appDispatchers) {
+
+    private val questionFormListOperationDelegate: ListOperationDelegate<QuestionViewUiState> =
+        ListOperationDelegate(
+            scope = viewModelScope,
+            dispatcher = appDispatchers.io,
+            initialDataFlow = flow {
+                uiState.collect {
+                    if (it.questions.isNotEmpty()) {
+                        emit(it.questions)
+                    }
+                }
+            },
+            loadMoreFlow = MutableStateFlow(emptyList()),
+            keySelector = { it.questionId }
+        )
+
+    private val questionEventHandlerUseCase = QuestionEventHandlerUseCase(this.viewModelScope)
+
+    val listUiState: StateFlow<GenericListState<QuestionViewUiState>> =
+        questionFormListOperationDelegate.listUiState
 
     private val _uiState = MutableStateFlow(QuestionFormScreenUiState())
     val uiState = _uiState.asStateFlow()
 
     private val _uiEvent = MutableSharedFlow<QuestionFormUiEvent>()
     val uiEvent = _uiEvent.asSharedFlow()
+
+    init {
+        viewModelScope.launch(getDispatcherIo()) {
+            questionFormListOperationDelegate.listUiState.map { it.items }
+                .distinctUntilChanged().filter { it.isNotEmpty() }
+                .questionAnswerOverlayFlow(answerRepository.answersState)
+                .collectLatest { questions ->
+                    Timber.d("Combining question items flow with transformed questions: ${questions.size}")
+                    if (questions.isNotEmpty()) {
+                        questionFormListOperationDelegate.updateList(questions)
+                    }
+                }
+        }
+    }
 
     /**
      * Initialize form with data
@@ -64,7 +118,7 @@ class QuestionFormViewModel(appDispatchers: AppDispatchers) : BaseViewModel(appD
             is QuestionFormEvent.OnBackPressed -> handleBackPressed()
             is QuestionFormEvent.OnQuestionAnswered -> handleQuestionAnswered(
                 event.questionId,
-                event.optionId
+                event.optionId,
             )
 
             is QuestionFormEvent.OnQuestionExpanded -> handleQuestionExpanded(
@@ -101,7 +155,7 @@ class QuestionFormViewModel(appDispatchers: AppDispatchers) : BaseViewModel(appD
 
             // TODO: Call repository to submit answers
             // For now, simulate success
-            kotlinx.coroutines.delay(1000)
+            delay(1000)
 
             _uiState.update { state ->
                 state.copy(
@@ -140,12 +194,23 @@ class QuestionFormViewModel(appDispatchers: AppDispatchers) : BaseViewModel(appD
     }
 
     private fun handleBackPressed() {
-        viewModelScope.launch {
-            _uiEvent.emit(QuestionFormUiEvent.OnNavigateBack())
-        }
+        navigationUseCase.navigateTo("back")
     }
 
-    private fun handleQuestionAnswered(questionId: String, optionId: String) {
+    private fun handleQuestionAnswered(
+        questionId: String,
+        optionId: String,
+
+        ) {
+        questionEventHandlerUseCase.handleQuestionEvent(
+            event = QuestionViewEvent.OnOptionSelected(questionId, optionId),
+            listOperationDelegate =
+                questionFormListOperationDelegate
+        )
+
+
+
+
         _uiState.update { state ->
             val updatedQuestions = state.questions.map { question ->
                 if (question.questionId == questionId) {
@@ -196,5 +261,13 @@ class QuestionFormViewModel(appDispatchers: AppDispatchers) : BaseViewModel(appD
 
     private fun handleErrorDismiss() {
         _uiState.update { it.copy(isError = false, errorText = "") }
+    }
+
+    fun onQuestionEvent(it: QuestionViewEvent) {
+        questionEventHandlerUseCase.handleQuestionEvent(
+            event = it,
+            listOperationDelegate =
+                questionFormListOperationDelegate
+        )
     }
 }

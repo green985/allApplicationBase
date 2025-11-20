@@ -35,7 +35,13 @@ data class GenericListState<T>(
     val onRetryMore: (() -> Unit)? = null,
 
     val triggerScrollToPosition: ((Int) -> Unit)? = null,
-)
+) {
+    companion object {
+        fun <T> empty(): GenericListState<T> {
+            return GenericListState()
+        }
+    }
+}
 
 fun <T> MutableStateFlow<GenericListState<T>>.makeEmptyListState(): GenericListState<T> {
     this.updateState {
