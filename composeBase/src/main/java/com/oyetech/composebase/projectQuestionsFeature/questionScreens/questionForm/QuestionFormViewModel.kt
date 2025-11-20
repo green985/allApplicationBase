@@ -73,10 +73,33 @@ class QuestionFormViewModel(
                 .questionAnswerOverlayFlow(answerRepository.answersState)
                 .collectLatest { questions ->
                     Timber.d("Combining question items flow with transformed questions: ${questions.size}")
+                    observeQuestionListChanges(questions)
                     if (questions.isNotEmpty()) {
                         questionFormListOperationDelegate.updateList(questions)
                     }
                 }
+        }
+    }
+
+    fun observeQuestionListChanges(questions: List<QuestionViewUiState>) {
+        val isAllAnswered = questions.all { it.isAnsweredByUser }
+        _uiState.update { currentState ->
+            currentState.copy(
+                canSubmit = isAllAnswered && !currentState.isLocked
+            )
+        }
+
+        val answeredCount = questions.count { it.isAnsweredByUser }
+        _uiState.update { currentState ->
+            currentState.copy(
+                answeredCount = answeredCount,
+            )
+        }
+        val totalCount = questions.count()
+        _uiState.update { currentState ->
+            currentState.copy(
+                totalCount = totalCount,
+            )
         }
     }
 
@@ -116,10 +139,6 @@ class QuestionFormViewModel(
             is QuestionFormEvent.OnEditForm -> handleEditForm()
             is QuestionFormEvent.OnCancelEdit -> handleCancelEdit()
             is QuestionFormEvent.OnBackPressed -> handleBackPressed()
-            is QuestionFormEvent.OnQuestionAnswered -> handleQuestionAnswered(
-                event.questionId,
-                event.optionId,
-            )
 
             is QuestionFormEvent.OnQuestionExpanded -> handleQuestionExpanded(
                 event.questionId,
@@ -197,41 +216,6 @@ class QuestionFormViewModel(
         navigationUseCase.navigateTo("back")
     }
 
-    private fun handleQuestionAnswered(
-        questionId: String,
-        optionId: String,
-
-        ) {
-        questionEventHandlerUseCase.handleQuestionEvent(
-            event = QuestionViewEvent.OnOptionSelected(questionId, optionId),
-            listOperationDelegate =
-                questionFormListOperationDelegate
-        )
-
-
-
-
-        _uiState.update { state ->
-            val updatedQuestions = state.questions.map { question ->
-                if (question.questionId == questionId) {
-                    question.copy(
-                        selectedAnswer = optionId,
-                        isAnsweredByUser = true
-                    )
-                } else {
-                    question
-                }
-            }.toImmutableList()
-
-            val allAnswered = updatedQuestions.all { it.isAnsweredByUser }
-
-            state.copy(
-                questions = updatedQuestions,
-                canSubmit = allAnswered && !state.isLocked
-            )
-        }
-    }
-
     private fun handleQuestionExpanded(questionId: String, isExpanded: Boolean) {
         // Note: QuestionViewUiState doesn't have isExpanded field
         // This can be handled in the UI layer if needed
@@ -264,6 +248,13 @@ class QuestionFormViewModel(
     }
 
     fun onQuestionEvent(it: QuestionViewEvent) {
+        // todo will change with locked variable.
+        if (_uiState.value.canSubmit) {
+            Timber.d("Form is locked, ignoring question event")
+            return
+        }
+
+
         questionEventHandlerUseCase.handleQuestionEvent(
             event = it,
             listOperationDelegate =

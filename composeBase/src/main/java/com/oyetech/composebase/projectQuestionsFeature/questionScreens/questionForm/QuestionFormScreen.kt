@@ -195,8 +195,8 @@ private fun QuestionFormContent(
         if (!uiState.isLocked) {
             item {
                 ProgressSection(
-                    answeredCount = uiState.getAnsweredCount(),
-                    totalCount = uiState.getTotalQuestions()
+                    answeredCount = uiState.answeredCount,
+                    totalCount = uiState.totalCount
                 )
             }
         }

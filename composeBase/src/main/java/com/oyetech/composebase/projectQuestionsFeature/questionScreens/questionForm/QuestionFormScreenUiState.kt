@@ -33,6 +33,9 @@ data class QuestionFormScreenUiState(
     val title: String = "",
     val description: String = "",
 
+    val answeredCount: Int = 0,
+    val totalCount: Int = 0,
+
     // Questions catalog - now using QuestionViewUiState
     val questions: ImmutableList<QuestionViewUiState> = persistentListOf(),
 
@@ -57,10 +60,6 @@ sealed class QuestionFormEvent : BaseEvent() {
     data object OnBackPressed : QuestionFormEvent()
 
     // Question interactions
-    data class OnQuestionAnswered(
-        val questionId: String,
-        val optionId: String,
-    ) : QuestionFormEvent()
 
     data class OnQuestionExpanded(
         val questionId: String,
