@@ -13,7 +13,7 @@ Created by Erdi Özbek
 object GoogleSignInModule {
     var googleSignInModulee = module {
 //        single<GoogleLoginRepository> { GoogleLoginRepositoryImpl(get(), get(),get()) }
-        single<GoogleLoginRepository> { GoogleLoginRepositoryImpl2(get(), get(), get()) }
+        single<GoogleLoginRepository> { GoogleLoginRepositoryImpl2(get(), get()) }
 
 //        single<GoogleLoginRepository> { FirebaseGoogleLoginRepositoryImpl(get(), get()) }
     }

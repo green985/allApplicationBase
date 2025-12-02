@@ -32,7 +32,6 @@ import timber.log.Timber
 class GoogleLoginRepositoryImpl2(
     private val activityProviderUseCase: ActivityProviderUseCase,
     private val firebaseUserRepository: FirebaseUserRepository,
-    private val questionSupabaseRepository: com.oyetech.domain.repository.question.QuestionSupabaseRepository,
 ) : GoogleLoginRepository {
     override val googleUserStateFlow =
         MutableStateFlow(GoogleUserResponseData())

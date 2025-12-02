@@ -10,6 +10,22 @@ Created by Erdi Özbek
  **/
 
 @Keep
+data class UserProfileProperty(
+    val isAnonymous: Boolean = false,
+    val notificationToken: String = "",
+    val token: String = "",
+
+    val lastSignInTimestamp: Long? = null,
+    val creationTimestamp: Long = System.currentTimeMillis(),
+
+    val userId: String = "",
+    val username: String = "",
+    val gender: String = "",
+    val age: String = "",
+    val biography: String = "",
+)
+
+@Keep
 data class FirebaseUserProfileModel(
     @get:Exclude
     val errorException: Exception? = null, // Added field
@@ -35,4 +51,18 @@ data class FirebaseUserProfileModel(
                 userId.isNotBlank() &&
                 gender.isNotBlank()
     }
+}
+
+fun UserProfileProperty.toFirebaseUserProfileModel(): FirebaseUserProfileModel {
+    return FirebaseUserProfileModel(
+        isAnonymous = this.isAnonymous,
+        notificationToken = this.notificationToken,
+        lastSignInTimestamp = this.lastSignInTimestamp,
+        creationTimestamp = this.creationTimestamp,
+        userId = this.userId,
+        username = this.username,
+        gender = this.gender,
+        age = this.age,
+        biography = this.biography,
+    )
 }

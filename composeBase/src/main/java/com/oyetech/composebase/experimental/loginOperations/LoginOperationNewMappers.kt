@@ -4,6 +4,8 @@ import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.updateState
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
+import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
+import com.oyetech.models.firebaseModels.userModel.toFirebaseUserProfileModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -13,6 +15,11 @@ Created by Erdi Özbek
 -17.04.2025-
 -15:21-
  **/
+
+fun LoginOperationVM.mapToProfileValue2(userData: UserProfileProperty?) {
+    val userFirebaseUserProfileModel = userData?.toFirebaseUserProfileModel()
+    mapToProfileValue(userFirebaseUserProfileModel)
+}
 
 fun LoginOperationVM.mapToProfileValue(userData: FirebaseUserProfileModel?) {
     if (userData == null) {

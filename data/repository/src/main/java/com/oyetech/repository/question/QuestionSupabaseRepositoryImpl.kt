@@ -2,6 +2,7 @@ package com.oyetech.repository.question
 
 import com.oyetech.domain.repository.question.QuestionSupabaseRepository
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserPostData
+import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.remote.questionRemote.QuestionSupabaseDataSource
 import kotlinx.coroutines.flow.Flow
@@ -14,7 +15,7 @@ class QuestionSupabaseRepositoryImpl(
         return questionSupabaseDataSource.createQuestion(question)
     }
 
-    override fun registerGoogleUser(googleUserResponseData: GoogleUserPostData): Flow<QuestionOperationResponseBody> {
+    override fun registerGoogleUser(googleUserResponseData: GoogleUserPostData): Flow<UserProfileProperty> {
         return questionSupabaseDataSource.registerGoogleUser(googleUserResponseData)
     }
 }

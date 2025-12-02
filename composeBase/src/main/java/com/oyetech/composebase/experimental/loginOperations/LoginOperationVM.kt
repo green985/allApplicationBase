@@ -113,6 +113,7 @@ class LoginOperationVM(
                                 googleUserResponseData.toGoogleUserPostData()
                             ).asResult().collectLatest {
                                 Timber.d(" registerGoogleUser response: $it")
+                                mapToProfileValue2(it.getOrNull())
                             }
                         } else if (googleUserResponseData.errorException != null) {
                             loginOperationState.value = LoginOperationUiState(

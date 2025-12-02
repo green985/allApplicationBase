@@ -1,7 +1,9 @@
 package com.oyetech.remote.questionRemote
 
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserPostData
+import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
+import com.oyetech.remote.helper.interceptGenericResponseTrueForm
 import com.oyetech.remote.helper.interceptTrueForm
 import kotlinx.coroutines.flow.Flow
 
@@ -13,8 +15,8 @@ class QuestionSupabaseDataSource(private val questionSupabaseApi: QuestionSupaba
         }
     }
 
-    fun registerGoogleUser(googleUserResponseData: GoogleUserPostData): Flow<QuestionOperationResponseBody> {
-        return interceptTrueForm {
+    fun registerGoogleUser(googleUserResponseData: GoogleUserPostData): Flow<UserProfileProperty> {
+        return interceptGenericResponseTrueForm {
             questionSupabaseApi.registerGoogleUser(googleUserResponseData)
         }
     }
