@@ -12,15 +12,9 @@ Created by Erdi Özbek
 
 interface FirebaseUserRepository {
     val userDataStateFlow: MutableStateFlow<FirebaseUserProfileModel>
-
-    //    fun createProfile(user: FirebaseUserProfileModel)
-//    fun checkUsername(username: String): Boolean
     fun deleteUser(uid: String)
 
-    //    fun updateLastLogin(uid: String)
     fun getUserProfile(firebaseProfileUserModel: FirebaseUserProfileModel)
-
-//    suspend fun updateUserName(username: String)
 
     fun getUsername(): String
     fun getUserId(): String

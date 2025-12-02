@@ -77,7 +77,6 @@ class GoogleLoginRepositoryImpl(
         } catch (e: Exception) {
             googleUserStateFlow.value = getNewWithException(e.message)
         }
-
     }
 
     override suspend fun signInWithGoogle() {
@@ -99,7 +98,6 @@ class GoogleLoginRepositoryImpl(
         } catch (e: Exception) {
             googleUserStateFlow.value = getNewWithException(e.message)
         }
-
     }
 
     private suspend fun signWithGoogle() {
@@ -128,10 +126,8 @@ class GoogleLoginRepositoryImpl(
     private fun handleGoogleCriential(
         result: GetCredentialResponse,
     ) {
-
         // Handle the successfully returned credential.
         when (val credential = result.credential) {
-
             // Passkey credential
             is PublicKeyCredential -> {
                 // Share responseJson such as a GetCredentialResponse on your server to
@@ -216,7 +212,6 @@ class GoogleLoginRepositoryImpl(
             // do nothing...
             userAutoLoginStateFlow.value = true
         }
-
     }
 
     override fun removeUser(uid: String) {
@@ -227,9 +222,7 @@ class GoogleLoginRepositoryImpl(
         return firebaseAuth.currentUser?.uid ?: googleUserStateFlow.value.uid
     }
 
-    fun getCurrentUserResponse(
-    ): GoogleUserResponseData? {
-
+    fun getCurrentUserResponse(): GoogleUserResponseData? {
         val currentUser = firebaseAuth.currentUser
         val userGoogleData = currentUser?.toGoogleUserResponseData()
 
