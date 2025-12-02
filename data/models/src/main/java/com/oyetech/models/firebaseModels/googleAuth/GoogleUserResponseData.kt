@@ -1,11 +1,13 @@
 package com.oyetech.models.firebaseModels.googleAuth
 
 import androidx.annotation.Keep
+import com.google.firebase.firestore.Exclude
 import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
 
 @Keep
-data class GoogleUserResponseData(
+data class GoogleUserPostData(
     val uid: String = "",
+    val token: String? = "",
     val email: String? = null,
     val displayName: String? = null,
     val phoneNumber: String? = null,
@@ -15,6 +17,54 @@ data class GoogleUserResponseData(
     val isAnonymous: Boolean = false,
     val metadata: UserMetadata? = null,
     val providerData: List<ProviderDataInfo> = emptyList(),
+)
+
+fun GoogleUserResponseData.toGoogleUserPostData(): GoogleUserPostData {
+    return GoogleUserPostData(
+        uid = this.uid,
+        token = this.token,
+        email = this.email,
+        displayName = this.displayName,
+        phoneNumber = this.phoneNumber,
+        photoUrl = this.photoUrl,
+        providerId = this.providerId,
+        tenantId = this.tenantId,
+        isAnonymous = this.isAnonymous,
+        metadata = this.metadata,
+        providerData = this.providerData,
+    )
+}
+
+fun GoogleUserPostData.toGoogleUserResponseData(): GoogleUserResponseData {
+    return GoogleUserResponseData(
+        uid = this.uid,
+        token = this.token,
+        email = this.email,
+        displayName = this.displayName,
+        phoneNumber = this.phoneNumber,
+        photoUrl = this.photoUrl,
+        providerId = this.providerId,
+        tenantId = this.tenantId,
+        isAnonymous = this.isAnonymous,
+        metadata = this.metadata,
+        providerData = this.providerData,
+    )
+}
+
+@Keep
+data class GoogleUserResponseData(
+    val uid: String = "",
+    val token: String? = "",
+    val email: String? = null,
+    val displayName: String? = null,
+    val phoneNumber: String? = null,
+    val photoUrl: String? = null,
+    val providerId: String = "",
+    val tenantId: String? = null,
+    val isAnonymous: Boolean = false,
+    val metadata: UserMetadata? = null,
+    val providerData: List<ProviderDataInfo> = emptyList(),
+    @get:Exclude
     val errorException: Exception? = null, // Added field
 ) {
     fun toFirebaseUserProfileModel(): FirebaseUserProfileModel {

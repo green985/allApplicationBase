@@ -1,5 +1,6 @@
 package com.oyetech.remote.questionRemote
 
+import com.oyetech.models.firebaseModels.googleAuth.GoogleUserPostData
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -10,5 +11,11 @@ interface QuestionSupabaseApi {
     @POST("v1/question-post")
     suspend fun createQuestion(
         @Body question: QuestionOperationResponseBody,
+    ): Response<QuestionOperationResponseBody>
+
+
+    @POST("v1/registerGoogleUser")
+    suspend fun registerGoogleUser(
+        @Body body: GoogleUserPostData,
     ): Response<QuestionOperationResponseBody>
 }

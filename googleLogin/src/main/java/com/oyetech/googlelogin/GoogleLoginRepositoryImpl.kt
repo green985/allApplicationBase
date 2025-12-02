@@ -106,6 +106,7 @@ class GoogleLoginRepositoryImpl(
             val googleIdOption = GetGoogleIdOption.Builder()
                 // Your server's client ID, not your Android client ID.
                 // todo will be change....
+                .setFilterByAuthorizedAccounts(false)
                 .setServerClientId("652520712669-5sudspef6cq60j7drtgr06rm567r0qa2.apps.googleusercontent.com")
                 // Only show accounts previously used to sign in.
                 .build()
@@ -119,6 +120,7 @@ class GoogleLoginRepositoryImpl(
                 CredentialManager.Companion.create(activity).getCredential(activity, request)
             handleGoogleCriential(credential)
         } catch (e: Exception) {
+            e.printStackTrace()
             googleUserStateFlow.value = getNewWithException(e.message)
         }
     }
@@ -156,6 +158,7 @@ class GoogleLoginRepositoryImpl(
                         // pass googleIdTokenCredential.getIdToken() to the backend server.
                         val idToken = googleIdTokenCredential.idToken
 
+                        // will be take a look...
                         firebaseAuthWithGoogle(idToken)
                     } catch (e: GoogleIdTokenParsingException) {
                         Timber.d("Received an invalid google id token response")
@@ -175,14 +178,26 @@ class GoogleLoginRepositoryImpl(
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                val userGoogleData = getCurrentUserResponse()
 
-                if (userGoogleData?.isUserHasUID() == true) {
-                    googleUserStateFlow.value = userGoogleData
-                } else {
-                    googleUserStateFlow.value =
-                        getNewWithException("setupGoogleSignInLauncher Google sign in failed")
-                }
+                firebaseAuth.currentUser?.getIdToken(true)
+                    ?.addOnSuccessListener { result ->
+                        val firebaseIdToken = result.token
+                        // bu token'ı backend'e gönder
+
+                        val userGoogleData = getCurrentUserResponse()
+
+                        if (userGoogleData?.isUserHasUID() == true) {
+                            googleUserStateFlow.value =
+                                userGoogleData.copy(token = firebaseIdToken)
+                        } else {
+                            googleUserStateFlow.value =
+                                getNewWithException("setupGoogleSignInLauncher Google sign in failed")
+                        }
+                    }?.addOnFailureListener {
+                        googleUserStateFlow.value =
+                            getNewWithException("setupGoogleSignInLauncher addOnFailureListener sign in failed")
+                    }
+
             } else {
                 googleUserStateFlow.value =
                     getNewWithException("setupGoogleSignInLauncher Google sign in failed")

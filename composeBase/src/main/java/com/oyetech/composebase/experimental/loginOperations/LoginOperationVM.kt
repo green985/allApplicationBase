@@ -19,6 +19,7 @@ import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.firebaseModels.googleAuth.isUserHasUID
+import com.oyetech.models.firebaseModels.googleAuth.toGoogleUserPostData
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.delay
@@ -45,6 +46,7 @@ class LoginOperationVM(
     private val firebaseUserRepository: FirebaseUserRepository,
     private val firebaseTokenOperationRepository: FirebaseTokenOperationRepository,
     private val snackbarDelegate: SnackbarDelegate,
+    private val questionSupabaseRepository: com.oyetech.domain.repository.question.QuestionSupabaseRepository,
 ) : BaseViewModel(appDispatchers) {
 
     val loginOperationState =
@@ -107,9 +109,18 @@ class LoginOperationVM(
                 it.fold(
                     onSuccess = { googleUserResponseData ->
                         if (googleUserResponseData.isUserHasUID()) {
-                            val firebaseProfileUserModel =
-                                googleUserResponseData.toFirebaseUserProfileModel()
-                            firebaseUserRepository.getUserProfile(firebaseProfileUserModel)
+                            Timber.d(" Google User State Flow Success: $googleUserResponseData")
+                            questionSupabaseRepository.registerGoogleUser(
+                                googleUserResponseData.toGoogleUserPostData()
+                            ).asResult().collectLatest {
+                                Timber.d(" registerGoogleUser response: $it")
+                            }
+
+
+//
+//                            val firebaseProfileUserModel =
+//                                googleUserResponseData.toFirebaseUserProfileModel()
+//                            firebaseUserRepository.getUserProfile(firebaseProfileUserModel)
                         } else if (googleUserResponseData.errorException != null) {
                             loginOperationState.value = LoginOperationUiState(
                                 isError = true,
@@ -138,8 +149,8 @@ class LoginOperationVM(
                     }
                     viewModelScope.launch(getDispatcherIo()) {
                         try {
-//                        googleLoginRepository.signInWithGoogle()
-                            googleLoginRepository.signInWithGoogleAnonymous()
+                            googleLoginRepository.signInWithGoogle()
+//                            googleLoginRepository.signInWithGoogleAnonymous()
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
