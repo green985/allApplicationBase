@@ -109,18 +109,11 @@ class LoginOperationVM(
                 it.fold(
                     onSuccess = { googleUserResponseData ->
                         if (googleUserResponseData.isUserHasUID()) {
-                            Timber.d(" Google User State Flow Success: $googleUserResponseData")
                             questionSupabaseRepository.registerGoogleUser(
                                 googleUserResponseData.toGoogleUserPostData()
                             ).asResult().collectLatest {
                                 Timber.d(" registerGoogleUser response: $it")
                             }
-
-
-//
-//                            val firebaseProfileUserModel =
-//                                googleUserResponseData.toFirebaseUserProfileModel()
-//                            firebaseUserRepository.getUserProfile(firebaseProfileUserModel)
                         } else if (googleUserResponseData.errorException != null) {
                             loginOperationState.value = LoginOperationUiState(
                                 isError = true,

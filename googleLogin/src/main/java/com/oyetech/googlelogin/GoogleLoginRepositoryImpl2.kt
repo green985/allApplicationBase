@@ -29,7 +29,7 @@ import com.oyetech.models.firebaseModels.googleAuth.isUserHasUID
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
 
-class GoogleLoginRepositoryImpl(
+class GoogleLoginRepositoryImpl2(
     private val activityProviderUseCase: ActivityProviderUseCase,
     private val firebaseUserRepository: FirebaseUserRepository,
     private val questionSupabaseRepository: com.oyetech.domain.repository.question.QuestionSupabaseRepository,
