@@ -110,7 +110,6 @@ class GoogleLoginRepositoryImpl(
                 // todo will be change....
                 .setServerClientId("652520712669-5sudspef6cq60j7drtgr06rm567r0qa2.apps.googleusercontent.com")
                 // Only show accounts previously used to sign in.
-
                 .build()
 
 // Create the Credential Manager request

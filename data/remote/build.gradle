@@ -9,7 +9,7 @@ dependencies {
     implementation project(Modules.secureKeys)
     // KOTLIN
     implementation KotlinLibraries.kotlin
-
+    implementation project(Modules.domain)
 
     // NETWORK
     implementation Libraries.retrofitCoroutineAdapter
