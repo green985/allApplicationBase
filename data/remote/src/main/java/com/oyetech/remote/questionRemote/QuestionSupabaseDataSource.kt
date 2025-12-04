@@ -15,6 +15,12 @@ class QuestionSupabaseDataSource(private val questionSupabaseApi: QuestionSupaba
         }
     }
 
+    fun updateQuestion(question: QuestionOperationResponseBody): Flow<QuestionOperationResponseBody> {
+        return interceptGenericResponseTrueForm {
+            questionSupabaseApi.updateQuestion(question)
+        }
+    }
+
     fun registerGoogleUser(googleUserResponseData: GoogleUserPostData): Flow<UserProfileProperty> {
         return interceptGenericResponseTrueForm {
             questionSupabaseApi.registerGoogleUser(googleUserResponseData)

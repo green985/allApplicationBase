@@ -227,7 +227,7 @@ class QuestionCreateQuestionVm(
             Timber.d("Submitting question (edit=$isEditMode): $body")
 
             val operation = if (isEditMode) {
-                questionRepository.updateQuestion(body)
+                questionSupabaseRepository.updateQuestion(body)
             } else {
                 questionSupabaseRepository.createQuestion(body)
             }

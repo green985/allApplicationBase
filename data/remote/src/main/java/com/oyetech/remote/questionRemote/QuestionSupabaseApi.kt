@@ -16,6 +16,11 @@ interface QuestionSupabaseApi {
         @Body question: QuestionOperationResponseBody,
     ): Response<GenericResponse<QuestionOperationResponseBody>>
 
+    @POST("v1/questionUpdate")
+    suspend fun updateQuestion(
+        @Body question: QuestionOperationResponseBody,
+    ): Response<GenericResponse<QuestionOperationResponseBody>>
+
 
     @POST("v1/registerGoogleUser")
     suspend fun registerGoogleUser(
