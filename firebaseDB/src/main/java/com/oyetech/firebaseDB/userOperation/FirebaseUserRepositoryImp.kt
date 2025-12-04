@@ -152,11 +152,11 @@ class FirebaseUserRepositoryImp(
     }
 
     override fun getUsername(): String {
-        return userDataStateFlow.value.username
+        return userProfileDataStateFlow.value.username
     }
 
     override fun getUserId(): String {
-        return userDataStateFlow.value.userId
+        return userProfileDataStateFlow.value.userId
     }
 
     override fun getUserProfileModel(): MutableStateFlow<FirebaseUserProfileModel> {

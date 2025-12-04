@@ -11,10 +11,10 @@ import retrofit2.http.POST
 
 interface QuestionSupabaseApi {
 
-    @POST("v1/question-post")
+    @POST("v1/questionPost")
     suspend fun createQuestion(
         @Body question: QuestionOperationResponseBody,
-    ): Response<QuestionOperationResponseBody>
+    ): Response<GenericResponse<QuestionOperationResponseBody>>
 
 
     @POST("v1/registerGoogleUser")

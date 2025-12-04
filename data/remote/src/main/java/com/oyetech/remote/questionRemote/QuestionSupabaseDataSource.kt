@@ -5,13 +5,12 @@ import com.oyetech.models.firebaseModels.googleAuth.GoogleUserPostData
 import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.remote.helper.interceptGenericResponseTrueForm
-import com.oyetech.remote.helper.interceptTrueForm
 import kotlinx.coroutines.flow.Flow
 
 class QuestionSupabaseDataSource(private val questionSupabaseApi: QuestionSupabaseApi) {
 
     fun createQuestion(question: QuestionOperationResponseBody): Flow<QuestionOperationResponseBody> {
-        return interceptTrueForm {
+        return interceptGenericResponseTrueForm {
             questionSupabaseApi.createQuestion(question)
         }
     }
