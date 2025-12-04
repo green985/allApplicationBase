@@ -60,6 +60,7 @@ fun LoginOperationVM.mapToProfileValue(userData: FirebaseUserProfileModel?) {
 
             viewModelScope.launch(getDispatcherIo()) {
                 uiEvent.emit(LoginOperationUiEvent.OnLoginSuccess)
+                navigationUseCase.navigateTo("back")
             }
 
             viewModelScope.launch(Dispatchers.Main) {
