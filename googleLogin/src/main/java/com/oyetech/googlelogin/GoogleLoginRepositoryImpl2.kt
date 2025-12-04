@@ -21,17 +21,24 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.oyetech.domain.helper.ActivityProviderUseCase
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
+import com.oyetech.models.firebaseModels.googleAuth.GetUserWithTokenBody
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData.Companion.getNewWithException
 import com.oyetech.models.firebaseModels.googleAuth.ProviderDataInfo
 import com.oyetech.models.firebaseModels.googleAuth.UserMetadata
 import com.oyetech.models.firebaseModels.googleAuth.isUserHasUID
+import com.oyetech.tools.coroutineHelper.asResult
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class GoogleLoginRepositoryImpl2(
     private val activityProviderUseCase: ActivityProviderUseCase,
     private val firebaseUserRepository: FirebaseUserRepository,
+    private val questionSupabaseRepository: com.oyetech.domain.repository.question.QuestionSupabaseRepository,
 ) : GoogleLoginRepository {
     override val googleUserStateFlow =
         MutableStateFlow(GoogleUserResponseData())
@@ -221,6 +228,50 @@ class GoogleLoginRepositoryImpl2(
             }
         } catch (e: Exception) {
             // do nothing...
+            userAutoLoginStateFlow.value = true
+        }
+    }
+
+    override fun autoLoginOperation2() {
+        try {
+            val currentUser = firebaseAuth.currentUser
+            if (currentUser == null) {
+                userAutoLoginStateFlow.value = true
+            } else {
+                currentUser.getIdToken(false)
+                    .addOnSuccessListener { result ->
+                        val firebaseToken = result.token
+                        if (firebaseToken != null) {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                questionSupabaseRepository.getUserWithToken(
+                                    GetUserWithTokenBody(firebaseToken = firebaseToken)
+                                ).asResult().collectLatest { resultFlow ->
+                                    resultFlow.fold(
+                                        onSuccess = { userProfileProperty ->
+                                            Timber.d(" userProfileee $userProfileProperty")
+                                            firebaseUserRepository.updateUserProfileProperty(
+                                                userProfileProperty
+                                            )
+                                            userAutoLoginStateFlow.value = true
+                                        },
+                                        onFailure = { error ->
+                                            Timber.e("autoLoginOperation2 error: ${error.message}")
+                                            userAutoLoginStateFlow.value = true
+                                        }
+                                    )
+                                }
+                            }
+                        } else {
+                            userAutoLoginStateFlow.value = true
+                        }
+                    }
+                    .addOnFailureListener { error ->
+                        Timber.e("autoLoginOperation2 getIdToken error: ${error.message}")
+                        userAutoLoginStateFlow.value = true
+                    }
+            }
+        } catch (e: Exception) {
+            Timber.e("autoLoginOperation2 exception: ${e.message}")
             userAutoLoginStateFlow.value = true
         }
     }

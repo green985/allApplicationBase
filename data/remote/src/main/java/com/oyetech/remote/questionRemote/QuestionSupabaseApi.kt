@@ -1,6 +1,7 @@
 package com.oyetech.remote.questionRemote
 
 import com.oyetech.models.entity.GenericResponse
+import com.oyetech.models.firebaseModels.googleAuth.GetUserWithTokenBody
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserPostData
 import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
@@ -24,5 +25,10 @@ interface QuestionSupabaseApi {
     @POST("v1/updateUserProfile")
     suspend fun updateUser(
         @Body body: UserProfileProperty,
+    ): Response<GenericResponse<UserProfileProperty>>
+
+    @POST("v1/getUserWithToken")
+    suspend fun getUserWithToken(
+        @Body body: GetUserWithTokenBody,
     ): Response<GenericResponse<UserProfileProperty>>
 }

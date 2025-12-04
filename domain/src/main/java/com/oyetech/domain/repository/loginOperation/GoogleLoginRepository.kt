@@ -23,6 +23,7 @@ interface GoogleLoginRepository {
     fun signInWithGoogleAnonymous()
 
     fun autoLoginOperation()
+    fun autoLoginOperation2()
     fun removeUser(uid: String)
     fun getUserUid(): String
 }

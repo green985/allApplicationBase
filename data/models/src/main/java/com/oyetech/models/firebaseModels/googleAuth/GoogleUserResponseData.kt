@@ -5,6 +5,11 @@ import com.google.firebase.firestore.Exclude
 import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
 
 @Keep
+data class GetUserWithTokenBody(
+    val firebaseToken: String = "",
+)
+
+@Keep
 data class GoogleUserPostData(
     val uid: String = "",
     val firebaseToken: String? = "",

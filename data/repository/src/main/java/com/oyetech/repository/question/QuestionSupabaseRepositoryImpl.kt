@@ -1,6 +1,7 @@
 package com.oyetech.repository.question
 
 import com.oyetech.domain.repository.question.QuestionSupabaseRepository
+import com.oyetech.models.firebaseModels.googleAuth.GetUserWithTokenBody
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserPostData
 import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
@@ -21,5 +22,9 @@ class QuestionSupabaseRepositoryImpl(
 
     override fun updateUser(userProfileProperty: UserProfileProperty): Flow<UserProfileProperty> {
         return questionSupabaseDataSource.updateUser(userProfileProperty)
+    }
+
+    override fun getUserWithToken(getUserWithTokenBody: GetUserWithTokenBody): Flow<UserProfileProperty> {
+        return questionSupabaseDataSource.getUserWithToken(getUserWithTokenBody)
     }
 }

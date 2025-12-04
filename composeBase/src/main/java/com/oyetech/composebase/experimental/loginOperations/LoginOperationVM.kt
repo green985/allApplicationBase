@@ -59,7 +59,7 @@ class LoginOperationVM(
         if (GeneralSettings.isLoginOperationEnable()) {
             observeGoogleUserStateFlow()
             observeUserProfileState()
-            googleLoginRepository.autoLoginOperation()
+            googleLoginRepository.autoLoginOperation2()
             updateUserToken()
         }
     }
@@ -259,8 +259,8 @@ class LoginOperationVM(
                 Timber.d("updateUser response: $it")
                 it.fold(
                     onSuccess = { updatedUser ->
-                        firebaseUserRepository.updateUserProfileProperty(updatedUser)
                         uiEvent.emit(LoginOperationUiEvent.OnLoginSuccess)
+                        firebaseUserRepository.updateUserProfileProperty(updatedUser)
                         navigationUseCase.navigateTo("back")
                     },
                     onFailure = { error ->

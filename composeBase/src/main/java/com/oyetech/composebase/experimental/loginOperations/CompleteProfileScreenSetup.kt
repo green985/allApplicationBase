@@ -1,6 +1,5 @@
 package com.oyetech.composebase.experimental.loginOperations
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -52,11 +51,6 @@ fun CompleteProfileScreenSetup(navigationRoute: (navigationRoute: String) -> Uni
     }
 
     CompleteProfileScreen(uiState = uiState, onEvent = { vm.onEvent(it) })
-
-
-    BackHandler {
-        Timber.d("BackHandler")
-    }
 }
 
 @Composable
