@@ -18,6 +18,7 @@ Created by Erdi Özbek
 
 fun LoginOperationVM.mapToProfileValue2(userData: UserProfileProperty?) {
     val userFirebaseUserProfileModel = userData?.toFirebaseUserProfileModel()
+    userData?.let { firebaseUserRepository.updateUserProfileProperty(it) }
     mapToProfileValue(userFirebaseUserProfileModel)
 }
 
@@ -25,6 +26,7 @@ fun LoginOperationVM.mapToProfileValue(userData: FirebaseUserProfileModel?) {
     if (userData == null) {
         return
     }
+    this.firebaseUserRepository.userDataStateFlow.value = userData
 //
 //    if (userData.isUserDeleted()) {
 //        viewModelScope.launch(Dispatchers.Main) {
@@ -85,6 +87,7 @@ fun LoginOperationVM.mapToProfileValue(userData: FirebaseUserProfileModel?) {
         val isLoading = loginOperationState.value.isLoading
         loginOperationState.value = LoginOperationUiState(
             isLoading = isLoading,
+            errorMessage = LanguageKey.userIdNotFound
         )
     }
 }

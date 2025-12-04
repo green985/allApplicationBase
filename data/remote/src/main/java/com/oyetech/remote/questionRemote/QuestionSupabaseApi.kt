@@ -20,4 +20,9 @@ interface QuestionSupabaseApi {
     suspend fun registerGoogleUser(
         @Body body: GoogleUserPostData,
     ): Response<GenericResponse<UserProfileProperty>>
+
+    @POST("v1/updateUserProfile")
+    suspend fun updateUser(
+        @Body body: UserProfileProperty,
+    ): Response<GenericResponse<UserProfileProperty>>
 }

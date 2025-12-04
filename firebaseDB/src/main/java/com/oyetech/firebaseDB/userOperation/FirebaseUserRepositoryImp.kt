@@ -8,6 +8,7 @@ import com.oyetech.models.errors.exceptionHelper.GeneralException
 import com.oyetech.models.firebaseModels.databaseKeys.FirebaseDatabaseKeys
 import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
 import com.oyetech.models.firebaseModels.userModel.FirebaseUserPropertyModel
+import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
@@ -18,17 +19,21 @@ class FirebaseUserRepositoryImp(
     private val firestore: FirebaseFirestore,
 ) : FirebaseUserRepository {
 
+    override val userProfileDataStateFlow =
+        MutableStateFlow<UserProfileProperty>(UserProfileProperty())
+
     override val userDataStateFlow =
         MutableStateFlow<FirebaseUserProfileModel>(FirebaseUserProfileModel())
 
     override suspend fun updateUserProperty(userData: FirebaseUserProfileModel) {
         try {
-            val inUse = isUsernameInUse(username = userData.username)
-            if (inUse) {
-                userDataStateFlow.value =
-                    FirebaseUserProfileModel(errorException = Exception("Username is already in use"))
-                return
-            }
+            // todo will be handle...
+//            val inUse = isUsernameInUse(username = userData.username)
+//            if (inUse) {
+//                userDataStateFlow.value =
+//                    FirebaseUserProfileModel(errorException = Exception("Username is already in use"))
+//                return
+//            }
 
             val toSave = userData.copy(errorException = null)
             firestore
@@ -205,5 +210,9 @@ class FirebaseUserRepositoryImp(
                 throw e
             }
         }
+    }
+
+    override fun updateUserProfileProperty(updatedUser: UserProfileProperty) {
+        userProfileDataStateFlow.value = updatedUser
     }
 }

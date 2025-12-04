@@ -7,7 +7,7 @@ import com.oyetech.models.firebaseModels.userModel.FirebaseUserProfileModel
 @Keep
 data class GoogleUserPostData(
     val uid: String = "",
-    val token: String? = "",
+    val firebaseToken: String? = "",
     val email: String? = null,
     val displayName: String? = null,
     val phoneNumber: String? = null,
@@ -22,7 +22,7 @@ data class GoogleUserPostData(
 fun GoogleUserResponseData.toGoogleUserPostData(): GoogleUserPostData {
     return GoogleUserPostData(
         uid = this.uid,
-        token = this.token,
+        firebaseToken = this.token,
         email = this.email,
         displayName = this.displayName,
         phoneNumber = this.phoneNumber,
@@ -38,7 +38,7 @@ fun GoogleUserResponseData.toGoogleUserPostData(): GoogleUserPostData {
 fun GoogleUserPostData.toGoogleUserResponseData(): GoogleUserResponseData {
     return GoogleUserResponseData(
         uid = this.uid,
-        token = this.token,
+        token = this.firebaseToken,
         email = this.email,
         displayName = this.displayName,
         phoneNumber = this.phoneNumber,

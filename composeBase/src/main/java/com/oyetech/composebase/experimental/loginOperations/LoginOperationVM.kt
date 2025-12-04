@@ -43,7 +43,7 @@ class LoginOperationVM(
     appDispatchers: AppDispatchers,
     private val googleLoginRepository: GoogleLoginRepository,
     val navigationUseCase: NavigationUseCase,
-    private val firebaseUserRepository: FirebaseUserRepository,
+    val firebaseUserRepository: FirebaseUserRepository,
     private val firebaseTokenOperationRepository: FirebaseTokenOperationRepository,
     private val snackbarDelegate: SnackbarDelegate,
     private val questionSupabaseRepository: com.oyetech.domain.repository.question.QuestionSupabaseRepository,
@@ -90,10 +90,21 @@ class LoginOperationVM(
     private fun observeUserProfileState() {
         viewModelScope.launch(getDispatcherIo()) {
             firebaseUserRepository.userDataStateFlow.asResult().onEach {
-                Timber.d(" profileRepository User State Flow: $it")
                 it.fold(
                     onSuccess = { userData ->
                         mapToProfileValue(userData)
+                    },
+                    onFailure = {
+                        Timber.d(" Google User State Flow Error: $it")
+                    }
+                )
+            }.collect()
+        }
+        viewModelScope.launch(getDispatcherIo()) {
+            firebaseUserRepository.userProfileDataStateFlow.asResult().onEach {
+                it.fold(
+                    onSuccess = { userData ->
+                        mapToProfileValue2(userData)
                     },
                     onFailure = {
                         Timber.d(" Google User State Flow Error: $it")
@@ -227,16 +238,43 @@ class LoginOperationVM(
             copy(isLoading = true)
         }
         viewModelScope.launch(getDispatcherIo()) {
-            val userData = firebaseUserRepository.userDataStateFlow.value
+            val userData = firebaseUserRepository.userProfileDataStateFlow.value
 
-            val editedUserData = userData.copy(
-                username = loginOperationState.value.displayName,
-                age = loginOperationState.value.age,
-                gender = loginOperationState.value.gender
-            )
-            firebaseUserRepository.updateUserProperty(editedUserData)
-            uiEvent.emit(LoginOperationUiEvent.OnLoginSuccess)
-            navigationUseCase.navigateTo("back")
+            val userProfileProperty =
+                com.oyetech.models.firebaseModels.userModel.UserProfileProperty(
+                    firebaseToken = userData.firebaseToken,
+                    userId = userData.userId,
+                    displayName = loginOperationState.value.displayName,
+                    username = loginOperationState.value.displayName,
+                    age = loginOperationState.value.age,
+                    gender = loginOperationState.value.gender,
+                    biography = userData.biography,
+                    isAnonymous = userData.isAnonymous,
+                    notificationToken = userData.notificationToken,
+//                    lastSignInTimestampTmp = userData.lastSignInTimestampTmp,
+//                    creationTimestamp = userData.creationTimestamp
+                )
+
+            questionSupabaseRepository.updateUser(userProfileProperty).asResult().collectLatest {
+                Timber.d("updateUser response: $it")
+                it.fold(
+                    onSuccess = { updatedUser ->
+                        firebaseUserRepository.updateUserProfileProperty(updatedUser)
+                        uiEvent.emit(LoginOperationUiEvent.OnLoginSuccess)
+                        navigationUseCase.navigateTo("back")
+                    },
+                    onFailure = { error ->
+                        Timber.e("updateUser error: ${error.message}")
+                        loginOperationState.updateState {
+                            copy(
+                                isLoading = false,
+                                isError = true,
+                                errorMessage = error.message ?: "Update failed"
+                            )
+                        }
+                    }
+                )
+            }
         }
         return false
     }

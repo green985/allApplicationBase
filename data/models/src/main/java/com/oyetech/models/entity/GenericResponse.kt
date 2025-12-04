@@ -19,6 +19,6 @@ class GenericResponse<T> {
     @Json(name = "message")
     var resultMessage: String = ""
 
-    @Json(name = "success")
+    @Json(name = "status")
     var resultStatus: Boolean = false
 }

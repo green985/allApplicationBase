@@ -8,4 +8,5 @@ import kotlinx.coroutines.flow.Flow
 interface QuestionSupabaseRepository {
     fun createQuestion(question: QuestionOperationResponseBody): Flow<QuestionOperationResponseBody>
     fun registerGoogleUser(googleUserResponseData: GoogleUserPostData): Flow<UserProfileProperty>
+    fun updateUser(userProfileProperty: UserProfileProperty): Flow<UserProfileProperty>
 }

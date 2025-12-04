@@ -18,4 +18,8 @@ class QuestionSupabaseRepositoryImpl(
     override fun registerGoogleUser(googleUserResponseData: GoogleUserPostData): Flow<UserProfileProperty> {
         return questionSupabaseDataSource.registerGoogleUser(googleUserResponseData)
     }
+
+    override fun updateUser(userProfileProperty: UserProfileProperty): Flow<UserProfileProperty> {
+        return questionSupabaseDataSource.updateUser(userProfileProperty)
+    }
 }

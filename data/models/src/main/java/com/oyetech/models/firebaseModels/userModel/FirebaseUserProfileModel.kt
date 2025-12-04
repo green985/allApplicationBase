@@ -13,13 +13,15 @@ Created by Erdi Özbek
 data class UserProfileProperty(
     val isAnonymous: Boolean = false,
     val notificationToken: String = "",
-    val token: String = "",
+    val firebaseToken: String = "",
 
-    val lastSignInTimestamp: Long? = null,
-    val creationTimestamp: Long = System.currentTimeMillis(),
+    val lastSignInTimestamp: String = "",
+    val lastSignInTimestampTmp: Long? = null,
+    val creationTimestamp: String = "",
 
     val userId: String = "",
     val username: String = "",
+    val displayName: String = "",
     val gender: String = "",
     val age: String = "",
     val biography: String = "",
@@ -57,8 +59,8 @@ fun UserProfileProperty.toFirebaseUserProfileModel(): FirebaseUserProfileModel {
     return FirebaseUserProfileModel(
         isAnonymous = this.isAnonymous,
         notificationToken = this.notificationToken,
-        lastSignInTimestamp = this.lastSignInTimestamp,
-        creationTimestamp = this.creationTimestamp,
+//        lastSignInTimestamp = this.lastSignInTimestampTmp,
+//        creationTimestamp = this.creationTimestamp,
         userId = this.userId,
         username = this.username,
         gender = this.gender,
