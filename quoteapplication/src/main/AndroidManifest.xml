@@ -28,21 +28,6 @@
         android:usesCleartextTraffic="true">
 
         <activity
-            android:name="com.oyetech.composebase.projectQuotesFeature.main.QuoteMainActivity"
-            android:exported="true"
-            android:launchMode="standard"
-            android:theme="@style/Theme.DefaultAppTheme"
-            android:windowSoftInputMode="adjustNothing">
-            <!--            <intent-filter>-->
-            <!--                <action android:name="android.intent.action.MAIN" />-->
-
-            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-            <!--            </intent-filter>-->
-
-
-        </activity>
-
-        <activity
             android:name="com.oyetech.composebase.projectQuestionsFeature.main.QuestionMainActivity"
             android:exported="true"
             android:launchMode="standard"
@@ -54,20 +39,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <service
-            android:name="com.oyetech.composebase.sharedScreens.voiceRecord.service.DigitalNoteForegroundService"
-            android:exported="false"
-            android:foregroundServiceType="mediaPlayback" />
-
-        <service
-            android:name="com.oyetech.composebase.sharedScreens.voiceRecord.service.VolumeKeyAccessibilityService"
-            android:exported="false"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
-            <meta-data
-                android:name="android.accessibilityservice"
-                android:resource="@xml/volume_key_accessibility_service" />
-        </service>
 
         <property
             android:name="android.adservices.AD_SERVICES_CONFIG"
