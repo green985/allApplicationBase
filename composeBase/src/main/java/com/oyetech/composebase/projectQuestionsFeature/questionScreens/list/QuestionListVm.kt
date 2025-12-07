@@ -11,8 +11,6 @@ import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionV
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.toUiState
 import com.oyetech.domain.repository.firebase.FirebaseQuestionAnswerRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
-import com.oyetech.domain.repository.firebase.FirebaseUserRepository
-import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QueTag
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
@@ -32,11 +30,9 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @Suppress("TooManyFunctions", "LongParameterList")
-class QuestionListVm2(
+class QuestionListVm(
     appDispatchers: AppDispatchers,
-    private val navigationUseCase: NavigationUseCase,
     private val repository: FirebaseQuestionOperationRepository,
-    private val userRepository: FirebaseUserRepository,
     private val answerRepository: FirebaseQuestionAnswerRepository,
     private val getQuestionsPagedByCreatedAtUseCase: GetQuestionsPagedByCreatedAtUseCase,
     private val getUserQuestionsPagedByCreatedAtUseCase: GetUserQuestionsPagedByCreatedAtUseCase,

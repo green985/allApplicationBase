@@ -40,7 +40,7 @@ fun QuestionListWithParamsScreenSetup(
     userId: String? = null,
 ) {
     val vm =
-        koinViewModel<QuestionListVm2>(
+        koinViewModel<QuestionListVm>(
             key = "QuestionListWithParamsScreenSetup_$questionTagId-$adminFilterTypeStr-$questionListType-$userId"
         )
     val uiState by vm.uiState.collectAsStateWithLifecycle()

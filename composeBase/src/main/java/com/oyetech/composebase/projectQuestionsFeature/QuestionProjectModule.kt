@@ -3,7 +3,7 @@ package com.oyetech.composebase.projectQuestionsFeature
 import com.oyetech.composebase.projectQuestionsFeature.adminApprove.AdminApproveQuestionVm
 import com.oyetech.composebase.projectQuestionsFeature.main.QuestionMainActivityVm
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.createQuestion.QuestionCreateQuestionVm
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListVm2
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListVm
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionPagerVm
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.usecases.GetQuestionsPagedByCreatedAtUseCase
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.usecases.GetUserQuestionsPagedByCreatedAtUseCase
@@ -26,7 +26,7 @@ object QuestionProjectModule {
         viewModelOf(::QuestionCreateQuestionVm)
         viewModelOf(::FacSettingsVm)
 
-        viewModelOf(::QuestionListVm2)
+        viewModelOf(::QuestionListVm)
         viewModelOf(::QuestionPagerVm)
         viewModelOf(::AdminApproveQuestionVm)
         viewModelOf(::FloatingAskQuestionBarVm)
