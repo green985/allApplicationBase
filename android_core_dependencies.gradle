@@ -10,6 +10,8 @@ dependencies {
     implementation AndroidLibraries.kotlinCoroutineAndroid
     // ANDROID
     implementation AndroidLibraries.appCompat
+
+
     implementation AndroidLibraries.coreKtx
     implementation AndroidLibraries.constraintLayout
     implementation AndroidLibraries.lifecycleViewModel
