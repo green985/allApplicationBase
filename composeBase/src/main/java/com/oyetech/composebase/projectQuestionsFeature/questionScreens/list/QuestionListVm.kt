@@ -9,8 +9,8 @@ import com.oyetech.composebase.projectQuestionsFeature.questionScreens.usecases.
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.toUiState
-import com.oyetech.domain.repository.firebase.FirebaseQuestionAnswerRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
+import com.oyetech.domain.useCases.AnswerUseCase
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QueFilter
 import com.oyetech.models.questionProject.questionOperation.QueTag
@@ -36,7 +36,7 @@ import timber.log.Timber
 class QuestionListVm(
     appDispatchers: AppDispatchers,
     private val repository: FirebaseQuestionOperationRepository,
-    private val answerRepository: FirebaseQuestionAnswerRepository,
+    private val answerUseCase: AnswerUseCase,
     private val getQuestionsPagedByCreatedAtUseCase: GetQuestionsPagedByCreatedAtUseCase,
     private val getUserQuestionsPagedByCreatedAtUseCase: GetUserQuestionsPagedByCreatedAtUseCase,
 ) : BaseViewModel(appDispatchers) {
@@ -70,7 +70,7 @@ class QuestionListVm(
     private fun Flow<List<QuestionViewUiState>>.obserseQuestionAnswerToList() {
         viewModelScope.launch(getDispatcherIo()) {
             this@obserseQuestionAnswerToList.filter { it.isNotEmpty() }
-                .getQuestionTransformerFlow(answerRepository.answersState)
+                .getQuestionTransformerFlow(answerUseCase.answersState)
                 .collectLatest { questions ->
                     Timber.d("Combining question items flow with transformed questions: ${questions.size}")
                     if (questions.isNotEmpty()) {

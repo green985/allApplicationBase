@@ -11,7 +11,9 @@ import com.oyetech.models.questionProject.questionOperation.QuestionOperationRes
 import com.oyetech.models.questionProject.questionOperation.QuestionStatusUpdateRequest
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface QuestionSupabaseApi {
 
@@ -54,4 +56,25 @@ interface QuestionSupabaseApi {
     suspend fun addAnswer(
         @Body answer: QueAnswer,
     ): Response<GenericResponse<QueAnswer>>
+
+    @POST("v1/getAnswersByUser")
+    suspend fun getAnswersByUser(
+        @Query("userId") userId: String,
+    ): Response<GenericResponse<List<QueAnswer>>>
+
+    @POST("v1/getAnswersByQuestion")
+    suspend fun getAnswersByQuestion(
+        @Query("questionId") questionId: String,
+    ): Response<GenericResponse<List<QueAnswer>>>
+
+    @POST("v1/updateAnswer")
+    suspend fun updateAnswer(
+        @Body answer: QueAnswer,
+    ): Response<GenericResponse<QueAnswer>>
+
+    @DELETE("v1/deleteAnswer")
+    suspend fun deleteAnswer(
+        @Query("userId") userId: String,
+        @Query("questionId") questionId: String,
+    ): Response<GenericResponse<Unit>>
 }

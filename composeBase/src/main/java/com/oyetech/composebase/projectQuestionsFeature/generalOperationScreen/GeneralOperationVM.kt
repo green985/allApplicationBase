@@ -6,6 +6,7 @@ import com.oyetech.composebase.sharedScreens.messaging.MessageOperationVM
 import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserListOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
+import com.oyetech.domain.useCases.AnswerUseCase
 import com.oyetech.domain.useCases.helpers.AppReviewOperationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
@@ -29,7 +30,7 @@ class GeneralOperationVM(
     private val firebaseUserListOperationRepository: FirebaseUserListOperationRepository,
     private val messageOperationVM: MessageOperationVM,
     private val userRepository: FirebaseUserRepository,
-    private val answerRepository: com.oyetech.domain.repository.firebase.FirebaseQuestionAnswerRepository,
+    private val answerUseCase: AnswerUseCase,
 ) : BaseViewModel(appDispatchers) {
 
     fun getReviewCanShowState() = appReviewOperationUseCase.getReviewCanShowState()
@@ -79,7 +80,7 @@ class GeneralOperationVM(
         x = viewModelScope.launch(getDispatcherIo()) {
             userRepository.userDataStateFlow.collectLatest {
                 if (it.userId.isNotBlank()) {
-                    answerRepository.getAnswersByUser(it.userId)
+                    answerUseCase.getAnswersByUser(it.userId)
                         .collectLatest {
                             /* repo updates its own state */
                             x?.cancel()

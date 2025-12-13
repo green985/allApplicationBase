@@ -8,7 +8,7 @@ import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.Ques
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.questionAnswerOverlayFlow
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
-import com.oyetech.domain.repository.firebase.FirebaseQuestionAnswerRepository
+import com.oyetech.domain.useCases.AnswerUseCase
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.tools.coroutineHelper.AppDispatchers
@@ -37,7 +37,7 @@ import timber.log.Timber
 class QuestionFormViewModel(
     appDispatchers: AppDispatchers,
     private val navigationUseCase: NavigationUseCase,
-    private val answerRepository: FirebaseQuestionAnswerRepository,
+    private val answerUseCase: AnswerUseCase,
 ) : BaseViewModel(appDispatchers) {
 
     private val questionFormListOperationDelegate: ListOperationDelegate<QuestionViewUiState> =
@@ -70,7 +70,7 @@ class QuestionFormViewModel(
         viewModelScope.launch(getDispatcherIo()) {
             questionFormListOperationDelegate.listUiState.map { it.items }
                 .distinctUntilChanged().filter { it.isNotEmpty() }
-                .questionAnswerOverlayFlow(answerRepository.answersState)
+                .questionAnswerOverlayFlow(answerUseCase.answersState)
                 .collectLatest { questions ->
                     Timber.d("Combining question items flow with transformed questions: ${questions.size}")
                     observeQuestionListChanges(questions)

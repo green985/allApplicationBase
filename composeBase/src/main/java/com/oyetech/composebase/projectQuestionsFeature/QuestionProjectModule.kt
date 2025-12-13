@@ -10,6 +10,7 @@ import com.oyetech.composebase.projectQuestionsFeature.questionScreens.usecases.
 import com.oyetech.composebase.sharedScreens.settings.FacSettingsVm
 import com.oyetech.composebase.sharedScreens.userProfile.userProfileDesign.UserProfileVm2
 import com.oyetech.composebase.sharedViews.floating.FloatingAskQuestionBarVm
+import com.oyetech.domain.useCases.AnswerUseCase
 import com.oyetech.domain.useCases.QuestionUseCase
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.factoryOf
@@ -20,6 +21,7 @@ object QuestionProjectModule {
     val module = module {
 
         singleOf(::QuestionUseCase)
+        singleOf(::AnswerUseCase)
         singleOf(::GetUserQuestionsPagedByCreatedAtUseCase)
         factoryOf(::GetQuestionsPagedByCreatedAtUseCase)
         viewModelOf(::QuestionMainActivityVm)

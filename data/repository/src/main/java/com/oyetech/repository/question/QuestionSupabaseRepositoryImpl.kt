@@ -50,4 +50,20 @@ class QuestionSupabaseRepositoryImpl(
     override fun addAnswer(answer: QueAnswer): Flow<QueAnswer> {
         return questionSupabaseDataSource.addAnswer(answer)
     }
+
+    override fun getAnswersByUser(userId: String): Flow<List<QueAnswer>> {
+        return questionSupabaseDataSource.getAnswersByUser(userId)
+    }
+
+    override suspend fun getAnswersByQuestion(questionId: String): Flow<List<QueAnswer>> {
+        return questionSupabaseDataSource.getAnswersByQuestion(questionId)
+    }
+
+    override fun updateAnswer(answer: QueAnswer): Flow<QueAnswer> {
+        return questionSupabaseDataSource.updateAnswer(answer)
+    }
+
+    override fun deleteAnswer(userId: String, questionId: String): Flow<Unit> {
+        return questionSupabaseDataSource.deleteAnswer(userId, questionId)
+    }
 }

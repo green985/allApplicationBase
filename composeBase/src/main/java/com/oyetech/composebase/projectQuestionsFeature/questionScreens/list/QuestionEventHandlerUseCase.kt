@@ -4,10 +4,10 @@ import com.oyetech.composebase.helpers.listOperations.ListOperationDelegate
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
-import com.oyetech.domain.repository.firebase.FirebaseQuestionAnswerRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.question.QuestionSupabaseRepository
+import com.oyetech.domain.useCases.AnswerUseCase
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.models.questionProject.questionOperation.ModerationStatus
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
@@ -39,7 +39,7 @@ class QuestionEventHandlerUseCase(
     private val navigationUseCase: NavigationUseCase by inject()
     private val repository: FirebaseQuestionOperationRepository by inject()
     private val userRepository: FirebaseUserRepository by inject()
-    private val answerRepository: FirebaseQuestionAnswerRepository by inject()
+    private val answerUseCase: AnswerUseCase by inject()
     private val appDispatchers: AppDispatchers by inject()
 
     private val questionSupabaseRepository: QuestionSupabaseRepository by inject()
@@ -124,7 +124,7 @@ class QuestionEventHandlerUseCase(
                 Timber.d("User ID is blank, cannot submit answer")
                 return@launch
             }
-            val alreadyAnswered = answerRepository.answersState.value.any {
+            val alreadyAnswered = answerUseCase.answersState.value.any {
                 it.userId == uid && it.questionId == event.questionId
             }
             if (alreadyAnswered) return@launch
@@ -136,7 +136,7 @@ class QuestionEventHandlerUseCase(
                 textValue = null,
                 userId = uid,
             )
-            answerRepository.submitAnswer(answer)
+            answerUseCase.submitAnswer(answer)
                 .collectLatest { /* updated in repo state */ }
         }
         Timber.d("Option selected: ${event.optionId} for question: ${event.questionId}")
@@ -146,7 +146,7 @@ class QuestionEventHandlerUseCase(
         scope.launch(appDispatchers.io) {
             val uid = userRepository.getUserId()
             if (uid.isBlank()) return@launch
-            answerRepository.deleteAnswer(uid, event.questionId)
+            answerUseCase.deleteAnswer(uid, event.questionId)
                 .collectLatest { /* updated in repo state */ }
         }
     }

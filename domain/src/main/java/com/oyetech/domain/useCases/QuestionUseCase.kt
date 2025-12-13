@@ -1,6 +1,5 @@
 package com.oyetech.domain.useCases
 
-import com.oyetech.domain.repository.firebase.FirebaseQuestionAnswerRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
 import com.oyetech.domain.repository.question.QuestionSupabaseRepository
 import com.oyetech.models.questionProject.questionOperation.ModerationStatus
@@ -17,7 +16,6 @@ import timber.log.Timber
 
 class QuestionUseCase(
     private val questionRepository: FirebaseQuestionOperationRepository,
-    private val answerRepository: FirebaseQuestionAnswerRepository,
     private val questionSupabaseRepository: QuestionSupabaseRepository,
 ) {
     private val _questionUpdatedEvent = MutableSharedFlow<String>(
@@ -73,26 +71,6 @@ class QuestionUseCase(
 
     }
 
-    fun overlayAnswers(
-        questions: List<QuestionOperationResponseBody>,
-        answers: List<QueAnswer>,
-    ): List<QuestionOperationResponseBody> {
-        val answerMap = answers.associateBy { it.questionId }
-        return questions.map { question ->
-            val answer = answerMap[question.questionId]
-            if (answer != null) {
-                // Store answer info in metadata for UI layer to use
-                question.copy(
-                    metadata = question.metadata + mapOf(
-                        "isAnswered" to "true",
-                        "selectedAnswer" to (answer.selectedOptionIds?.firstOrNull() ?: "")
-                    )
-                )
-            } else {
-                question
-            }
-        }
-    }
 
     private suspend fun fetchQuestionById(questionId: String): QuestionOperationResponseBody? {
         return try {

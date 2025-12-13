@@ -60,4 +60,28 @@ class QuestionSupabaseDataSource(private val questionSupabaseApi: QuestionSupaba
             questionSupabaseApi.addAnswer(answer)
         }
     }
+
+    fun getAnswersByUser(userId: String): Flow<List<QueAnswer>> {
+        return interceptGenericResponseTrueForm {
+            questionSupabaseApi.getAnswersByUser(userId)
+        }
+    }
+
+    suspend fun getAnswersByQuestion(questionId: String): Flow<List<QueAnswer>> {
+        return interceptGenericResponseTrueForm {
+            questionSupabaseApi.getAnswersByQuestion(questionId)
+        }
+    }
+
+    fun updateAnswer(answer: QueAnswer): Flow<QueAnswer> {
+        return interceptGenericResponseTrueForm {
+            questionSupabaseApi.updateAnswer(answer)
+        }
+    }
+
+    fun deleteAnswer(userId: String, questionId: String): Flow<Unit> {
+        return interceptGenericResponseTrueForm {
+            questionSupabaseApi.deleteAnswer(userId, questionId)
+        }
+    }
 }
