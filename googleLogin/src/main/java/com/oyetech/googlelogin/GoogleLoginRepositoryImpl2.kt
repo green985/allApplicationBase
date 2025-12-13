@@ -90,17 +90,17 @@ class GoogleLoginRepositoryImpl2(
         try {
             googleUserStateFlow.value = GoogleUserResponseData()
             val currentUser = firebaseAuth.currentUser
-            if (currentUser == null) {
-                signWithGoogle()
-            } else {
-                val userGoogleData = getCurrentUserResponse()
-                if (userGoogleData == null || !userGoogleData.isUserHasUID()) {
-                    googleUserStateFlow.value =
-                        getNewWithException("setupGoogleSignInLauncher Google sign in failed")
-                } else {
-                    googleUserStateFlow.value = userGoogleData.copy()
-                }
-            }
+            signWithGoogle()
+//            if (currentUser == null) {
+//            } else {
+//                val userGoogleData = getCurrentUserResponse()
+//                if (userGoogleData == null || !userGoogleData.isUserHasUID()) {
+//                    googleUserStateFlow.value =
+//                        getNewWithException("setupGoogleSignInLauncher Google sign in failed")
+//                } else {
+//                    googleUserStateFlow.value = userGoogleData.copy()
+//                }
+//            }
         } catch (e: Exception) {
             googleUserStateFlow.value = getNewWithException(e.message)
         }
