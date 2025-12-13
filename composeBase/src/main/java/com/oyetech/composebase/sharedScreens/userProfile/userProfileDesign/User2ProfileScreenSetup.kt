@@ -85,7 +85,6 @@ fun User2ProfileScreenSetup(
     User2ProfileScreen(
         modifier = modifier,
         uiState = uiState,
-        receiverUserId = receiverUserId,
         onEvent = onEvent
     )
 }
@@ -94,7 +93,6 @@ fun User2ProfileScreenSetup(
 @Composable
 fun User2ProfileScreen(
     modifier: Modifier = Modifier,
-    receiverUserId: String,
     uiState: UserProfileUiState2 = UserProfileUiState2(),
     onEvent: (UserProfileUiEvent2) -> Unit = { },
 ) {
@@ -402,7 +400,6 @@ private fun UserImageListView(
 @Preview(showBackground = true)
 fun User2ProfileScreenPreview() {
     User2ProfileScreen(
-        receiverUserId = "erdiOzbek",
         uiState = getDefaultUiState2()
     )
 }

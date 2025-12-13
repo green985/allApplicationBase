@@ -20,18 +20,24 @@ object QuestionAppProjectRoutes {
     val QuestionCreateQuestionPage = Route("questionCreateQuestionPage")
     val QuestionAppHomepage = Route("questionAppHomepage")
     val QuestionAppSettings = Route("question/QuestionAppSettings")
-    val MessageConversationList = Route("question/MessageConversationList")
-    val UserList = Route("question/UserList")
     val AdminApproveQuestion = Route("question/AdminApproveQuestion")
     val QuestionListWithParams = Route("question/QuestionListWithParams")
     val QuestionPager = Route("question/QuestionPager")
     val UserProfile = Route("question/UserProfile")
-    val User2Profile = Route("question/User2Profile/{receiverId}")
-    val MessageDetail = Route("question/MessageDetail")
     val CompleteProfileScreen = Route("question/CompleteProfileScreen")
     val EditProfile = Route("question/EditProfile")
     val QuestionFormScreen = Route("question/QuestionFormScreen")
 
+
+    val UserList = Route("question/UserList")
+
+    val MessageDetail = Route("question/MessageDetail")
+
+    val MessageConversationList = Route("question/MessageConversationList")
+
+}
+
+object QuestionAppProjectBottomNavigationDestinations {
     val questionApplicationBottomTabNavList = listOf(
         QuestionAppNavItem.TabQuestionAppHomepage,
         QuestionAppNavItem.TabQuestionList,

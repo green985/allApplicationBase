@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppBottomNavigationView
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
+import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectBottomNavigationDestinations
 import com.oyetech.composebase.projectQuestionsFeature.navigation.questionAppNavigation
 import com.oyetech.composebase.projectQuestionsFeature.theme.RadioAppTheme
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator
@@ -52,7 +52,7 @@ fun QuestionMainScreen(
             ) {
                 NavHost(
                     navController = navController,
-                    startDestination = QuestionAppProjectRoutes.questionApplicationBottomTabNavList.first().path,
+                    startDestination = QuestionAppProjectBottomNavigationDestinations.questionApplicationBottomTabNavList.first().path,
                 ) {
                     navHostScreenSetup(navController, navigationUseCase)
                     questionAppNavigation(navController)

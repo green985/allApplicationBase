@@ -35,7 +35,6 @@ class QuestionMainActivity : ComponentActivity() {
                     if (GeneralSettings.isDebug()) {
                         QuestionAppDebugRoot(navigationUseCase)
                     } else {
-
                         QuestionMainScreen(navigationUseCase)
                     }
                 })

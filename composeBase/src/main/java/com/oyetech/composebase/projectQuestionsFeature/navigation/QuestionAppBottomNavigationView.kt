@@ -41,7 +41,7 @@ fun QuestionAppBottomNavigationView(
                 isClickable = bottomNavigationVisibility,
                 vm = bottomNavigationVm,
                 navController = navController,
-                navItems = QuestionAppProjectRoutes.questionApplicationBottomTabNavList
+                navItems = QuestionAppProjectBottomNavigationDestinations.questionApplicationBottomTabNavList
             )
     }
 }
