@@ -6,6 +6,7 @@ import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import com.oyetech.models.questionProject.questionOperation.QueFilter
 import com.oyetech.models.questionProject.questionOperation.QuestionListWithFilterResponse
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
+import com.oyetech.models.questionProject.questionOperation.QuestionStatusUpdateRequest
 import com.oyetech.remote.helper.interceptGenericResponseTrueForm
 import kotlinx.coroutines.flow.Flow
 
@@ -20,6 +21,12 @@ class QuestionSupabaseDataSource(private val questionSupabaseApi: QuestionSupaba
     fun updateQuestion(question: QuestionOperationResponseBody): Flow<QuestionOperationResponseBody> {
         return interceptGenericResponseTrueForm {
             questionSupabaseApi.updateQuestion(question)
+        }
+    }
+
+    fun updateQuestionStatus(request: QuestionStatusUpdateRequest): Flow<QuestionOperationResponseBody> {
+        return interceptGenericResponseTrueForm {
+            questionSupabaseApi.updateQuestionStatus(request)
         }
     }
 

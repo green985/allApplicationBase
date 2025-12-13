@@ -7,6 +7,7 @@ import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import com.oyetech.models.questionProject.questionOperation.QueFilter
 import com.oyetech.models.questionProject.questionOperation.QuestionListWithFilterResponse
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
+import com.oyetech.models.questionProject.questionOperation.QuestionStatusUpdateRequest
 import com.oyetech.remote.questionRemote.QuestionSupabaseDataSource
 import kotlinx.coroutines.flow.Flow
 
@@ -21,6 +22,10 @@ class QuestionSupabaseRepositoryImpl(
 
     override fun updateQuestion(question: QuestionOperationResponseBody): Flow<QuestionOperationResponseBody> {
         return questionSupabaseDataSource.updateQuestion(question)
+    }
+
+    override fun updateQuestionStatus(request: QuestionStatusUpdateRequest): Flow<QuestionOperationResponseBody> {
+        return questionSupabaseDataSource.updateQuestionStatus(request)
     }
 
     override fun registerGoogleUser(googleUserResponseData: GoogleUserPostData): Flow<UserProfileProperty> {

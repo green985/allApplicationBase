@@ -7,6 +7,7 @@ import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import com.oyetech.models.questionProject.questionOperation.QueFilter
 import com.oyetech.models.questionProject.questionOperation.QuestionListWithFilterResponse
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
+import com.oyetech.models.questionProject.questionOperation.QuestionStatusUpdateRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -23,6 +24,10 @@ interface QuestionSupabaseApi {
         @Body question: QuestionOperationResponseBody,
     ): Response<GenericResponse<QuestionOperationResponseBody>>
 
+    @POST("v1/questionUpdate")
+    suspend fun updateQuestionStatus(
+        @Body request: QuestionStatusUpdateRequest,
+    ): Response<GenericResponse<QuestionOperationResponseBody>>
 
     @POST("v1/registerGoogleUser")
     suspend fun registerGoogleUser(

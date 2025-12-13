@@ -6,11 +6,13 @@ import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import com.oyetech.models.questionProject.questionOperation.QueFilter
 import com.oyetech.models.questionProject.questionOperation.QuestionListWithFilterResponse
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
+import com.oyetech.models.questionProject.questionOperation.QuestionStatusUpdateRequest
 import kotlinx.coroutines.flow.Flow
 
 interface QuestionSupabaseRepository {
     fun createQuestion(question: QuestionOperationResponseBody): Flow<QuestionOperationResponseBody>
     fun updateQuestion(question: QuestionOperationResponseBody): Flow<QuestionOperationResponseBody>
+    fun updateQuestionStatus(request: QuestionStatusUpdateRequest): Flow<QuestionOperationResponseBody>
     fun registerGoogleUser(googleUserResponseData: GoogleUserPostData): Flow<UserProfileProperty>
     fun updateUser(userProfileProperty: UserProfileProperty): Flow<UserProfileProperty>
     fun getUserWithToken(getUserWithTokenBody: GetUserWithTokenBody): Flow<UserProfileProperty>

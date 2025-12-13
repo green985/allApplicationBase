@@ -7,10 +7,12 @@ import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionV
 import com.oyetech.domain.repository.firebase.FirebaseQuestionAnswerRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
+import com.oyetech.domain.repository.question.QuestionSupabaseRepository
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.models.questionProject.questionOperation.ModerationStatus
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QuestionListAdminFilterType
+import com.oyetech.models.questionProject.questionOperation.QuestionStatusUpdateRequest
 import com.oyetech.models.questionProject.questionOperation.QuestionType
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import kotlinx.coroutines.CoroutineScope
@@ -40,6 +42,8 @@ class QuestionEventHandlerUseCase(
     private val answerRepository: FirebaseQuestionAnswerRepository by inject()
     private val appDispatchers: AppDispatchers by inject()
 
+    private val questionSupabaseRepository: QuestionSupabaseRepository by inject()
+
     fun handleQuestionEvent(
         event: QuestionViewEvent,
         listOperationDelegate: ListOperationDelegate<QuestionViewUiState>,
@@ -56,9 +60,11 @@ class QuestionEventHandlerUseCase(
             is QuestionViewEvent.OnAcceptClicked -> {
                 updateAdminOperationClicked(event.questionId, listOperationDelegate)
                 scope.launch(appDispatchers.io) {
-                    repository.updateQuestionStatus(
-                        event.questionId,
-                        ModerationStatus.APPROVED
+                    questionSupabaseRepository.updateQuestionStatus(
+                        QuestionStatusUpdateRequest(
+                            event.questionId,
+                            ModerationStatus.APPROVED
+                        )
                     ).collectLatest { /* no-op */ }
                 }
             }
@@ -66,9 +72,11 @@ class QuestionEventHandlerUseCase(
             is QuestionViewEvent.OnDeclineClicked -> {
                 updateAdminOperationClicked(event.questionId, listOperationDelegate)
                 scope.launch(appDispatchers.io) {
-                    repository.updateQuestionStatus(
-                        event.questionId,
-                        ModerationStatus.DECLINED
+                    questionSupabaseRepository.updateQuestionStatus(
+                        QuestionStatusUpdateRequest(
+                            event.questionId,
+                            ModerationStatus.DECLINED
+                        )
                     ).collectLatest { /* no-op */ }
                 }
             }
@@ -82,9 +90,11 @@ class QuestionEventHandlerUseCase(
             is QuestionViewEvent.OnPendingClicked -> {
                 updateAdminOperationClicked(event.questionId, listOperationDelegate)
                 scope.launch(appDispatchers.io) {
-                    repository.updateQuestionStatus(
-                        event.questionId,
-                        ModerationStatus.PENDING
+                    questionSupabaseRepository.updateQuestionStatus(
+                        QuestionStatusUpdateRequest(
+                            event.questionId,
+                            ModerationStatus.PENDING
+                        )
                     ).collectLatest { /* no-op */ }
                 }
             }

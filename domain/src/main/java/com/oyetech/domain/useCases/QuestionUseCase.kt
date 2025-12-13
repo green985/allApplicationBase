@@ -9,6 +9,7 @@ import com.oyetech.models.questionProject.questionOperation.QueFilter
 import com.oyetech.models.questionProject.questionOperation.QueTag
 import com.oyetech.models.questionProject.questionOperation.QuestionListWithFilterResponse
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
+import com.oyetech.models.questionProject.questionOperation.QuestionStatusUpdateRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.combine
@@ -109,5 +110,9 @@ class QuestionUseCase(
 
     fun getQuestionListWithFilterParam(filterParam: QueFilter): Flow<QuestionListWithFilterResponse> {
         return questionSupabaseRepository.getQuestionListWithFilterParam(filterParam)
+    }
+
+    fun updateQuestionStatus(request: QuestionStatusUpdateRequest): Flow<QuestionOperationResponseBody> {
+        return questionSupabaseRepository.updateQuestionStatus(request)
     }
 }
