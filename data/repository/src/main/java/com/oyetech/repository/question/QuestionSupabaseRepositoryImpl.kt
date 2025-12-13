@@ -63,7 +63,7 @@ class QuestionSupabaseRepositoryImpl(
         return questionSupabaseDataSource.updateAnswer(answer)
     }
 
-    override fun deleteAnswer(userId: String, questionId: String): Flow<Unit> {
+    override fun deleteAnswer(userId: String, questionId: String): Flow<Boolean> {
         return questionSupabaseDataSource.deleteAnswer(userId, questionId)
     }
 }

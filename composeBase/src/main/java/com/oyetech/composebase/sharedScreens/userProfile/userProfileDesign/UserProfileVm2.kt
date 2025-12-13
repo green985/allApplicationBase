@@ -123,7 +123,7 @@ class UserProfileVm2(
     private suspend fun loadCurrentUserProfile() {
         _uiState.updateState { copy(isLoading = true) }
 
-        firebaseUserRepository.userDataStateFlow.asResult().collectLatest { result ->
+        firebaseUserRepository.userProfileDataStateFlow.asResult().collectLatest { result ->
             result.fold(
                 onSuccess = { user ->
                     if (user != null) {

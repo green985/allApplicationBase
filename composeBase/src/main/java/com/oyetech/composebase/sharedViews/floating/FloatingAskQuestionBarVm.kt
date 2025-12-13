@@ -42,7 +42,7 @@ class FloatingAskQuestionBarVm(
 
     private fun observeLoginStatus() {
         viewModelScope.launch(getDispatcherIo()) {
-            firebaseUserRepository.userDataStateFlow.asResult().collectLatest { result ->
+            firebaseUserRepository.userProfileDataStateFlow.asResult().collectLatest { result ->
                 result.fold(
                     onSuccess = { userData ->
                         val isVisible = userData.isProfileComplete()

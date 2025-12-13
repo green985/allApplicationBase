@@ -78,7 +78,7 @@ class GeneralOperationVM(
     private fun getUserAnswers() {
         var x: Job? = null
         x = viewModelScope.launch(getDispatcherIo()) {
-            userRepository.userDataStateFlow.collectLatest {
+            userRepository.userProfileDataStateFlow.collectLatest {
                 if (it.userId.isNotBlank()) {
                     answerUseCase.getAnswersByUser(it.userId)
                         .collectLatest {

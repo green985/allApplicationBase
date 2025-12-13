@@ -25,7 +25,13 @@ data class UserProfileProperty(
     val gender: String = "",
     val age: String = "",
     val biography: String = "",
-)
+) {
+    fun isProfileComplete(): Boolean {
+        return username.isNotBlank() &&
+                userId.isNotBlank() &&
+                gender.isNotBlank()
+    }
+}
 
 @Keep
 data class FirebaseUserProfileModel(

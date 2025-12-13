@@ -43,7 +43,7 @@ class AnswerUseCase(
         }
     }
 
-    fun deleteAnswer(userId: String, questionId: String): Flow<Unit> {
+    fun deleteAnswer(userId: String, questionId: String): Flow<Boolean> {
         return questionSupabaseRepository.deleteAnswer(userId, questionId).onEach {
             val current = _answersState.value.toMutableList().apply {
                 removeAll { it.questionId == questionId && it.userId == userId }

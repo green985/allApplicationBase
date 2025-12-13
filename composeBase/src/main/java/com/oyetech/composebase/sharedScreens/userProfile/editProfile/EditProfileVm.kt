@@ -27,7 +27,7 @@ class EditProfileVm(
 
     private fun loadCurrentBiography() {
         viewModelScope.launch(getDispatcherIo()) {
-            val currentUser = firebaseUserRepository.userDataStateFlow.value
+            val currentUser = firebaseUserRepository.userProfileDataStateFlow.value
             uiState.updateState {
                 copy(biographyText = currentUser.biography)
             }

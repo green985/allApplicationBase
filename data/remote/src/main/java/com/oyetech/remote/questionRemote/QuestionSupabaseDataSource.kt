@@ -79,7 +79,7 @@ class QuestionSupabaseDataSource(private val questionSupabaseApi: QuestionSupaba
         }
     }
 
-    fun deleteAnswer(userId: String, questionId: String): Flow<Unit> {
+    fun deleteAnswer(userId: String, questionId: String): Flow<Boolean> {
         return interceptGenericResponseTrueForm {
             questionSupabaseApi.deleteAnswer(userId, questionId)
         }

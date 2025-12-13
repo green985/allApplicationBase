@@ -64,7 +64,7 @@ class MessageConversationListVm(
     private fun controlUserStatus() {
         listViewState.updateState { copy(isLoadingInitial = true, isRefreshing = false) }
         viewModelScope.launch(getDispatcherIo()) {
-            firebaseUserRepository.userDataStateFlow.asResult().collectLatest { result ->
+            firebaseUserRepository.userProfileDataStateFlow.asResult().collectLatest { result ->
                 result.fold({
                     if (!it.isProfileComplete()) {
                         Timber.e("User ID is null or empty")

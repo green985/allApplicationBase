@@ -22,5 +22,5 @@ interface QuestionSupabaseRepository {
     fun getAnswersByUser(userId: String): Flow<List<QueAnswer>>
     suspend fun getAnswersByQuestion(questionId: String): Flow<List<QueAnswer>>
     fun updateAnswer(answer: QueAnswer): Flow<QueAnswer>
-    fun deleteAnswer(userId: String, questionId: String): Flow<Unit>
+    fun deleteAnswer(userId: String, questionId: String): Flow<Boolean>
 }

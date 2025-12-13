@@ -12,6 +12,7 @@ import com.oyetech.models.questionProject.questionOperation.QuestionStatusUpdate
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
 
@@ -57,12 +58,12 @@ interface QuestionSupabaseApi {
         @Body answer: QueAnswer,
     ): Response<GenericResponse<QueAnswer>>
 
-    @POST("v1/getAnswersByUser")
+    @GET("v1/getAnswersByUser")
     suspend fun getAnswersByUser(
         @Query("userId") userId: String,
     ): Response<GenericResponse<List<QueAnswer>>>
 
-    @POST("v1/getAnswersByQuestion")
+    @GET("v1/getAnswersByQuestion")
     suspend fun getAnswersByQuestion(
         @Query("questionId") questionId: String,
     ): Response<GenericResponse<List<QueAnswer>>>
@@ -76,5 +77,5 @@ interface QuestionSupabaseApi {
     suspend fun deleteAnswer(
         @Query("userId") userId: String,
         @Query("questionId") questionId: String,
-    ): Response<GenericResponse<Unit>>
+    ): Response<GenericResponse<Boolean>>
 }
