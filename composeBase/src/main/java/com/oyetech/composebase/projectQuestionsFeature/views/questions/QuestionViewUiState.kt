@@ -2,11 +2,11 @@ package com.oyetech.composebase.projectQuestionsFeature.views.questions
 
 import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.base.BaseUIState
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType
 import com.oyetech.models.questionProject.questionOperation.ModerationStatus
 import com.oyetech.models.questionProject.questionOperation.QueOption
 import com.oyetech.models.questionProject.questionOperation.QueTag
 import com.oyetech.models.questionProject.questionOperation.QuestionCategories
+import com.oyetech.models.questionProject.questionOperation.QuestionListAdminFilterType
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.models.questionProject.questionOperation.QuestionOptionCatalog
 import com.oyetech.models.questionProject.questionOperation.QuestionTaxonomyDefaults

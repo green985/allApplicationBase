@@ -2,10 +2,10 @@ package com.oyetech.composebase.projectQuestionsFeature.adminApprove
 
 import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.base.BaseUIEvent
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QueFilter
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType
 import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.models.questionProject.questionOperation.QueFilter
 import com.oyetech.models.questionProject.questionOperation.QueTag
+import com.oyetech.models.questionProject.questionOperation.QuestionListAdminFilterType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 

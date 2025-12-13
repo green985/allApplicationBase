@@ -1,8 +1,8 @@
-package com.oyetech.composebase.projectQuestionsFeature.questionScreens.list
+package com.oyetech.models.questionProject.questionOperation
 
-import com.oyetech.models.questionProject.questionOperation.ModerationStatus
-import com.oyetech.models.questionProject.questionOperation.ModerationStatus.APPROVED
+import androidx.annotation.Keep
 
+@Keep
 enum class QuestionListAdminFilterType {
     ALL,
     APPROVED_ADMIN,
@@ -28,9 +28,10 @@ object QuestionListAdminFilterTypeCatalog {
 
 fun QuestionListAdminFilterType.toModerationStatusOrNull(): ModerationStatus? {
     return when (this) {
-        QuestionListAdminFilterType.APPROVED_ADMIN -> APPROVED
+        QuestionListAdminFilterType.APPROVED_ADMIN -> ModerationStatus.APPROVED
         QuestionListAdminFilterType.DECLINED_ADMIN -> ModerationStatus.DECLINED
         QuestionListAdminFilterType.PENDING_ADMIN -> ModerationStatus.PENDING
         QuestionListAdminFilterType.ALL -> ModerationStatus.ALL
     }
 }
+

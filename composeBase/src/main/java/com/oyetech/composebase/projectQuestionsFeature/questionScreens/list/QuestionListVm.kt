@@ -12,9 +12,12 @@ import com.oyetech.composebase.projectQuestionsFeature.views.questions.toUiState
 import com.oyetech.domain.repository.firebase.FirebaseQuestionAnswerRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
+import com.oyetech.models.questionProject.questionOperation.QueFilter
 import com.oyetech.models.questionProject.questionOperation.QueTag
+import com.oyetech.models.questionProject.questionOperation.QuestionListAdminFilterType
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.models.questionProject.questionOperation.QuestionType
+import com.oyetech.models.questionProject.questionOperation.toModerationStatusOrNull
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -116,7 +119,7 @@ class QuestionListVm(
                     if (filter.userId.isNullOrBlank()) {
                         kotlinx.coroutines.flow.flowOf(emptyList())
                     } else {
-                        repository.getUserAnsweredQuestions(filter.userId)
+                        repository.getUserAnsweredQuestions(filter.userId.orEmpty())
                     }
                 }
 

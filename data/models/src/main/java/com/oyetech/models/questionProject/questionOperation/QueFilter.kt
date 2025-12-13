@@ -1,7 +1,8 @@
-package com.oyetech.composebase.projectQuestionsFeature.questionScreens.list
+package com.oyetech.models.questionProject.questionOperation
 
-import com.oyetech.models.questionProject.questionOperation.QueTag
+import androidx.annotation.Keep
 
+@Keep
 data class QueFilter(
     val adminFilterType: QuestionListAdminFilterType = QuestionListAdminFilterType.APPROVED_ADMIN,
     val selectedTagFilter: QueTag? = null,

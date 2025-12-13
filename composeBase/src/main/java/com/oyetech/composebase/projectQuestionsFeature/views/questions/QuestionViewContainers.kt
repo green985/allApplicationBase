@@ -22,13 +22,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.ALL
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.APPROVED_ADMIN
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.DECLINED_ADMIN
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListAdminFilterType.PENDING_ADMIN
 import com.oyetech.composebase.projectQuestionsFeature.theme.QuestionProjectViewAttrs
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.questionProject.questionOperation.QueOption
+import com.oyetech.models.questionProject.questionOperation.QuestionListAdminFilterType
 import com.oyetech.models.questionProject.questionOperation.QuestionType
 
 /**
@@ -214,16 +211,16 @@ fun QuestionAdminActionsContainer(
         return
     }
     val adminFilterType = uiState.adminFilterType
-    if (adminFilterType != ALL) {
+    if (adminFilterType != QuestionListAdminFilterType.ALL) {
         QuestionStatusContainer(modifier, uiState)
     }
 
     when (adminFilterType) {
-        ALL -> {
+        QuestionListAdminFilterType.ALL -> {
             // Show only status
         }
 
-        APPROVED_ADMIN -> {
+        QuestionListAdminFilterType.APPROVED_ADMIN -> {
             // Show status + Mark as Pending button
 
             Column(
@@ -254,7 +251,7 @@ fun QuestionAdminActionsContainer(
             }
         }
 
-        PENDING_ADMIN -> {
+        QuestionListAdminFilterType.PENDING_ADMIN -> {
 
             Row(
                 modifier = modifier
@@ -303,7 +300,7 @@ fun QuestionAdminActionsContainer(
         }
 
 
-        DECLINED_ADMIN -> {
+        QuestionListAdminFilterType.DECLINED_ADMIN -> {
 
             // Show status + Send to Pending button
             Column(

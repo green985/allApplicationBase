@@ -2,7 +2,9 @@ package com.oyetech.composebase.projectQuestionsFeature.questionScreens.list
 
 import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
+import com.oyetech.models.questionProject.questionOperation.QueFilter
 import com.oyetech.models.questionProject.questionOperation.QueTag
+import com.oyetech.models.questionProject.questionOperation.QuestionListAdminFilterType
 
 // Minimal UI state (toolbar, etc.)
 data class QuestionListUiState(

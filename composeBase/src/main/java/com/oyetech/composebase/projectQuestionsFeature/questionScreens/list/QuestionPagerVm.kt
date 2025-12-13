@@ -2,6 +2,7 @@ package com.oyetech.composebase.projectQuestionsFeature.questionScreens.list
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
+import com.oyetech.models.questionProject.questionOperation.QueFilter
 import com.oyetech.models.questionProject.questionOperation.QueTag
 import com.oyetech.models.questionProject.questionOperation.QuestionTagCatalog
 import com.oyetech.tools.coroutineHelper.AppDispatchers
@@ -38,7 +39,6 @@ class QuestionPagerVm(
 data class QuestionPagerUiState(
     val currentFilter: QueFilter = QueFilter.DEFAULT,
     val currentPage: Int = 0,
-
     val currentFilterType: QueTag? = null,
     val tabs: ImmutableList<Pair<QueTag, String>> = QuestionTagCatalog.questionMeaningList.map {
         Pair(it, it.name)
