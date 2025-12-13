@@ -4,6 +4,7 @@ import com.oyetech.domain.repository.question.QuestionSupabaseRepository
 import com.oyetech.models.firebaseModels.googleAuth.GetUserWithTokenBody
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserPostData
 import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
+import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QueFilter
 import com.oyetech.models.questionProject.questionOperation.QuestionListWithFilterResponse
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
@@ -44,5 +45,9 @@ class QuestionSupabaseRepositoryImpl(
         filterParam: QueFilter,
     ): Flow<QuestionListWithFilterResponse> {
         return questionSupabaseDataSource.getQuestionListWithFilterParam(filterParam)
+    }
+
+    override fun addAnswer(answer: QueAnswer): Flow<QueAnswer> {
+        return questionSupabaseDataSource.addAnswer(answer)
     }
 }

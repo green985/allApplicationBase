@@ -135,7 +135,6 @@ class QuestionEventHandlerUseCase(
                 numericValue = null,
                 textValue = null,
                 userId = uid,
-                submittedAt = null,
             )
             answerRepository.submitAnswer(answer)
                 .collectLatest { /* updated in repo state */ }

@@ -1,8 +1,6 @@
 package com.oyetech.models.questionProject.questionOperation
 
 import androidx.annotation.Keep
-import com.google.firebase.firestore.ServerTimestamp
-import java.util.Date
 
 @Keep
 data class QueAnswer(
@@ -12,5 +10,5 @@ data class QueAnswer(
     val numericValue: Double? = null,
     val textValue: String? = null,
     val userId: String = "",
-    @ServerTimestamp val submittedAt: Date? = null,
+    val createdAt: String = "",
 )

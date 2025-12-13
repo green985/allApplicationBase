@@ -115,4 +115,8 @@ class QuestionUseCase(
     fun updateQuestionStatus(request: QuestionStatusUpdateRequest): Flow<QuestionOperationResponseBody> {
         return questionSupabaseRepository.updateQuestionStatus(request)
     }
+
+    fun submitAnswer(answer: QueAnswer): Flow<QueAnswer> {
+        return questionSupabaseRepository.addAnswer(answer)
+    }
 }
