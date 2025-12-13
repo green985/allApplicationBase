@@ -4,6 +4,7 @@ import com.oyetech.models.entity.GenericResponse
 import com.oyetech.models.firebaseModels.googleAuth.GetUserWithTokenBody
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserPostData
 import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
+import com.oyetech.models.questionProject.questionOperation.QuestionFilterParam
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -36,4 +37,9 @@ interface QuestionSupabaseApi {
     suspend fun getUserWithToken(
         @Body body: GetUserWithTokenBody,
     ): Response<GenericResponse<UserProfileProperty>>
+
+    @POST("v1/getQuestionListWithFilter")
+    suspend fun getQuestionListWithFilterParam(
+        @Body filterParam: QuestionFilterParam,
+    ): Response<GenericResponse<List<QuestionOperationResponseBody>>>
 }

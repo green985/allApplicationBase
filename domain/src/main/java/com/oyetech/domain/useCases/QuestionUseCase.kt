@@ -2,9 +2,11 @@ package com.oyetech.domain.useCases
 
 import com.oyetech.domain.repository.firebase.FirebaseQuestionAnswerRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
+import com.oyetech.domain.repository.question.QuestionSupabaseRepository
 import com.oyetech.models.questionProject.questionOperation.ModerationStatus
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QueTag
+import com.oyetech.models.questionProject.questionOperation.QuestionFilterParam
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -14,6 +16,7 @@ import timber.log.Timber
 class QuestionUseCase(
     private val questionRepository: FirebaseQuestionOperationRepository,
     private val answerRepository: FirebaseQuestionAnswerRepository,
+    private val questionSupabaseRepository: QuestionSupabaseRepository,
 ) {
     private val _questionUpdatedEvent = MutableSharedFlow<String>(
         replay = 1,
@@ -101,5 +104,9 @@ class QuestionUseCase(
             Timber.e(e, "Error fetching question $questionId")
             null
         }
+    }
+
+    fun getQuestionListWithFilterParam(filterParam: QuestionFilterParam): Flow<List<QuestionOperationResponseBody>> {
+        return questionSupabaseRepository.getQuestionListWithFilterParam(filterParam)
     }
 }
