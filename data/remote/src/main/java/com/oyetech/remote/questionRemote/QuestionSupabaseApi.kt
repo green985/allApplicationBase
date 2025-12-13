@@ -38,7 +38,7 @@ interface QuestionSupabaseApi {
         @Body body: GetUserWithTokenBody,
     ): Response<GenericResponse<UserProfileProperty>>
 
-    @POST("v1/getQuestionListWithFilter")
+    @POST("v1/getQuestionListWithFilterParam")
     suspend fun getQuestionListWithFilterParam(
         @Body filterParam: QueFilter,
     ): Response<GenericResponse<List<QuestionOperationResponseBody>>>
