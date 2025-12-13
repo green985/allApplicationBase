@@ -5,6 +5,7 @@ import com.oyetech.models.firebaseModels.googleAuth.GetUserWithTokenBody
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserPostData
 import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import com.oyetech.models.questionProject.questionOperation.QueFilter
+import com.oyetech.models.questionProject.questionOperation.QuestionListWithFilterResponse
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.remote.questionRemote.QuestionSupabaseDataSource
 import kotlinx.coroutines.flow.Flow
@@ -36,7 +37,7 @@ class QuestionSupabaseRepositoryImpl(
 
     override fun getQuestionListWithFilterParam(
         filterParam: QueFilter,
-    ): Flow<List<QuestionOperationResponseBody>> {
+    ): Flow<QuestionListWithFilterResponse> {
         return questionSupabaseDataSource.getQuestionListWithFilterParam(filterParam)
     }
 }

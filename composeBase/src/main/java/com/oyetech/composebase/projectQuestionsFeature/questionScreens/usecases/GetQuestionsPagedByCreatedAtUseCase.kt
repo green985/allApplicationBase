@@ -9,6 +9,7 @@ import com.oyetech.models.questionProject.questionOperation.QueFilter
 import com.oyetech.models.questionProject.questionOperation.QueTag
 import com.oyetech.models.questionProject.questionOperation.QuestionListAdminFilterType
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
+import com.oyetech.models.questionProject.questionOperation.toQuestionList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 
@@ -32,7 +33,7 @@ class GetQuestionsPagedByCreatedAtUseCase(
                         adminFilterType = QuestionListAdminFilterType.APPROVED_ADMIN,
                         selectedTagFilter = currentTag,
                     )
-                ).first()
+                ).first().toQuestionList()
 
 //                return repository.getQuestionsFilteredPage(
 //                    moderationStatus = currentModerationStatus,

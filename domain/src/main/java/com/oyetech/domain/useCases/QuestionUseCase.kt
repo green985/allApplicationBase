@@ -7,6 +7,7 @@ import com.oyetech.models.questionProject.questionOperation.ModerationStatus
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QueFilter
 import com.oyetech.models.questionProject.questionOperation.QueTag
+import com.oyetech.models.questionProject.questionOperation.QuestionListWithFilterResponse
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -106,7 +107,7 @@ class QuestionUseCase(
         }
     }
 
-    fun getQuestionListWithFilterParam(filterParam: QueFilter): Flow<List<QuestionOperationResponseBody>> {
+    fun getQuestionListWithFilterParam(filterParam: QueFilter): Flow<QuestionListWithFilterResponse> {
         return questionSupabaseRepository.getQuestionListWithFilterParam(filterParam)
     }
 }

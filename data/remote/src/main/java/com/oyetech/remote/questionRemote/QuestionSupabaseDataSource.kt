@@ -4,6 +4,7 @@ import com.oyetech.models.firebaseModels.googleAuth.GetUserWithTokenBody
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserPostData
 import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import com.oyetech.models.questionProject.questionOperation.QueFilter
+import com.oyetech.models.questionProject.questionOperation.QuestionListWithFilterResponse
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.remote.helper.interceptGenericResponseTrueForm
 import kotlinx.coroutines.flow.Flow
@@ -40,7 +41,7 @@ class QuestionSupabaseDataSource(private val questionSupabaseApi: QuestionSupaba
         }
     }
 
-    fun getQuestionListWithFilterParam(filterParam: QueFilter): Flow<List<QuestionOperationResponseBody>> {
+    fun getQuestionListWithFilterParam(filterParam: QueFilter): Flow<QuestionListWithFilterResponse> {
         return interceptGenericResponseTrueForm {
             questionSupabaseApi.getQuestionListWithFilterParam(filterParam)
         }
