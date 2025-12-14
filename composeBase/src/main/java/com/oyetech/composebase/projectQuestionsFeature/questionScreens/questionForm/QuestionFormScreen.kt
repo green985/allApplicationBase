@@ -50,7 +50,6 @@ import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListWithParamsContent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
-import com.oyetech.composebase.projectQuestionsFeature.views.questions.toOperationBody
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
@@ -74,12 +73,8 @@ fun QuestionFormScreenSetup(
         // TODO: Load form data from repository
         // viewModel.loadForm(formId)
         // For now, initialize with sample data
-        viewModel.initializeForm(
-            formId = formId,
-            title = "Sample Form Title",
-            description = "This is a sample form description.",
-            questions = previewQuestionFormScreenUiState().questions.map { it.toOperationBody() }
-        )
+//        viewModel.onEvent(QuestionFormEvent.OnFormLoad(formId))
+        viewModel.onEvent(QuestionFormEvent.OnFormLoad("form1"))
     }
 
     LaunchedEffect(Unit) {

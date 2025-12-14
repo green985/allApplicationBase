@@ -54,6 +54,7 @@ data class QuestionFormScreenUiState(
  */
 sealed class QuestionFormEvent : BaseEvent() {
     // Form actions
+    data class OnFormLoad(val formId: String) : QuestionFormEvent()
     data object OnSubmitForm : QuestionFormEvent()
     data object OnEditForm : QuestionFormEvent()
     data object OnCancelEdit : QuestionFormEvent()

@@ -7,6 +7,8 @@ import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import com.oyetech.models.questionProject.questionOperation.DeleteAnswerRequest
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QueFilter
+import com.oyetech.models.questionProject.questionOperation.QuestionFormDetailRequest
+import com.oyetech.models.questionProject.questionOperation.QuestionFormDetailResponse
 import com.oyetech.models.questionProject.questionOperation.QuestionListWithFilterResponse
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.models.questionProject.questionOperation.QuestionStatusUpdateRequest
@@ -77,4 +79,9 @@ interface QuestionSupabaseApi {
     suspend fun deleteAnswer(
         @Body request: DeleteAnswerRequest,
     ): Response<GenericResponse<Boolean>>
+
+    @POST("v1/getCatalogDetail")
+    suspend fun getCatalogDetail(
+        @Body request: QuestionFormDetailRequest,
+    ): Response<GenericResponse<QuestionFormDetailResponse>>
 }

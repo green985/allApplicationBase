@@ -5,6 +5,7 @@ import com.oyetech.models.firebaseModels.googleAuth.GoogleUserPostData
 import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QueFilter
+import com.oyetech.models.questionProject.questionOperation.QuestionFormDetailResponse
 import com.oyetech.models.questionProject.questionOperation.QuestionListWithFilterResponse
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.models.questionProject.questionOperation.QuestionStatusUpdateRequest
@@ -23,4 +24,5 @@ interface QuestionSupabaseRepository {
     suspend fun getAnswersByQuestion(questionId: String): Flow<List<QueAnswer>>
     fun updateAnswer(answer: QueAnswer): Flow<QueAnswer>
     fun deleteAnswer(userId: String, questionId: String): Flow<Boolean>
+    fun getCatalogDetail(formId: String, userId: String): Flow<QuestionFormDetailResponse>
 }

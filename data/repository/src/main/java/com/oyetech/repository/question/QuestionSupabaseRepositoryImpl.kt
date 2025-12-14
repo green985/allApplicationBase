@@ -6,6 +6,7 @@ import com.oyetech.models.firebaseModels.googleAuth.GoogleUserPostData
 import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QueFilter
+import com.oyetech.models.questionProject.questionOperation.QuestionFormDetailResponse
 import com.oyetech.models.questionProject.questionOperation.QuestionListWithFilterResponse
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.models.questionProject.questionOperation.QuestionStatusUpdateRequest
@@ -65,5 +66,12 @@ class QuestionSupabaseRepositoryImpl(
 
     override fun deleteAnswer(userId: String, questionId: String): Flow<Boolean> {
         return questionSupabaseDataSource.deleteAnswer(userId, questionId)
+    }
+
+    override fun getCatalogDetail(
+        formId: String,
+        userId: String,
+    ): Flow<QuestionFormDetailResponse> {
+        return questionSupabaseDataSource.getCatalogDetail(formId, userId)
     }
 }

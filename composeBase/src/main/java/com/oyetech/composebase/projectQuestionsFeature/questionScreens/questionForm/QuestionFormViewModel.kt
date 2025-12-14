@@ -8,9 +8,10 @@ import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.Ques
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.questionAnswerOverlayFlow
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
+import com.oyetech.domain.repository.firebase.FirebaseUserRepository
+import com.oyetech.domain.repository.question.QuestionSupabaseRepository
 import com.oyetech.domain.useCases.AnswerUseCase
 import com.oyetech.domain.useCases.NavigationUseCase
-import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
@@ -38,6 +39,8 @@ class QuestionFormViewModel(
     appDispatchers: AppDispatchers,
     private val navigationUseCase: NavigationUseCase,
     private val answerUseCase: AnswerUseCase,
+    private val firebaseUserRepository: FirebaseUserRepository,
+    private val questionSupabaseRepository: QuestionSupabaseRepository,
 ) : BaseViewModel(appDispatchers) {
 
     private val questionFormListOperationDelegate: ListOperationDelegate<QuestionViewUiState> =
@@ -103,30 +106,27 @@ class QuestionFormViewModel(
         }
     }
 
-    /**
-     * Initialize form with data
-     */
-    fun initializeForm(
-        formId: String,
-        title: String,
-        description: String,
-        questions: List<QuestionOperationResponseBody>,
-    ) {
-        viewModelScope.launch {
-            _uiState.update { currentState ->
-                val questionItems = questions.map { question ->
-                    question.toQuestionViewUiStateForForm()
-                }.toImmutableList()
+    fun getFormDetail(formId: String, userId: String) {
+        viewModelScope.launch(getDispatcherIo()) {
+            _uiState.update { it.copy(isLoading = true, isError = false) }
 
-                currentState.copy(
-                    isLoading = false,
-                    formId = formId,
-                    title = title,
-                    description = description,
-                    questions = questionItems,
-                    canSubmit = false
-                )
-            }
+            questionSupabaseRepository.getCatalogDetail(formId, userId)
+                .collectLatest { response ->
+                    val questionItems = response.questions.map { question ->
+                        question.toQuestionViewUiStateForForm()
+                    }.toImmutableList()
+
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            isLoading = false,
+                            formId = response.formId,
+                            title = response.title,
+                            description = response.description,
+                            questions = questionItems,
+                            canSubmit = false
+                        )
+                    }
+                }
         }
     }
 
@@ -135,6 +135,11 @@ class QuestionFormViewModel(
      */
     fun onEvent(event: QuestionFormEvent) {
         when (event) {
+            is QuestionFormEvent.OnFormLoad -> {
+                val userId = firebaseUserRepository.getUserId()
+                getFormDetail(event.formId, userId)
+            }
+
             is QuestionFormEvent.OnSubmitForm -> handleSubmitForm()
             is QuestionFormEvent.OnEditForm -> handleEditForm()
             is QuestionFormEvent.OnCancelEdit -> handleCancelEdit()
