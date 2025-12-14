@@ -64,12 +64,12 @@ class QuestionListVm(
     )
 
     init {
-        questionItemsFlow(listOperationDelegate).obserseQuestionAnswerToList()
+        questionItemsFlow(listOperationDelegate).observeQuestionAnswerToList()
     }
 
-    private fun Flow<List<QuestionViewUiState>>.obserseQuestionAnswerToList() {
+    private fun Flow<List<QuestionViewUiState>>.observeQuestionAnswerToList() {
         viewModelScope.launch(getDispatcherIo()) {
-            this@obserseQuestionAnswerToList.filter { it.isNotEmpty() }
+            this@observeQuestionAnswerToList.filter { it.isNotEmpty() }
                 .getQuestionTransformerFlow(answerUseCase.answersState)
                 .collectLatest { questions ->
                     Timber.d("Combining question items flow with transformed questions: ${questions.size}")

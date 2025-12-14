@@ -60,7 +60,7 @@ class LoginOperationVM(
             observeGoogleUserStateFlow()
             observeUserProfileState()
             googleLoginRepository.autoLoginOperation2()
-            updateUserToken()
+//            updateUserToken()
         }
     }
 

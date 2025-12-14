@@ -3,6 +3,7 @@ package com.oyetech.remote.questionRemote
 import com.oyetech.models.firebaseModels.googleAuth.GetUserWithTokenBody
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserPostData
 import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
+import com.oyetech.models.questionProject.questionOperation.DeleteAnswerRequest
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QueFilter
 import com.oyetech.models.questionProject.questionOperation.QuestionListWithFilterResponse
@@ -81,7 +82,8 @@ class QuestionSupabaseDataSource(private val questionSupabaseApi: QuestionSupaba
 
     fun deleteAnswer(userId: String, questionId: String): Flow<Boolean> {
         return interceptGenericResponseTrueForm {
-            questionSupabaseApi.deleteAnswer(userId, questionId)
+            val request = DeleteAnswerRequest(userId = userId, questionId = questionId)
+            questionSupabaseApi.deleteAnswer(request)
         }
     }
 }

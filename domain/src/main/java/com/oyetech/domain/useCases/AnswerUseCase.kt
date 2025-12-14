@@ -5,6 +5,7 @@ import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 
 class AnswerUseCase(
@@ -24,22 +25,13 @@ class AnswerUseCase(
     }
 
     fun submitAnswer(answer: QueAnswer): Flow<QueAnswer> {
-        return questionSupabaseRepository.addAnswer(answer).onEach { submittedAnswer ->
+        return questionSupabaseRepository.addAnswer(answer).map { submittedAnswer ->
             val current = _answersState.value.toMutableList().apply {
                 removeAll { it.questionId == submittedAnswer.questionId && it.userId == submittedAnswer.userId }
                 add(submittedAnswer)
             }
             _answersState.value = current
-        }
-    }
-
-    fun updateAnswer(answer: QueAnswer): Flow<QueAnswer> {
-        return questionSupabaseRepository.updateAnswer(answer).onEach { updatedAnswer ->
-            val current = _answersState.value.toMutableList().apply {
-                removeAll { it.questionId == updatedAnswer.questionId && it.userId == updatedAnswer.userId }
-                add(updatedAnswer)
-            }
-            _answersState.value = current
+            submittedAnswer
         }
     }
 
