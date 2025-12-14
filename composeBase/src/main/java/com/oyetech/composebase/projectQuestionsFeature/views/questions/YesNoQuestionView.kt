@@ -149,6 +149,14 @@ fun CreateQuestionYesNoView(
                 label = { Text(LanguageKey.untitledQuestionText) }
             )
             SpacerSmall()
+            // Only titleText is editable
+            androidx.compose.material3.OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = uiState.formId,
+                onValueChange = { onEvent(QuestionViewEvent.FormIdChanged(it)) },
+                label = { Text(LanguageKey.formId) }
+            )
+            SpacerSmall()
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,

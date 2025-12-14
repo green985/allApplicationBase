@@ -44,7 +44,7 @@ class GetQuestionsPagedByCreatedAtUseCase(
             }
 
             override fun extractCreatedAtEpochMs(item: QuestionOperationResponseBody): Long {
-                return item.createdAt1 ?: 0L
+                return item.creationTime ?: 0L
             }
         }
 

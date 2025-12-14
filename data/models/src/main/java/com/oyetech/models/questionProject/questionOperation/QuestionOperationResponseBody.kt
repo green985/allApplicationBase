@@ -11,6 +11,7 @@ Created by Erdi Özbek
 @Keep
 data class QuestionOperationResponseBody(
     val questionId: String = "",
+    val formId: String? = null,
     val questionTitle: String = "",
     val questionType: QuestionType = QuestionType.SINGLE_CHOICE,
     val moderationStatus: ModerationStatus = ModerationStatus.PENDING,
@@ -26,8 +27,8 @@ data class QuestionOperationResponseBody(
     val metadata: Map<String, String> = emptyMap(),
     val version: Int = 1,
 
-    val createdBy: String = "",
+    val createdAt: String = "",
 
-    val createdAt1: Long? = null,
+    val creationTime: Long? = null,
 //    @ServerTimestamp val createdAt: Date? = null,
 )

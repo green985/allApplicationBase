@@ -109,6 +109,12 @@ class QuestionCreateQuestionVm(
                     }
                 }
 
+                is QuestionViewEvent.FormIdChanged -> {
+                    questionUiState.updateState {
+                        copy(formId = event.value)
+                    }
+                }
+
                 is QuestionViewEvent.OnOptionSelected -> {
                     // todo will be removed, create question doesnt have answer selection
                     Timber.d("Option selected CreateQuestionVM: ${event.optionId} for question ${event.questionId}")
@@ -216,11 +222,12 @@ class QuestionCreateQuestionVm(
                 title = currentQuestion.titleText,
                 taxonomy = taxonomy,
                 questionId = questionIdToUse,
-                createdBy = userId
+                createdBy = userId,
             ).copy(
                 questionId = RandomHelper.generateGuid(),
                 tags = currentQuestion.selectedTags.toList(),
-                moderationStatus = moderationStatus
+                moderationStatus = moderationStatus,
+                formId = currentQuestion.formId
             )
 
             val isEditMode = editingQuestionId.isNotBlank()

@@ -82,8 +82,8 @@ object QuestionTaxonomyFactory {
                 "subCategoryKey" to (taxonomy.subCategoryKey ?: ""),
             ),
             version = 1,
-            createdBy = createdBy,
-            createdAt1 = null,
+            createdAt = createdBy,
+            creationTime = null,
         )
     }
 }

@@ -29,6 +29,7 @@ data class QuestionViewUiState(
     val isError: Boolean = false,
     val errorText: String = "",
     val questionId: String = "",
+    val formId: String = "form1",
     val titleText: String = "",
     val bodyText: String = "",
     val questionType: QuestionType = QuestionType.SINGLE_CHOICE,
@@ -52,6 +53,7 @@ data class QuestionViewUiState(
 sealed class QuestionViewEvent : BaseEvent() {
 
     data class TitleChanged(val value: String) : QuestionViewEvent()
+    data class FormIdChanged(val value: String) : QuestionViewEvent()
     object SubmitClicked : QuestionViewEvent()
     object CancelClicked : QuestionViewEvent()
     object OnErrorDismiss : QuestionViewEvent()
@@ -86,7 +88,7 @@ fun QuestionViewUiState.toOperationBody(): QuestionOperationResponseBody {
         options = this.options,
         constraints = null,
         // createdAt is @ServerTimestamp and set by backend; null here is fine
-        createdAt1 = null,
+        creationTime = null,
     )
 }
 

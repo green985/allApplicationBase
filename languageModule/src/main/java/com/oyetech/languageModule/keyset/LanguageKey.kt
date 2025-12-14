@@ -17,6 +17,7 @@ object LanguageKey {
     var answerYes set(value) {} get() = LocalLanguageHelper.getStringWithKey("answerYes")
     var answerNo set(value) {} get() = LocalLanguageHelper.getStringWithKey("answerNo")
     var untitledQuestionText set(value) {} get() = LocalLanguageHelper.getStringWithKey("untitledQuestionText")
+    var formId set(value) {} get() = LocalLanguageHelper.getStringWithKey("formId")
     var yesText set(value) {} get() = LocalLanguageHelper.getStringWithKey("YES")
     var noText set(value) {} get() = LocalLanguageHelper.getStringWithKey("NO")
     var yourAnswerText set(value) {} get() = LocalLanguageHelper.getStringWithKey("yourAnswerText")

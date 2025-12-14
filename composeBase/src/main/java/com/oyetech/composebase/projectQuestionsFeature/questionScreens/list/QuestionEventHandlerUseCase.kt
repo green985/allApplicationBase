@@ -113,7 +113,11 @@ class QuestionEventHandlerUseCase(
             is QuestionViewEvent.OnTagSelected -> TODO()
             is QuestionViewEvent.OnTagSelectedForCreateQuestion -> TODO()
             QuestionViewEvent.SubmitClicked -> TODO()
-            is QuestionViewEvent.TitleChanged -> TODO()
+            is QuestionViewEvent.TitleChanged -> {
+                Timber.d("Title changed: ${event.value}")
+            }
+
+            is QuestionViewEvent.FormIdChanged -> TODO()
         }
     }
 
