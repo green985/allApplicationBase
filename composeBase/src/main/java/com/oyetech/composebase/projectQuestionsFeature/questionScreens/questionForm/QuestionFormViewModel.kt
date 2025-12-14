@@ -8,6 +8,7 @@ import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.Ques
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.questionAnswerOverlayFlow
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
+import com.oyetech.composebase.projectQuestionsFeature.views.questions.toUiState
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.question.QuestionSupabaseRepository
 import com.oyetech.domain.useCases.AnswerUseCase
@@ -111,9 +112,10 @@ class QuestionFormViewModel(
             _uiState.update { it.copy(isLoading = true, isError = false) }
 
             questionSupabaseRepository.getCatalogDetail(formId, userId)
+
                 .collectLatest { response ->
                     val questionItems = response.questions.map { question ->
-                        question.toQuestionViewUiStateForForm()
+                        question.toUiState()
                     }.toImmutableList()
 
                     _uiState.update { currentState ->

@@ -4,7 +4,6 @@ import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.base.BaseUIEvent
 import com.oyetech.composebase.base.BaseUIState
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
-import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -110,26 +109,6 @@ fun QuestionFormScreenUiState.getAnsweredCount(): Int {
 
 fun QuestionFormScreenUiState.getTotalQuestions(): Int {
     return questions.size
-}
-
-// Conversion functions
-fun QuestionOperationResponseBody.toQuestionViewUiStateForForm(
-    selectedOptionId: String? = null,
-    isLocked: Boolean = false,
-): QuestionViewUiState {
-    return QuestionViewUiState(
-        isLoading = false,
-        isError = false,
-        errorText = "",
-        questionId = this.questionId,
-        titleText = this.questionTitle,
-        questionType = this.questionType,
-        options = this.options.toImmutableList(),
-        selectedAnswer = selectedOptionId,
-        isAnsweredByUser = selectedOptionId != null,
-        selectedTags = this.tags.toImmutableList(),
-        moderationStatus = this.moderationStatus
-    )
 }
 
 // Preview helpers

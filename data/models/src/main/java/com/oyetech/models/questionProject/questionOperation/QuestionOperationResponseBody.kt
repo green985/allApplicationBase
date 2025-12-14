@@ -27,7 +27,7 @@ data class QuestionOperationResponseBody(
     val metadata: Map<String, String> = emptyMap(),
     val version: Int = 1,
 
-    val createdAt: String = "",
+    val createdBy: String = "",
 
     val creationTime: Long? = null,
 //    @ServerTimestamp val createdAt: Date? = null,
