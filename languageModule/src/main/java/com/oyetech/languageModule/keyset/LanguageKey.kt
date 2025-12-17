@@ -10,6 +10,7 @@ Created by Erdi Özbek
 
 object LanguageKey {
     // QuestionYesNoView keys
+    var questionFormResultTitle set(value) {} get() = LocalLanguageHelper.getStringWithKey("questionFormResultTitle")
     var editProfileError set(value) {} get() = LocalLanguageHelper.getStringWithKey("Biography update failed")
     var adminApproveScreen set(value) {} get() = LocalLanguageHelper.getStringWithKey("Approve Questions")
     var questionUpdatedSuccessfullyText set(value) {} get() = LocalLanguageHelper.getStringWithKey("questionUpdatedSuccessfullyText")

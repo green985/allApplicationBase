@@ -39,6 +39,7 @@ data class QuestionFormScreenUiState(
     val questions: ImmutableList<QuestionViewUiState> = persistentListOf(),
 
     // Form state
+    val submitResultText: String = "",
     val isSubmitted: Boolean = false,
     val isLocked: Boolean = false, // Questions are locked after submit
     val submittedAt: Long? = null,
