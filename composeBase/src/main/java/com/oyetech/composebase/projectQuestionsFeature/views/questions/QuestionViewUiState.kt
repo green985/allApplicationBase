@@ -29,7 +29,7 @@ data class QuestionViewUiState(
     val isError: Boolean = false,
     val errorText: String = "",
     val questionId: String = "",
-    val formId: String = "form1",
+    val formId: String = "",
     val titleText: String = "",
     val bodyText: String = "",
     val questionType: QuestionType = QuestionType.SINGLE_CHOICE,

@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+@Suppress("LongParameterList", "TooManyFunctions")
 class QuestionCreateQuestionVm(
     appDispatchers: AppDispatchers,
     private val navigationUseCase: NavigationUseCase,
