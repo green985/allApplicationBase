@@ -256,10 +256,10 @@ class QuestionFormViewModel(
 
     fun onQuestionEvent(it: QuestionViewEvent) {
         // todo will change with locked variable.
-        if (_uiState.value.canSubmit) {
-            Timber.d("Form is locked, ignoring question event")
-            return
-        }
+//        if (_uiState.value.canSubmit) {
+//            Timber.d("Form is locked, ignoring question event")
+//            return
+//        }
 
 
         questionEventHandlerUseCase.handleQuestionEvent(

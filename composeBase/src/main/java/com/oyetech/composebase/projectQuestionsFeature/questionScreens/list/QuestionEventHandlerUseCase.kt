@@ -50,7 +50,7 @@ class QuestionEventHandlerUseCase(
     ) {
         when (event) {
             is QuestionViewEvent.OnOptionSelected -> {
-                handleOptionSelected(event)
+                handleOptionSelected(event, listOperationDelegate)
             }
 
             is QuestionViewEvent.OnDeleteAnswerClicked -> {
@@ -121,7 +121,10 @@ class QuestionEventHandlerUseCase(
         }
     }
 
-    private fun handleOptionSelected(event: QuestionViewEvent.OnOptionSelected) {
+    private fun handleOptionSelected(
+        event: QuestionViewEvent.OnOptionSelected,
+        listOperationDelegate: ListOperationDelegate<QuestionViewUiState>,
+    ) {
         scope.launch(appDispatchers.io) {
             val uid = userRepository.getUserId()
             if (uid.isBlank()) {
@@ -132,8 +135,15 @@ class QuestionEventHandlerUseCase(
                 it.userId == uid && it.questionId == event.questionId
             }
             if (alreadyAnswered) return@launch
+
+            val questionUiState = listOperationDelegate.listUiState.value.items.find {
+                it.questionId == event.questionId
+            }
+            val formId = questionUiState?.formId
+
             val answer = QueAnswer(
                 questionId = event.questionId,
+                formId = formId,
                 type = QuestionType.SINGLE_CHOICE,
                 selectedOptionIds = listOf(event.optionId),
                 numericValue = null,

@@ -5,6 +5,7 @@ import androidx.annotation.Keep
 @Keep
 data class QueAnswer(
     val questionId: String = "",
+    val formId: String? = null,
     val type: QuestionType = QuestionType.SINGLE_CHOICE,
     val selectedOptionIds: List<String>? = null,
     val numericValue: Double? = null,
