@@ -12,6 +12,8 @@ import com.oyetech.models.questionProject.questionOperation.QuestionFormDetailRe
 import com.oyetech.models.questionProject.questionOperation.QuestionListWithFilterResponse
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.models.questionProject.questionOperation.QuestionStatusUpdateRequest
+import com.oyetech.models.questionProject.questionOperation.SubmitCatalogRequest
+import com.oyetech.models.questionProject.questionOperation.SubmitCatalogResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -84,4 +86,9 @@ interface QuestionSupabaseApi {
     suspend fun getCatalogDetail(
         @Body request: QuestionFormDetailRequest,
     ): Response<GenericResponse<QuestionFormDetailResponse>>
+
+    @POST("v1/submitCatalog")
+    suspend fun submitCatalog(
+        @Body request: SubmitCatalogRequest,
+    ): Response<GenericResponse<SubmitCatalogResponse>>
 }

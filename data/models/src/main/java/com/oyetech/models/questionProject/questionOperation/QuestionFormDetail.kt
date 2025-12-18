@@ -12,5 +12,6 @@ data class QuestionFormDetailResponse(
     val createdAt: String,
     val updatedAt: String,
     val createdBy: String,
+    val questionFormResultText: String,
     val questions: List<QuestionOperationResponseBody>,
 )

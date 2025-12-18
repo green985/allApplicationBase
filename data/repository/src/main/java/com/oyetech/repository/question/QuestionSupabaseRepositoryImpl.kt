@@ -10,6 +10,7 @@ import com.oyetech.models.questionProject.questionOperation.QuestionFormDetailRe
 import com.oyetech.models.questionProject.questionOperation.QuestionListWithFilterResponse
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.models.questionProject.questionOperation.QuestionStatusUpdateRequest
+import com.oyetech.models.questionProject.questionOperation.SubmitCatalogResponse
 import com.oyetech.remote.questionRemote.QuestionSupabaseDataSource
 import kotlinx.coroutines.flow.Flow
 
@@ -73,5 +74,13 @@ class QuestionSupabaseRepositoryImpl(
         userId: String,
     ): Flow<QuestionFormDetailResponse> {
         return questionSupabaseDataSource.getCatalogDetail(formId, userId)
+    }
+
+    override fun submitCatalog(
+        formId: String,
+        userId: String,
+        questions: List<QuestionOperationResponseBody>,
+    ): Flow<SubmitCatalogResponse> {
+        return questionSupabaseDataSource.submitCatalog(formId, userId, questions)
     }
 }

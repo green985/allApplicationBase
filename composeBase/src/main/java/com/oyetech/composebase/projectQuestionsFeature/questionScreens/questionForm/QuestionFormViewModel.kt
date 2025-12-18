@@ -3,19 +3,21 @@ package com.oyetech.composebase.projectQuestionsFeature.questionScreens.question
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.baseGenericList.GenericListState
+import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.helpers.listOperations.ListOperationDelegate
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionEventHandlerUseCase
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.questionAnswerOverlayFlow
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
+import com.oyetech.composebase.projectQuestionsFeature.views.questions.toOperationBody
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.toUiState
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.question.QuestionSupabaseRepository
 import com.oyetech.domain.useCases.AnswerUseCase
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
+import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -80,6 +82,9 @@ class QuestionFormViewModel(
                     observeQuestionListChanges(questions)
                     if (questions.isNotEmpty()) {
                         questionFormListOperationDelegate.updateList(questions)
+                        _uiState.updateState {
+                            copy(questions = questions.toImmutableList())
+                        }
                     }
                 }
         }
@@ -125,6 +130,7 @@ class QuestionFormViewModel(
                             title = response.title,
                             description = response.description,
                             questions = questionItems,
+                            submitResultText = response.questionFormResultText,
                             canSubmit = false
                         )
                     }
@@ -158,10 +164,9 @@ class QuestionFormViewModel(
     }
 
     private fun handleSubmitForm() {
-        viewModelScope.launch {
+        viewModelScope.launch(getDispatcherIo()) {
             val currentState = _uiState.value
 
-            // Validate
             if (!currentState.allQuestionsAnswered()) {
                 _uiState.update {
                     it.copy(
@@ -172,28 +177,52 @@ class QuestionFormViewModel(
                 return@launch
             }
 
-            // Simulate submit
             _uiState.update {
                 it.copy(
                     isLoading = true
                 )
             }
 
-            // TODO: Call repository to submit answers
-            // For now, simulate success
-            delay(1000)
+            val userId = firebaseUserRepository.getUserId()
+            val questionsResponse = currentState.questions.map { it.toOperationBody() }
 
-            _uiState.update { state ->
-                state.copy(
-                    isLoading = false,
-                    isSubmitted = true,
-                    isLocked = true,
-                    submittedAt = System.currentTimeMillis()
+            questionSupabaseRepository.submitCatalog(
+                formId = currentState.formId,
+                userId = userId,
+                questions = questionsResponse
+            ).asResult().collectLatest { response ->
+                response.fold(
+                    onSuccess = { resp ->
+                        _uiState.update { state ->
+                            state.copy(
+                                submitResultText = resp.resultText,
+                                isLoading = false,
+                                isSubmitted = true,
+                                isLocked = true,
+                                submittedAt = System.currentTimeMillis()
+                            )
+                        }
+                        _uiEvent.emit(QuestionFormUiEvent.OnSubmitSuccess)
+                        _uiEvent.emit(QuestionFormUiEvent.OnFormLocked)
+
+                    },
+                    onFailure = { error ->
+                        Timber.e(error, "Error submitting form")
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                isError = true,
+                                errorText = error.message ?: "Unknown error occurred"
+                            )
+                        }
+                        _uiEvent.emit(
+                            QuestionFormUiEvent.OnSubmitError(
+                                error.message ?: "Unknown error occurred"
+                            )
+                        )
+                    }
                 )
             }
-
-            _uiEvent.emit(QuestionFormUiEvent.OnSubmitSuccess)
-            _uiEvent.emit(QuestionFormUiEvent.OnFormLocked)
         }
     }
 

@@ -9,6 +9,7 @@ import com.oyetech.models.questionProject.questionOperation.QuestionFormDetailRe
 import com.oyetech.models.questionProject.questionOperation.QuestionListWithFilterResponse
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.models.questionProject.questionOperation.QuestionStatusUpdateRequest
+import com.oyetech.models.questionProject.questionOperation.SubmitCatalogResponse
 import kotlinx.coroutines.flow.Flow
 
 interface QuestionSupabaseRepository {
@@ -25,4 +26,9 @@ interface QuestionSupabaseRepository {
     fun updateAnswer(answer: QueAnswer): Flow<QueAnswer>
     fun deleteAnswer(userId: String, questionId: String): Flow<Boolean>
     fun getCatalogDetail(formId: String, userId: String): Flow<QuestionFormDetailResponse>
+    fun submitCatalog(
+        formId: String,
+        userId: String,
+        questions: List<QuestionOperationResponseBody>,
+    ): Flow<SubmitCatalogResponse>
 }

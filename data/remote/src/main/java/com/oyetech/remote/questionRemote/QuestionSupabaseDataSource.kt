@@ -11,6 +11,8 @@ import com.oyetech.models.questionProject.questionOperation.QuestionFormDetailRe
 import com.oyetech.models.questionProject.questionOperation.QuestionListWithFilterResponse
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.models.questionProject.questionOperation.QuestionStatusUpdateRequest
+import com.oyetech.models.questionProject.questionOperation.SubmitCatalogRequest
+import com.oyetech.models.questionProject.questionOperation.SubmitCatalogResponse
 import com.oyetech.remote.helper.interceptGenericResponseTrueForm
 import kotlinx.coroutines.flow.Flow
 
@@ -93,6 +95,18 @@ class QuestionSupabaseDataSource(private val questionSupabaseApi: QuestionSupaba
         return interceptGenericResponseTrueForm {
             val request = QuestionFormDetailRequest(formId = formId, userId = userId)
             questionSupabaseApi.getCatalogDetail(request)
+        }
+    }
+
+    fun submitCatalog(
+        formId: String,
+        userId: String,
+        questions: List<QuestionOperationResponseBody>,
+    ): Flow<SubmitCatalogResponse> {
+        return interceptGenericResponseTrueForm {
+            val request =
+                SubmitCatalogRequest(formId = formId, userId = userId, questions = questions)
+            questionSupabaseApi.submitCatalog(request)
         }
     }
 }
