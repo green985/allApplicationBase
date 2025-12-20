@@ -198,6 +198,6 @@ class QuestionListVm(
     }
 
     fun onQuestionEvent(event: QuestionViewEvent) {
-        questionEventHandlerUseCase.handleQuestionEvent(event, listOperationDelegate)
+        questionEventHandlerUseCase.handleQuestionEvent(event, listOperationDelegate.listUiState)
     }
 }

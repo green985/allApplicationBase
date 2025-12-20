@@ -1,10 +1,10 @@
 package com.oyetech.composebase.projectQuestionsFeature.questionScreens.list
 
-import com.oyetech.composebase.helpers.listOperations.ListOperationDelegate
+import com.oyetech.composebase.base.baseGenericList.GenericListState
+import com.oyetech.composebase.base.baseGenericList.updateSingleItem
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
-import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.question.QuestionSupabaseRepository
 import com.oyetech.domain.useCases.AnswerUseCase
@@ -37,7 +37,6 @@ class QuestionEventHandlerUseCase(
 ) : KoinComponent {
 
     private val navigationUseCase: NavigationUseCase by inject()
-    private val repository: FirebaseQuestionOperationRepository by inject()
     private val userRepository: FirebaseUserRepository by inject()
     private val answerUseCase: AnswerUseCase by inject()
     private val appDispatchers: AppDispatchers by inject()
@@ -46,11 +45,11 @@ class QuestionEventHandlerUseCase(
 
     fun handleQuestionEvent(
         event: QuestionViewEvent,
-        listOperationDelegate: ListOperationDelegate<QuestionViewUiState>,
+        listUiState: MutableStateFlow<GenericListState<QuestionViewUiState>>,
     ) {
         when (event) {
             is QuestionViewEvent.OnOptionSelected -> {
-                handleOptionSelected(event, listOperationDelegate)
+                handleOptionSelected(event, listUiState)
             }
 
             is QuestionViewEvent.OnDeleteAnswerClicked -> {
@@ -58,7 +57,7 @@ class QuestionEventHandlerUseCase(
             }
 
             is QuestionViewEvent.OnAcceptClicked -> {
-                updateAdminOperationClicked(event.questionId, listOperationDelegate)
+                updateAdminOperationClicked(event.questionId, listUiState)
                 scope.launch(appDispatchers.io) {
                     questionSupabaseRepository.updateQuestionStatus(
                         QuestionStatusUpdateRequest(
@@ -70,7 +69,7 @@ class QuestionEventHandlerUseCase(
             }
 
             is QuestionViewEvent.OnDeclineClicked -> {
-                updateAdminOperationClicked(event.questionId, listOperationDelegate)
+                updateAdminOperationClicked(event.questionId, listUiState)
                 scope.launch(appDispatchers.io) {
                     questionSupabaseRepository.updateQuestionStatus(
                         QuestionStatusUpdateRequest(
@@ -88,7 +87,7 @@ class QuestionEventHandlerUseCase(
             }
 
             is QuestionViewEvent.OnPendingClicked -> {
-                updateAdminOperationClicked(event.questionId, listOperationDelegate)
+                updateAdminOperationClicked(event.questionId, listUiState)
                 scope.launch(appDispatchers.io) {
                     questionSupabaseRepository.updateQuestionStatus(
                         QuestionStatusUpdateRequest(
@@ -123,7 +122,7 @@ class QuestionEventHandlerUseCase(
 
     private fun handleOptionSelected(
         event: QuestionViewEvent.OnOptionSelected,
-        listOperationDelegate: ListOperationDelegate<QuestionViewUiState>,
+        listUiState: MutableStateFlow<GenericListState<QuestionViewUiState>>,
     ) {
         scope.launch(appDispatchers.io) {
             val uid = userRepository.getUserId()
@@ -136,7 +135,7 @@ class QuestionEventHandlerUseCase(
             }
             if (alreadyAnswered) return@launch
 
-            val questionUiState = listOperationDelegate.listUiState.value.items.find {
+            val questionUiState = listUiState.value.items.find {
                 it.questionId == event.questionId
             }
             val formId = questionUiState?.formId
@@ -167,18 +166,12 @@ class QuestionEventHandlerUseCase(
 
     private fun updateAdminOperationClicked(
         questionId: String,
-        listOperationDelegate: ListOperationDelegate<QuestionViewUiState>,
+        listUiState: MutableStateFlow<GenericListState<QuestionViewUiState>>,
     ) {
-        listOperationDelegate.listUiState.value.items.find { it.questionId == questionId }
-            ?.let { item ->
-                val updated = item.copy(adminOperationClicked = true)
-                val currentList = listOperationDelegate.listUiState.value.items.toMutableList()
-                val index = currentList.indexOf(item)
-                if (index != -1) {
-                    currentList[index] = updated
-                    listOperationDelegate.updateList(currentList)
-                }
-            }
+        listUiState.updateSingleItem(
+            predicate = { it.questionId == questionId },
+            transform = { it.copy(adminOperationClicked = true) }
+        )
     }
 
     private fun setAdminMode(isAdminView: Boolean) {

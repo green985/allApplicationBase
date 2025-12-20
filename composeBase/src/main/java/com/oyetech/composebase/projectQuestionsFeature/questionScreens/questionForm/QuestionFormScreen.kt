@@ -65,7 +65,7 @@ fun QuestionFormScreenSetup(
 ) {
     val viewModel = koinViewModel<QuestionFormViewModel>()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val listUiState by viewModel.listUiState.collectAsStateWithLifecycle()
+    val listUiState2 by viewModel.listUiState2.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(formId) {
@@ -103,7 +103,7 @@ fun QuestionFormScreenSetup(
 
     QuestionFormScreen(
         uiState = uiState,
-        listUiState = listUiState,
+        listUiState = listUiState2,
         onQuestionEvent = { viewModel.onQuestionEvent(it) },
         snackbarHostState = snackbarHostState,
         onEvent = { viewModel.onEvent(it) }

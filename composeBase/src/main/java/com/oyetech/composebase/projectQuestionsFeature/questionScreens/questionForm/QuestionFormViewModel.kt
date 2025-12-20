@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.base.updateState
-import com.oyetech.composebase.helpers.listOperations.ListOperationDelegate
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionEventHandlerUseCase
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.questionAnswerOverlayFlow
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
@@ -20,13 +19,11 @@ import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -45,26 +42,9 @@ class QuestionFormViewModel(
     private val firebaseUserRepository: FirebaseUserRepository,
     private val questionSupabaseRepository: QuestionSupabaseRepository,
 ) : BaseViewModel(appDispatchers) {
-
-    private val questionFormListOperationDelegate: ListOperationDelegate<QuestionViewUiState> =
-        ListOperationDelegate(
-            scope = viewModelScope,
-            dispatcher = appDispatchers.io,
-            initialDataFlow = flow {
-                uiState.collect {
-                    if (it.questions.isNotEmpty()) {
-                        emit(it.questions)
-                    }
-                }
-            },
-            loadMoreFlow = MutableStateFlow(emptyList()),
-            keySelector = { it.questionId }
-        )
-
     private val questionEventHandlerUseCase = QuestionEventHandlerUseCase(this.viewModelScope)
 
-    val listUiState: StateFlow<GenericListState<QuestionViewUiState>> =
-        questionFormListOperationDelegate.listUiState
+    val listUiState2 = MutableStateFlow(GenericListState<QuestionViewUiState>())
 
     private val _uiState = MutableStateFlow(QuestionFormScreenUiState())
     val uiState = _uiState.asStateFlow()
@@ -74,16 +54,15 @@ class QuestionFormViewModel(
 
     init {
         viewModelScope.launch(getDispatcherIo()) {
-            questionFormListOperationDelegate.listUiState.map { it.items }
+            listUiState2.map { it.items }
                 .distinctUntilChanged().filter { it.isNotEmpty() }
                 .questionAnswerOverlayFlow(answerUseCase.answersState)
                 .collectLatest { questions ->
                     Timber.d("Combining question items flow with transformed questions: ${questions.size}")
                     observeQuestionListChanges(questions)
                     if (questions.isNotEmpty()) {
-                        questionFormListOperationDelegate.updateList(questions)
-                        _uiState.updateState {
-                            copy(questions = questions.toImmutableList())
+                        listUiState2.updateState {
+                            copy(items = questions.toImmutableList())
                         }
                     }
                 }
@@ -122,7 +101,9 @@ class QuestionFormViewModel(
                     val questionItems = response.questions.map { question ->
                         question.toUiState()
                     }.toImmutableList()
-
+                    listUiState2.updateState {
+                        copy(items = questionItems)
+                    }
                     _uiState.update { currentState ->
                         currentState.copy(
                             isLoading = false,
@@ -293,8 +274,7 @@ class QuestionFormViewModel(
 
         questionEventHandlerUseCase.handleQuestionEvent(
             event = it,
-            listOperationDelegate =
-                questionFormListOperationDelegate
+            listUiState = listUiState2
         )
     }
 }
