@@ -146,6 +146,11 @@ class QuestionFormViewModel(
 
     private fun handleSubmitForm() {
         viewModelScope.launch(getDispatcherIo()) {
+            _uiState.updateState {
+                copy(
+                    questions = listUiState2.value.items.toImmutableList()
+                )
+            }
             val currentState = _uiState.value
 
             if (!currentState.allQuestionsAnswered()) {

@@ -60,7 +60,7 @@ class LoginOperationVM(
             observeGoogleUserStateFlow()
             observeUserProfileState()
             googleLoginRepository.autoLoginOperation2()
-//            updateUserToken()
+            updateUserToken()
         }
     }
 
@@ -74,10 +74,10 @@ class LoginOperationVM(
                 if (firebaseTokenOperationModel?.notificationToken?.isBlank() == false) {
                     uiEvent.collectLatest {
                         if (it is LoginOperationUiEvent.OnLoginSuccess) {
-                            Timber.d("LoginOperationVM updateUserToken")
-                            firebaseUserRepository.updateUserNotificationToken(
-                                firebaseTokenOperationModel.notificationToken
-                            )
+                            Timber.d("LoginOperationVM updateUserToken + ${firebaseTokenOperationModel.notificationToken}")
+//                            firebaseUserRepository.updateUserNotificationToken(
+//                                firebaseTokenOperationModel.notificationToken
+//                            )
                         } else {
                             Timber.d("LoginOperationVM updateUserToken else")
                         }
