@@ -4,6 +4,7 @@ import com.oyetech.domain.repository.question.QuestionSupabaseRepository
 import com.oyetech.models.firebaseModels.googleAuth.GetUserWithTokenBody
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserPostData
 import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
+import com.oyetech.models.questionProject.questionOperation.GenerateFormResultResponse
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QueFilter
 import com.oyetech.models.questionProject.questionOperation.QuestionFormDetailResponse
@@ -82,5 +83,19 @@ class QuestionSupabaseRepositoryImpl(
         questions: List<QuestionOperationResponseBody>,
     ): Flow<SubmitCatalogResponse> {
         return questionSupabaseDataSource.submitCatalog(formId, userId, questions)
+    }
+
+    override fun generateFormResult(
+        formId: String,
+        userId: String,
+        prompt: String,
+        notificationToken: String?,
+    ): Flow<GenerateFormResultResponse> {
+        return questionSupabaseDataSource.generateFormResult(
+            formId,
+            userId,
+            prompt,
+            notificationToken
+        )
     }
 }

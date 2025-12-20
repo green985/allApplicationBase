@@ -5,6 +5,8 @@ import com.oyetech.models.firebaseModels.googleAuth.GetUserWithTokenBody
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserPostData
 import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import com.oyetech.models.questionProject.questionOperation.DeleteAnswerRequest
+import com.oyetech.models.questionProject.questionOperation.GenerateFormResultRequest
+import com.oyetech.models.questionProject.questionOperation.GenerateFormResultResponse
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QueFilter
 import com.oyetech.models.questionProject.questionOperation.QuestionFormDetailRequest
@@ -91,4 +93,9 @@ interface QuestionSupabaseApi {
     suspend fun submitCatalog(
         @Body request: SubmitCatalogRequest,
     ): Response<GenericResponse<SubmitCatalogResponse>>
+
+    @POST("v1/generateFormResult")
+    suspend fun generateFormResult(
+        @Body request: GenerateFormResultRequest,
+    ): Response<GenericResponse<GenerateFormResultResponse>>
 }

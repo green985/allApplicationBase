@@ -4,6 +4,8 @@ import com.oyetech.models.firebaseModels.googleAuth.GetUserWithTokenBody
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserPostData
 import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import com.oyetech.models.questionProject.questionOperation.DeleteAnswerRequest
+import com.oyetech.models.questionProject.questionOperation.GenerateFormResultRequest
+import com.oyetech.models.questionProject.questionOperation.GenerateFormResultResponse
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QueFilter
 import com.oyetech.models.questionProject.questionOperation.QuestionFormDetailRequest
@@ -107,6 +109,23 @@ class QuestionSupabaseDataSource(private val questionSupabaseApi: QuestionSupaba
             val request =
                 SubmitCatalogRequest(formId = formId, userId = userId, questions = questions)
             questionSupabaseApi.submitCatalog(request)
+        }
+    }
+
+    fun generateFormResult(
+        formId: String,
+        userId: String,
+        prompt: String,
+        notificationToken: String?,
+    ): Flow<GenerateFormResultResponse> {
+        return interceptGenericResponseTrueForm {
+            val request = GenerateFormResultRequest(
+                formId = formId,
+                userId = userId,
+                prompt = prompt,
+                notificationToken = notificationToken
+            )
+            questionSupabaseApi.generateFormResult(request)
         }
     }
 }

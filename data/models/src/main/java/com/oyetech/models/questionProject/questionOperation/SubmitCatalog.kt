@@ -9,3 +9,14 @@ data class SubmitCatalogRequest(
 data class SubmitCatalogResponse(
     val resultText: String,
 )
+
+data class GenerateFormResultRequest(
+    val formId: String,
+    val userId: String,
+    val prompt: String,
+    val notificationToken: String? = null,
+)
+
+data class GenerateFormResultResponse(
+    val resultText: String,
+)
