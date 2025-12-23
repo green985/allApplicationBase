@@ -10,6 +10,7 @@ import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionV
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.toOperationBody
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.toUiState
+import com.oyetech.domain.repository.firebase.FirebaseTokenOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.question.QuestionSupabaseRepository
 import com.oyetech.domain.useCases.AnswerUseCase
@@ -41,6 +42,7 @@ class QuestionFormViewModel(
     private val answerUseCase: AnswerUseCase,
     private val firebaseUserRepository: FirebaseUserRepository,
     private val questionSupabaseRepository: QuestionSupabaseRepository,
+    private val firebaseTokenOperationRepository: FirebaseTokenOperationRepository,
 ) : BaseViewModel(appDispatchers) {
     private val questionEventHandlerUseCase = QuestionEventHandlerUseCase(this.viewModelScope)
 
@@ -191,6 +193,7 @@ class QuestionFormViewModel(
                         _uiEvent.emit(QuestionFormUiEvent.OnSubmitSuccess)
                         _uiEvent.emit(QuestionFormUiEvent.OnFormLocked)
 
+                        generateFormResult()
                     },
                     onFailure = { error ->
                         Timber.e(error, "Error submitting form")
@@ -281,5 +284,45 @@ class QuestionFormViewModel(
             event = it,
             listUiState = listUiState2
         )
+    }
+
+    private fun generateFormResult() {
+        viewModelScope.launch(getDispatcherIo()) {
+            val currentState = _uiState.value
+            val userId = firebaseUserRepository.getUserId()
+            val notificationToken =
+                firebaseTokenOperationRepository.firebaseTokenStateFlow.value?.notificationToken
+            val prompt =
+                "Verdiğiniz yanıtları analiz edip size özel bir değerlendirme hazırlıyorum. Bu süreç birkaç saniye sürebilir."
+
+            _uiState.update { it.copy(isGeneratingResult = true) }
+
+            questionSupabaseRepository.generateFormResult(
+                formId = currentState.formId,
+                userId = userId,
+                prompt = prompt,
+                notificationToken = notificationToken
+            ).asResult().collectLatest { response ->
+                response.fold(
+                    onSuccess = { resp ->
+                        _uiState.update { state ->
+                            state.copy(
+                                isGeneratingResult = false,
+                                generatedResultText = resp.resultText ?: ""
+                            )
+                        }
+                    },
+                    onFailure = { error ->
+                        Timber.e(error, "Error generating form result")
+                        _uiState.update { state ->
+                            state.copy(
+                                isGeneratingResult = false,
+                                generatedResultText = "Sonuç oluşturulurken bir hata oluştu."
+                            )
+                        }
+                    }
+                )
+            }
+        }
     }
 }

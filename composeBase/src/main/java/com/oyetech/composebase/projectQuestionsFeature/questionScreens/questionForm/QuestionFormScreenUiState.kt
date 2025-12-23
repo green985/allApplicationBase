@@ -44,6 +44,10 @@ data class QuestionFormScreenUiState(
     val isLocked: Boolean = false, // Questions are locked after submit
     val submittedAt: Long? = null,
 
+    // AI Result generation
+    val isGeneratingResult: Boolean = false,
+    val generatedResultText: String = "",
+
     // Validation
     val canSubmit: Boolean = false, // All questions answered
     val validationErrors: ImmutableList<String> = persistentListOf(),

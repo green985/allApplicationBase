@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,7 +50,6 @@ import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListWithParamsContent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
-import com.oyetech.languageModule.keyset.LanguageKey
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
@@ -182,7 +183,9 @@ private fun QuestionFormContent(
                 description = uiState.description,
                 isLocked = uiState.isLocked,
                 submittedAt = uiState.submittedAt,
-                resultText = uiState.submitResultText
+                resultText = uiState.submitResultText,
+                isGeneratingResult = uiState.isGeneratingResult,
+                generatedResultText = uiState.generatedResultText
             )
         }
 
@@ -243,6 +246,8 @@ private fun FormTitleSection(
     description: String,
     isLocked: Boolean,
     submittedAt: Long?,
+    isGeneratingResult: Boolean = false,
+    generatedResultText: String = "",
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -297,7 +302,7 @@ private fun FormTitleSection(
             }
         }
 
-        if (resultText.isNotBlank()) {
+        if (isGeneratingResult || generatedResultText.isNotBlank()) {
             Spacer(modifier = Modifier.height(8.dp))
             Card(
                 modifier = modifier
@@ -310,17 +315,39 @@ private fun FormTitleSection(
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = LanguageKey.questionFormResultTitle,
+                        text = "AI Değerlendirme",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(12.dp))
-                    Text(
-                        text = resultText,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+
+                    if (isGeneratingResult) {
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(40.dp)
+                                )
+                                Text(
+                                    text = "Yanıtlarınız analiz ediliyor...",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    } else {
+                        Text(
+                            text = generatedResultText,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
             }
         }
@@ -386,8 +413,7 @@ private fun FormActionButtons(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+            .padding(0.dp),
     ) {
         AnimatedVisibility(
             visible = !isLocked,
