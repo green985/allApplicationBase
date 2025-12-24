@@ -9,7 +9,6 @@ import com.oyetech.composebase.projectQuestionsFeature.homeScreen.QuestionsHomeS
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.createQuestion.QuestionCreateScreenSetup
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListWithParamsScreenSetup
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionPagerScreenSetup
-import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListScreenSetup
 import com.oyetech.composebase.sharedScreens.navigation.ScreenKey
 import com.oyetech.composebase.sharedScreens.settings.FacSettingsScreenSetup
 import com.oyetech.composebase.sharedScreens.userList.UserListScreenSetup
@@ -27,7 +26,7 @@ fun NavGraphBuilder.questionAppNavigation(navController: NavController) {
     }
 
     composable(QuestionAppProjectRoutes.MessageConversationList.route) {
-        MessageConversationListScreenSetup()
+//        MessageConversationListScreenSetup()
     }
 
     composable(QuestionAppProjectRoutes.UserList.route) {

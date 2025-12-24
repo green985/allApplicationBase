@@ -3,7 +3,6 @@ package com.oyetech.composebase.projectQuestionsFeature.navigation
 import com.oyetech.composebase.R
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationItem
 import com.oyetech.composebase.navigator.Route
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.MessageConversationList
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.QuestionAppHomepage
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.QuestionAppSettings
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.QuestionPager
@@ -71,7 +70,7 @@ sealed class QuestionAppNavItem {
 
     object QuestionAppMessageTab :
         BottomNavigationItem(
-            path = MessageConversationList.route.toString(),
+            path = QuestionAppSettings.route.toString(),
             title = R.string.nav_item_settings,
             icon = R.drawable.ic_settings
         )
