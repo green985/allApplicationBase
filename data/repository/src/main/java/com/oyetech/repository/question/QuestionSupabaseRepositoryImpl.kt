@@ -90,12 +90,14 @@ class QuestionSupabaseRepositoryImpl(
         userId: String,
         prompt: String,
         notificationToken: String?,
+        token: String?,
     ): Flow<GenerateFormResultResponse> {
         return questionSupabaseDataSource.generateFormResult(
             formId,
             userId,
             prompt,
-            notificationToken
+            notificationToken,
+            token
         )
     }
 }

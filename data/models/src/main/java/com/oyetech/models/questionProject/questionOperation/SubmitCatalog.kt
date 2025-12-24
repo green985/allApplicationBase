@@ -15,6 +15,7 @@ data class GenerateFormResultRequest(
     val userId: String,
     val prompt: String,
     val notificationToken: String? = null,
+    val token: String? = null,
 )
 
 data class GenerateFormResultResponse(

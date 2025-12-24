@@ -38,5 +38,6 @@ interface QuestionSupabaseRepository {
         userId: String,
         prompt: String,
         notificationToken: String?,
+        token: String?,
     ): Flow<GenerateFormResultResponse>
 }

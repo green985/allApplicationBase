@@ -12,6 +12,7 @@ import com.oyetech.composebase.projectQuestionsFeature.views.questions.toOperati
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.toUiState
 import com.oyetech.domain.repository.firebase.FirebaseTokenOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
+import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.domain.repository.question.QuestionSupabaseRepository
 import com.oyetech.domain.useCases.AnswerUseCase
 import com.oyetech.domain.useCases.NavigationUseCase
@@ -41,6 +42,7 @@ class QuestionFormViewModel(
     private val navigationUseCase: NavigationUseCase,
     private val answerUseCase: AnswerUseCase,
     private val firebaseUserRepository: FirebaseUserRepository,
+    private val googleLoginRepository: GoogleLoginRepository,
     private val questionSupabaseRepository: QuestionSupabaseRepository,
     private val firebaseTokenOperationRepository: FirebaseTokenOperationRepository,
 ) : BaseViewModel(appDispatchers) {
@@ -296,12 +298,13 @@ class QuestionFormViewModel(
                 "Verdiğiniz yanıtları analiz edip size özel bir değerlendirme hazırlıyorum. Bu süreç birkaç saniye sürebilir."
 
             _uiState.update { it.copy(isGeneratingResult = true) }
-
+            val token = googleLoginRepository.googleUserStateFlow.value.token
             questionSupabaseRepository.generateFormResult(
                 formId = currentState.formId,
                 userId = userId,
                 prompt = prompt,
-                notificationToken = notificationToken
+                notificationToken = notificationToken,
+                token = token,
             ).asResult().collectLatest { response ->
                 response.fold(
                     onSuccess = { resp ->

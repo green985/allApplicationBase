@@ -117,13 +117,15 @@ class QuestionSupabaseDataSource(private val questionSupabaseApi: QuestionSupaba
         userId: String,
         prompt: String,
         notificationToken: String?,
+        token: String?,
     ): Flow<GenerateFormResultResponse> {
         return interceptGenericResponseTrueForm {
             val request = GenerateFormResultRequest(
                 formId = formId,
                 userId = userId,
                 prompt = prompt,
-                notificationToken = notificationToken
+                notificationToken = notificationToken,
+                token = token,
             )
             questionSupabaseApi.generateFormResult(request)
         }
