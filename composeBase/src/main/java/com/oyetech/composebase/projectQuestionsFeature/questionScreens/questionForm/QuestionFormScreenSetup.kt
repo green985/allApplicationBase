@@ -186,6 +186,17 @@ private fun QuestionFormContent(
             )
         }
 
+        // Catalog List Horizontal
+        item {
+            QuestionFormListScreenSetup(
+                catalogList = uiState.catalogList,
+                isLoading = uiState.isCatalogListLoading,
+                onCatalogItemClick = { formId ->
+                    onEvent(QuestionFormEvent.OnCatalogItemClick(formId))
+                }
+            )
+        }
+
         // Progress Indicator
         if (!uiState.isLocked) {
             item {

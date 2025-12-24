@@ -6,6 +6,8 @@ import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import com.oyetech.models.questionProject.questionOperation.DeleteAnswerRequest
 import com.oyetech.models.questionProject.questionOperation.GenerateFormResultRequest
 import com.oyetech.models.questionProject.questionOperation.GenerateFormResultResponse
+import com.oyetech.models.questionProject.questionOperation.GetCatalogListRequest
+import com.oyetech.models.questionProject.questionOperation.GetCatalogListResponse
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QueFilter
 import com.oyetech.models.questionProject.questionOperation.QuestionFormDetailRequest
@@ -128,6 +130,13 @@ class QuestionSupabaseDataSource(private val questionSupabaseApi: QuestionSupaba
                 token = token,
             )
             questionSupabaseApi.generateFormResult(request)
+        }
+    }
+
+    fun getCatalogList(queryText: String): Flow<GetCatalogListResponse> {
+        return interceptGenericResponseTrueForm {
+            val request = GetCatalogListRequest(queryText = queryText)
+            questionSupabaseApi.getCatalogList(request)
         }
     }
 }

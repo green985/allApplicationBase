@@ -9,7 +9,6 @@ import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.ques
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.toOperationBody
-import com.oyetech.composebase.projectQuestionsFeature.views.questions.toUiState
 import com.oyetech.domain.repository.firebase.FirebaseTokenOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
@@ -30,6 +29,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import com.oyetech.composebase.projectQuestionsFeature.views.questions.toUiState as questionToUiState
 
 /**
  * Created by Erdi Özbek
@@ -71,6 +71,7 @@ class QuestionFormViewModel(
                     }
                 }
         }
+        getCatalogList()
     }
 
     fun observeQuestionListChanges(questions: List<QuestionViewUiState>) {
@@ -103,7 +104,7 @@ class QuestionFormViewModel(
 
                 .collectLatest { response ->
                     val questionItems = response.questions.map { question ->
-                        question.toUiState()
+                        question.questionToUiState()
                     }.toImmutableList()
                     listUiState2.updateState {
                         copy(items = questionItems)
@@ -137,6 +138,8 @@ class QuestionFormViewModel(
             is QuestionFormEvent.OnEditForm -> handleEditForm()
             is QuestionFormEvent.OnCancelEdit -> handleCancelEdit()
             is QuestionFormEvent.OnBackPressed -> handleBackPressed()
+            is QuestionFormEvent.OnLoadCatalogList -> getCatalogList()
+            is QuestionFormEvent.OnCatalogItemClick -> handleCatalogItemClick(event.formId)
 
             is QuestionFormEvent.OnQuestionExpanded -> handleQuestionExpanded(
                 event.questionId,
@@ -327,5 +330,42 @@ class QuestionFormViewModel(
                 )
             }
         }
+    }
+
+    private fun getCatalogList() {
+        viewModelScope.launch(getDispatcherIo()) {
+            _uiState.update { it.copy(isCatalogListLoading = true) }
+            questionSupabaseRepository.getCatalogList("all")
+                .asResult()
+                .collectLatest { response ->
+                    response.fold(
+                        onSuccess = { resp ->
+                            val catalogItems =
+                                resp.catalogs.map { it.toUiState() }.toImmutableList()
+                            _uiState.update { state ->
+                                state.copy(
+                                    catalogList = catalogItems,
+                                    isCatalogListLoading = false
+                                )
+                            }
+                        },
+                        onFailure = { error ->
+                            Timber.e(error, "Error loading catalog list")
+                            _uiState.update { state ->
+                                state.copy(
+                                    isCatalogListLoading = false,
+                                    isError = true,
+                                    errorText = error.message ?: "Katalog listesi yüklenemedi"
+                                )
+                            }
+                        }
+                    )
+                }
+        }
+    }
+
+    private fun handleCatalogItemClick(formId: String) {
+        val userId = firebaseUserRepository.getUserId()
+        getFormDetail(formId, userId)
     }
 }

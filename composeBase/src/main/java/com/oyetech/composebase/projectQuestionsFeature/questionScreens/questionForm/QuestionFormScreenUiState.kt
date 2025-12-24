@@ -35,6 +35,10 @@ data class QuestionFormScreenUiState(
     val answeredCount: Int = 0,
     val totalCount: Int = 0,
 
+    // Catalog list for horizontal list
+    val catalogList: ImmutableList<CatalogItemUiState> = persistentListOf(),
+    val isCatalogListLoading: Boolean = false,
+
     // Questions catalog - now using QuestionViewUiState
     val questions: ImmutableList<QuestionViewUiState> = persistentListOf(),
 
@@ -63,6 +67,8 @@ sealed class QuestionFormEvent : BaseEvent() {
     data object OnEditForm : QuestionFormEvent()
     data object OnCancelEdit : QuestionFormEvent()
     data object OnBackPressed : QuestionFormEvent()
+    data object OnLoadCatalogList : QuestionFormEvent()
+    data class OnCatalogItemClick(val formId: String) : QuestionFormEvent()
 
     // Question interactions
 

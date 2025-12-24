@@ -7,6 +7,8 @@ import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import com.oyetech.models.questionProject.questionOperation.DeleteAnswerRequest
 import com.oyetech.models.questionProject.questionOperation.GenerateFormResultRequest
 import com.oyetech.models.questionProject.questionOperation.GenerateFormResultResponse
+import com.oyetech.models.questionProject.questionOperation.GetCatalogListRequest
+import com.oyetech.models.questionProject.questionOperation.GetCatalogListResponse
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QueFilter
 import com.oyetech.models.questionProject.questionOperation.QuestionFormDetailRequest
@@ -98,4 +100,9 @@ interface QuestionSupabaseApi {
     suspend fun generateFormResult(
         @Body request: GenerateFormResultRequest,
     ): Response<GenericResponse<GenerateFormResultResponse>>
+
+    @POST("v1/getCatalogList")
+    suspend fun getCatalogList(
+        @Body request: GetCatalogListRequest,
+    ): Response<GenericResponse<GetCatalogListResponse>>
 }
