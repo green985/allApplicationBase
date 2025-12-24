@@ -71,9 +71,6 @@ fun QuestionFormScreenSetup(
 
     LaunchedEffect(formId) {
         // TODO: Load form data from repository
-        // viewModel.loadForm(formId)
-        // For now, initialize with sample data
-//        viewModel.onEvent(QuestionFormEvent.OnFormLoad(formId))
         viewModel.onEvent(QuestionFormEvent.OnFormLoad("form1"))
     }
 
