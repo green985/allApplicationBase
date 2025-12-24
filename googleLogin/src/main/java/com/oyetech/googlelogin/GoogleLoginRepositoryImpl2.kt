@@ -140,7 +140,7 @@ class GoogleLoginRepositoryImpl2(
                         }
 
                         // will be take a look...
-//                        firebaseAuthWithGoogle(idToken)
+                        firebaseAuthWithGoogle(idToken)
                     } catch (e: GoogleIdTokenParsingException) {
                         Timber.d("Received an invalid google id token response")
                     }

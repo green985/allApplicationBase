@@ -1,7 +1,7 @@
 package com.oyetech.googlelogin.di
 
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
-import com.oyetech.googlelogin.GoogleLoginRepositoryImpl2
+import com.oyetech.googlelogin.GoogleLoginRepositoryImpl3
 import org.koin.dsl.module
 
 /**
@@ -13,7 +13,8 @@ Created by Erdi Özbek
 object GoogleSignInModule {
     var googleSignInModulee = module {
 //        single<GoogleLoginRepository> { GoogleLoginRepositoryImpl(get(), get(), get()) }
-        single<GoogleLoginRepository> { GoogleLoginRepositoryImpl2(get(), get(), get()) }
+//        single<GoogleLoginRepository> { GoogleLoginRepositoryImpl2(get(), get(), get()) }
+        single<GoogleLoginRepository> { GoogleLoginRepositoryImpl3(get()) }
 
 //        single<GoogleLoginRepository> { FirebaseGoogleLoginRepositoryImpl(get(), get()) }
     }

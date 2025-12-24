@@ -28,6 +28,7 @@ fun GoogleUserResponseData.toGoogleUserPostData(): GoogleUserPostData {
     return GoogleUserPostData(
         uid = this.uid,
         firebaseToken = this.token,
+        // todo will be deletal later
         email = this.email,
         displayName = this.displayName,
         phoneNumber = this.phoneNumber,
