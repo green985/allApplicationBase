@@ -14,7 +14,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,16 +29,13 @@ import org.koin.compose.koinInject
 import timber.log.Timber
 
 @Composable
-fun CompleteProfileScreenSetup(navigationRoute: (navigationRoute: String) -> Unit = {}) {
+fun CompleteProfileScreenSetup() {
     val vm = koinInject<LoginOperationVM>()
     val uiState by vm.loginOperationState.collectAsStateWithLifecycle()
     val uiEventFlow by vm.uiEvent.collectAsStateWithLifecycle(null)
 
     when (uiEventFlow) {
         OnCancelUserCreation -> {
-            LaunchedEffect(Unit) {
-                navigationRoute.invoke("back")
-            }
         }
 
         OnLoginSuccess -> {

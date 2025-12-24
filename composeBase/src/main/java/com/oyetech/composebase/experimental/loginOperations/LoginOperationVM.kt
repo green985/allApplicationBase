@@ -58,7 +58,6 @@ class LoginOperationVM(
         Timber.d("LoginOperationVM init")
         if (GeneralSettings.isLoginOperationEnable()) {
             observeGoogleUserStateFlow()
-            observeUserProfileState()
             googleLoginRepository.autoLoginOperation2()
             updateUserToken()
         }
@@ -87,32 +86,6 @@ class LoginOperationVM(
         }
     }
 
-    private fun observeUserProfileState() {
-        viewModelScope.launch(getDispatcherIo()) {
-            firebaseUserRepository.userDataStateFlow.asResult().onEach {
-                it.fold(
-                    onSuccess = { userData ->
-                        mapToProfileValue(userData)
-                    },
-                    onFailure = {
-                        Timber.d(" Google User State Flow Error: $it")
-                    }
-                )
-            }.collect()
-        }
-        viewModelScope.launch(getDispatcherIo()) {
-            firebaseUserRepository.userProfileDataStateFlow.asResult().onEach {
-                it.fold(
-                    onSuccess = { userData ->
-                        mapToProfileValue2(userData)
-                    },
-                    onFailure = {
-                        Timber.d(" Google User State Flow Error: $it")
-                    }
-                )
-            }.collect()
-        }
-    }
 
     private fun observeGoogleUserStateFlow() {
         viewModelScope.launch(getDispatcherIo()) {
@@ -194,6 +167,7 @@ class LoginOperationVM(
                 OnCancel -> {
                     viewModelScope.launch(getDispatcherIo()) {
                         googleLoginRepository.removeUser(googleLoginRepository.getUserUid())
+                        navigationUseCase.navigateTo("back")
                         uiEvent.emit(LoginOperationUiEvent.OnCancelUserCreation)
                     }
                 }
@@ -223,6 +197,7 @@ class LoginOperationVM(
             snackbarDelegate.triggerSnackbarState(LanguageKey.deleteAccountSuccess)
             loginOperationState.value = LoginOperationUiState()
             uiEvent.emit(LoginOperationUiEvent.OnCancelUserCreation)
+            navigationUseCase.navigateTo("back")
         }
         return true
     }
@@ -244,7 +219,6 @@ class LoginOperationVM(
                 com.oyetech.models.firebaseModels.userModel.UserProfileProperty(
                     firebaseToken = userData.firebaseToken,
                     userId = userData.userId,
-                    displayName = loginOperationState.value.displayName,
                     username = loginOperationState.value.displayName,
                     age = loginOperationState.value.age,
                     gender = loginOperationState.value.gender,

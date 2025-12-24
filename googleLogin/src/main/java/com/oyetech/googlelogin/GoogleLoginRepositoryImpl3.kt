@@ -79,6 +79,12 @@ class GoogleLoginRepositoryImpl3(
                         if (idToken.isNotBlank()) {
                             currentGoogleToken = idToken
                             currentUserId = googleIdTokenCredential.id
+                            Timber.d("Google User ID: ${googleIdTokenCredential.data}")
+                            // print all bundle data
+                            for (key in googleIdTokenCredential.data.keySet()) {
+                                val value = googleIdTokenCredential.data.get(key)
+                                Timber.d("Data Key: $key Value: $value")
+                            }
 
                             googleUserStateFlow.value = GoogleUserResponseData(
                                 uid = googleIdTokenCredential.id,
