@@ -47,6 +47,7 @@ class LanguageOperationHelper(
     }
 
     fun initLanguageHelper(startWithVM: Boolean) {
+        return
         LocalLanguageHelper.startWithVM = startWithVM
 
         val textResourcesDataResponse = sharedOperationUseCase.getFirebaseLanguageValue()

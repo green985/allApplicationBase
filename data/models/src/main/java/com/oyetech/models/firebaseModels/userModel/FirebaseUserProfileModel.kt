@@ -14,6 +14,7 @@ data class UserProfileProperty(
     val isAnonymous: Boolean = false,
     val notificationToken: String = "",
     val firebaseToken: String = "",
+    val accessToken: String = "",
 
     val lastSignInTimestamp: String = "",
     val lastSignInTimestampTmp: Long? = null,

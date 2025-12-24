@@ -23,6 +23,7 @@ object QuestionSupabaseRemote {
             OkHttpClient.Builder()
                 .addInterceptor(HttpLoggingInterceptor().apply {
                     level = HttpLoggingInterceptor.Level.BODY
+                    redactHeader("Authorization")
                 })
                 .addInterceptor(get<AuthInterceptor>())
                 .build()

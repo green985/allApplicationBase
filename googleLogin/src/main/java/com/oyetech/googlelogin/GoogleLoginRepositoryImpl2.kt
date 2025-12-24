@@ -163,9 +163,20 @@ class GoogleLoginRepositoryImpl2(
                         // data. For that you first need to validate the token:
                         // pass googleIdTokenCredential.getIdToken() to the backend server.
                         val idToken = googleIdTokenCredential.idToken
+                        val userGoogleData = getCurrentUserResponse()
+                        Timber.d("Google ID Token eee: $userGoogleData")
+                        if (idToken.isNotBlank()) {
+                            googleUserStateFlow.value = GoogleUserResponseData(
+                                uid = googleIdTokenCredential.id,
+                                token = idToken
+                            )
+                        } else {
+                            googleUserStateFlow.value =
+                                getNewWithException("setupGoogleSignInLauncher Google sign in failed")
+                        }
 
                         // will be take a look...
-                        firebaseAuthWithGoogle(idToken)
+//                        firebaseAuthWithGoogle(idToken)
                     } catch (e: GoogleIdTokenParsingException) {
                         Timber.d("Received an invalid google id token response")
                     }
@@ -191,7 +202,7 @@ class GoogleLoginRepositoryImpl2(
 
                         if (userGoogleData?.isUserHasUID() == true) {
                             googleUserStateFlow.value =
-                                userGoogleData.copy(token = firebaseIdToken)
+                                userGoogleData.copy(token = idToken)
                         } else {
                             googleUserStateFlow.value =
                                 getNewWithException("setupGoogleSignInLauncher Google sign in failed")

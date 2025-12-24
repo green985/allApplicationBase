@@ -81,6 +81,7 @@ class GeneralOperationVM(
             userRepository.userProfileDataStateFlow.collectLatest {
                 if (it.userId.isNotBlank()) {
                     answerUseCase.getAnswersByUser(it.userId)
+                        .asResult()
                         .collectLatest {
                             /* repo updates its own state */
                             x?.cancel()
