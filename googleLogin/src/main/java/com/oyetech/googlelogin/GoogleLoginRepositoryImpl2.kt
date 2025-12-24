@@ -49,42 +49,6 @@ class GoogleLoginRepositoryImpl2(
 
     private lateinit var activity: ComponentActivity
 
-    override fun signInWithGoogleAnonymous() {
-        activity = getActivityOrSetError("setupGoogleSignIn activity problem") ?: return
-        try {
-            googleUserStateFlow.value = GoogleUserResponseData()
-            val currentUser = firebaseAuth.currentUser
-            if (currentUser == null) {
-                firebaseAuth.signInAnonymously()
-                    .addOnCompleteListener(activity) { task ->
-                        if (task.isSuccessful) {
-                            // Sign in success, update UI with the signed-in user's information
-                            val userGoogleData = getCurrentUserResponse()
-                            if (userGoogleData?.isUserHasUID() == true) {
-                                googleUserStateFlow.value = userGoogleData
-                            } else {
-                                googleUserStateFlow.value =
-                                    getNewWithException("setupGoogleSignInLauncher Google sign in failed")
-                            }
-                        } else {
-                            googleUserStateFlow.value =
-                                getNewWithException("setupGoogleSignInLauncher Google sign in failed")
-                        }
-                    }
-            } else {
-                val userGoogleData = getCurrentUserResponse()
-                if (userGoogleData == null || !userGoogleData.isUserHasUID()) {
-                    googleUserStateFlow.value =
-                        getNewWithException("setupGoogleSignInLauncher Google sign in failed")
-                } else {
-                    googleUserStateFlow.value = userGoogleData.copy()
-                }
-            }
-        } catch (e: Exception) {
-            googleUserStateFlow.value = getNewWithException(e.message)
-        }
-    }
-
     override suspend fun signInWithGoogle() {
         activity = getActivityOrSetError("setupGoogleSignIn activity problem") ?: return
         try {

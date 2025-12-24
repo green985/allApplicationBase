@@ -20,7 +20,6 @@ interface GoogleLoginRepository {
     val googleUserStateFlow: MutableStateFlow<GoogleUserResponseData>
 
     suspend fun signInWithGoogle()
-    fun signInWithGoogleAnonymous()
 
     fun autoLoginOperation()
     fun autoLoginOperation2()

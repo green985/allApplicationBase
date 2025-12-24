@@ -30,7 +30,6 @@ fun GeneralOperationScreenSetup(
     val viewModel = koinViewModel<GeneralOperationVM>()
     val generalPlaygroundVm = koinViewModel<GeneralPlaygroundVm>()
 
-    generalPlaygroundVm.initt()
     viewModel.hashCode()
     val loginOperationVM = koinInject<LoginOperationVM>()
 
