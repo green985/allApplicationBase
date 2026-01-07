@@ -72,20 +72,24 @@ class LoginOperationVM(
 
     private fun updateUserNotificationToken() {
         viewModelScope.launch(getDispatcherIo()) {
-            firebaseNotificationTokenOperationRepository.firebaseNotificationTokenStateFlow.collectLatest { firebaseTokenOperationModel ->
-                if (firebaseTokenOperationModel?.notificationToken?.isBlank() == false) {
-                    uiEvent.collectLatest {
-                        if (it is LoginOperationUiEvent.OnLoginSuccess) {
-                            Timber.d("LoginOperationVM updateUserToken + ${firebaseTokenOperationModel.notificationToken}")
+            firebaseNotificationTokenOperationRepository.firebaseNotificationTokenStateFlow
+                .collectLatest { firebaseTokenOperationModel ->
+                    if (firebaseTokenOperationModel?.notificationToken?.isBlank() == false) {
+                        uiEvent.collectLatest {
+                            if (it is LoginOperationUiEvent.OnLoginSuccess) {
+                                Timber.d(
+                                    "LoginOperationVM updateUserToken + " +
+                                            "${firebaseTokenOperationModel.notificationToken}"
+                                )
 //                            firebaseUserRepository.updateUserNotificationToken(
 //                                firebaseTokenOperationModel.notificationToken
 //                            )
-                        } else {
-                            Timber.d("LoginOperationVM updateUserToken else")
+                            } else {
+                                Timber.d("LoginOperationVM updateUserToken else")
+                            }
                         }
                     }
                 }
-            }
         }
     }
 
@@ -222,7 +226,7 @@ class LoginOperationVM(
 
     private fun deleteUserOperation(): Boolean {
         viewModelScope.launch(getDispatcherIo()) {
-            firebaseUserRepository.deleteUser(googleLoginRepository.getUserUid())
+//            firebaseUserRepository.deleteUser(googleLoginRepository.getUserUid())
             googleLoginRepository.removeUser(googleLoginRepository.getUserUid())
             delay(500)
             snackbarDelegate.triggerSnackbarState(LanguageKey.deleteAccountSuccess)
@@ -244,7 +248,18 @@ class LoginOperationVM(
             copy(isLoading = true)
         }
         viewModelScope.launch(getDispatcherIo()) {
-            val userData = firebaseUserRepository.userProfileDataStateFlow.value
+            val userData = googleLoginRepository.googleUserDataStateFlow.value
+            if (userData == null) {
+                Timber.d("onSubmitOperation: userData null")
+                loginOperationState.updateState {
+                    copy(
+                        isLoading = false,
+                        isError = true,
+                        errorMessage = LanguageKey.generalErrorText
+                    )
+                }
+                return@launch
+            }
 
             val userProfileProperty =
                 com.oyetech.models.firebaseModels.userModel.UserProfileProperty(
