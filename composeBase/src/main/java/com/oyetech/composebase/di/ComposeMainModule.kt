@@ -14,6 +14,7 @@ import com.oyetech.composebase.helpers.vibrationHelper.VibrationHelperImpl
 import com.oyetech.composebase.projectQuestionsFeature.generalOperationScreen.GeneralOperationVM
 import com.oyetech.composebase.projectQuestionsFeature.generalOperationScreen.generalPlayground.GeneralPlaygroundVm
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.questionForm.QuestionFormViewModel
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.questionForm.questionFormList.QuestionFormListViewModel
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigatorVM
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailVm
 import com.oyetech.composebase.sharedScreens.messaging.MessageOperationVM
@@ -49,6 +50,7 @@ object ComposeMainModule {
         // messaging
         viewModelOf(::MessageDetailVm)
         viewModelOf(::QuestionFormViewModel)
+        viewModelOf(::QuestionFormListViewModel)
         singleOf(::MessageOperationVM)
         viewModelOf(::MessageConversationListVm)
         viewModelOf(::UserListVm)

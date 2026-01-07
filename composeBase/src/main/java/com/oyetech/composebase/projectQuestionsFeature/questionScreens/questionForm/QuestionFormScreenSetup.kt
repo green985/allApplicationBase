@@ -48,7 +48,6 @@ import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListWithParamsContent
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.questionForm.questionFormList.QuestionFormListScreen
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import kotlinx.coroutines.flow.collectLatest
@@ -184,17 +183,6 @@ private fun QuestionFormContent(
                 resultText = uiState.submitResultText,
                 isGeneratingResult = uiState.isGeneratingResult,
                 generatedResultText = uiState.generatedResultText
-            )
-        }
-
-        // Catalog List Horizontal
-        item {
-            QuestionFormListScreen(
-                catalogList = uiState.catalogList,
-                isLoading = uiState.isCatalogListLoading,
-                onCatalogItemClick = { formId ->
-                    onEvent(QuestionFormEvent.OnCatalogItemClick(formId))
-                }
             )
         }
 

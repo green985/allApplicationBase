@@ -3,7 +3,6 @@ package com.oyetech.composebase.projectQuestionsFeature.questionScreens.question
 import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.base.BaseUIEvent
 import com.oyetech.composebase.base.BaseUIState
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.questionForm.questionFormList.CatalogItemUiState
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -36,10 +35,6 @@ data class QuestionFormScreenUiState(
     val answeredCount: Int = 0,
     val totalCount: Int = 0,
 
-    // Catalog list for horizontal list
-    val catalogList: ImmutableList<CatalogItemUiState> = persistentListOf(),
-    val isCatalogListLoading: Boolean = false,
-
     // Questions catalog - now using QuestionViewUiState
     val questions: ImmutableList<QuestionViewUiState> = persistentListOf(),
 
@@ -68,8 +63,6 @@ sealed class QuestionFormEvent : BaseEvent() {
     data object OnEditForm : QuestionFormEvent()
     data object OnCancelEdit : QuestionFormEvent()
     data object OnBackPressed : QuestionFormEvent()
-    data object OnLoadCatalogList : QuestionFormEvent()
-    data class OnCatalogItemClick(val formId: String) : QuestionFormEvent()
 
     // Question interactions
 

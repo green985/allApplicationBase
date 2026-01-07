@@ -6,7 +6,6 @@ import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionEventHandlerUseCase
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.questionAnswerOverlayFlow
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.questionForm.questionFormList.toUiState
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.toOperationBody
@@ -72,7 +71,6 @@ class QuestionFormViewModel(
                     }
                 }
         }
-        getCatalogList()
     }
 
     fun observeQuestionListChanges(questions: List<QuestionViewUiState>) {
@@ -139,8 +137,6 @@ class QuestionFormViewModel(
             is QuestionFormEvent.OnEditForm -> handleEditForm()
             is QuestionFormEvent.OnCancelEdit -> handleCancelEdit()
             is QuestionFormEvent.OnBackPressed -> handleBackPressed()
-            is QuestionFormEvent.OnLoadCatalogList -> getCatalogList()
-            is QuestionFormEvent.OnCatalogItemClick -> handleCatalogItemClick(event.formId)
 
             is QuestionFormEvent.OnQuestionExpanded -> handleQuestionExpanded(
                 event.questionId,
@@ -333,40 +329,4 @@ class QuestionFormViewModel(
         }
     }
 
-    private fun getCatalogList() {
-        viewModelScope.launch(getDispatcherIo()) {
-            _uiState.update { it.copy(isCatalogListLoading = true) }
-            questionSupabaseRepository.getCatalogList("all")
-                .asResult()
-                .collectLatest { response ->
-                    response.fold(
-                        onSuccess = { resp ->
-                            val catalogItems =
-                                resp.catalogs.map { it.toUiState() }.toImmutableList()
-                            _uiState.update { state ->
-                                state.copy(
-                                    catalogList = catalogItems,
-                                    isCatalogListLoading = false
-                                )
-                            }
-                        },
-                        onFailure = { error ->
-                            Timber.e(error, "Error loading catalog list")
-                            _uiState.update { state ->
-                                state.copy(
-                                    isCatalogListLoading = false,
-                                    isError = true,
-                                    errorText = error.message ?: "Katalog listesi yüklenemedi"
-                                )
-                            }
-                        }
-                    )
-                }
-        }
-    }
-
-    private fun handleCatalogItemClick(formId: String) {
-        val userId = firebaseUserRepository.getUserId()
-        getFormDetail(formId, userId)
-    }
 }

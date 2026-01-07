@@ -22,11 +22,6 @@ Tüm kurallar burada. Yeni task başlarken oku.
 
 **KOD_KURALLARI.md** - Compose fonksiyonları: Hardcoded data kullanılmaz, UiState'ten al
 
-**REFACTORING_REPORT_UI_EVENTS.md** - UI Event Pattern: sealed class Events, ScreenSetup wiring only
-
-**QUESTION_CREATION_PUBLISHING_FLOW.md** - Question creation flow: Type → Style → Content →
-Preview → Publish → Admin Moderation
-
 ## Rules Summary
 
 1. Compose: No hardcoded data (KOD_KURALLARI)

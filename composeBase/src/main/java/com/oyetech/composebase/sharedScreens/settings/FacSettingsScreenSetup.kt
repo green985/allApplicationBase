@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.helpers.general.GeneralSettings
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.questionForm.questionFormList.QuestionFormListScreenSetup
 import com.oyetech.composebase.sharedViews.settings.SimpleSettingsInfoViewSetup
 import com.oyetech.languageModule.keyset.LanguageKey
 import org.koin.androidx.compose.koinViewModel
@@ -105,6 +106,11 @@ fun FacSettingsScreen(
                 onClick = { onEvent.invoke(FacSettingsUiEvent.TermsAndConditionsClicked) },
                 text = uiState.termsAndConditionText
             )
+
+            QuestionFormListScreenSetup(
+                modifier = Modifier.fillMaxWidth()
+            )
+
             if (GeneralSettings.isRatingEnable()) {
                 HorizontalDivider(
                     modifier = Modifier.height(1.dp)
