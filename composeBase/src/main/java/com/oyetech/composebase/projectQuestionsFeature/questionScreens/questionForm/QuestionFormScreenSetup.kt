@@ -188,7 +188,7 @@ private fun QuestionFormContent(
 
         // Catalog List Horizontal
         item {
-            QuestionFormListScreenSetup(
+            QuestionFormListScreen(
                 catalogList = uiState.catalogList,
                 isLoading = uiState.isCatalogListLoading,
                 onCatalogItemClick = { formId ->
