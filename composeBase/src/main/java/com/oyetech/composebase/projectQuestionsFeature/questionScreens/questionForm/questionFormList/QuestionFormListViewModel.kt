@@ -5,10 +5,12 @@ import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.domain.repository.question.QuestionSupabaseRepository
+import com.oyetech.domain.useCases.AnswerUseCase
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -18,6 +20,7 @@ import timber.log.Timber
 class QuestionFormListViewModel(
     appDispatchers: AppDispatchers,
     private val navigationUseCase: NavigationUseCase,
+    private val answerUseCase: AnswerUseCase,
     private val questionSupabaseRepository: QuestionSupabaseRepository,
 ) : BaseViewModel(appDispatchers) {
 
@@ -51,6 +54,7 @@ class QuestionFormListViewModel(
                                     isLoading = false
                                 )
                             }
+                            calculateAnsweredQuestionCountFlow()
                         },
                         onFailure = { error ->
                             Timber.e(error, "Error loading catalog list")
@@ -62,6 +66,32 @@ class QuestionFormListViewModel(
                         }
                     )
                 }
+        }
+    }
+
+    private fun CoroutineScope.calculateAnsweredQuestionCountFlow() {
+        launch {
+            answerUseCase.answersState.collectLatest { answersList ->
+                // Process the answersList as needed
+                val formQuestionList = uiState.value.catalogList
+                val newList = formQuestionList?.mapIndexed { index, state ->
+                    val answeredCount = answersList.count { answer ->
+                        answer.formId == state.formId
+                    }
+                    state.copy(
+                        answeredQuestionCount = answeredCount
+                    )
+                }
+                Timber.d("Updated catalog list with answered counts: ${newList?.size}")
+                if (!newList.isNullOrEmpty()) {
+                    _uiState.updateState {
+                        copy(
+                            catalogList = newList.toImmutableList()
+                        )
+                    }
+                    Timber.d("Updated catalog answer count updated.")
+                }
+            }
         }
     }
 

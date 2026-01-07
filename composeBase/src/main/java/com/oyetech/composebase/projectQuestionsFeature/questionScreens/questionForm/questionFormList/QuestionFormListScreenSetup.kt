@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
@@ -116,8 +117,8 @@ private fun CatalogItemCard(
 ) {
     Card(
         modifier = modifier
-            .width(200.dp)
-            .height(250.dp)
+            .width(100.dp)
+            .height(100.dp)
             .clickable { onClick() },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
@@ -131,7 +132,7 @@ private fun CatalogItemCard(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(4.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
@@ -149,6 +150,17 @@ private fun CatalogItemCard(
 
                 Text(
                     text = catalog.formId,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = catalog.totalQuestions.toString() + if (catalog.answeredQuestionCount > 0) {
+                        "  " + catalog.answeredQuestionCount.toString()
+                    } else {
+                        "   bos"
+                    },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
@@ -187,4 +199,16 @@ private fun CatalogItemCard(
             }
         }
     }
+}
+
+@Preview
+@Composable
+private fun QuestionFormListScreenPreview() {
+    CatalogItemCard(
+        catalog = CatalogItemUiState(
+            formId = "vulputate",
+            title = "deserunt",
+            totalQuestions = 5,
+            isCompleted = false
+        ), onClick = {})
 }

@@ -6,5 +6,6 @@ import androidx.annotation.Keep
 data class CatalogItem(
     val formId: String,
     val title: String,
+    val totalQuestions: Int,
     val isCompleted: Boolean,
 )
