@@ -3,7 +3,6 @@ package com.oyetech.remote.questionRemote
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import okhttp3.Interceptor
 import okhttp3.Response
-import timber.log.Timber
 
 class AuthInterceptor(
     private val firebaseUserRepository: FirebaseUserRepository,
@@ -16,7 +15,7 @@ class AuthInterceptor(
         val token = firebaseUserRepository.userProfileDataStateFlow.value.accessToken.ifBlank {
             tokenAnon
         }
-        Timber.d("AuthInterceptor Token: $token")
+//        Timber.d("AuthInterceptor Token: $token")
         val newRequest = chain.request().newBuilder()
             .addHeader("Authorization", "Bearer $token")
             .build()
