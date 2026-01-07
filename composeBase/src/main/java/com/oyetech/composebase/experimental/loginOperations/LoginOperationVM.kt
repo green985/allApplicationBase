@@ -13,7 +13,8 @@ import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.OnSubmit
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.UsernameChanged
 import com.oyetech.composebase.helpers.general.GeneralSettings
-import com.oyetech.domain.repository.firebase.FirebaseTokenOperationRepository
+import com.oyetech.domain.repository.SharedOperationRepository
+import com.oyetech.domain.repository.firebase.FirebaseNotificationTokenOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.domain.useCases.NavigationUseCase
@@ -44,9 +45,10 @@ class LoginOperationVM(
     private val googleLoginRepository: GoogleLoginRepository,
     val navigationUseCase: NavigationUseCase,
     val firebaseUserRepository: FirebaseUserRepository,
-    private val firebaseTokenOperationRepository: FirebaseTokenOperationRepository,
+    private val firebaseNotificationTokenOperationRepository: FirebaseNotificationTokenOperationRepository,
     private val snackbarDelegate: SnackbarDelegate,
     private val questionSupabaseRepository: com.oyetech.domain.repository.question.QuestionSupabaseRepository,
+    private val sharedOperationRepository: SharedOperationRepository,
 ) : BaseViewModel(appDispatchers) {
 
     val loginOperationState =
@@ -58,8 +60,9 @@ class LoginOperationVM(
         Timber.d("LoginOperationVM init")
         if (GeneralSettings.isLoginOperationEnable()) {
             observeGoogleUserStateFlow()
+            observeGoogleUserDataStateFlow()
             googleLoginRepository.autoLoginOperation2()
-            updateUserToken()
+            updateUserNotificationToken()
         }
     }
 
@@ -67,9 +70,9 @@ class LoginOperationVM(
         return loginOperationState.asSharedFlow()
     }
 
-    private fun updateUserToken() {
+    private fun updateUserNotificationToken() {
         viewModelScope.launch(getDispatcherIo()) {
-            firebaseTokenOperationRepository.firebaseTokenStateFlow.collectLatest { firebaseTokenOperationModel ->
+            firebaseNotificationTokenOperationRepository.firebaseNotificationTokenStateFlow.collectLatest { firebaseTokenOperationModel ->
                 if (firebaseTokenOperationModel?.notificationToken?.isBlank() == false) {
                     uiEvent.collectLatest {
                         if (it is LoginOperationUiEvent.OnLoginSuccess) {
@@ -95,9 +98,12 @@ class LoginOperationVM(
                         if (googleUserResponseData.isUserHasUID()) {
                             questionSupabaseRepository.registerGoogleUser(
                                 googleUserResponseData.toGoogleUserPostData()
-                            ).asResult().collectLatest {
-                                Timber.d(" registerGoogleUser response: $it")
-                                mapToProfileValue2(it.getOrNull())
+                            ).asResult().collectLatest { result ->
+                                Timber.d(" registerGoogleUser response: $result")
+                                result.getOrNull()?.let { userProfileProperty ->
+                                    sharedOperationRepository.saveGoogleUserData(userProfileProperty)
+                                    mapToProfileValue2(userProfileProperty)
+                                }
                             }
                         } else if (googleUserResponseData.errorException != null) {
                             loginOperationState.value = LoginOperationUiState(
@@ -115,6 +121,31 @@ class LoginOperationVM(
                     }
                 )
             }.collect()
+        }
+    }
+
+    private fun observeGoogleUserDataStateFlow() {
+        viewModelScope.launch(getDispatcherIo()) {
+            googleLoginRepository.googleUserDataStateFlow.asResult().collectLatest {
+                it.fold(
+                    onSuccess = { userProfileProperty ->
+                        if (userProfileProperty != null) {
+                            Timber.d("Google user data found in shared prefs, calling getUserWithToken")
+                            questionSupabaseRepository.getUserWithToken(
+                                com.oyetech.models.firebaseModels.googleAuth.GetUserWithTokenBody(
+                                    token = userProfileProperty.token
+                                )
+                            ).asResult().collectLatest { userResult ->
+                                Timber.d(" getUserWithToken response: $userResult")
+                                mapToProfileValue2(userResult.getOrNull())
+                            }
+                        }
+                    },
+                    onFailure = {
+                        Timber.d(" Google User Data State Flow Error: $it")
+                    }
+                )
+            }
         }
     }
 
@@ -217,7 +248,7 @@ class LoginOperationVM(
 
             val userProfileProperty =
                 com.oyetech.models.firebaseModels.userModel.UserProfileProperty(
-                    firebaseToken = userData.firebaseToken,
+                    token = userData.token,
                     userId = userData.userId,
                     username = loginOperationState.value.displayName,
                     age = loginOperationState.value.age,

@@ -11,18 +11,22 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.oyetech.domain.helper.ActivityProviderUseCase
+import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData.Companion.getNewWithException
+import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
 
 class GoogleLoginRepositoryImpl3(
     private val activityProviderUseCase: ActivityProviderUseCase,
+    private val sharedOperationRepository: SharedOperationRepository,
 ) : GoogleLoginRepository {
 
     override val googleUserStateFlow = MutableStateFlow(GoogleUserResponseData())
     override val userAutoLoginStateFlow = MutableStateFlow(false)
+    override val googleUserDataStateFlow = MutableStateFlow<UserProfileProperty?>(null)
 
     private lateinit var activity: ComponentActivity
     private var currentGoogleToken: String? = null
@@ -116,12 +120,18 @@ class GoogleLoginRepositoryImpl3(
     }
 
     override fun autoLoginOperation2() {
+        val savedUserData = sharedOperationRepository.getGoogleUserData()
+        if (savedUserData != null) {
+            googleUserDataStateFlow.value = savedUserData
+        }
         userAutoLoginStateFlow.value = true
     }
 
     override fun removeUser(uid: String) {
         currentGoogleToken = null
         currentUserId = null
+        sharedOperationRepository.removeGoogleUserData()
+        googleUserDataStateFlow.value = null
         googleUserStateFlow.value = GoogleUserResponseData()
     }
 

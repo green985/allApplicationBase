@@ -121,4 +121,7 @@ public class SharedPrefKey {
     @NonNull
     public static String IS_USER_SIGN_IN_WITH_GOOGLE = "IS_USER_SIGN_IN_WITH_GOOGLE";
 
+    @NonNull
+    public static String GOOGLE_USER_FIREBASE_TOKEN = "GOOGLE_USER_FIREBASE_TOKEN";
+
 }

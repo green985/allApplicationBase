@@ -3,6 +3,7 @@ package com.oyetech.domain.repository
 import com.oyetech.models.entity.auth.AuthRequestResponse
 import com.oyetech.models.entity.language.TextResourcesDataResponse
 import com.oyetech.models.firebaseModels.language.FirebaseLanguageResponseDataWrapper
+import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import com.oyetech.models.radioProject.entity.radioEntity.station.RadioStationResponseData
 import com.oyetech.models.radioProject.helperModels.alarm.DataAlarmModel
 import com.oyetech.models.radioProject.helperModels.weekDay.WeekDaysModel
@@ -75,5 +76,9 @@ interface SharedOperationRepository {
     fun putDateWhenSubsDialogShow()
     fun getIsDateWhenSubsDialogShow(): Boolean
     fun getAlarmm(): DataAlarmModel?
+
+    fun saveGoogleUserData(userProfileProperty: UserProfileProperty)
+    fun getGoogleUserData(): UserProfileProperty?
+    fun removeGoogleUserData()
 
 }

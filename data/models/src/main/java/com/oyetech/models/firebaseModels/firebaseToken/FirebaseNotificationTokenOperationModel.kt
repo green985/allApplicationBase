@@ -8,7 +8,7 @@ import java.util.Date
 
 @JsonClass(generateAdapter = true)
 @Keep
-data class FirebaseTokenOperationModel(
+data class FirebaseNotificationTokenOperationModel(
     var notificationToken: String = "",
     var userId: String = "",
 

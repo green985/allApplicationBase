@@ -2,8 +2,8 @@ package com.oyetech.notificationmodule.tokenOperation
 
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
-import com.oyetech.domain.repository.firebase.FirebaseTokenOperationRepository
-import com.oyetech.models.firebaseModels.firebaseToken.FirebaseTokenOperationModel
+import com.oyetech.domain.repository.firebase.FirebaseNotificationTokenOperationRepository
+import com.oyetech.models.firebaseModels.firebaseToken.FirebaseNotificationTokenOperationModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
 
@@ -13,24 +13,24 @@ Created by Erdi Özbek
 -14:40-
  **/
 
-class FirebaseTokenOperationRepositoryImpl(private val firebaseMessaging: FirebaseMessaging) :
-    FirebaseTokenOperationRepository {
+class FirebaseNotificationNotificationTokenOperationRepositoryImpl(private val firebaseMessaging: FirebaseMessaging) :
+    FirebaseNotificationTokenOperationRepository {
 
     init {
         Timber.d("FirebaseTokenOperationRepositoryImpl initialized")
-        getToken()
+        getNotificationToken()
     }
 
-    override val firebaseTokenStateFlow = MutableStateFlow<FirebaseTokenOperationModel?>(null)
+    override val firebaseNotificationTokenStateFlow =
+        MutableStateFlow<FirebaseNotificationTokenOperationModel?>(null)
 
-    private fun getToken() {
+    private fun getNotificationToken() {
         firebaseMessaging.token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
                 return@OnCompleteListener
             }
             val token = task.result
-            Timber.d("Firebase messaging token: $token")
-            firebaseTokenStateFlow.value = FirebaseTokenOperationModel(
+            firebaseNotificationTokenStateFlow.value = FirebaseNotificationTokenOperationModel(
                 notificationToken = token,
             )
         })

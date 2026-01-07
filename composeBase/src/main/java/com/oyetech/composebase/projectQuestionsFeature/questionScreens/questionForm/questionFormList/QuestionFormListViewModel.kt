@@ -70,7 +70,7 @@ class QuestionFormListViewModel(
     }
 
     private fun CoroutineScope.calculateAnsweredQuestionCountFlow() {
-        launch {
+        launch(getDispatcherIo()) {
             answerUseCase.answersState.collectLatest { answersList ->
                 // Process the answersList as needed
                 val formQuestionList = uiState.value.catalogList

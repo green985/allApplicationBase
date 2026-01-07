@@ -7,6 +7,7 @@ import com.oyetech.models.entity.auth.AuthRequestResponse
 import com.oyetech.models.entity.auth.TokenDataResponse
 import com.oyetech.models.entity.language.TextResourcesDataResponse
 import com.oyetech.models.firebaseModels.language.FirebaseLanguageResponseDataWrapper
+import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import com.oyetech.models.radioProject.entity.radioEntity.station.RadioStationResponseData
 import com.oyetech.models.radioProject.helperModels.alarm.DataAlarmModel
 import com.oyetech.models.radioProject.helperModels.weekDay.WeekDaysModel
@@ -453,9 +454,23 @@ class SharedOperationRepositoryImp(
     }
 
     override fun putDateWhenSubsDialogShow() {
-        var timeMilis = Calendar.getInstance().timeInMillis
+        val timeMilis = Calendar.getInstance().timeInMillis
         sharedHelper.putLongData(SharedPrefKey.SUBS_DIALOG_SHOWN_TIME_MILIS, timeMilis)
     }
 
+    override fun saveGoogleUserData(userProfileProperty: UserProfileProperty) {
+        sharedHelper.addData(SharedPrefKey.GOOGLE_USER_FIREBASE_TOKEN, userProfileProperty)
+    }
+
+    override fun getGoogleUserData(): UserProfileProperty? {
+        return sharedHelper.retrieveData(
+            SharedPrefKey.GOOGLE_USER_FIREBASE_TOKEN,
+            UserProfileProperty::class.java
+        )
+    }
+
+    override fun removeGoogleUserData() {
+        sharedHelper.removeData(SharedPrefKey.GOOGLE_USER_FIREBASE_TOKEN)
+    }
 
 }

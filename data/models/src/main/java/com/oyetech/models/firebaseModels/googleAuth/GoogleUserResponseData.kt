@@ -5,19 +5,19 @@ import com.google.firebase.firestore.Exclude
 
 @Keep
 data class GetUserWithTokenBody(
-    val firebaseToken: String = "",
+    val token: String = "",
 )
 
 @Keep
 data class GoogleUserPostData(
     val uid: String = "",
-    val firebaseToken: String? = "",
+    val token: String? = "",
 )
 
 fun GoogleUserResponseData.toGoogleUserPostData(): GoogleUserPostData {
     return GoogleUserPostData(
         uid = this.uid,
-        firebaseToken = this.token,
+        token = this.token,
     )
 }
 

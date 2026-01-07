@@ -13,7 +13,7 @@ Created by Erdi Özbek
 data class UserProfileProperty(
     val isAnonymous: Boolean = false,
     val notificationToken: String = "",
-    val firebaseToken: String = "",
+    val token: String = "",
     val accessToken: String = "",
 
     val lastSignInTimestamp: String = "",

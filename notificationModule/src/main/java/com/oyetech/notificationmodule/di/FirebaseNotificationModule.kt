@@ -1,9 +1,9 @@
 package com.oyetech.notificationmodule.di
 
 import com.google.firebase.messaging.FirebaseMessaging
-import com.oyetech.domain.repository.firebase.FirebaseTokenOperationRepository
+import com.oyetech.domain.repository.firebase.FirebaseNotificationTokenOperationRepository
 import com.oyetech.notificationmodule.AppNotificationOperator
-import com.oyetech.notificationmodule.tokenOperation.FirebaseTokenOperationRepositoryImpl
+import com.oyetech.notificationmodule.tokenOperation.FirebaseNotificationNotificationTokenOperationRepositoryImpl
 import org.koin.dsl.module
 
 /**
@@ -18,7 +18,11 @@ object FirebaseNotificationModule {
             val firebaseMessaging = FirebaseMessaging.getInstance()
             firebaseMessaging
         }
-        single<FirebaseTokenOperationRepository> { FirebaseTokenOperationRepositoryImpl(get()) }
+        single<FirebaseNotificationTokenOperationRepository> {
+            FirebaseNotificationNotificationTokenOperationRepositoryImpl(
+                get()
+            )
+        }
         single<AppNotificationOperator> { AppNotificationOperator(get()) }
     }
 }

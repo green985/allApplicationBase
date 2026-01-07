@@ -9,7 +9,7 @@ import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.ques
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.toOperationBody
-import com.oyetech.domain.repository.firebase.FirebaseTokenOperationRepository
+import com.oyetech.domain.repository.firebase.FirebaseNotificationTokenOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.domain.repository.question.QuestionSupabaseRepository
@@ -44,7 +44,7 @@ class QuestionFormViewModel(
     private val firebaseUserRepository: FirebaseUserRepository,
     private val googleLoginRepository: GoogleLoginRepository,
     private val questionSupabaseRepository: QuestionSupabaseRepository,
-    private val firebaseTokenOperationRepository: FirebaseTokenOperationRepository,
+    private val firebaseNotificationTokenOperationRepository: FirebaseNotificationTokenOperationRepository,
 ) : BaseViewModel(appDispatchers) {
     private val questionEventHandlerUseCase = QuestionEventHandlerUseCase(this.viewModelScope)
 
@@ -293,7 +293,7 @@ class QuestionFormViewModel(
             val currentState = _uiState.value
             val userId = firebaseUserRepository.getUserId()
             val notificationToken =
-                firebaseTokenOperationRepository.firebaseTokenStateFlow.value?.notificationToken
+                firebaseNotificationTokenOperationRepository.firebaseNotificationTokenStateFlow.value?.notificationToken
             val prompt =
                 "Verdiğiniz yanıtları analiz edip size özel bir değerlendirme hazırlıyorum. Bu süreç birkaç saniye sürebilir."
 
