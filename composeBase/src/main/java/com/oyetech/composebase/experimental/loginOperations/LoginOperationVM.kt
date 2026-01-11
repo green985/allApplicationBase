@@ -15,12 +15,12 @@ import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.
 import com.oyetech.composebase.helpers.general.GeneralSettings
 import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseNotificationTokenOperationRepository
-import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.firebaseModels.googleAuth.isUserHasUID
 import com.oyetech.models.firebaseModels.googleAuth.toGoogleUserPostData
+import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.delay
@@ -40,11 +40,11 @@ Created by Erdi Özbek
 -02:24-
  **/
 
+@Suppress("LongParameterList")
 class LoginOperationVM(
     appDispatchers: AppDispatchers,
     private val googleLoginRepository: GoogleLoginRepository,
     val navigationUseCase: NavigationUseCase,
-    val firebaseUserRepository: FirebaseUserRepository,
     private val firebaseNotificationTokenOperationRepository: FirebaseNotificationTokenOperationRepository,
     private val snackbarDelegate: SnackbarDelegate,
     private val questionSupabaseRepository: com.oyetech.domain.repository.question.QuestionSupabaseRepository,
@@ -81,9 +81,7 @@ class LoginOperationVM(
                                     "LoginOperationVM updateUserToken + " +
                                             "${firebaseTokenOperationModel.notificationToken}"
                                 )
-//                            firebaseUserRepository.updateUserNotificationToken(
-//                                firebaseTokenOperationModel.notificationToken
-//                            )
+                                // Token update GoogleLoginRepository üzerinden yapılacak
                             } else {
                                 Timber.d("LoginOperationVM updateUserToken else")
                             }
@@ -106,7 +104,7 @@ class LoginOperationVM(
                                 Timber.d(" registerGoogleUser response: $result")
                                 result.getOrNull()?.let { userProfileProperty ->
                                     sharedOperationRepository.saveGoogleUserData(userProfileProperty)
-                                    mapToProfileValue2(userProfileProperty)
+                                    mapToProfileValue(userProfileProperty)
                                 }
                             }
                         } else if (googleUserResponseData.errorException != null) {
@@ -141,7 +139,7 @@ class LoginOperationVM(
                                 )
                             ).asResult().collectLatest { userResult ->
                                 Timber.d(" getUserWithToken response: $userResult")
-                                mapToProfileValue2(userResult.getOrNull())
+                                mapToProfileValue(userResult.getOrNull())
                             }
                         }
                     },
@@ -163,7 +161,6 @@ class LoginOperationVM(
                     viewModelScope.launch(getDispatcherIo()) {
                         try {
                             googleLoginRepository.signInWithGoogle()
-//                            googleLoginRepository.signInWithGoogleAnonymous()
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
@@ -226,7 +223,6 @@ class LoginOperationVM(
 
     private fun deleteUserOperation(): Boolean {
         viewModelScope.launch(getDispatcherIo()) {
-//            firebaseUserRepository.deleteUser(googleLoginRepository.getUserUid())
             googleLoginRepository.removeUser(googleLoginRepository.getUserUid())
             delay(500)
             snackbarDelegate.triggerSnackbarState(LanguageKey.deleteAccountSuccess)
@@ -262,7 +258,7 @@ class LoginOperationVM(
             }
 
             val userProfileProperty =
-                com.oyetech.models.firebaseModels.userModel.UserProfileProperty(
+                UserProfileProperty(
                     token = userData.token,
                     userId = userData.userId,
                     username = loginOperationState.value.displayName,
@@ -271,16 +267,14 @@ class LoginOperationVM(
                     biography = userData.biography,
                     isAnonymous = userData.isAnonymous,
                     notificationToken = userData.notificationToken,
-//                    lastSignInTimestampTmp = userData.lastSignInTimestampTmp,
-//                    creationTimestamp = userData.creationTimestamp
                 )
 
             questionSupabaseRepository.updateUser(userProfileProperty).asResult().collectLatest {
                 Timber.d("updateUser response: $it")
                 it.fold(
                     onSuccess = { updatedUser ->
+                        sharedOperationRepository.saveGoogleUserData(updatedUser)
                         uiEvent.emit(LoginOperationUiEvent.OnLoginSuccess)
-                        firebaseUserRepository.updateUserProfileProperty(updatedUser)
                         navigationUseCase.navigateTo("back")
                     },
                     onFailure = { error ->
@@ -349,8 +343,8 @@ class LoginOperationVM(
             }
             return true
         }
+
         return false
     }
-
 
 }
