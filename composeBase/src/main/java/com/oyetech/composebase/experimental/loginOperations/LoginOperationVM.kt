@@ -251,7 +251,7 @@ class LoginOperationVM(
                     copy(
                         isLoading = false,
                         isError = true,
-                        errorMessage = LanguageKey.generalErrorText
+                        errorMessage = LanguageKey.loginUserDataNullError
                     )
                 }
                 return@launch
