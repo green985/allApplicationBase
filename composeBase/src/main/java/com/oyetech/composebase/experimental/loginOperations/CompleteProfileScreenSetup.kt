@@ -39,7 +39,6 @@ fun CompleteProfileScreenSetup() {
         }
 
         OnLoginSuccess -> {
-
             Timber.d("OnLoginSuccess navigationRoute to home")
         }
 

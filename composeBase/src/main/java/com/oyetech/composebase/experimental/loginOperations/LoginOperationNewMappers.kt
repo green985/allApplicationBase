@@ -31,12 +31,6 @@ fun LoginOperationVM.mapToProfileValue(userData: UserProfileProperty?) {
     // Profile complete kontrolü
     if (userData.username.isNotBlank() && userData.age.isNotBlank() && userData.gender.isNotBlank()) {
         Timber.d("LoginOperationVM mapToProfileValue user profile complete: $userData")
-
-        viewModelScope.launch(getDispatcherIo()) {
-            uiEvent.emit(LoginOperationUiEvent.OnLoginSuccess)
-            navigationUseCase.navigateTo("back")
-        }
-
         viewModelScope.launch(Dispatchers.Main) {
             loginOperationState.updateState {
                 LoginOperationUiState(
@@ -47,6 +41,12 @@ fun LoginOperationVM.mapToProfileValue(userData: UserProfileProperty?) {
                 )
             }
         }
+        viewModelScope.launch(getDispatcherIo()) {
+            uiEvent.emit(LoginOperationUiEvent.OnLoginSuccess)
+            navigationUseCase.navigateTo("back")
+        }
+
+
     } else {
         Timber.d("LoginOperationVM mapToProfileValue profile incomplete: $userData")
         viewModelScope.launch(Dispatchers.Main) {

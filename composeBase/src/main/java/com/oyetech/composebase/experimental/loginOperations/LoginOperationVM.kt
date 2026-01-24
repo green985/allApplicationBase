@@ -18,6 +18,7 @@ import com.oyetech.domain.repository.firebase.FirebaseNotificationTokenOperation
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData
 import com.oyetech.models.firebaseModels.googleAuth.isUserHasUID
 import com.oyetech.models.firebaseModels.googleAuth.toGoogleUserPostData
 import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
@@ -95,18 +96,11 @@ class LoginOperationVM(
     private fun observeGoogleUserStateFlow() {
         viewModelScope.launch(getDispatcherIo()) {
             googleLoginRepository.googleUserStateFlow.asResult().onEach {
+                Timber.d(" Google User State Flow Result: $it")
                 it.fold(
                     onSuccess = { googleUserResponseData ->
                         if (googleUserResponseData.isUserHasUID()) {
-                            questionSupabaseRepository.registerGoogleUser(
-                                googleUserResponseData.toGoogleUserPostData()
-                            ).asResult().collectLatest { result ->
-                                Timber.d(" registerGoogleUser response: $result")
-                                result.getOrNull()?.let { userProfileProperty ->
-                                    sharedOperationRepository.saveGoogleUserData(userProfileProperty)
-                                    mapToProfileValue(userProfileProperty)
-                                }
-                            }
+                            registerGoogleUserOperation(googleUserResponseData)
                         } else if (googleUserResponseData.errorException != null) {
                             loginOperationState.value = LoginOperationUiState(
                                 isError = true,
@@ -123,6 +117,18 @@ class LoginOperationVM(
                     }
                 )
             }.collect()
+        }
+    }
+
+    private suspend fun registerGoogleUserOperation(googleUserResponseData: GoogleUserResponseData) {
+        questionSupabaseRepository.registerGoogleUser(
+            googleUserResponseData.toGoogleUserPostData()
+        ).asResult().collectLatest { result ->
+            Timber.d(" registerGoogleUser response: $result")
+            result.getOrNull()?.let { userProfileProperty ->
+                sharedOperationRepository.saveGoogleUserData(userProfileProperty)
+                mapToProfileValue(userProfileProperty)
+            }
         }
     }
 
@@ -244,7 +250,7 @@ class LoginOperationVM(
             copy(isLoading = true)
         }
         viewModelScope.launch(getDispatcherIo()) {
-            val userData = googleLoginRepository.googleUserDataStateFlow.value
+            val userData = googleLoginRepository.googleUserStateFlow.value
             if (userData == null) {
                 Timber.d("onSubmitOperation: userData null")
                 loginOperationState.updateState {
@@ -260,19 +266,27 @@ class LoginOperationVM(
             val userProfileProperty =
                 UserProfileProperty(
                     token = userData.token,
-                    userId = userData.userId,
+                    userId = userData.uid,
                     username = loginOperationState.value.displayName,
                     age = loginOperationState.value.age,
                     gender = loginOperationState.value.gender,
-                    biography = userData.biography,
-                    isAnonymous = userData.isAnonymous,
-                    notificationToken = userData.notificationToken,
                 )
 
             questionSupabaseRepository.updateUser(userProfileProperty).asResult().collectLatest {
                 Timber.d("updateUser response: $it")
                 it.fold(
                     onSuccess = { updatedUser ->
+                        loginOperationState.updateState {
+                            copy(
+                                isLoading = false,
+                                isError = false,
+                                errorMessage = "",
+                                displayName = updatedUser.displayName,
+                                age = updatedUser.age,
+                                gender = updatedUser.gender,
+
+                                )
+                        }
                         sharedOperationRepository.saveGoogleUserData(updatedUser)
                         uiEvent.emit(LoginOperationUiEvent.OnLoginSuccess)
                         navigationUseCase.navigateTo("back")

@@ -6,6 +6,7 @@ import com.oyetech.remote.questionRemote.QuestionSupabaseApi
 import com.oyetech.remote.questionRemote.QuestionSupabaseDataSource
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -16,7 +17,7 @@ object QuestionSupabaseRemote {
     const val QUESTION_SUPABASE_BASE_URL = "https://uduwhuvgdcacvdhzheyi.supabase.co/functions/"
 
     fun createQuestionSupabaseRemoteModule(baseUrl: String = QUESTION_SUPABASE_BASE_URL) = module {
-        single { AuthInterceptor(get()) }
+        singleOf(::AuthInterceptor)
 
         single {
             Timber.d("Providing QuestionSupabaseRemote OkHttpClient")

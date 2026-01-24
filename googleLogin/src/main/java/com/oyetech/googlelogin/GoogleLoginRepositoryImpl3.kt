@@ -115,10 +115,6 @@ class GoogleLoginRepositoryImpl3(
         }
     }
 
-    override fun autoLoginOperation() {
-        userAutoLoginStateFlow.value = true
-    }
-
     override fun autoLoginOperation2() {
         val savedUserData = sharedOperationRepository.getGoogleUserData()
         if (savedUserData != null) {

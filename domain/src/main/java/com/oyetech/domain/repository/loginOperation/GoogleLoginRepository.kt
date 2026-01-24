@@ -19,7 +19,6 @@ interface GoogleLoginRepository {
 
     suspend fun signInWithGoogle()
 
-    fun autoLoginOperation()
     fun autoLoginOperation2()
     fun removeUser(uid: String)
     fun getUserUid(): String

@@ -24,7 +24,7 @@ fun GoogleUserResponseData.toGoogleUserPostData(): GoogleUserPostData {
 @Keep
 data class GoogleUserResponseData(
     val uid: String = "",
-    val token: String? = "",
+    val token: String = "",
     @get:Exclude
     val errorException: Exception? = null,
 ) {
