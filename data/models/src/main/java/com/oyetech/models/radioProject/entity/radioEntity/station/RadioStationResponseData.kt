@@ -19,7 +19,7 @@ import kotlinx.parcelize.Parcelize
 data class RadioStationResponseData(
     // @PrimaryKey(autoGenerate = true) var rowId: Long = 0,
 
-    @Json(name = "clicktimestamp")
+    @param:Json(name = "clicktimestamp")
     var clicktimestamp: String = "",
     @Json(name = "clicktimestamp_iso8601")
     var clicktimestampIso8601: String = "",

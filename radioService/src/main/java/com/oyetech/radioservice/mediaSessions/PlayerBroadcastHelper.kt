@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.media.AudioManager
 import com.oyetech.radioservice.broadcasts.BecomingNoisyReceiver
 import com.oyetech.radioservice.broadcasts.HeadsetConnectionReceiver
+import com.oyetech.tools.ext.doInTryCatchWithoutStack
 
 open class PlayerBroadcastHelper(private var service: Service) {
 
@@ -20,10 +21,10 @@ open class PlayerBroadcastHelper(private var service: Service) {
     }
 
     fun unRegisterAllBroadcast() {
-        com.oyetech.tools.ext.doInTryCatchWithoutStack {
+        doInTryCatchWithoutStack {
             unRegisterHeadsetConnectionBroadCast()
         }
-        com.oyetech.tools.ext.doInTryCatchWithoutStack {
+        doInTryCatchWithoutStack {
             unRegisterBecomingNoisyBroadCastReceiver()
         }
     }
