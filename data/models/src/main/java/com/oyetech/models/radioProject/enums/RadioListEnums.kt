@@ -7,5 +7,5 @@ Created by Erdi Özbek
  **/
 enum class RadioListEnums {
 
-    Idle, Local, History, Favorites, Last_Click, Last_Change, Top_Voted, Top_Click, Languages, Country, Tag, Search, Quotes
+    Idle, Local, History, Favorites, Last_Click, Last_Change, Top_Voted, Top_Click, Languages, Country, Tag, Search
 }

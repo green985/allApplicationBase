@@ -31,8 +31,8 @@ android {
         minSdk = Versions.minSdk
         targetSdk = Versions.targetSdk
 
-        versionCode = QuoteReleaseProperty.versionCode
-        versionName = QuoteReleaseProperty.versionName
+        versionCode = libs.versions.versionCode.get().toInt()
+        versionName = libs.versions.versionName.get()
     }
 
     buildFeatures {

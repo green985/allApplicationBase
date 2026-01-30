@@ -3,7 +3,7 @@ package com.oyetech.remote.firebaseCloudRemote
 import android.content.Context
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.oyetech.models.utils.const.HelperConstant
-import com.oyetech.remote.di.isDebug
+import com.oyetech.tools.contextHelper.isDebug
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

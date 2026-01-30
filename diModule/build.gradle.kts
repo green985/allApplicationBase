@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.oyetech.dimodule"
-    compileSdk = Versions.compileSdk
+    compileSdk = libs.versions.compile.sdk.get().toInt()
 }
 
 

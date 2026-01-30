@@ -14,10 +14,12 @@ plugins {
 }
 ext.getArtifactNameRadio = {
     defaultConfig ->
-        def project = "quoteApplication"
-        def SEP = "_"
+        def project =
+        \ "quoteApplication\"
+        def SEP =
+        \ "_\"
         def version = defaultConfig.versionName
-        version = version.replace(".", "_")
+        version = version.replace(\ ".\", \"_\")
 
         def date = new Date()
         def formattedDate = date.format('dd-MM-yyyy')
@@ -35,10 +37,10 @@ android {
     defaultConfig {
         minSdkVersion Versions.minSdk
         targetSdkVersion Versions.targetSdk
-        versionCode QuoteReleaseProperty.versionCode
-        versionName QuoteReleaseProperty.versionName
+        versionCode libs.versions.versionCode.get().toInteger()
+        versionName libs.versions.versionName.get()
     }
-    setProperty("archivesBaseName", getArtifactNameRadio(defaultConfig))
+    setProperty(\ "archivesBaseName\", getArtifactNameRadio(defaultConfig))
 
     buildFeatures {
         buildConfig = true
@@ -96,10 +98,10 @@ dependencies {
 ktlint {
     android.set(true)
 
-    outputColorName.set("RED")
+    outputColorName.set(\ "RED\")
 
     filter {
-        exclude("**/generated/**")
-        include("**/kotlin/**")
+        exclude(\ "**/generated/**\")
+                include(\ "**/kotlin/**\")
     }
 }

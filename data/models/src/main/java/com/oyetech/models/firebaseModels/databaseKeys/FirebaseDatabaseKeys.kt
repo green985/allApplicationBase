@@ -11,9 +11,7 @@ object FirebaseDatabaseKeys {
     const val lastMessageId: String = "lastMessageId"
     const val userList: String = "userList"
     const val generalUserList: String = "generalUserList"
-    const val adviceQuoteCollection: String = "adviceQuoteCollection"
     const val languageTable: String = "languageTable"
-    const val quotesNoTagCollection: String = "quotesNoTagCollection"
     const val feedbackCollection = "feedbackCollection"
     const val Radio_Playing_Time_Collection = "Radio_Playing_Time_Collection"
 

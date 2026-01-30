@@ -18,9 +18,6 @@ object GeneralSettings {
         return true
     }
 
-    fun isAddQuoteSectionEnable(): Boolean {
-        return false
-    }
 
     fun isRealTimeOperationEnable(): Boolean {
         return false

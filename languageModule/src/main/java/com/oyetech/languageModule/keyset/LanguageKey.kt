@@ -59,8 +59,6 @@ object LanguageKey {
         set(value) {}
         get() =
             LocalLanguageHelper.getStringWithKey("contactWithUsSentSuccessfully")
-    var quoteSentSuccessfully set(value) {} get() = LocalLanguageHelper.getStringWithKey("Quote sent successfully")
-    var adviceQuote set(value) {} get() = LocalLanguageHelper.getStringWithKey("adviceQuote")
     var commentLoginButtonText set(value) {} get() = LocalLanguageHelper.getStringWithKey("commentLoginButtonText")
     var usernameInfoText set(value) {} get() = LocalLanguageHelper.getStringWithKey("usernameInfoText")
     var deleteAccountSuccess set(value) {} get() = LocalLanguageHelper.getStringWithKey("deleteAccountSuccess")
@@ -76,7 +74,6 @@ object LanguageKey {
     var commentCannotBeTooLong set(value) {} get() = LocalLanguageHelper.getStringWithKey("commentCannotBeTooLong")
     var commentCannotBeTooShort set(value) {} get() = LocalLanguageHelper.getStringWithKey("commentCannotBeTooShort")
     var commentCannotBeEmpty set(value) {} get() = LocalLanguageHelper.getStringWithKey("commentCannotBeEmpty")
-    var quotes set(value) {} get() = LocalLanguageHelper.getStringWithKey("quotes")
     var usernameIsEmpty set(value) {} get() = LocalLanguageHelper.getStringWithKey("usernameIsEmpty")
     var createUserErrorMessage set(value) {} get() = LocalLanguageHelper.getStringWithKey("createUserErrorMessage")
     var accountDeleted set(value) {} get() = LocalLanguageHelper.getStringWithKey("accountDeleted")

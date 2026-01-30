@@ -1,4 +1,6 @@
 [versions]
+versionCode = "6"
+versionName = "1.0.0"
 compile-sdk = "36"
 kotlin = "2.2.20"
 agp = "8.7.0"
@@ -38,8 +40,10 @@ gson = "2.11.0"
 moshi = "1.15.0"
 room = "2.8.4"
 firebase-firestore = "25.1.4"
+annotation-jvm = "1.9.1"
 
 [libraries]
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 moshi = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
 moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshi" }
@@ -83,6 +87,7 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junit-version" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material-version" }
+androidx-annotation-jvm = { group = "androidx.annotation", name = "annotation-jvm", version.ref = "annotation-jvm" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "agp" }

@@ -8,7 +8,6 @@ import com.oyetech.models.utils.moshi.deserializeHashMap
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
 import java.util.Locale
-import kotlin.system.measureTimeMillis
 
 /**
 Created by Erdi Özbek
@@ -20,10 +19,6 @@ class LocalLanguageHelper(private val context: Context) {
 
     init {
         Timber.d("LocalLanguageHelper init")
-        val timeeee = measureTimeMillis {
-            readAndInitLanguageHash("wallpaper_language_en.json")
-        }
-        Timber.d("LocalLanguageHelper init time: $timeeee")
     }
 
     companion object {
