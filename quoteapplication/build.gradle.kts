@@ -1,10 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
-import jdk.tools.jlink.resources.plugins
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -25,20 +18,14 @@ plugins {
     alias(libs.plugins.crashlytics)
 }
 
-private fun artifactName(versionName: String, versionCode: Int): String {
-    val date = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date())
-    val versionSafe = versionName.replace(".", "_")
-    val project = "quoteApplication"
-    return "${project}_${versionSafe}_${versionCode}_$date"
-}
 
 android {
-    namespace = "com.oyetech.quoteApplication"
+    namespace = "com.oyetech.quoteapplication"
 
-    compileSdk = libs.versions.compileSdk.get().toInt()
+    compileSdk = libs.versions.compile.sdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.oyetech.quoteApplication"
+        applicationId = "com.oyetech.quoteapplication"
 
         // Projede buildSrc/konstantlar varsa onları korudum:
         minSdk = Versions.minSdk
@@ -46,8 +33,6 @@ android {
 
         versionCode = QuoteReleaseProperty.versionCode
         versionName = QuoteReleaseProperty.versionName
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildFeatures {
@@ -125,30 +110,6 @@ android {
                 "proguard-rules.pro"
             )
         }
-    }
-
-    // APK adlandırma: modern varyant API
-    androidComponents {
-        onVariants(selector().all()) { variant ->
-            val vName = variant.versionName.orNull ?: "0.0.0"
-            val vCode = variant.versionCode.orNull ?: 1
-            val name = artifactName(vName, vCode)
-
-            variant.outputs.forEach { output ->
-                // AGP 8.x: outputFileName property Android Gradle Plugin internal API olabilir.
-                // Çalışıyorsa kullan, çalışmazsa bu blok kaldırılır ve CI tarafında artifact rename yapılır.
-                output.outputFileName.set("$name.apk")
-            }
-        }
-    }
-
-    // Derleme hedefleri
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
     }
 }
 
