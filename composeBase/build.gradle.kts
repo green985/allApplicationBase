@@ -50,6 +50,9 @@ dependencies {
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.timber)
+    debugImplementation(libs.androidx.ui.tooling)
+
+
 
     implementation(project(":subImpl:tools"))
     implementation(project(Modules.domain))
@@ -57,5 +60,4 @@ dependencies {
     implementation(project(Modules.model))
     implementation(project(Modules.radioService))
     implementation(project(Modules.languageModule))
-    debugImplementation(libs.androidx.ui.tooling)
 }

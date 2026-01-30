@@ -33,7 +33,6 @@ dependencies {
     api(Libraries.koin)
     implementation(Libraries.koinCompose)
     implementation(project.dependencies.platform("io.insert-koin:koin-bom:${Versions.koin}"))
-    implementation("io.insert-koin:koin-core")
     implementation("io.insert-koin:koin-androidx-compose")
     implementation("io.insert-koin:koin-androidx-compose-navigation")
 

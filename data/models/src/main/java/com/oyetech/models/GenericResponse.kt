@@ -1,4 +1,4 @@
-package com.oyetech.models.entity
+package com.oyetech.models
 
 import androidx.annotation.Keep
 import com.squareup.moshi.Json

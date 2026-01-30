@@ -1,6 +1,6 @@
 package com.oyetech.remote.helper
 
-import com.oyetech.models.entity.GenericResponse
+import com.oyetech.models.GenericResponse
 import com.oyetech.models.errors.ErrorMessage.throwError
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapMerge

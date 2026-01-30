@@ -1,6 +1,6 @@
 package com.oyetech.remote.wallpaperRemote.services
 
-import com.oyetech.models.entity.GenericResponse
+import com.oyetech.models.GenericResponse
 import com.oyetech.models.entity.bibleModels.BiblePropertyResponseData
 import com.oyetech.models.entity.bibleProperties.BibleBookPropertyResponseData
 import com.oyetech.models.entity.bibleProperties.BibleChapterDetailResponseData
