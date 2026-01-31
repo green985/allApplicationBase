@@ -18,7 +18,7 @@ interface RadioHistoryDao : BaseDao<RadioStationResponseData> {
     fun getHistoryRadioModelListFlow(asd: String = ""): Flow<List<RadioStationResponseData>>
 
     @Query("SELECT * FROM radioDataModel " + "ORDER BY radioName ")
-    fun getRadioHistoryList(): List<RadioStationResponseData>?
+    fun getRadioHistoryList(): List<RadioStationResponseData>
 
     @Query("delete FROM radioDataModel " + "WHERE stationuuid in (:idList)")
     fun deleteHistoryList(idList: List<String>): Int

@@ -4,7 +4,6 @@ import android.os.Parcelable
 import androidx.annotation.Keep
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
-import com.oyetech.models.BR
 import com.oyetech.models.utils.moshi.serialize
 import com.oyetech.models.utils.states.FileOperationState
 import com.squareup.moshi.Json
@@ -52,7 +51,6 @@ data class ImageMessageResponseData(
             } else {
                 _progressStatus = value
             }
-            notifyPropertyChanged(BR.progressStatus)
         }
 }
 

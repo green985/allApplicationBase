@@ -19,9 +19,7 @@ Created by Erdi Özbek
 -17:00-
  **/
 
-@Parcelize
 @Keep
-@JsonClass(generateAdapter = true)
 data class FirebaseMessageConversationData(
     var conversationId: String = "",
     var participantList: List<FirebaseParticipantData> = emptyList(),
@@ -35,7 +33,7 @@ data class FirebaseMessageConversationData(
     @Ignore
     var lastMessage: FirebaseMessagingLocalData? = null,
 
-    ) : Parcelable
+    )
 
 @Keep
 @JsonClass(generateAdapter = true)
@@ -54,10 +52,8 @@ data class FirebaseMessagingResponseData(
     var timestamp: Any? = null,
 )
 
-@Parcelize
 @Keep
 @Entity(tableName = "messages")
-@JsonClass(generateAdapter = true)
 data class FirebaseMessagingLocalData(
     @PrimaryKey
     var messageId: String = "",
@@ -68,9 +64,7 @@ data class FirebaseMessagingLocalData(
     var status: MessageStatus = IDLE,
     var createdAt: Long? = System.currentTimeMillis(),
 
-//    var mediaType: String? = null,
-//    var mediaUrl: String? = null,
-) : Parcelable
+    )
 
 @Parcelize
 @Keep

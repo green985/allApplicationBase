@@ -1,5 +1,6 @@
 package com.oyetech.local.di
 
+import android.content.Context
 import com.oyetech.local.database.RadioAllListDatabase
 import com.oyetech.local.database.RadioDatabase
 import com.oyetech.local.database.RadioFavListDatabase
@@ -8,7 +9,6 @@ import com.oyetech.local.database.RadioLastListDatabase
 import com.oyetech.local.database.contentDatabase.ContentLikeDatabase
 import com.oyetech.local.database.messaging.MessagesAllDatabase
 import com.oyetech.local.database.messaging.MessagesSendingDatabase
-import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
@@ -30,32 +30,32 @@ object RadioLocalModuleDi {
     private const val CONTENT_OPERATION_DATABASE = "CONTENT_OPERATION_DATABASE"
 
     val localModule = module {
-        single(named(DATABASE)) { RadioDatabase.buildDatabase(androidContext()) }
+        single(named(DATABASE)) { RadioDatabase.buildDatabase(get<Context>()) }
         factory { (get(named(DATABASE)) as RadioDatabase).radioModelDao() }
         // factory { (get(named(DATABASE)) as RadioDatabase).messageConversationDao() }
 
-        single(named(RADIO_HISTORY_DATABASE)) { RadioHistoryDatabase.buildDatabase(androidContext()) }
+        single(named(RADIO_HISTORY_DATABASE)) { RadioHistoryDatabase.buildDatabase(get<Context>()) }
         factory { (get(named(RADIO_HISTORY_DATABASE)) as RadioHistoryDatabase).radioModelDao() }
 
-        single(named(RADIO_LIST_DATABASE)) { RadioLastListDatabase.buildDatabase(androidContext()) }
+        single(named(RADIO_LIST_DATABASE)) { RadioLastListDatabase.buildDatabase(get<Context>()) }
         factory { (get(named(RADIO_LIST_DATABASE)) as RadioLastListDatabase).radioLastListDao() }
 
-        single(named(RADIO_FAV_LIST_DATABASE)) { RadioFavListDatabase.buildDatabase(androidContext()) }
+        single(named(RADIO_FAV_LIST_DATABASE)) { RadioFavListDatabase.buildDatabase(get<Context>()) }
         factory { (get(named(RADIO_FAV_LIST_DATABASE)) as RadioFavListDatabase).radioModelDao() }
 
-        single(named(RADIO_ALL_LIST_DATABASE)) { RadioAllListDatabase.buildDatabase(androidContext()) }
+        single(named(RADIO_ALL_LIST_DATABASE)) { RadioAllListDatabase.buildDatabase(get<Context>()) }
         factory { (get(named(RADIO_ALL_LIST_DATABASE)) as RadioAllListDatabase).radioModelDao() }
 
         single(named(MESSAGE_SENDING_DATABASE)) {
             MessagesSendingDatabase.buildDatabase(
-                androidContext()
+                get<Context>()
             )
         }
         factory { (get(named(MESSAGE_SENDING_DATABASE)) as MessagesSendingDatabase).radioModelDao() }
 
         single(named(FIREBASE_MESSAGE_DATABASE)) {
             MessagesAllDatabase.buildDatabase(
-                androidContext()
+                get<Context>()
             )
         }
         factory { (get(named(FIREBASE_MESSAGE_DATABASE)) as MessagesAllDatabase).modelDao() }
@@ -63,7 +63,7 @@ object RadioLocalModuleDi {
 
         single(named(CONTENT_OPERATION_DATABASE)) {
             ContentLikeDatabase.buildDatabase(
-                androidContext()
+                get<Context>()
             )
         }
         factory { (get(named(CONTENT_OPERATION_DATABASE)) as ContentLikeDatabase).modelDao() }

@@ -3,7 +3,6 @@ package com.oyetech.models.entity.general
 import android.os.Parcelable
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
-import com.oyetech.models.BR
 import com.squareup.moshi.Json
 import kotlinx.parcelize.Parcelize
 
@@ -27,6 +26,5 @@ open class IsOnlineBaseData(
         set(value) {
             _isOnline = value
 
-            notifyPropertyChanged(BR.onlineView)
         }
 }
