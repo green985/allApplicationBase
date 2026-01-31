@@ -83,29 +83,8 @@ object KoinHelperInits {
 
 
         single { SharedHelper(get(), get()) }
-//        single { VerseNoteSpanHelper(com.oyetech.materialViews.R.drawable.ic_verse_note_img) }
-//        single<SharedHelperRepository> { SharedPrefRepositoryImp(get()) }
-//        singleOf(::ClipboardOperationHelper)
-//        singleOf(::TokenAuthenticator)
-//        singleOf(::RefreshTokenHelper)
-//        singleOf(::ForceUpdateHelper)
-        // singleOf(::ChuckInterceptor)
-        // singleOf(::SignalRHelper)
-
         single<SharedOperationRepository> { SharedOperationRepositoryImp(get()) }
 
-//        single { HeaderInterceptor(get(), get()) }
-//        singleOf(::AuthOperationBodyHelper)
-//        singleOf(::UnreadMessageCalculatorHelper)
-//        singleOf(::OnlineOfflineStatusHelper)
-//        singleOf(::LanguageHelper)
-        /*
-        single<AnalyticsRepository> { AnalyticsRepositoryImp(get()) }
-        single<GoogleSubscriptionOperationRepository> { GoogleSubscriptionOperationImp(get(), get(), get()) }
-
-
-
-         */
         singleOf(::LanguageOperationHelper)
     }
 
