@@ -35,7 +35,7 @@ abstract class ContentLikeDatabase : RoomDatabase() {
                 ContentLikeDatabase::class.java,
                 "ContentLike.db"
             )
-                .fallbackToDestructiveMigration()
+                .fallbackToDestructiveMigration(false)
                 .build()
             return database
         }

@@ -36,7 +36,7 @@ abstract class RadioLastListDatabase : RoomDatabase() {
                 RadioLastListDatabase::class.java,
                 "NacAppLast.db"
             )
-                .fallbackToDestructiveMigration()
+                .fallbackToDestructiveMigration(false)
                 .build()
             return radioDatabaseeee
         }

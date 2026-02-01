@@ -16,10 +16,10 @@ Created by Erdi Özbek
 interface RadioFavListDao : BaseDao<RadioStationFavModel> {
 
     @Query("SELECT * FROM radioFavModel " + " ")
-    fun getRadioFavList(): List<RadioStationFavModel>?
+    fun getRadioFavList(): List<RadioStationFavModel>
 
     @Query("SELECT * FROM radioFavModel " + " ")
-    fun getRadioFavListFlow(): Flow<List<RadioStationFavModel>>?
+    fun getRadioFavListFlow(): Flow<List<RadioStationFavModel>>
 
     @Query("delete FROM radioFavModel " + "WHERE stationuuid in (:idList)")
     fun deleteLastList(idList: List<String>): Int

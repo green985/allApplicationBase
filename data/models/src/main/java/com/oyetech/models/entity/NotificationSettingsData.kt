@@ -16,6 +16,6 @@ Created by Erdi Özbek
 @JsonClass(generateAdapter = true)
 @Parcelize
 data class NotificationSettingsData(
-    @Json(name = "verseOfTheDay") var verseOfTheDay: Boolean = true,
-    @Json(name = "prayerOfTheDay") var prayerOfTheDay: Boolean = true,
+    @param:Json(name = "verseOfTheDay") var verseOfTheDay: Boolean = true,
+    @param:Json(name = "prayerOfTheDay") var prayerOfTheDay: Boolean = true,
 ) : Parcelable

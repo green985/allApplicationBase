@@ -30,7 +30,7 @@ abstract class RadioDatabase : RoomDatabase() {
                 RadioDatabase::class.java,
                 "NacAppRadio.db"
             )
-                .fallbackToDestructiveMigration()
+                .fallbackToDestructiveMigration(false)
                 .build()
             return radioDatabaseee
         }

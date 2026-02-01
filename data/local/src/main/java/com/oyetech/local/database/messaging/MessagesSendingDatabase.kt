@@ -38,7 +38,7 @@ abstract class MessagesSendingDatabase : RoomDatabase() {
                 MessagesSendingDatabase::class.java,
                 "MessagesSending.db"
             )
-                .fallbackToDestructiveMigration()
+                .fallbackToDestructiveMigration(false)
                 .build()
             return databasee
         }

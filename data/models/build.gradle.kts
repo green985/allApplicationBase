@@ -37,5 +37,5 @@ dependencies {
     implementation(libs.room.runtime)
 
     // Firebase
-    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.firestore)
 }

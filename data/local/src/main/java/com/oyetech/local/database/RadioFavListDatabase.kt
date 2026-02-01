@@ -36,7 +36,7 @@ abstract class RadioFavListDatabase : RoomDatabase() {
                 RadioFavListDatabase::class.java,
                 "NacAppFavList.db"
             )
-                .fallbackToDestructiveMigration()
+                .fallbackToDestructiveMigration(false)
                 .build()
             return radioDatabaseee
         }
