@@ -14,7 +14,7 @@ android {
 dependencies {
     implementation(project(Modules.secureKeys))
     implementation(project(Modules.domain))
-    implementation(project(Modules.model))
+    implementation(project(Modules.models))
     implementation(project(Modules.tools))
 
     // KOTLIN

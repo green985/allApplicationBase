@@ -6,7 +6,6 @@ import android.media.AudioManager.OnAudioFocusChangeListener
 import com.oyetech.domain.useCases.contentOperations.RadioOperationUseCase
 import com.oyetech.models.radioProject.radioModels.PauseReason.FOCUS_LOSS
 import com.oyetech.models.radioProject.radioModels.PauseReason.FOCUS_LOSS_TRANSIENT
-import com.oyetech.radioservice.BuildConfig
 import com.oyetech.radioservice.serviceUtils.ServiceConst
 import com.oyetech.tools.contextHelper.isDebug
 import org.koin.java.KoinJavaComponent
@@ -64,7 +63,7 @@ class AudioFocusChangeListener : OnAudioFocusChangeListener {
                 }
 
                 AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
-                    if (BuildConfig.DEBUG) Timber.d("audio focus loss transient can duck")
+                    if (context.isDebug()) Timber.d("audio focus loss transient can duck")
                     radioOperationUseCase.setVolume(ServiceConst.DUCK_VOLUME)
                 }
             }

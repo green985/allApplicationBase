@@ -71,7 +71,7 @@ private fun AdminApproveQuestionToolbar(title: String) {
     })
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun AdminApproveQuestionContent(
     uiState: AdminApproveQuestionUiState,

@@ -16,7 +16,6 @@ import android.content.pm.PackageManager
 import android.content.pm.PackageManager.NameNotFoundException
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Build
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.VibrationEffect
@@ -25,12 +24,18 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import com.oyetech.models.utils.const.ActivityNameConst
 import com.oyetech.models.utils.const.HelperConstant
+import com.oyetech.tools.ext.doInTryCatch
 
 /**
 Created by Erdi Özbek
 -16.07.2022-
 -17:30-
  **/
+
+fun Context.isDebug(): Boolean {
+    return this.applicationInfo.flags and
+            ApplicationInfo.FLAG_DEBUGGABLE !== 0
+}
 
 fun Context.openStoreUrl() {
     val appPackageName =
@@ -62,7 +67,7 @@ fun getIntentFlagUpdateWithInMutable(): Int {
 }
 
 fun Context.finishApp() {
-    com.oyetech.tools.ext.doInTryCatch {
+    doInTryCatch {
         (this as Activity).finishAffinity()
         System.exit(0)
     }
@@ -164,7 +169,7 @@ fun Context.copyToClipboard(text: String) {
 }
 
 fun requestNotificationPermission(activity: Activity, requestCode: Int = 1001) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.POST_NOTIFICATIONS)
             != PackageManager.PERMISSION_GRANTED
         ) {

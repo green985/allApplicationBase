@@ -63,7 +63,7 @@ private fun QuestionPagerToolbar(title: String) {
     })
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun QuestionPagerScreen(
     contentPadding: PaddingValues,
