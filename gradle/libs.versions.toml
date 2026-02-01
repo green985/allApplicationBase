@@ -22,6 +22,8 @@ paging = "3.3.5"
 glide-compose = "1.0.0-beta01"
 kotlinx-collections-immutable = "0.3.8"
 kotlinx-serialization-json = "1.6.3"
+kotlinx-coroutines = "1.6.3"
+exoplayer = "2.18.1"
 timber = "4.7.1"
 ksp = "2.2.20-2.0.3"
 ktlint = "10.2.1"
@@ -112,6 +114,9 @@ koin-androidx-compose-navigation = { module = "io.insert-koin:koin-androidx-comp
 glide-compose = { module = "com.github.bumptech.glide:compose", version.ref = "glide-compose" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinx-collections-immutable" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
+exoplayer = { module = "com.google.android.exoplayer:exoplayer", version.ref = "exoplayer" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 androides-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "ui-tooling" }

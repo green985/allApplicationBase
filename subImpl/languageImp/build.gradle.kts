@@ -9,9 +9,7 @@ android {
 }
 
 dependencies {
-
     implementation(AndroidLibraries.coreKtx)
-
     implementation(project(Modules.domain))
     implementation(project(Modules.models))
     implementation(project(Modules.languageModule))
