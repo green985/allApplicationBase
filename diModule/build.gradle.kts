@@ -1,12 +1,29 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    id("com.google.devtools.ksp")
+    id("com.google.devtools.ksp") version "2.2.20-2.0.3"
 }
 
 android {
     namespace = "com.oyetech.dimodule"
     compileSdk = libs.versions.compile.sdk.get().toInt()
+
+    defaultConfig {
+        minSdk = Versions.minSdk
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
 }
 
 
@@ -26,11 +43,11 @@ dependencies {
     implementation(project(Modules.notificationModule))
 
     // Firebase Libraries
-    implementation(platform(FirebaseLibrary.firebaseBom))
-    implementation(FirebaseLibrary.performance)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.perf)
     // implementation(FirebaseLibrary.messaging)
-    implementation(FirebaseLibrary.crashlytics)
-    implementation(FirebaseLibrary.analytics)
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.analytics)
 
     implementation(project(Modules.adsModule))
     implementation(project(Modules.firebaseDB))
@@ -69,7 +86,7 @@ dependencies {
     implementation("androidx.compose.runtime:runtime:1.7.6")
 
     // Feature Modules (commented out for now)
-    // implementation(project(Modules.featureFeedList))
+    // implementation(project(Modules.featureFeedList)))
     // implementation(project(Modules.messages))
     // implementation(project(Modules.imageViewer))
     // implementation(project(Modules.userNotification))

@@ -27,7 +27,7 @@ android {
 dependencies {
 
 
-    implementation project(Modules.model)
+    implementation project(Modules.models)
     implementation project(Modules.languageModule)
     implementation project(Modules.tools)
 

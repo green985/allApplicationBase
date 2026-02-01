@@ -112,17 +112,12 @@ fun Context.getAppName(): String {
     return applicationName
 }
 
-fun Context.isDebug(): Boolean {
-    return this.applicationInfo.flags and
-            ApplicationInfo.FLAG_DEBUGGABLE !== 0
-}
-
 fun Context.getVersionName(): String {
     val context = this
     try {
-        val versionName: String? = context.packageManager
-            .getPackageInfo(context.packageName, 0).versionName
-        return versionName ?: "versionNotFound"
+        val versionName: String = context.packageManager
+            .getPackageInfo(context.packageName, 0).versionName ?: ""
+        return versionName
     } catch (e: NameNotFoundException) {
         e.printStackTrace()
         return ""

@@ -1,8 +1,12 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-parcelize'
+apply plugin: 'org.lsposed.lsparanoid'
+apply plugin: 'kotlinx-serialization'
 
 android {
-    namespace 'com.oyetech.languageModule'
+    namespace 'com.oyetech.models'
 
     compileSdkVersion Versions.compileSdk
     defaultConfig {
@@ -18,11 +22,20 @@ android {
         viewBinding true
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
 }
 
 dependencies {
-    implementation project(Modules.models)
     implementation KotlinLibraries.kotlin
+
+
     implementation Libraries.timber
 
     api Libraries.koin
@@ -32,4 +45,5 @@ dependencies {
     implementation Libraries.moshi
     implementation Libraries.moshiKotlin
     implementation Libraries.roomRunTime
+    implementation libs.firebase.firestore
 }

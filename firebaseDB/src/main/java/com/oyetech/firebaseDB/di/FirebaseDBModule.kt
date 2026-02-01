@@ -81,10 +81,14 @@ object FirebaseDBModule {
         single<FirebaseLanguageOperationRepository> { FirebaseLanguageOperationRepositoryImp(get()) }
         single<FirebaseMessagingRepository> {
             FirebaseMessagingRepositoryImpl(
-                get(),
-                get(),
-                get(),
-                get(), get(), get(), get(), get()
+                firestore = get(),
+                userRepository = get(),
+                messagesSendingOperationRepository = get(),
+                messagesAllOperationRepository = get(),
+                dispatcher = get(),
+                activityProviderUseCase = get(),
+                firebaseRealtimeHelperRepository = get(),
+                firebaseCloudOperationRepository = get()
             )
         }
 

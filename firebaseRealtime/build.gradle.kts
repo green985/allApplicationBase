@@ -5,25 +5,21 @@ plugins {
 
 android {
     namespace = "com.oyetech.firebaserealtime"
-    compileSdk = Versions.compileSdk
+    compileSdk = libs.versions.compile.sdk.get().toInt()
 
-    defaultConfig {
-        minSdk = Versions.minSdk
 
-        consumerProguardFiles("consumer-rules.pro")
-    }
 }
 
 dependencies {
     implementation(AndroidLibraries.coreKtx)
 
     implementation(project(Modules.domain))
-    implementation(project(Modules.model))
+    implementation(project(Modules.models))
     implementation(project(Modules.languageModule))
     implementation(project(Modules.tools))
 
 
-    implementation(platform(FirebaseLibrary.firebaseBom))
+    implementation(platform(libs.firebase.bom))
     implementation("com.google.firebase:firebase-database")
 
     implementation(Libraries.timber)

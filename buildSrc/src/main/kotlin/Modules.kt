@@ -11,7 +11,7 @@ object Modules {
 
     const val local = ":data:local"
     const val remote = ":data:remote"
-    const val model = ":data:models"
+    const val models = ":data:models"
     const val repository = ":data:repository"
 
     const val domain = ":domain"

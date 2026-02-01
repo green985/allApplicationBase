@@ -5,13 +5,7 @@ plugins {
 
 android {
     namespace = "com.oyetech.languageimp"
-    compileSdk = Versions.compileSdk
-
-    defaultConfig {
-        minSdk = Versions.minSdk
-
-        consumerProguardFiles("consumer-rules.pro")
-    }
+    compileSdk = libs.versions.compile.sdk.get().toInt()
 }
 
 dependencies {
@@ -20,7 +14,7 @@ dependencies {
 
 
     implementation(project(Modules.domain))
-    implementation(project(Modules.model))
+    implementation(project(Modules.models))
     implementation(project(Modules.languageModule))
     implementation(project(Modules.tools))
 
