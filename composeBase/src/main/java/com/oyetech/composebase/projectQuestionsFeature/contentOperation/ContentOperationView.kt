@@ -25,7 +25,7 @@ Created by Erdi Özbek
 
 @Suppress("FunctionNaming")
 @Composable
-fun QuoteContentOperationView(
+fun ContentOperationView(
     modifier: Modifier = Modifier,
     contentOperationUiState: ContentOperationUiState,
     contentOperationEvent: (ContentOperationEvent) -> Unit,
@@ -75,8 +75,8 @@ fun QuoteContentOperationView(
 @Suppress("FunctionName", "UnusedPrivateMember")
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-private fun QuoteContentOperationPrev() {
-    QuoteContentOperationView(
+private fun ContentOperationPrev() {
+    ContentOperationView(
         contentOperationUiState = ContentOperationUiState(
             contentId = "1",
             isInitialed = false,

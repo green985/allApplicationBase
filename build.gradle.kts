@@ -24,6 +24,13 @@ detekt {
 
 
 subprojects {
+    configurations.all {
+        resolutionStrategy {
+            force("org.jetbrains.kotlin:kotlin-stdlib:2.2.20")
+            force("org.jetbrains.kotlin:kotlin-parcelize-runtime:2.2.20")
+        }
+    }
+    
     apply(plugin = "io.gitlab.arturbosch.detekt")
 
     configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {

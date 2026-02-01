@@ -6,7 +6,10 @@ import com.google.gson.GsonBuilder
 import com.oyetech.dimodule.BaseApplication
 import com.oyetech.dimodule.sharedPref.SharedHelper
 import com.oyetech.dimodule.sharedPref.SharedOperationRepositoryImp
+import com.oyetech.domain.helper.ActivityProviderUseCase
 import com.oyetech.domain.repository.SharedOperationRepository
+import com.oyetech.domain.useCases.NavigationUseCase
+import com.oyetech.domain.useCases.helpers.AppReviewOperationUseCase
 import com.oyetech.languageimp.LanguageOperationHelper
 import com.oyetech.models.utils.const.HelperConstant.DEFAULT_TIMEOUT
 import com.oyetech.models.utils.moshi.DefaultIfNullFactory
@@ -16,7 +19,6 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import java.util.concurrent.TimeUnit
@@ -44,11 +46,15 @@ object KoinHelperInits {
         }
 
         single {
-            androidContext().getSharedPreferences(
+            get<Context>().getSharedPreferences(
                 BASE_SHARED_PREF_KEY,
                 Context.MODE_PRIVATE
             )
         }
+
+        singleOf(::NavigationUseCase)
+        singleOf(::ActivityProviderUseCase)
+        singleOf(::AppReviewOperationUseCase)
 
         single {
             HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
@@ -77,29 +83,8 @@ object KoinHelperInits {
 
 
         single { SharedHelper(get(), get()) }
-//        single { VerseNoteSpanHelper(com.oyetech.materialViews.R.drawable.ic_verse_note_img) }
-//        single<SharedHelperRepository> { SharedPrefRepositoryImp(get()) }
-//        singleOf(::ClipboardOperationHelper)
-//        singleOf(::TokenAuthenticator)
-//        singleOf(::RefreshTokenHelper)
-//        singleOf(::ForceUpdateHelper)
-        // singleOf(::ChuckInterceptor)
-        // singleOf(::SignalRHelper)
-
         single<SharedOperationRepository> { SharedOperationRepositoryImp(get()) }
 
-//        single { HeaderInterceptor(get(), get()) }
-//        singleOf(::AuthOperationBodyHelper)
-//        singleOf(::UnreadMessageCalculatorHelper)
-//        singleOf(::OnlineOfflineStatusHelper)
-//        singleOf(::LanguageHelper)
-        /*
-        single<AnalyticsRepository> { AnalyticsRepositoryImp(get()) }
-        single<GoogleSubscriptionOperationRepository> { GoogleSubscriptionOperationImp(get(), get(), get()) }
-
-
-
-         */
         singleOf(::LanguageOperationHelper)
     }
 

@@ -16,14 +16,14 @@ interface MessagesSendingDao : BaseDao<FirebaseMessagingLocalData> {
     @Query("SELECT * FROM messages " + " " + "ORDER BY createdAt DESC LIMIT 1")
     fun getFirstInMessage(): Flow<FirebaseMessagingLocalData>
 
-    @Query("SELECT * FROM messages " + " ")
-    fun getMessageList(): List<FirebaseMessagingLocalData>?
+    @Query("SELECT * FROM messages")
+    fun getMessageList(): List<FirebaseMessagingLocalData>
 
     @Query("SELECT * FROM messages " + "where messageId = :messageId")
     fun getMessageWithId(messageId: String): FirebaseMessagingLocalData?
 
-    @Query("SELECT * FROM messages " + " ")
-    fun getMessageListFlow(): Flow<List<FirebaseMessagingLocalData>?>
+    @Query("SELECT * FROM messages")
+    fun getMessageListFlow(): Flow<List<FirebaseMessagingLocalData>>
 
     @Query("delete FROM messages " + "WHERE messageId in (:idList)")
     fun deleteLastList(idList: List<String>): Int

@@ -21,6 +21,7 @@ import com.oyetech.radioservice.helper.AudioFocusChangeListener
 import com.oyetech.radioservice.mediaSessions.MediaSessionHelper
 import com.oyetech.radioservice.serviceUtils.PlayerServiceUtils
 import com.oyetech.tools.contextHelper.isDebug
+import com.oyetech.tools.ext.doInTryCatch
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -268,7 +269,7 @@ abstract class PlayerServiceHelper : ScopeService() {
                     wm.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "PlayerService")
             }
             if (!wifiLock!!.isHeld) {
-                com.oyetech.tools.ext.doInTryCatch {
+                doInTryCatch {
                     wifiLock.acquire()
                 }
             } else {

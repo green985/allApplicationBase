@@ -4,7 +4,6 @@ import android.os.Parcelable
 import androidx.annotation.Keep
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
-import com.oyetech.models.BR
 import com.oyetech.models.entity.bibleModels.BibleAudioPropertyResponseData
 import com.oyetech.models.entity.contentProperties.ContentMediaTypeEnum.BIBLE
 import com.oyetech.models.entity.contentProperties.ContentMediaTypeEnum.RADIO
@@ -35,21 +34,18 @@ data class OldContentPlayerDetailsModel(
         @Bindable get() = _contentName
         set(value) {
             _contentName = value
-            notifyPropertyChanged(BR.contentName)
         }
 
     var contentTitle: String
         @Bindable get() = _contentTitle
         set(value) {
             _contentTitle = value
-            notifyPropertyChanged(BR.contentTitle)
         }
 
     var contentType: ContentMediaTypeEnum
         @Bindable get() = _contentType
         set(value) {
             _contentType = value
-            notifyPropertyChanged(BR.contentType)
         }
 
     companion object {

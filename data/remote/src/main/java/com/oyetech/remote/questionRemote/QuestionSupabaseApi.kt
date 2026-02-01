@@ -1,6 +1,6 @@
 package com.oyetech.remote.questionRemote
 
-import com.oyetech.models.entity.GenericResponse
+import com.oyetech.models.GenericResponse
 import com.oyetech.models.firebaseModels.googleAuth.GetUserWithTokenBody
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserPostData
 import com.oyetech.models.firebaseModels.userModel.UserProfileProperty

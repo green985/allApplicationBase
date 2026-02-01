@@ -6,7 +6,6 @@ import androidx.annotation.Keep
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import androidx.room.Ignore
-import com.oyetech.models.BR
 import com.oyetech.models.utils.states.TextFontEnum
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
@@ -53,20 +52,17 @@ data class BibleVerseWithTextDetailData(
         @Bindable get() = _contentFontSizeMultiplier
         set(value) {
             _contentFontSizeMultiplier = value
-            notifyPropertyChanged(BR.contentFontSizeMultiplier)
         }
 
     var contentFontStyle: TextFontEnum
         @Bindable get() = _contentFontStyle
         set(value) {
             _contentFontStyle = value
-            notifyPropertyChanged(BR.contentFontStyle)
         }
 
     var playingVerseAudio: Boolean
         @Bindable get() = _playingVerseAudio
         set(value) {
             _playingVerseAudio = value
-            notifyPropertyChanged(BR.playingVerseAudio)
         }
 }

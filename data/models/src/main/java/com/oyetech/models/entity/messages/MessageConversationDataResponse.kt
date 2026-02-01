@@ -6,7 +6,6 @@ import androidx.databinding.Bindable
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import com.oyetech.models.BR
 import com.oyetech.models.entity.feed.FeedDataResponse
 import com.oyetech.models.entity.general.IsOnlineBaseData
 import com.oyetech.models.entity.user.UserDetailDataResponse
@@ -66,7 +65,6 @@ data class MessageConversationDataResponse(
         set(value) {
             _unreadMessageCount = value
 
-            notifyPropertyChanged(BR.unreadMessageCount)
         }
 
     @Json(ignore = true)
@@ -75,7 +73,6 @@ data class MessageConversationDataResponse(
         set(value) {
             _lastMessageStatus = value
 
-            notifyPropertyChanged(BR.lastMessageStatus)
         }
 }
 

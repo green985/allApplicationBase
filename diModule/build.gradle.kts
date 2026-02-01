@@ -1,29 +1,12 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    id("com.google.devtools.ksp") version "2.2.20-2.0.3"
+    id("com.google.devtools.ksp")
 }
 
 android {
     namespace = "com.oyetech.dimodule"
-    compileSdk = Versions.compileSdk
-
-    defaultConfig {
-        minSdk = Versions.minSdk
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
+    compileSdk = libs.versions.compile.sdk.get().toInt()
 }
 
 

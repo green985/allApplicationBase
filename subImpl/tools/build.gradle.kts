@@ -5,49 +5,25 @@ plugins {
 
 android {
     namespace = "com.oyetech.tools"
-    compileSdk = Versions.compileSdk
-
-    defaultConfig {
-        minSdk = Versions.minSdk
-
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
+    compileSdk = libs.versions.compile.sdk.get().toInt()
 }
 
 dependencies {
 
-    api(Libraries.koin)
-    implementation(Libraries.koinCompose)
-    implementation(project.dependencies.platform("io.insert-koin:koin-bom:${Versions.koin}"))
-    implementation("io.insert-koin:koin-core")
-    implementation("io.insert-koin:koin-androidx-compose")
-    implementation("io.insert-koin:koin-androidx-compose-navigation")
+    // Koin dependencies, migrated to versions.toml catalog (libs)
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.androidx.compose.navigation)
 
-
+    // Local module dependency
     implementation(project(Modules.model))
-    implementation(KotlinLibraries.kotlin)
-    implementation(Libraries.timber)
 
-    api(Libraries.koin)
-
-    implementation(KotlinLibraries.kotlin)
-    implementation(Libraries.gson)
-    implementation(Libraries.moshi)
-    implementation(Libraries.moshiKotlin)
-    implementation(Libraries.roomRunTime)
-
+    // Core and utility libraries, migrated to versions.toml catalog (libs)
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.timber)
+    implementation(libs.gson)
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
+    implementation(libs.room.runtime)
 }

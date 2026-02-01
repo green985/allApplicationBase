@@ -3,8 +3,6 @@ package com.oyetech.dimodule.koins
 import com.oyetech.adshelper.di.AdsHelperModule
 import com.oyetech.composebase.di.ComposeMainModule
 import com.oyetech.composebase.projectQuestionsFeature.QuestionProjectModule
-import com.oyetech.domain.di.DomainModule
-import com.oyetech.domain.di.QuoteDomainModule
 import com.oyetech.domain.di.RadioDomainModule
 import com.oyetech.exoplayermodule.di.ExoPlayerModuleDi
 import com.oyetech.firebaseDB.di.FirebaseDBModule
@@ -14,7 +12,6 @@ import com.oyetech.googlelogin.di.GoogleSignInModule
 import com.oyetech.languageimp.LanguageImplModule
 import com.oyetech.local.di.RadioLocalModuleDi
 import com.oyetech.notificationmodule.di.FirebaseNotificationModule
-import com.oyetech.quotes.QuotesLocalModuleDi
 import com.oyetech.radiooperationmodule.di.RadioOperationModuleDi
 import com.oyetech.radioservice.di.RadioServiceModule
 import com.oyetech.remote.di.QuestionSupabaseRemote
@@ -22,11 +19,9 @@ import com.oyetech.remote.di.RadioModuleDI
 import com.oyetech.remote.di.RandomOperationModuleDI
 import com.oyetech.remote.di.dataSourceModule
 import com.oyetech.remote.firebaseCloudRemote.FirebaseCloudRemoteModule
-import com.oyetech.remote.quotesRemote.QuotesRemoteModule
 import com.oyetech.repository.di.QuestionRepositoryModule
 import com.oyetech.repository.di.RadioRepositoryDI
 import com.oyetech.repository.di.RepositoryModule
-import com.oyetech.repository.quotesImp.QuotesImpModule
 import com.oyetech.reviewer.di.GoogleAppReviewerModule
 import com.oyetech.tools.di.CommonsModule
 import org.koin.dsl.module
@@ -46,7 +41,6 @@ object AppComponent {
         CommonsModule.module,
         dataSourceModule,
         QuestionRepositoryModule.questionRepositoryModule,
-        DomainModule.wallpaperDomainModule,
 
         // Features modules
         // ImageViewerModuleDi.imageViewerModule,
@@ -69,13 +63,9 @@ object AppComponent {
         FirebaseDBModule.firebaseDBModulee,
         FirebaseNotificationModule.module,
 
-        QuotesImpModule.quoteImpModule,
-        QuotesRemoteModule.createZenQuotesRemoteModule(),
-        QuotesLocalModuleDi.localModule,
         GoogleSignInModule.googleSignInModulee,
         LanguageImplModule.languageImplModule,
         FirebaseRealtimeModule.module,
-        QuoteDomainModule.module,
 
         QuestionProjectModule.module,
         QuestionSupabaseRemote.createQuestionSupabaseRemoteModule(),

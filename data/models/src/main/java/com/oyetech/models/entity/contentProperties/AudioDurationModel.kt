@@ -4,7 +4,6 @@ import android.os.Parcelable
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import androidx.room.Ignore
-import com.oyetech.models.BR
 import com.oyetech.models.entity.messages.MessageDetailDataResponse
 import com.oyetech.models.utils.helper.TimeFunctions
 import com.oyetech.models.utils.states.AUDIO_IDLE
@@ -47,7 +46,6 @@ data class AudioDurationModel(
         set(value) {
             _currentDuration = value
             if (!isTracing) {
-                notifyPropertyChanged(BR.currentDuration)
             }
         }
 
@@ -55,14 +53,12 @@ data class AudioDurationModel(
         @Bindable get() = _totalDuration
         set(value) {
             _totalDuration = value
-            notifyPropertyChanged(BR.totalDuration)
         }
 
     var playerAudioState: Int
         @Bindable get() = _playerAudioState
         set(value) {
             _playerAudioState = value
-            notifyPropertyChanged(BR.playerAudioState)
         }
 
     fun getTotalDurationFormatString(): String {

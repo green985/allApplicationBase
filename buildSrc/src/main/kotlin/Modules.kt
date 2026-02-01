@@ -24,7 +24,6 @@ object Modules {
     const val composeBase = ":composeBase"
     const val radioService = ":radioService"
 
-    const val featureWallpaperList = ":features:wallpaperList"
     const val featureSettings = ":features:settingss"
 
     const val imageViewer = ":features:imageViewer"

@@ -52,7 +52,7 @@ object Versions {
     const val signalR = "6.0.2"
     const val lifecycle = "2.7.0"
     const val nav = "2.6.0"
-    const val room = "2.2.4"
+    const val room = "2.8.4"
     const val recyclerview = "1.2.1"
     const val coil = "1.1.1"
     const val swipeRefreshh = "1.1.0"

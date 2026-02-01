@@ -14,13 +14,13 @@ Created by Erdi Özbek
 @Dao
 interface RadioLastListDao : BaseDao<RadioStationResponseData> {
 
-    @Query("SELECT * FROM radioDataModel " + " ")
-    fun getRadioLastList(): List<RadioStationResponseData>?
+    @Query("SELECT * FROM radioDataModel")
+    fun getRadioLastList(): List<RadioStationResponseData>
 
     @Query("delete FROM radioDataModel " + "WHERE stationuuid in (:idList)")
     fun deleteLastList(idList: List<String>): Int
 
-    @Query("delete FROM radioDataModel ")
+    @Query("delete FROM radioDataModel")
     fun deleteAllList()
 
     fun clearLastListTable() {

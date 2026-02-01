@@ -8,8 +8,6 @@ import com.oyetech.domain.repository.firebase.FirebaseLanguageOperationRepositor
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuestionTagRepository
-import com.oyetech.domain.repository.firebase.FirebaseQuotesDebugOperationRepository
-import com.oyetech.domain.repository.firebase.FirebaseQuotesOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseStorageRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserListOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserPropertyRepository
@@ -25,7 +23,6 @@ import com.oyetech.firebaseDB.firebaseDB.language.FirebaseLanguageOperationRepos
 import com.oyetech.firebaseDB.firebaseDB.messaging.FirebaseMessagingRepositoryImpl
 import com.oyetech.firebaseDB.firebaseDB.question.FirebaseQuestionOperationRepositoryImpl
 import com.oyetech.firebaseDB.firebaseDB.question.FirebaseQuestionTagRepositoryImpl
-import com.oyetech.firebaseDB.firebaseDB.quotes.FirebaseQuotesOperationRepositoryImp
 import com.oyetech.firebaseDB.firebaseDB.radio.RadioAnalyticsOperationRepositoryImp
 import com.oyetech.firebaseDB.firebaseDB.userList.FirebaseUserListOperationRepositoryImpl
 import com.oyetech.firebaseDB.userOperation.FirebaseUserPropertyRepositoryImpl
@@ -81,19 +78,6 @@ object FirebaseDBModule {
         single<FirebaseUserRepository> { FirebaseUserRepositoryImp(get()) }
         single<FirebaseUserPropertyRepository> { FirebaseUserPropertyRepositoryImpl(get()) }
 
-        single<FirebaseQuotesOperationRepository> {
-            FirebaseQuotesOperationRepositoryImp(
-                get(),
-                get(),
-            )
-        }
-
-        single<FirebaseQuotesDebugOperationRepository> {
-            FirebaseQuotesOperationRepositoryImp(
-                get(),
-                get(),
-            )
-        }
         single<FirebaseLanguageOperationRepository> { FirebaseLanguageOperationRepositoryImp(get()) }
         single<FirebaseMessagingRepository> {
             FirebaseMessagingRepositoryImpl(
