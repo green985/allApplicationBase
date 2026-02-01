@@ -29,7 +29,7 @@ android {
 }
 
 dependencies {
-    implementation project(Modules.model)
+    implementation project(Modules.models)
     implementation KotlinLibraries.kotlin
     implementation Libraries.timber
 

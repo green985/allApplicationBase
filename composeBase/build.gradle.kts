@@ -8,7 +8,7 @@ plugins {
 
 android {
 
-namespace = "com.oyetech.composebase"
+    namespace = "com.oyetech.composebase"
 
     compileSdk = libs.versions.compile.sdk.get().toInt()
 
@@ -52,7 +52,7 @@ dependencies {
     implementation(project(":subImpl:tools"))
     implementation(project(Modules.domain))
     implementation(project(Modules.glideModule))
-    implementation(project(Modules.model))
+    implementation(project(Modules.models))
     implementation(project(Modules.radioService))
     implementation(project(Modules.languageModule))
     debugImplementation(libs.androidx.ui.tooling)

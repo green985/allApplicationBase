@@ -29,6 +29,7 @@ import com.oyetech.radioservice.serviceUtils.ServiceConst
 import com.oyetech.radioservice.serviceUtils.ServiceConst.ACTION_RESUME
 import com.oyetech.radioservice.services.PlayerService
 import com.oyetech.tools.contextHelper.getMainActivityStartIntent
+import com.oyetech.tools.ext.doInTryCatch
 import org.koin.java.KoinJavaComponent
 import timber.log.Timber
 
@@ -240,7 +241,7 @@ class RadioNotificationHelper(
             )
 
         val notification = notificationBuilder.build()
-        com.oyetech.tools.ext.doInTryCatch {
+        doInTryCatch {
             service.startForeground(
                 NotificationConst.NOTIFY_ID,
                 notification

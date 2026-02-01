@@ -1,12 +1,13 @@
 package com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer
 
+import androidx.core.text.parseAsHtml
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.baseGenericList.ComplexItemListState
-import com.oyetech.composebase.mappers.mapToUi.QuotesMappers.mapToQuoteUiState
+import com.oyetech.composebase.helpers.viewProperties.toAnnotatedString
 import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationVm
 import com.oyetech.composebase.projectQuotesFeature.navigation.QuoteAppProjectRoutes
 import com.oyetech.composebase.projectQuotesFeature.quotes.listScreen.QuotePagingSource
@@ -103,13 +104,24 @@ class QuotesVM(
             }
         }
     }
-}
 
-fun Flow<List<QuoteResponseData>>.mapToUiState(): Flow<List<QuoteUiState>> {
-    return this.map {
-        it.map {
-            mapToQuoteUiState(it)
+    fun mapToQuoteUiState(it: QuoteResponseData) =
+        QuoteUiState(
+            quoteId = it.quoteId,
+            text = it.text,
+            author = it.author,
+//            createdAtString = TimeFunctions.getDateFromLongWithoutHour(it.createdAt),
+            createdAtString = "",
+            authorImage = it.authorImage,
+            htmlFormatted = it.htmlFormatted,
+            annotatedStringText = it.htmlFormatted.parseAsHtml().toAnnotatedString()
+        )
+
+    fun Flow<List<QuoteResponseData>>.mapToUiState(): Flow<List<QuoteUiState>> {
+        return this.map {
+            it.map {
+                mapToQuoteUiState(it)
+            }
         }
     }
 }
-

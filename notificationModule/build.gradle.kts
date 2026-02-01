@@ -6,20 +6,12 @@ plugins {
 android {
     namespace = "com.oyetech.notificationmodule"
 
-    compileSdk = Versions.compileSdk
+    compileSdk = libs.versions.compile.sdk.get().toInt()
 
     defaultConfig {
         minSdk = Versions.minSdk
 
         consumerProguardFiles("consumer-rules.pro")
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
     }
 }
 
@@ -28,7 +20,7 @@ dependencies {
 
 
     implementation(project(Modules.domain))
-    implementation(project(Modules.model))
+    implementation(project(Modules.models))
     implementation(project(Modules.languageModule))
     implementation(project(Modules.tools))
 
@@ -40,7 +32,7 @@ dependencies {
     implementation("io.insert-koin:koin-androidx-compose-navigation")
 
 
-    implementation(platform(FirebaseLibrary.firebaseBom))
+    implementation(platform(libs.firebase.bom))
     implementation(FirebaseLibrary.messaging)
     implementation(FirebaseLibrary.inappmessaging)
     implementation("com.jakewharton.timber:timber:4.7.1")

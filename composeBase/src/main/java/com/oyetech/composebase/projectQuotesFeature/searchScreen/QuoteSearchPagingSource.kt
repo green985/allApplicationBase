@@ -1,17 +1,21 @@
 package com.oyetech.composebase.projectQuotesFeature.searchScreen
 
+import androidx.core.text.parseAsHtml
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.oyetech.composebase.base.updateState
-import com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer.mapToUiState
+import com.oyetech.composebase.helpers.viewProperties.toAnnotatedString
 import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteUiState
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
+import com.oyetech.models.quotes.responseModel.QuoteResponseData
 import com.oyetech.models.utils.const.HelperConstant
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -64,5 +68,25 @@ class QuoteSearchPagingSource(
         }
     }
 
+
+    fun mapToQuoteUiState(it: QuoteResponseData) =
+        QuoteUiState(
+            quoteId = it.quoteId,
+            text = it.text,
+            author = it.author,
+//            createdAtString = TimeFunctions.getDateFromLongWithoutHour(it.createdAt),
+            createdAtString = "",
+            authorImage = it.authorImage,
+            htmlFormatted = it.htmlFormatted,
+            annotatedStringText = it.htmlFormatted.parseAsHtml().toAnnotatedString()
+        )
+
+    fun Flow<List<QuoteResponseData>>.mapToUiState(): Flow<List<QuoteUiState>> {
+        return this.map {
+            it.map {
+                mapToQuoteUiState(it)
+            }
+        }
+    }
 
 }

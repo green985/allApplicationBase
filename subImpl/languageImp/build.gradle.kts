@@ -5,27 +5,7 @@ plugins {
 
 android {
     namespace = "com.oyetech.languageimp"
-    compileSdk = Versions.compileSdk
-
-    defaultConfig {
-        minSdk = Versions.minSdk
-
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
+    compileSdk = libs.versions.compile.sdk.get().toInt()
 }
 
 dependencies {
@@ -34,7 +14,7 @@ dependencies {
 
 
     implementation(project(Modules.domain))
-    implementation(project(Modules.model))
+    implementation(project(Modules.models))
     implementation(project(Modules.languageModule))
     implementation(project(Modules.tools))
 

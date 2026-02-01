@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.oyetech.revenuecatoperationmodule"
-    compileSdk = Versions.compileSdk
+    compileSdk = libs.versions.compile.sdk.get().toInt()
 
     defaultConfig {
         minSdk = Versions.minSdk
@@ -31,7 +31,7 @@ dependencies {
 
 
     implementation(project(Modules.domain))
-    implementation(project(Modules.model))
+    implementation(project(Modules.models))
     implementation(Libraries.timber)
     api(Libraries.koin)
 

@@ -116,7 +116,7 @@ fun Context.getVersionName(): String {
     val context = this
     try {
         val versionName: String = context.packageManager
-            .getPackageInfo(context.packageName, 0).versionName
+            .getPackageInfo(context.packageName, 0).versionName ?: ""
         return versionName
     } catch (e: NameNotFoundException) {
         e.printStackTrace()

@@ -1,15 +1,18 @@
 package com.oyetech.composebase.projectQuotesFeature.quotes.listScreen
 
+import androidx.core.text.parseAsHtml
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.oyetech.composebase.base.baseGenericList.ComplexItemListState
+import com.oyetech.composebase.helpers.viewProperties.toAnnotatedString
 import com.oyetech.composebase.projectQuotesFeature.contentOperation.ContentOperationVm
-import com.oyetech.composebase.projectQuotesFeature.quotes.randomQuotesViewer.mapToUiState
 import com.oyetech.composebase.projectQuotesFeature.quotes.uiState.QuoteUiState
 import com.oyetech.domain.quotesDomain.quotesData.QuoteDataOperationRepository
+import com.oyetech.models.quotes.responseModel.QuoteResponseData
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -68,6 +71,27 @@ class QuotePagingSource(
             }
         } catch (e: Exception) {
             LoadResult.Error(e)
+        }
+    }
+
+
+    fun mapToQuoteUiState(it: QuoteResponseData) =
+        QuoteUiState(
+            quoteId = it.quoteId,
+            text = it.text,
+            author = it.author,
+//            createdAtString = TimeFunctions.getDateFromLongWithoutHour(it.createdAt),
+            createdAtString = "",
+            authorImage = it.authorImage,
+            htmlFormatted = it.htmlFormatted,
+            annotatedStringText = it.htmlFormatted.parseAsHtml().toAnnotatedString()
+        )
+
+    fun Flow<List<QuoteResponseData>>.mapToUiState(): Flow<List<QuoteUiState>> {
+        return this.map {
+            it.map {
+                mapToQuoteUiState(it)
+            }
         }
     }
 

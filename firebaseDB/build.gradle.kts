@@ -10,10 +10,16 @@ android {
 
 dependencies {
     implementation(project(Modules.domain))
+    implementation(project(Modules.tools))
+    implementation(project(Modules.models))
+    implementation(project(Modules.languageModule))
 
     implementation(platform(libs.firebase.bom))
 
-    implementation(libs.firebase.firestore.ktx)
-    implementation(libs.firebase.database.ktx)
-    implementation(libs.firebase.storage.ktx)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.database)
+    implementation(libs.firebase.storage)
+    implementation(libs.timber)
+
+
 }

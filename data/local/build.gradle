@@ -20,7 +20,7 @@ dependencies {
     // TEST MODULE
     //androidTestImplementation project(Modules.commonTest)
     // DATA MODULE
-    implementation project(Modules.model)
+    implementation project(Modules.models)
     // KOIN
     implementation Libraries.koin
     // TEST

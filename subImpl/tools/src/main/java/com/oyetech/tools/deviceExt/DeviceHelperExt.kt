@@ -29,7 +29,7 @@ object DeviceHelperExt {
         try {
             val info: PackageInfo = context.packageManager
                 .getPackageInfo(context.packageName, PackageManager.GET_SIGNATURES)
-            for (signature in info.signatures) {
+            for (signature in info.signatures!!) {
                 val md: MessageDigest = MessageDigest.getInstance("SHA")
                 md.update(signature.toByteArray())
                 val hashKey: String = String(Base64.encode(md.digest(), 0))

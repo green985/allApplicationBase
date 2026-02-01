@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.oyetech.dimodule"
-    compileSdk = Versions.compileSdk
+    compileSdk = libs.versions.compile.sdk.get().toInt()
 
     defaultConfig {
         minSdk = Versions.minSdk
@@ -24,14 +24,6 @@ android {
             )
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
-    }
-
 }
 
 
@@ -51,11 +43,11 @@ dependencies {
     implementation(project(Modules.notificationModule))
 
     // Firebase Libraries
-    implementation(platform(FirebaseLibrary.firebaseBom))
-    implementation(FirebaseLibrary.performance)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.perf)
     // implementation(FirebaseLibrary.messaging)
-    implementation(FirebaseLibrary.crashlytics)
-    implementation(FirebaseLibrary.analytics)
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.analytics)
 
     implementation(project(Modules.adsModule))
     implementation(project(Modules.firebaseDB))
@@ -94,7 +86,7 @@ dependencies {
     implementation("androidx.compose.runtime:runtime:1.7.6")
 
     // Feature Modules (commented out for now)
-    // implementation(project(Modules.featureFeedList))
+    // implementation(project(Modules.featureFeedList)))
     // implementation(project(Modules.messages))
     // implementation(project(Modules.imageViewer))
     // implementation(project(Modules.userNotification))
