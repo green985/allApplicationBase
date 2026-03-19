@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
 }
 
 android {
@@ -9,31 +9,28 @@ android {
     compileSdk = libs.versions.compile.sdk.get().toInt()
 
     defaultConfig {
-        minSdk = Versions.minSdk
+        minSdk = libs.versions.min.sdk.get().toInt()
 
         consumerProguardFiles("consumer-rules.pro")
     }
 }
 
 dependencies {
-    implementation(AndroidLibraries.coreKtx)
-
+    implementation(libs.androidx.core.ktx)
 
     implementation(project(Modules.domain))
     implementation(project(Modules.models))
     implementation(project(Modules.languageModule))
     implementation(project(Modules.tools))
 
-    implementation(Libraries.timber)
-    api(Libraries.koin)
-    implementation(project.dependencies.platform("io.insert-koin:koin-bom:${Versions.koin}"))
-    implementation("io.insert-koin:koin-core")
-    implementation("io.insert-koin:koin-androidx-compose")
-    implementation("io.insert-koin:koin-androidx-compose-navigation")
-
+    implementation(libs.timber)
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.android)
+    implementation(libs.koin.core)
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.androidx.compose.navigation)
 
     implementation(platform(libs.firebase.bom))
-    implementation(FirebaseLibrary.messaging)
-    implementation(FirebaseLibrary.inappmessaging)
-    implementation("com.jakewharton.timber:timber:4.7.1")
+    implementation(libs.firebase.messaging)
+    implementation(libs.firebase.inappmessaging)
 }

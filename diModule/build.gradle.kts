@@ -1,7 +1,7 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    id("com.google.devtools.ksp")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -9,11 +9,8 @@ android {
     compileSdk = libs.versions.compile.sdk.get().toInt()
 }
 
-
 dependencies {
-
     implementation(project(Modules.domain))
-    // implementation(project(Modules.navigation))
     implementation(project(Modules.remote))
     implementation(project(Modules.local))
     implementation(project(Modules.repository))
@@ -24,53 +21,44 @@ dependencies {
     implementation(project(Modules.googleLogin))
     implementation(project(Modules.languageimp))
     implementation(project(Modules.notificationModule))
-
-    // Firebase Libraries
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.perf)
-    // implementation(FirebaseLibrary.messaging)
-    implementation(libs.firebase.crashlytics)
-    implementation(libs.firebase.analytics)
-
     implementation(project(Modules.adsModule))
     implementation(project(Modules.firebaseDB))
     implementation(project(Modules.exoplayerModule))
     implementation(project(Modules.radioOperationModule))
-
-    // Retrofit Libraries
-    implementation(Libraries.retrofitCoroutineAdapter)
-    implementation(Libraries.gson)
-    implementation(Libraries.moshi)
-    implementation(Libraries.moshiKotlin)
-    implementation(Libraries.retrofit)
-    implementation(Libraries.retrofitGsonConverter)
-    implementation(Libraries.retrofitMoshiConverter)
-    implementation(Libraries.timber)
     implementation(project(":data:models"))
     implementation(project(":subImpl:tools"))
     implementation(project(":firebaseRealtime"))
 
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.perf)
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.analytics)
 
+    // Network
+    implementation(libs.retrofit.kotlin.coroutines.adapter)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.retrofit.converter.moshi)
+    implementation(libs.okhttp.logging.interceptor)
+    ksp(libs.moshi.kotlin.codegen)
 
-    ksp(Libraries.retrofitMoshiConverterKapt)
-    implementation(Libraries.httpLoggingInterceptor)
+    // Parsing
+    implementation(libs.gson)
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
 
-    // Gson and Moshi
-    implementation(Libraries.gson)
-    implementation(Libraries.moshi)
-    implementation(Libraries.moshiKotlin)
+    // Koin
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.android)
+    implementation(libs.koin.core)
+    implementation(libs.koin.androidx.compose)
 
-    // Android Libraries
-    implementation(AndroidLibraries.appCompat)
-    implementation(AndroidLibraries.navigation)
-    implementation(AndroidLibraries.navigationFrag)
-    implementation(Libraries.splashscreen)
-
-    implementation("androidx.compose.runtime:runtime:1.7.6")
-
-    // Feature Modules (commented out for now)
-    // implementation(project(Modules.featureFeedList)))
-    // implementation(project(Modules.messages))
-    // implementation(project(Modules.imageViewer))
-    // implementation(project(Modules.userNotification))
+    // Android
+    implementation(libs.androidx.appcompat)
+    implementation(libs.navigation.ui.ktx)
+    implementation(libs.navigation.fragment.ktx)
+    implementation(libs.compose.runtime)
+    implementation(libs.core.splashscreen)
+    implementation(libs.timber)
 }

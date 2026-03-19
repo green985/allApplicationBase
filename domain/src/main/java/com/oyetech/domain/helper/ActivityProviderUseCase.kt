@@ -2,17 +2,20 @@ package com.oyetech.domain.helper
 
 import android.app.Activity
 import android.app.Application
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.annotation.RequiresApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import java.util.UUID
 
+@RequiresApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 class ActivityProviderUseCase(application: Application) {
 
     private var activeActivity: Activity? = null

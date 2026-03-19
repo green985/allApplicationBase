@@ -1,31 +1,28 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
 }
 
 android {
     namespace = "com.oyetech.firebaserealtime"
     compileSdk = libs.versions.compile.sdk.get().toInt()
-
-
 }
 
 dependencies {
-    implementation(AndroidLibraries.coreKtx)
+    implementation(libs.androidx.core.ktx)
 
     implementation(project(Modules.domain))
     implementation(project(Modules.models))
     implementation(project(Modules.languageModule))
     implementation(project(Modules.tools))
 
-
     implementation(platform(libs.firebase.bom))
-    implementation("com.google.firebase:firebase-database")
+    implementation(libs.firebase.database)
 
-    implementation(Libraries.timber)
-    api(Libraries.koin)
-    implementation(project.dependencies.platform("io.insert-koin:koin-bom:${Versions.koin}"))
-    implementation("io.insert-koin:koin-core")
-    implementation("io.insert-koin:koin-androidx-compose")
-    implementation("io.insert-koin:koin-androidx-compose-navigation")
+    implementation(libs.timber)
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.android)
+    implementation(libs.koin.core)
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.androidx.compose.navigation)
 }

@@ -12,8 +12,6 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import org.koin.android.scope.serviceScope
-import org.koin.core.scope.Scope
 import timber.log.Timber
 
 /**
@@ -25,7 +23,6 @@ Created by Erdi Özbek
 @OptIn(InternalCoroutinesApi::class)
 class PlayerService : PlayerServiceHelper() {
 
-    override val scope: Scope by serviceScope()
 
     private var timer: CountDownTimer? = null
 

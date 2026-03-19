@@ -1,14 +1,17 @@
 package com.oyetech.radioservice.services
 
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
 import android.net.wifi.WifiManager
+import android.os.Build
 import android.os.IBinder
 import android.os.Parcelable
 import android.os.PowerManager
 import android.util.Log
 import android.view.KeyEvent
+import androidx.annotation.RequiresApi
 import com.oyetech.domain.useCases.contentOperations.RadioOperationUseCase
 import com.oyetech.models.radioProject.radioModels.PauseReason
 import com.oyetech.models.radioProject.radioModels.PauseReason.FOCUS_LOSS_TRANSIENT
@@ -28,7 +31,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.isActive
-import org.koin.android.scope.ScopeService
 import org.koin.java.KoinJavaComponent
 import timber.log.Timber
 
@@ -37,8 +39,9 @@ Created by Erdi Özbek
 -20.11.2022-
 -17:21-
  **/
+@RequiresApi(Build.VERSION_CODES.CUPCAKE)
 
-abstract class PlayerServiceHelper : ScopeService() {
+abstract class PlayerServiceHelper : Service() {
 
     var binder = LocalBinder()
 
@@ -243,6 +246,7 @@ abstract class PlayerServiceHelper : ScopeService() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.CUPCAKE)
     private fun acquireWakeLockAndWifiLock() {
         var wakeLock = mediaSessionHelper.wakeLock
         var wifiLock = mediaSessionHelper.wifiLock

@@ -20,4 +20,5 @@ dependencies {
     implementation(libs.moshi)
     implementation(libs.moshi.kotlin)
     implementation(libs.room.runtime)
+    implementation(libs.androidx.core)
 }

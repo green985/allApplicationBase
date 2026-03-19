@@ -26,5 +26,6 @@ dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libs.timber)
     api(libs.koin.core)
+    implementation(libs.androidx.activity.ktx)
     detektPlugins(libs.detekt.formatting)
 }

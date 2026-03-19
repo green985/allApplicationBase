@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
 }
 
 android {
@@ -9,25 +9,18 @@ android {
 }
 
 dependencies {
-
-    api(Libraries.koin)
-    implementation(Libraries.koinCompose)
-    implementation(project.dependencies.platform("io.insert-koin:koin-bom:${Versions.koin}"))
-    implementation("io.insert-koin:koin-core")
-    implementation("io.insert-koin:koin-androidx-compose")
-    implementation("io.insert-koin:koin-androidx-compose-navigation")
-
-
     implementation(project(Modules.models))
-    implementation(KotlinLibraries.kotlin)
-    implementation(Libraries.timber)
 
-    api(Libraries.koin)
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.android)
+    implementation(libs.koin.core)
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.androidx.compose.navigation)
 
-    implementation(KotlinLibraries.kotlin)
-    implementation(Libraries.gson)
-    implementation(Libraries.moshi)
-    implementation(Libraries.moshiKotlin)
-    implementation(Libraries.roomRunTime)
-
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.timber)
+    implementation(libs.gson)
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
+    implementation(libs.room.runtime)
 }
