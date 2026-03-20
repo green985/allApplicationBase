@@ -3,7 +3,7 @@ versionCode = "6"
 versionName = "1.0.0"
 compile-sdk = "36"
 min-sdk = "26"
-kotlin = "2.2.20"
+kotlin = "2.3.20"
 agp = "9.1.0"
 compose-bom = "2024.09.02"
 koin-bom = "4.2.0"
@@ -26,7 +26,7 @@ kotlinx-serialization-json = "1.6.3"
 kotlinx-coroutines = "1.6.3"
 exoplayer = "2.18.1"
 timber = "4.7.1"
-ksp = "2.2.20-2.0.4"
+ksp = "2.3.20-2.3.6"
 ktlint = "10.2.1"
 detekt = "1.20.0-RC2"
 lsparanoid = "0.5.2"
@@ -162,7 +162,7 @@ core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx1
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version = "2.3.20" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
