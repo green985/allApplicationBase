@@ -4,11 +4,13 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.detekt)
+
 }
 
 android {
     namespace = "com.oyetech.exoplayermodule"
     compileSdk = libs.versions.compile.sdk.get().toInt()
+
 }
 
 dependencies {
@@ -20,5 +22,6 @@ dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libs.timber)
     api(libs.koin.core)
+
     detektPlugins(libs.detekt.formatting)
 }

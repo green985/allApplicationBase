@@ -1,11 +1,13 @@
 plugins {
     alias(libs.plugins.android.library)
 
+
 }
 
 android {
     namespace = "com.oyetech.radioservice"
     compileSdk = libs.versions.compile.sdk.get().toInt()
+
 }
 
 dependencies {
@@ -14,4 +16,5 @@ dependencies {
     implementation(project(Modules.tools))
     implementation(libs.mediaX)
     implementation(libs.timber)
+
 }

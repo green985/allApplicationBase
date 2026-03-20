@@ -1,11 +1,13 @@
 plugins {
     alias(libs.plugins.android.library)
 
+
 }
 
 android {
     namespace = "com.oyetech.firebaseDB"
     compileSdk = libs.versions.compile.sdk.get().toInt()
+
 }
 
 dependencies {

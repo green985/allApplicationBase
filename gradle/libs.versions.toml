@@ -6,7 +6,7 @@ min-sdk = "26"
 kotlin = "2.2.20"
 agp = "9.1.0"
 compose-bom = "2024.09.02"
-koin-bom = "3.5.0"
+koin-bom = "4.2.0"
 appcompat = "1.7.0"
 core-ktx = "1.13.1"
 kotlin-gradle-plugin = "2.2.20"
@@ -67,6 +67,7 @@ googleid = "1.1.1"
 play-review = "2.0.0"
 core = "1.18.0"
 activityKtx = "1.13.0"
+coreKtx1 = "1.18.0"
 
 [libraries]
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
@@ -124,9 +125,9 @@ navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.
 navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigation" }
 paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
 
-koin-core = { module = "io.insert-koin:koin-core" }
-koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose" }
-koin-androidx-compose-navigation = { module = "io.insert-koin:koin-androidx-compose-navigation" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin-bom" }
+koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin-bom" }
+koin-androidx-compose-navigation = { module = "io.insert-koin:koin-androidx-compose-navigation", version.ref = "koin-bom" }
 
 glide-compose = { module = "com.github.bumptech.glide:compose", version.ref = "glide-compose" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinx-collections-immutable" }
@@ -157,10 +158,11 @@ googleid = { module = "com.google.android.libraries.identity.googleid:googleid",
 play-review-ktx = { module = "com.google.android.play:review-ktx", version.ref = "play-review" }
 androidx-core = { group = "androidx.core", name = "core", version.ref = "core" }
 androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx1" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version = "2.3.20" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 

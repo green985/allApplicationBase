@@ -4,11 +4,13 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.detekt)
+
 }
 
 android {
     namespace = "com.oyetech.adsModule"
     compileSdk = libs.versions.compile.sdk.get().toInt()
+
 
 }
 
@@ -24,5 +26,6 @@ dependencies {
     implementation(libs.timber)
     api(libs.koin.core)
     implementation(libs.play.services.ads.api)
+
     detektPlugins(libs.detekt.formatting)
 }

@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.parcelize)
+
 }
 
 android {
@@ -18,6 +19,7 @@ android {
     lint {
         disable.add("UnusedMaterial3ScaffoldPaddingParameter")
     }
+
 }
 
 dependencies {
@@ -50,6 +52,7 @@ dependencies {
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.timber)
+
     debugImplementation(libs.androidx.ui.tooling)
 
 

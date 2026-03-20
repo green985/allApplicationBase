@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
 
+
 }
 
 android {
@@ -13,6 +14,7 @@ android {
 
         consumerProguardFiles("consumer-rules.pro")
     }
+
 }
 
 dependencies {
@@ -33,4 +35,5 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.inappmessaging)
+
 }

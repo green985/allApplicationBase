@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
 
+
 }
 
 android {
@@ -25,4 +26,5 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.androidx.compose)
     implementation(libs.koin.androidx.compose.navigation)
+
 }

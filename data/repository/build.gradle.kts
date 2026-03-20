@@ -1,11 +1,13 @@
 plugins {
     alias(libs.plugins.android.library)
 
+
 }
 
 android {
     namespace = "com.oyetech.repository"
     compileSdk = libs.versions.compile.sdk.get().toInt()
+
 }
 
 dependencies {
@@ -20,4 +22,5 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.retrofit)
     implementation(libs.androidx.annotation.jvm)
+
 }

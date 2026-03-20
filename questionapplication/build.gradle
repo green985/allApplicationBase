@@ -1,11 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'com.google.gms.google-services'
-    id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
     id 'org.jlleitschuh.gradle.ktlint'
     id 'io.gitlab.arturbosch.detekt'
-    id 'kotlin-android'
     id 'kotlin-parcelize'
     id 'org.lsposed.lsparanoid'
     id 'com.google.firebase.crashlytics'
@@ -14,12 +11,10 @@ plugins {
 }
 ext.getArtifactNameRadio = {
     defaultConfig ->
-        def project =
-        \ "quoteApplication\"
-        def SEP =
-        \ "_\"
+        def project = "quoteApplication"
+        def SEP = "_"
         def version = defaultConfig.versionName
-        version = version.replace(\ ".\", \"_\")
+        version = version.replace(".", "_")
 
         def date = new Date()
         def formattedDate = date.format('dd-MM-yyyy')
@@ -35,12 +30,12 @@ android {
 
     compileSdkVersion 36
     defaultConfig {
-        minSdkVersion Versions.minSdk
-        targetSdkVersion Versions.targetSdk
-        versionCode libs.versions.versionCode.get().toInteger()
-        versionName libs.versions.versionName.get()
+        minSdk = libs.versions.min.sdk.get().toInteger()
+        targetSdk = libs.versions.compile.sdk.get().toInteger()
+
+        versionCode = libs.versions.versionCode.get().toInteger()
+        versionName = libs.versions.versionName.get()
     }
-    setProperty(\ "archivesBaseName\", getArtifactNameRadio(defaultConfig))
 
     buildFeatures {
         buildConfig = true
@@ -98,10 +93,10 @@ dependencies {
 ktlint {
     android.set(true)
 
-    outputColorName.set(\ "RED\")
+    outputColorName.set("RED")
 
     filter {
-        exclude(\ "**/generated/**\")
-                include(\ "**/kotlin/**\")
+        exclude("**/generated/**")
+        include("**/kotlin/**")
     }
 }

@@ -8,4 +8,5 @@ android {
 dependencies {
     implementation project(Modules.domain)
     implementation(libs.play.review.ktx)
+    implementation libs.core.ktx
 }

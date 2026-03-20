@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.detekt)
+
 }
 
 android {
@@ -15,6 +16,7 @@ android {
         buildConfig = true
         viewBinding = true
     }
+
 }
 
 dependencies {
@@ -27,5 +29,6 @@ dependencies {
     implementation(libs.timber)
     api(libs.koin.core)
     implementation(libs.androidx.activity.ktx)
+
     detektPlugins(libs.detekt.formatting)
 }

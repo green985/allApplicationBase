@@ -1,11 +1,13 @@
 plugins {
     alias(libs.plugins.android.library)
 
+
 }
 
 android {
     namespace = "com.oyetech.glideModule"
     compileSdk = libs.versions.compile.sdk.get().toInt()
+
 }
 
 dependencies {
@@ -17,4 +19,5 @@ dependencies {
     implementation(libs.timber)
     implementation(project(Modules.domain))
     implementation(project(Modules.tools))
+
 }

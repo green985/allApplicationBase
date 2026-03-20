@@ -1,11 +1,13 @@
 plugins {
     alias(libs.plugins.android.library)
 
+
 }
 
 android {
     namespace = "com.oyetech.languageimp"
     compileSdk = libs.versions.compile.sdk.get().toInt()
+
 }
 
 dependencies {
@@ -22,4 +24,5 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.androidx.compose)
     implementation(libs.koin.androidx.compose.navigation)
+
 }

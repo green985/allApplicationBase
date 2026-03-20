@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.lsparanoid)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
+
 }
 
 android {
@@ -18,6 +19,7 @@ android {
         buildConfig = true
         viewBinding = true
     }
+
 }
 
 dependencies {
@@ -38,4 +40,5 @@ dependencies {
 
     // Firebase
     implementation(libs.firebase.firestore)
+
 }

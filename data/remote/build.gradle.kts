@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
 
     alias(libs.plugins.ksp)
+
 }
 
 android {
@@ -9,6 +10,7 @@ android {
 
     // Ortak build dosyasından gelen değerleri libs.versions.toml'dan alıyorum
     compileSdk = libs.versions.compile.sdk.get().toInt()
+
 }
 
 dependencies {
@@ -31,6 +33,7 @@ dependencies {
     implementation(libs.moshi.kotlin)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.retrofit.converter.moshi)
+
 
     // Moshi CodeGen for Kotlin
     ksp(libs.moshi.kotlin.codegen)

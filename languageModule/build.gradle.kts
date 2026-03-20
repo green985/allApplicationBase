@@ -1,11 +1,13 @@
 plugins {
     alias(libs.plugins.android.library)
 
+
 }
 
 android {
     namespace = "com.oyetech.languageModule"
     compileSdk = libs.versions.compile.sdk.get().toInt()
+
 }
 
 dependencies {
@@ -21,4 +23,5 @@ dependencies {
     implementation(libs.moshi.kotlin)
     implementation(libs.room.runtime)
     implementation(libs.androidx.core)
+
 }
