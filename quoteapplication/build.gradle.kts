@@ -1,11 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
 
     // Eski dosyada vardı; gerekiyorsa tut
-    kotlin("kapt")
     alias(libs.plugins.kotlin.parcelize)
 
     // Quality / tooling
@@ -28,8 +27,8 @@ android {
         applicationId = "com.oyetech.quoteapplication"
 
         // Projede buildSrc/konstantlar varsa onları korudum:
-        minSdk = Versions.minSdk
-        targetSdk = Versions.targetSdk
+        minSdk = libs.versions.min.sdk.get().toInt()
+        targetSdk = libs.versions.compile.sdk.get().toInt()
 
         versionCode = libs.versions.versionCode.get().toInt()
         versionName = libs.versions.versionName.get()

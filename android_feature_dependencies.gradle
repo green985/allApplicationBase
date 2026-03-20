@@ -30,7 +30,6 @@ dependencies {
     testImplementation TestLibraries.junit
     testImplementation TestLibraries.mockk
     testImplementation TestLibraries.archCoreTest
-    kaptAndroidTest TestLibraries.databinding
 
 
     debugImplementation TestLibraries.testCore

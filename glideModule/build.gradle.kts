@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
+
 }
 
 android {
@@ -13,7 +13,7 @@ dependencies {
 //    ksp(libs.glide.compiler) // Using KSP for annotation processing
     implementation(libs.glide.annotations)
     implementation(libs.glide.okhttp3)
-    
+
     implementation(libs.timber)
     implementation(project(Modules.domain))
     implementation(project(Modules.tools))
