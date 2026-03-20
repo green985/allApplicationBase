@@ -21,7 +21,6 @@ detekt {
     autoCorrect = true
 }
 
-
 subprojects {
     apply(plugin = "io.gitlab.arturbosch.detekt")
 
@@ -29,5 +28,4 @@ subprojects {
         config.setFrom(files("$rootDir/detekt.yml"))
         buildUponDefaultConfig = true
     }
-
 }
