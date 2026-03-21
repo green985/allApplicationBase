@@ -19,8 +19,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.revenuecat.purchases)
 
-    implementation(project(Modules.domain))
-    implementation(project(Modules.models))
+    implementation(project(":domain"))
+    implementation(project(":data:models"))
 
     implementation(libs.timber)
     implementation(platform(libs.koin.bom))

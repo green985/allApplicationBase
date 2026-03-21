@@ -11,7 +11,7 @@ android {
 }
 
 dependencies {
-    implementation(project(Modules.models))
+    implementation(project(":data:models"))
 
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.android)

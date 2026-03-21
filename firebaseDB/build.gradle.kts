@@ -11,10 +11,10 @@ android {
 }
 
 dependencies {
-    implementation(project(Modules.domain))
-    implementation(project(Modules.tools))
-    implementation(project(Modules.models))
-    implementation(project(Modules.languageModule))
+    implementation(project(":domain"))
+    implementation(project(":subImpl:tools"))
+    implementation(project(":data:models"))
+    implementation(project(":languageModule"))
 
     implementation(platform(libs.firebase.bom))
 

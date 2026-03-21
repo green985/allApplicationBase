@@ -12,10 +12,10 @@ android {
 dependencies {
     implementation(libs.androidx.core.ktx)
 
-    implementation(project(Modules.domain))
-    implementation(project(Modules.models))
-    implementation(project(Modules.languageModule))
-    implementation(project(Modules.tools))
+    implementation(project(":domain"))
+    implementation(project(":data:models"))
+    implementation(project(":languageModule"))
+    implementation(project(":subImpl:tools"))
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.database)

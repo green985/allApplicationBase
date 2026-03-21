@@ -11,9 +11,9 @@ android {
 }
 
 dependencies {
-    implementation(project(Modules.domain))
-    implementation(project(Modules.models))
-    implementation(project(Modules.tools))
+    implementation(project(":domain"))
+    implementation(project(":data:models"))
+    implementation(project(":subImpl:tools"))
     implementation(libs.mediaX)
     implementation(libs.timber)
 

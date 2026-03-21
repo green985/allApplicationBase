@@ -59,9 +59,9 @@ dependencies {
 
 
     implementation(project(":subImpl:tools"))
-    implementation(project(Modules.domain))
-    implementation(project(Modules.glideModule))
-    implementation(project(Modules.models))
-    implementation(project(Modules.radioService))
-    implementation(project(Modules.languageModule))
+    implementation(project(":domain"))
+    implementation(project(":glideModule"))
+    implementation(project(":data:models"))
+    implementation(project(":radioService"))
+    implementation(project(":languageModule"))
 }

@@ -17,7 +17,7 @@ dependencies {
     implementation(libs.glide.okhttp3)
 
     implementation(libs.timber)
-    implementation(project(Modules.domain))
-    implementation(project(Modules.tools))
+    implementation(project(":domain"))
+    implementation(project(":subImpl:tools"))
 
 }

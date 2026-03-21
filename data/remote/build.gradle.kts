@@ -15,10 +15,10 @@ android {
 }
 
 dependencies {
-    implementation(project(Modules.secureKeys))
-    implementation(project(Modules.domain))
-    implementation(project(Modules.models))
-    implementation(project(Modules.tools))
+    implementation(project(":secureKeys"))
+    implementation(project(":domain"))
+    implementation(project(":data:models"))
+    implementation(project(":subImpl:tools"))
 
     // KOTLIN
     implementation(libs.kotlin.stdlib)

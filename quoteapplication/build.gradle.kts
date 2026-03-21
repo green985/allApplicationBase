@@ -113,8 +113,8 @@ android {
 }
 
 dependencies {
-    implementation(project(Modules.diModule))
-    implementation(project(Modules.composeBase))
+    implementation(project(":diModule"))
+    implementation(project(":composeBase"))
 }
 
 ktlint {
