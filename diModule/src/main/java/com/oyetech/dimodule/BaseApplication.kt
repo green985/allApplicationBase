@@ -53,9 +53,7 @@ class BaseApplication : Application() {
         setAppContext(this)
         setApplicationn(this)
 
-
         activityProviderUseCase.hashCode()
-
     }
 
     // CONFIGURATION ---
