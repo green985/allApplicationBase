@@ -41,7 +41,7 @@ data class GoogleSubsPurchaseInfo(
     @Json(name = "purchaseToken")
     var purchaseToken: String = "",
     @Json(name = "quantity")
-    var quantity: Int = 0
+    var quantity: Int = 0,
 ) : Parcelable
 
 /*
@@ -66,5 +66,5 @@ data class GooglePlaySubscriptionInfoResponseData(
     @Json(name = "period")
     var period: String = "",
     @Json(name = "startTime")
-    var startTime: String = ""
+    var startTime: String = "",
 ) : Parcelable

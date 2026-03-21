@@ -27,7 +27,7 @@ interface GoogleSubscriptionOperationRepository {
 
     fun startBillingClient(
         repository: GoogleSubscriptionUIOperationRepository?,
-        controlJustHistory: Boolean
+        controlJustHistory: Boolean,
     )
 }
 
@@ -40,6 +40,6 @@ interface GoogleSubscriptionUIOperationRepository {
     fun onPurchaseAcknowledgePurchase()
     fun onProductListShownWithFlag(
         fromMessageLimit: Boolean,
-        messageLimitInfoResponseData: MessagesLimitInfoResponseData
+        messageLimitInfoResponseData: MessagesLimitInfoResponseData,
     )
 }

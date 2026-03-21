@@ -108,6 +108,7 @@ class RadioDataOperationUseCase(
     suspend fun getRadioWithStationUuid(stationUuid: String): RadioStationResponseData? {
         return radioDataOperationRepository.findRadioStationWithStationId(stationUuid)
     }
+
     suspend fun getRadioWithStationUuidList(stationUuid: List<String>): List<RadioStationResponseData> {
         return radioDataOperationRepository.getRadioWithStationUuidList(stationUuid)
     }
