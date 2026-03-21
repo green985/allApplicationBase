@@ -1,15 +1,11 @@
 plugins {
     alias(libs.plugins.android.library)
-
-
-
     alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "com.oyetech.dimodule"
     compileSdk = libs.versions.compile.sdk.get().toInt()
-
 }
 
 dependencies {
@@ -44,6 +40,7 @@ dependencies {
     implementation(libs.retrofit.converter.gson)
     implementation(libs.retrofit.converter.moshi)
     implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.core.ktx)
 
     ksp(libs.moshi.kotlin.codegen)
 
