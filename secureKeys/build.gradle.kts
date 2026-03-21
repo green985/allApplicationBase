@@ -9,9 +9,7 @@ plugins {
 android {
     namespace = "com.oyetech.secureKeys"
     compileSdk = libs.versions.compile.sdk.get().toInt()
-
 }
-
 dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libs.androidx.annotation.jvm)
