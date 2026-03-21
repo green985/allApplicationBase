@@ -45,7 +45,6 @@ class FirebaseCommentOperationRepositoryImp(
             wrapperResult.get(index).copy(commentId = queryDocumentSnapshot.id)
         }
         return flowOf(wrapperResult)
-
     }
 
     @Suppress("TooGenericExceptionThrown")

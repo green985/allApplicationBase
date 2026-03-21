@@ -123,7 +123,6 @@ private fun YesNoQuestionContent(
                 SpacerSmall()
                 Text(text = LanguageKey.yourAnswerText + ": " + answeredText)
             }
-
         }
     }
 }
@@ -209,7 +208,6 @@ private fun QuestionYesNoScreen_Preview_Edit_Mode() {
         onEvent = {},
         isEditMode = true,
     )
-
 }
 
 @Preview(showBackground = true, showSystemUi = true)

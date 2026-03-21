@@ -8,5 +8,4 @@ interface LocationHelperRepository {
     fun requestLocation()
 
     val locationResultStateFlow: MutableStateFlow<LocationRequestBody>
-
 }

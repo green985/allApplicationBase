@@ -36,4 +36,3 @@ object RadioDataModelMapper {
         return mapper.invoke()
     }
 }
-

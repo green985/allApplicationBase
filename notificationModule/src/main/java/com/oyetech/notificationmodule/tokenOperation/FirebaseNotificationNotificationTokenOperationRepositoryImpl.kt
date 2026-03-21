@@ -25,14 +25,16 @@ class FirebaseNotificationNotificationTokenOperationRepositoryImpl(private val f
         MutableStateFlow<FirebaseNotificationTokenOperationModel?>(null)
 
     private fun getNotificationToken() {
-        firebaseMessaging.token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                return@OnCompleteListener
+        firebaseMessaging.token.addOnCompleteListener(
+            OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    return@OnCompleteListener
+                }
+                val token = task.result
+                firebaseNotificationTokenStateFlow.value = FirebaseNotificationTokenOperationModel(
+                    notificationToken = token,
+                )
             }
-            val token = task.result
-            firebaseNotificationTokenStateFlow.value = FirebaseNotificationTokenOperationModel(
-                notificationToken = token,
-            )
-        })
+        )
     }
 }

@@ -76,10 +76,8 @@ data class AudioDurationModel(
             return TimeFunctions.getHourMinSecFromLongString(currentDuration)
         }
     }
-
 }
 
 enum class ExoPlayerState {
     IDLE, PLAYING, STOP, ERROR, BUFFERING
 }
-

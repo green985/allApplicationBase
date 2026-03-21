@@ -185,7 +185,6 @@ class QuestionEventHandlerUseCase(
     }
 }
 
-
 fun Flow<List<QuestionViewUiState>>.questionAnswerOverlayFlow(
     answersState: StateFlow<List<QueAnswer>>,
 ): Flow<List<QuestionViewUiState>> {
@@ -193,7 +192,6 @@ fun Flow<List<QuestionViewUiState>>.questionAnswerOverlayFlow(
         answersState
             .map { list -> list.associateBy { it.questionId } }
             .distinctUntilChanged()
-
 
     return combine(this, answersIndexedFlow) { questions, answersIdx ->
         if (questions.isEmpty()) return@combine questions

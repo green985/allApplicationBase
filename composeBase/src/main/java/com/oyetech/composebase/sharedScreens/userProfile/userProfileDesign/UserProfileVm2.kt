@@ -53,7 +53,6 @@ class UserProfileVm2(
                 })
             }
         }
-
     }
 
     private suspend fun initializeProfile() {

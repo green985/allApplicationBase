@@ -60,7 +60,6 @@ class FirebaseUserListOperationRepositoryImpl(
             Timber.d("getRandomUsersFromDatabase Result list: ${resultList.size}")
             emit(resultList)
         }
-
     }
 
     suspend fun getRandomUsersFromRoom(roomId: String): List<Map<String, Any>> {
@@ -109,7 +108,6 @@ class FirebaseUserListOperationRepositoryImpl(
 
                 emit(Unit)
             }
-
         }
     }
 

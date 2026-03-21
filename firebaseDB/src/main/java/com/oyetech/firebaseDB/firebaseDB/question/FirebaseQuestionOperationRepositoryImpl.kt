@@ -22,7 +22,6 @@ class FirebaseQuestionOperationRepositoryImpl(
     private val firestore: FirebaseFirestore,
 ) : FirebaseQuestionOperationRepository {
 
-
     override suspend fun getQuestionsFilteredPage(
         moderationStatus: ModerationStatus?,
         tag: QueTag?,
@@ -60,7 +59,6 @@ class FirebaseQuestionOperationRepositoryImpl(
             Timber.d("Error fetching filtered questions page: ${e.message}")
             return null
         }
-
     }
 
     @Suppress("TooGenericExceptionThrown")

@@ -23,5 +23,4 @@ object ServiceConst {
     const val DUCK_VOLUME = 40f
 
     const val SERVICE_RETURN_NOT_IMPORTANT = -1251251315
-
 }

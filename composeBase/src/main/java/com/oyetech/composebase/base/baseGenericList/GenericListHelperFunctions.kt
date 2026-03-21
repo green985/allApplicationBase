@@ -38,7 +38,6 @@ fun CoroutineScope.safeScrollToItem(
             }
 
             Timber.d("safeScrollToItem: Successfully scrolled to item $index")
-
         } catch (e: Exception) {
             Timber.e(e, "safeScrollToItem: Failed to scroll to item $index")
         }

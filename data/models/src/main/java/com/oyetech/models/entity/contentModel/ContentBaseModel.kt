@@ -65,7 +65,3 @@ data class ContentBaseModel<T : Parcelable>(
     var radioTitle: String = "",
 
     ) : Parcelable
-
-
-
-

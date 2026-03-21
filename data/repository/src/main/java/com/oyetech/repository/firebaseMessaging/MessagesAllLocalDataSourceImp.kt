@@ -67,6 +67,4 @@ class MessagesAllLocalDataSourceImp(
     override suspend fun getLastMessage(receiverId: String): FirebaseMessagingLocalData? {
         return messagesAllDao.getLastMessage(receiverId)
     }
-
-
 }

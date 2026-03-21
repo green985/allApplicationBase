@@ -21,7 +21,6 @@ fun SnacbarScreenSetup(snackbarHostState: SnackbarHostState) {
 
     DefaultSnackbar(snackbarHostState)
 
-
     LaunchedEffect(stateee.uuid) {
         if (stateee.message.isNotEmpty()) {
             snackbarHostState.showSnackbar(
@@ -29,6 +28,5 @@ fun SnacbarScreenSetup(snackbarHostState: SnackbarHostState) {
                 actionLabel = stateee.actionLabel,
             )
         }
-
     }
 }

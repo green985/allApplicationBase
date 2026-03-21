@@ -20,5 +20,4 @@ var dataSourceModule = module {
     single { BibleDataSource(get(), get()) }
     single { BibleReadOperationDataSource(get()) }
     single { GeneralOperationDataSource(get()) }
-
 }

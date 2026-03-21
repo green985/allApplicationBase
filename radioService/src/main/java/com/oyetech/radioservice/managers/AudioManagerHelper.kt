@@ -21,7 +21,5 @@ class AudioManagerHelper {
     private fun prepareAudioManagerAndGet() {
         audioManager =
             (context.getSystemService(Context.AUDIO_SERVICE) as AudioManager)
-
-
     }
 }

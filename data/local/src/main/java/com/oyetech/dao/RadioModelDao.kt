@@ -15,5 +15,4 @@ interface RadioModelDao : BaseDao<RadioStationResponseData> {
 
     @Query("SELECT * FROM radioDataModel " + "ORDER BY radioName ")
     fun getLastRadio(): List<RadioStationResponseData>
-
 }

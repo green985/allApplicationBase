@@ -35,6 +35,4 @@ class MessagesSendingOperationRepositoryImp(
     override fun firstInMessageFlow(): Flow<FirebaseMessagingLocalData?> {
         return messagesSendingDao.getFirstInMessage()
     }
-
-
 }

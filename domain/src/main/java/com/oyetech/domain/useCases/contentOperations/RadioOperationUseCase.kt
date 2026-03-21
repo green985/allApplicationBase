@@ -67,8 +67,6 @@ class RadioOperationUseCase(
                     Paused -> {
                     }
                 }
-
-
             }
         }
 
@@ -106,12 +104,10 @@ class RadioOperationUseCase(
             }
         }
 
-
         lastStation = radioModel
 
         setRadioViewStateData(PrePlaying)
         radioOperationRepository.startPlayer(lastStation)
-
 
         if (radioModel != null) {
             prepareRadioDataOperation(radioModel, radioListFromLiveData)
@@ -212,6 +208,4 @@ class RadioOperationUseCase(
     suspend fun findStation(stationUuid: String): RadioStationResponseData? {
         return radioDataOperationUseCase.getRadioWithStationUuid(stationUuid)
     }
-
-
 }

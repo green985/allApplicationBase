@@ -20,6 +20,4 @@ abstract class BaseBroadcastReceiver : BroadcastReceiver() {
     val sharedOperationUseCase: SharedOperationRepository by KoinJavaComponent.inject(
         SharedOperationRepository::class.java
     )
-
-
 }

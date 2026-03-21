@@ -2,13 +2,6 @@ package com.oyetech.composebase.helpers.vibrationHelper
 
 import android.annotation.SuppressLint
 import android.content.Context
-
-/**
-Created by Erdi Özbek
--2.11.2024-
--17:24-
- **/
-
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -74,6 +67,5 @@ class VibrationHelperImpl(private val context: Context) : IVibrationHelper {
         }
 
         return amplitudes.toIntArray()
-
     }
 }

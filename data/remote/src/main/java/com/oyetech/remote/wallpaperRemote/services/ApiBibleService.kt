@@ -17,6 +17,4 @@ interface ApiBibleService {
     @Headers("api-key:4724e11d7996459d74ac0214c1e906d3")
     @GET("/v1/audio-bibles")
     suspend fun getAudioBibles(@Query("language") language: String = "eng"): Response<AudioBibleListWrapperResponseData>
-
-
 }

@@ -44,7 +44,6 @@ class FirebaseContentLikeOperationRepositoryImpl(
             }
             emit(wrapperResult)
         }
-
     }
 
     override suspend fun getInitialStateOfContent(contentId: String): Flow<LikeOperationModel> {
@@ -132,7 +131,6 @@ class FirebaseContentLikeOperationRepositoryImpl(
             Timber.d("Like added: Update return fav = " + userOldInputResult.like)
             emit(userOldInputResult)
         }
-
     }
 
     override fun getLikeCount(contentId: String): Flow<Int> {
@@ -145,6 +143,4 @@ class FirebaseContentLikeOperationRepositoryImpl(
             emit(result.size())
         }
     }
-
-
 }

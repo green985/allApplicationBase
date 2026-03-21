@@ -41,5 +41,4 @@ class ContentOperationLocalRepositoryImp(
     override suspend fun addToLikeList(contentLike: LikeOperationModel) {
         contentLikeDao.insert(contentLike)
     }
-
 }

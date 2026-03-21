@@ -22,10 +22,12 @@ object QuestionSupabaseRemote {
         single {
             Timber.d("Providing QuestionSupabaseRemote OkHttpClient")
             OkHttpClient.Builder()
-                .addInterceptor(HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BODY
-                    redactHeader("Authorization")
-                })
+                .addInterceptor(
+                    HttpLoggingInterceptor().apply {
+                        level = HttpLoggingInterceptor.Level.BODY
+                        redactHeader("Authorization")
+                    }
+                )
                 .addInterceptor(get<AuthInterceptor>())
                 .build()
         }

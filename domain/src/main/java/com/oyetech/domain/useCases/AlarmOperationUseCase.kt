@@ -27,5 +27,4 @@ class AlarmOperationUseCase(private var repository: AlarmOperationRepository) {
     fun setEnableAlarm(alarmId: Int = 0, isEnable: Boolean) {
         repository.setEnableAlarm(alarmId, isEnable)
     }
-
 }

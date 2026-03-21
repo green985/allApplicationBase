@@ -18,6 +18,4 @@ class GlideOperationUseCase(private var repository: GlideOperationRepository) {
     fun setUseCaseContext(context: Context) {
         repository.setUseCaseContext(context)
     }
-
-
 }

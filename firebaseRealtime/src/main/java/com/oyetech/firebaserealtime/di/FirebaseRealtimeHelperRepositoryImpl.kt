@@ -49,7 +49,6 @@ class FirebaseRealtimeHelperRepositoryImpl(
             val myRef = getUserRef(messageBody.receiverId)
             if (myRef == null) {
                 Timber.d("User ref is null")
-
             } else {
                 myRef.child(FirebaseDatabaseKeys.messages).push()
                     .setValue(postData)
@@ -60,7 +59,6 @@ class FirebaseRealtimeHelperRepositoryImpl(
                             messageBody.copy(status = MessageStatus.ERROR)
                         )
                     }
-
             }
         } catch (e: Exception) {
             throw GeneralException(e)
@@ -128,13 +126,11 @@ class FirebaseRealtimeHelperRepositoryImpl(
                             }
                         })
                 }
-
             } catch (e: Exception) {
                 Timber.d("observeUserMessagesRealtimeOperations error: ${e.message}")
                 throw GeneralException(e)
             }
         }
-
     }
 
     private fun saveMessageToLocal(message: FirebaseMessagingResponseData?) {

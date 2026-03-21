@@ -15,5 +15,4 @@ class LanguageCountryDataSource(private var bibleService: BibleService) {
 
     suspend fun getCountries(languageCodeRequestBody: LanguageCodeRequestBody) =
         bibleService.getCountries(languageCodeRequestBody)
-
 }

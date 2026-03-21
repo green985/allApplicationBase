@@ -25,5 +25,4 @@ class BibleReadOperationDataSource(
 
     suspend fun unReadChapter(bibleChapterReadOperationRequestBody: BibleChapterReadOperationRequestBody) =
         bibleService.unReadChapter(bibleChapterReadOperationRequestBody)
-
 }

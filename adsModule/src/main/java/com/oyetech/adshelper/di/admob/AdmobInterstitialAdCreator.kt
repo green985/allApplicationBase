@@ -97,8 +97,6 @@ class AdmobInterstitialAdCreator(private var activity: Activity) : BaseAdHelper(
     override fun showAds(): Boolean {
         Log.d("TAG", "interstitial show girdiiiii")
 
-
-
         if (mInterstitialAd != null) {
             Log.d("TAG", "shooooowwwww")
             mInterstitialAd!!.show(activity)
@@ -111,6 +109,4 @@ class AdmobInterstitialAdCreator(private var activity: Activity) : BaseAdHelper(
             return false
         }
     }
-
-
 }

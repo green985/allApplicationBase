@@ -40,7 +40,6 @@ object ComposeMainModule {
         single<SnackbarDelegate> { SnackbarDelegate() }
         single<BottomNavigationDelegate> { BottomNavigationDelegate() }
 
-
         singleOf(::GeneralOperationVM)
         singleOf(::GeneralPlaygroundVm)
         singleOf(::LoginOperationVM)

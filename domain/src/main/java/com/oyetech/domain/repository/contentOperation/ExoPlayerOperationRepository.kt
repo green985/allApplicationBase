@@ -23,5 +23,4 @@ interface ExoPlayerOperationRepository {
     fun setVolume(volume: Float)
 
     // fun isPlaying(): Boolean
-
 }

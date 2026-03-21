@@ -27,13 +27,11 @@ object QuestionAppProjectRoutes {
     val EditProfile = Route("question/EditProfile")
     val QuestionFormScreen = Route("question/QuestionFormScreen")
 
-
     val UserList = Route("question/UserList")
 
     val MessageDetail = Route("question/MessageDetail")
 
     val MessageConversationList = Route("question/MessageConversationList")
-
 }
 
 object QuestionAppProjectBottomNavigationDestinations {

@@ -1,9 +1,9 @@
 package com.oyetech.composebase.helpers.listOperations
 
 //
-//class ExampleEndlessDataWithPagingFlowUseCaseImp  constructor(
+// class ExampleEndlessDataWithPagingFlowUseCaseImp  constructor(
 //    private val betHistoryGetPinnedCouponsUseCase: BetHistoryGetPinnedCouponsUseCase,
-//) : ExampleEndlessDataWithPagingFlowUseCase {
+// ) : ExampleEndlessDataWithPagingFlowUseCase {
 //
 //    private lateinit var currentWidgetGuid: String
 //    private lateinit var currentFilter: BetHistoryFilter
@@ -38,4 +38,4 @@ package com.oyetech.composebase.helpers.listOperations
 //
 //
 //
-//}
+// }

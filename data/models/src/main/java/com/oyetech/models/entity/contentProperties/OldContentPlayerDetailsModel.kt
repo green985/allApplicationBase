@@ -78,8 +78,6 @@ data class OldContentPlayerDetailsModel(
                 return null
             }
 
-
-
             return OldContentPlayerDetailsModel(
                 streamUrl = audioFileDetailResponseData.fileUrl,
                 _contentName = contentName,
@@ -88,6 +86,4 @@ data class OldContentPlayerDetailsModel(
             )
         }
     }
-
-
 }

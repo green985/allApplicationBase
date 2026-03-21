@@ -91,10 +91,8 @@ object QuestionTagCatalog {
         "SCENARIO_BASED"
     )
 
-
     val createQuestionTagList = buildList {
         addAll(questionMeaningList)
         addAll(questionCategoryTag)
     }
-
 }

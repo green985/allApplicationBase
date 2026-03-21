@@ -128,7 +128,6 @@ fun QuestionPagerScreen(
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 private fun QuestionPagerPreview() {

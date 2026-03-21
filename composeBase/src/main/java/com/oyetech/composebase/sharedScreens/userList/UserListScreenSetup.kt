@@ -51,8 +51,6 @@ fun UserListScreenSetup(
         onEvent = { vm.onEvent(it) },
         listViewState = listViewState,
     )
-
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,7 +63,6 @@ fun UserListScreen(
     listViewState: GenericListState<UserListItemUiState>,
 ) {
     val lazyListState = rememberLazyListState()
-
 
     BaseScaffold(
         topBar = {
@@ -101,14 +98,16 @@ fun UserListScreen(
                                 itemsIndexed(
                                     items = listViewState.items,
                                     itemContent = { index, itemDetail ->
-                                        UserListItemView(modifier = Modifier.clickable {
-                                            onEvent.invoke(UserListEvent.OnUserClick(index))
-                                        }, uiState = itemDetail)
-                                    })
+                                        UserListItemView(
+                                            modifier = Modifier.clickable {
+                                                onEvent.invoke(UserListEvent.OnUserClick(index))
+                                            },
+                                            uiState = itemDetail
+                                        )
+                                    }
+                                )
                             },
                         )
-
-
 
                         if (listViewState.isLoadingInitial) {
                             LoadingScreenFullSize()
@@ -130,6 +129,6 @@ fun UserListScreen(
                     }
                 }
             }
-        })
-
+        }
+    )
 }

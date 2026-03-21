@@ -129,4 +129,3 @@ fun UserDetailSubDataResponse.mapToNormalize(): UserDetailDataResponse {
     )
     return userDetailDataResponse
 }
-

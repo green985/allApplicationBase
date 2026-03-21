@@ -60,14 +60,11 @@ object RadioLocalModuleDi {
         }
         factory { (get(named(FIREBASE_MESSAGE_DATABASE)) as MessagesAllDatabase).modelDao() }
 
-
         single(named(CONTENT_OPERATION_DATABASE)) {
             ContentLikeDatabase.buildDatabase(
                 get<Context>()
             )
         }
         factory { (get(named(CONTENT_OPERATION_DATABASE)) as ContentLikeDatabase).modelDao() }
-
     }
 }
-

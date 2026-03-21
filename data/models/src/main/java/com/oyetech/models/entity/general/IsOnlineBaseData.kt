@@ -25,6 +25,5 @@ open class IsOnlineBaseData(
         @Bindable get() = _isOnline
         set(value) {
             _isOnline = value
-
         }
 }

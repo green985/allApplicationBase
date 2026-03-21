@@ -37,9 +37,6 @@ class FirebaseLanguageOperationRepositoryImp(
 
         val wrapperResult = FirebaseLanguageResponseDataWrapper.firebaseDocumentToObject(wrapper)
 
-
         return flowOf(wrapperResult)
-
     }
-
 }

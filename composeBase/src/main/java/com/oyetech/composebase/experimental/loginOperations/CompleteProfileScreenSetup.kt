@@ -43,7 +43,6 @@ fun CompleteProfileScreenSetup() {
         }
 
         null -> {
-
         }
     }
 
@@ -58,7 +57,8 @@ fun CompleteProfileScreen(
 ) {
     androidx.compose.ui.window.Dialog(
         properties = DialogHelper.fullScreenDialogProperties,
-        onDismissRequest = {}) {
+        onDismissRequest = {}
+    ) {
         Scaffold(
             topBar = {
                 TopAppBar(

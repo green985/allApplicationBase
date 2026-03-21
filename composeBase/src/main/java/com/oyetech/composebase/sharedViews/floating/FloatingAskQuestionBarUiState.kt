@@ -8,4 +8,3 @@ package com.oyetech.composebase.sharedViews.floating
 data class FloatingAskQuestionBarUiState(
     val isVisible: Boolean = false,
 )
-

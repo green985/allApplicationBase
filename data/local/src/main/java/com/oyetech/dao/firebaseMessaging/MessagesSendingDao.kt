@@ -47,6 +47,4 @@ interface MessagesSendingDao : BaseDao<FirebaseMessagingLocalData> {
 //        deleteAllList()
         insert(list)
     }
-
-
 }

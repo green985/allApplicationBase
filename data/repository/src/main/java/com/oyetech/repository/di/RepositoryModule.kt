@@ -26,6 +26,5 @@ object RepositoryModule {
 
         single<FirebaseCloudOperationRepository> { FirebaseCloudOperationRepositoryImp(get()) }
         single<RandomOperationRepository> { RandomOperationRepositoryImpl(get()) }
-
     }
 }

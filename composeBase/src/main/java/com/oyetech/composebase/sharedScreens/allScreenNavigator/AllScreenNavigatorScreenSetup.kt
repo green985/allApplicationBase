@@ -43,7 +43,6 @@ fun AllScreenNavigatorScreenSetup(
     val isNavigate = remember { false }
 
     LaunchedEffect(isNavigate) {
-
     }
 
     BaseScaffold {
@@ -97,11 +96,8 @@ fun AllScreenNavigatorScreenSetup(
                     }) {
                         Text(text = model)
                     }
-
                 })
             }
-
         }
     }
-
 }

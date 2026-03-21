@@ -8,7 +8,6 @@ Created by Erdi Özbek
 
 class FirebaseGoogleLoginRepositoryImpl {
 // 652520712669-5sudspef6cq60j7drtgr06rm567r0qa2.apps.googleusercontent.com
-
 }
 
 /**

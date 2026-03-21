@@ -30,7 +30,6 @@ fun FirebaseUserProfileModel.toMapFirebaseUserListModel(): FirebaseUserListModel
         age = age,
         gender = gender,
     )
-
 }
 
 fun FirebaseUserProfileModel.toMapListFirebaseUserListModel(): Map<String, Any> {

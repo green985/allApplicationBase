@@ -73,6 +73,4 @@ interface RadioApiService {
 
     @GET("url/{stationUuid}")
     suspend fun sendStationClickEvent(@Field("stationUuid") stationUuid: String): Response<StationClickResponseData>
-
-
 }

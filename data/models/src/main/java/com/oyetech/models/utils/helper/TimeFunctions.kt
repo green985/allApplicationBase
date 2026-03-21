@@ -385,8 +385,6 @@ object TimeFunctions {
         } else {
             mFormatter.format("%02d:%02d", minutes, seconds).toString()
         }
-
-
     }
 
     fun calculateToSecondToMinStringForm(seconds: Long): String {
@@ -401,5 +399,4 @@ object TimeFunctions {
         }
         return timeString.plus(leftSecondString)
     }
-
 }

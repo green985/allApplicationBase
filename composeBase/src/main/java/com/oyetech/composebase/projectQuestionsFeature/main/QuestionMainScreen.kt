@@ -60,7 +60,6 @@ fun QuestionMainScreen(
             }
             QuestionAppBottomNavigationView(navController = navController)
         }
-
     }
 }
 

@@ -44,7 +44,8 @@ class MessageOperationVM(
                         onSuccess = {}, onFailure = {
                             delay(1000)
                             observeRealtimeOperation()
-                        })
+                        }
+                    )
                 }
         }
     }
@@ -52,5 +53,4 @@ class MessageOperationVM(
     fun initFun(): String {
         return this.javaClass.name
     }
-
 }

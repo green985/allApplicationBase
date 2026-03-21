@@ -10,7 +10,6 @@ class FirebaseUserPropertyRepositoryImpl(
     private val firestore: FirebaseFirestore,
 ) : FirebaseUserPropertyRepository {
 
-
     override val updateOperationSharedEvent =
         kotlinx.coroutines.flow.MutableSharedFlow<Unit>()
 

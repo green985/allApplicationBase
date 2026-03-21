@@ -24,6 +24,5 @@ class FirebaseOnlineHelper {
         }.addOnFailureListener {
             Timber.d("not connected")
         }
-
     }
 }

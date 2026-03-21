@@ -51,7 +51,6 @@ fun MessageConversationListScreenSetup(
 
     val listViewState by vm.listViewState.collectAsStateWithLifecycle()
 
-
     BaseScaffold(
         topBar = {
             MessageConversationToolbar()
@@ -64,7 +63,6 @@ fun MessageConversationListScreenSetup(
                 onEvent = { vm.onEvent(it) },
                 listViewState = listViewState,
             )
-
 
             if (listViewState.isLoadingInitial) {
                 LoadingScreenFullSize()
@@ -83,8 +81,8 @@ fun MessageConversationListScreenSetup(
                     withoutAlpha = true
                 )
             }
-        })
-
+        }
+    )
 }
 
 @Composable
@@ -105,7 +103,6 @@ private fun MessageConversationToolbar() {
 @Composable
 private fun MessageConversationToolbarPreview() {
     MessageConversationToolbar()
-
 }
 
 @Suppress("FunctionName")
@@ -117,7 +114,6 @@ fun MessageConversationListScreen(
     listViewState: GenericListState<MessageConversationUiState>,
 ) {
     val lazyListState = rememberLazyListState()
-
 
     Column(
         modifier = Modifier
@@ -145,10 +141,10 @@ fun MessageConversationListScreen(
                                 },
                                 uiState = itemDetail,
                             )
-                        })
+                        }
+                    )
                 },
             )
         }
-
     }
 }

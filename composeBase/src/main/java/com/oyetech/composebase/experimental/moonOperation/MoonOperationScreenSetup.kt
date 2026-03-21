@@ -44,7 +44,6 @@ fun MoonOperationScreenSetup(viewModel: MoonOperationVm = koinViewModel()) {
         onEvent = viewModel::onEvent,
         modifier = Modifier.fillMaxSize()
     )
-
 }
 
 @Suppress("FunctionName")
@@ -75,7 +74,6 @@ fun MoonOperationScreen(
                     RealisticMoonPhaseVisual(illumination = 0.4f)
                 }
 
-
                 if (uiState.error != null) {
                     Text(text = "Hata: ${uiState.error}", color = Color.Red)
                 } else {
@@ -100,7 +98,7 @@ fun MoonOperationScreen(
                     }
 
                     uiState.distanceToMoon?.let {
-                        Text("Dünya - Ay mesafesi: ${it} km")
+                        Text("Dünya - Ay mesafesi: $it km")
                     }
 
                     uiState.distanceToSun?.let {
@@ -116,7 +114,6 @@ fun MoonOperationScreen(
             }
         }
     }
-
 }
 
 @Composable

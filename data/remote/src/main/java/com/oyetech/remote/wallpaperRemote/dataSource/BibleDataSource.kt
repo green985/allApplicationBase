@@ -33,6 +33,4 @@ class BibleDataSource(
 
     suspend fun saveClient(bibleSaveDeviceRequestBody: BibleSaveDeviceRequestBody) =
         bibleService.saveClient(bibleSaveDeviceRequestBody)
-
-
 }

@@ -26,7 +26,6 @@ class FirebaseRealtimeHelperRepositoryDenemeImpl(private val firebaseDatabase: F
     val userPath = "users/$userID/message"
 
     override fun idlee() {
-
     }
 
     override fun sendTestMessage() {
@@ -102,7 +101,6 @@ class FirebaseRealtimeHelperRepositoryDenemeImpl(private val firebaseDatabase: F
                 println("error = $error")
             }
         })
-
     }
 
     /**

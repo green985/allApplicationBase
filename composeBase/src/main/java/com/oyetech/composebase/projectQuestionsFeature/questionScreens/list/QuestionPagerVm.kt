@@ -33,7 +33,6 @@ class QuestionPagerVm(
             }
         }
     }
-
 }
 
 data class QuestionPagerUiState(

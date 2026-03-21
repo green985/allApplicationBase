@@ -198,7 +198,6 @@ fun List<FirebaseMessagingLocalData>.mergeMessages(
                 items = mergedList,
             )
         }
-
     }
 
     Timber.d("mergeMessagesDuration: $mergeMessagesDuration")

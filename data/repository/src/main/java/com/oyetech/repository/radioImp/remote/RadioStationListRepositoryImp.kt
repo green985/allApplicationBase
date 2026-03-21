@@ -22,17 +22,14 @@ class RadioStationListRepositoryImp(private var radioListDataSource: StationList
 
     override fun getLastChangeStationList(): Flow<List<RadioStationResponseData>> {
         return radioListDataSource.getLastChangeStationList()
-
     }
 
     override fun getTopVotedStationList(): Flow<List<RadioStationResponseData>> {
         return radioListDataSource.getTopVotedStationList()
-
     }
 
     override fun getTopClickStationList(): Flow<List<RadioStationResponseData>> {
         return radioListDataSource.getTopClickStationList()
-
     }
 
     override fun getStationListWithTagParams(tagString: String): Flow<List<RadioStationResponseData>> {
@@ -74,5 +71,4 @@ class RadioStationListRepositoryImp(private var radioListDataSource: StationList
             }
         }
     }
-
 }

@@ -71,7 +71,6 @@ abstract class PlayerServiceHelper : Service() {
         Timber.d("service on Destroy calledd.")
         stopService()
         super.onDestroy()
-
     }
 
     fun pause() {
@@ -91,7 +90,6 @@ abstract class PlayerServiceHelper : Service() {
 
     fun previous() {
         radioOperationUseCase.previousRadioChannel()
-
     }
 
     private fun isCanPlay(): Boolean {
@@ -117,7 +115,6 @@ abstract class PlayerServiceHelper : Service() {
             acquireAudioFocus()
             radioOperationUseCase.resumePlayer()
         }
-
     }
 
     fun prepareServiceInit() {
@@ -134,8 +131,8 @@ abstract class PlayerServiceHelper : Service() {
         if (context.isDebug()) Timber.d("acquiring audio focus.")
 
         val result = audioManager.requestAudioFocus(
-            audioFocusChangeListener,  // Use the music stream.
-            AudioManager.STREAM_MUSIC,  // Request permanent focus.
+            audioFocusChangeListener, // Use the music stream.
+            AudioManager.STREAM_MUSIC, // Request permanent focus.
             AudioManager.AUDIOFOCUS_GAIN
         )
         if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
@@ -218,7 +215,6 @@ abstract class PlayerServiceHelper : Service() {
                 if (value !== FOCUS_LOSS_TRANSIENT) {
                     releaseAudioFocus()
                 }
-
             }
         }
         return collector
@@ -283,5 +279,4 @@ abstract class PlayerServiceHelper : Service() {
             Log.e(TAG, "could not acquire wifi lock, WifiManager does not exist!")
         }
     }
-
 }

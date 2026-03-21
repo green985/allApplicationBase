@@ -12,7 +12,6 @@ class ListViewOperationVM constructor(
     private val exampleEndlessDataFlowUseCase: ExampleEndlessDataFlowUseCase,
 ) : BaseViewModel(dispatchers) {
 
-
     private val listOperationDelegate = ListOperationDelegate(
         scope = viewModelScope,
         dispatcher = getDispatcherIo(),
@@ -32,7 +31,6 @@ class ListViewOperationVM constructor(
         listOperationDelegate.cancelJobs()
         Timber.d("ListViewOperationVM cleared")
     }
-
 }
 
 data class ExampleObject(val id: Long, val name: String)

@@ -13,6 +13,4 @@ class GeneralOperationDataSource(private var service: BibleService) {
 
     suspend fun sendFeedback(feedbackOperationRequestBody: FeedbackOperationRequestBody) =
         service.sendFeedback(feedbackOperationRequestBody)
-
-
 }

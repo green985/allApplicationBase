@@ -80,12 +80,9 @@ object KoinHelperInits {
             builder.build()
         }
 
-
-
         single { SharedHelper(get(), get()) }
         single<SharedOperationRepository> { SharedOperationRepositoryImp(get()) }
 
         singleOf(::LanguageOperationHelper)
     }
-
 }

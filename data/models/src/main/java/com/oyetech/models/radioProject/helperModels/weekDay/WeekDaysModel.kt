@@ -36,9 +36,7 @@ fun generateWeekDaysList(): ArrayList<WeekDaysModel> {
         var dayNameString = SimpleDateFormat("EEEE", Locale.getDefault()).format(calendar.time)
 
         list.add(WeekDaysModel(dayNameString, isSelected = true, id = it))
-
     }
 
     return list
-
 }

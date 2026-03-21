@@ -9,5 +9,5 @@ Created by Erdi Özbek
  **/
 
 interface RadioAnalyticsOperationRepository {
-    fun sendRadioPlayingAnalytics(radioPlayingData : RadioPlayingAnalyticsData)
+    fun sendRadioPlayingAnalytics(radioPlayingData: RadioPlayingAnalyticsData)
 }

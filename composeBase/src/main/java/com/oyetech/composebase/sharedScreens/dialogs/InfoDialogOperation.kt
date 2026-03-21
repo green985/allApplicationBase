@@ -68,9 +68,9 @@ fun InfoDialogOperation(
                         Text(LanguageKey.dismiss)
                     }
                 }
-
             }
-        })
+        }
+    )
 }
 
 @Preview(showBackground = true)

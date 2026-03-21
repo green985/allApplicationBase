@@ -56,7 +56,6 @@ class LanguageOperationHelper(
             isInit = false
         }
 
-
         if (isInit) {
             Timber.d("already init...")
             return
@@ -143,7 +142,6 @@ class LanguageOperationHelper(
             return
         }
 
-
         retrieveLanguageFromDevice()
     }
 
@@ -191,6 +189,4 @@ class LanguageOperationHelper(
             languageHashMap[it.key] = it.value
         }
     }
-
-
 }

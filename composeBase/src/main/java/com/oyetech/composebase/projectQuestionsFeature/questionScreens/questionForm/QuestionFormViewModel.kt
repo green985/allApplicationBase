@@ -100,7 +100,6 @@ class QuestionFormViewModel(
             _uiState.update { it.copy(isLoading = true, isError = false) }
 
             questionSupabaseRepository.getCatalogDetail(formId, userId)
-
                 .collectLatest { response ->
                     val questionItems = response.questions.map { question ->
                         question.questionToUiState()
@@ -281,7 +280,6 @@ class QuestionFormViewModel(
 //            return
 //        }
 
-
         questionEventHandlerUseCase.handleQuestionEvent(
             event = it,
             listUiState = listUiState2
@@ -328,5 +326,4 @@ class QuestionFormViewModel(
             }
         }
     }
-
 }

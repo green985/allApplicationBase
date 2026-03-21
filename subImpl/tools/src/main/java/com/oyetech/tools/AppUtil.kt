@@ -24,14 +24,13 @@ object AppUtil {
         val connManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val netInfo = connManager.activeNetworkInfo
-        //should check null because in airplane mode it will be null
+        // should check null because in airplane mode it will be null
         return netInfo != null && netInfo.isConnected
     }
 
     fun dumpIntent(i: Intent) {
         var LOG_TAG = "intentnnn"
         val bundle = i.extras
-
 
         if (bundle != null) {
             val keys = bundle.keySet()
@@ -68,6 +67,4 @@ object AppUtil {
         }
         return ""
     }
-
-
 }

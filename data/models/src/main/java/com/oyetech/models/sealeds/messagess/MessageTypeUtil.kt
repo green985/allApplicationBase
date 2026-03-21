@@ -27,6 +27,3 @@ sealed class MessageTypeUtil {
     object Audio : MessageTypeUtil()
     object TextReply : MessageTypeUtil()
 }
-
-
-

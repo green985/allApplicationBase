@@ -16,6 +16,5 @@ class BecomingNoisyReceiver : BaseBroadcastReceiver() {
                 radioOperationUseCase.pausePlayer(PauseReason.BECAME_NOISY)
             }
         }
-
     }
 }

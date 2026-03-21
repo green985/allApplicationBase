@@ -22,7 +22,6 @@ fun MyFirebaseMessagingService.handleNotification(notificationBody: String?) {
         val firebaseCloudNotificationTypeWrapper =
             notificationBody.deserialize<FirebaseCloudNotificationTypeWrapper>()
 
-
         when (firebaseCloudNotificationTypeWrapper?.notificationType) {
             FirebaseNotificationTypeEnum.Message.name -> {
                 Timber.d("Message notification type")
@@ -52,8 +51,6 @@ fun MyFirebaseMessagingService.handleNotification(notificationBody: String?) {
                 Timber.d("Unknown notification type")
             }
         }
-
-
     } catch (e: Exception) {
         e.printStackTrace()
     }

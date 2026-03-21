@@ -23,7 +23,6 @@ Created by Erdi Özbek
 @OptIn(InternalCoroutinesApi::class)
 class PlayerService : PlayerServiceHelper() {
 
-
     private var timer: CountDownTimer? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -40,7 +39,6 @@ class PlayerService : PlayerServiceHelper() {
             }
 
             MediaButtonReceiver.handleIntent(mediaSessionHelper.getMediaSession(), intent)
-
         }
 
         return super.onStartCommand(intent, flags, startId)
@@ -103,7 +101,6 @@ class PlayerService : PlayerServiceHelper() {
 
             radioOperationUseCase.radioViewStateNewMutableStateFlow.asStateFlow()
                 .collect(getRadioOperationServiceCollector())
-
         }
     }
 
@@ -118,6 +115,4 @@ class PlayerService : PlayerServiceHelper() {
                 .collect(getRadioPauseReasonServiceCollector())
         }
     }
-
-
 }

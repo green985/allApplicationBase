@@ -99,7 +99,6 @@ class ContentOperationVm(
                 }
         }
         Timber.d("Initialized content operation for: ${contentIdList.size} items")
-
     }
 
     private fun updateContentStates(list: List<LikeOperationModel>) {
@@ -151,5 +150,4 @@ class ContentOperationVm(
             }
         }
     }
-
 }

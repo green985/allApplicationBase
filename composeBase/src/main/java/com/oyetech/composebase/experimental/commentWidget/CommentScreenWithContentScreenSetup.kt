@@ -95,7 +95,6 @@ fun CommentScreenWithContentScreenSetup(
                         vm.onEvent(event)
                     })
                 }
-
             },
         )
 
@@ -111,9 +110,7 @@ fun CommentScreenWithContentScreenSetup(
                 loginOperationVM.onEvent(event)
             }
         )
-
     }
-
 
     when (uiState.addCommentState) {
         is Error -> {
@@ -136,36 +133,38 @@ fun CommentScreenWithContentScreenSetup(
         }
 
         else -> {
-
         }
     }
-
 }
 
 @Preview
 @Composable
 private fun CommentInputViewPreview() {
-    CommentInputView(uiState = CommentScreenUiState(
-        contentId = "malesuada",
-        commentInput = "no",
-        addCommentState = Idle,
-        isListEmpty = false,
-        commentList = persistentListOf<CommentItemUiState>(),
-        errorMessage = "vitae"
-    ), userUiState = LoginOperationUiState(
-        isLoading = false,
-        isError = false,
-        errorMessage = "has",
-        isUsernameEmpty = false,
-        isUserDeleted = false,
-        displayName = "Elva Parrish",
-        uid = "dicam",
-        displayNameRemote = "Lucy Evans",
-        photoUrl = "http://www.bing.com/search?q=sed",
-        isLogin = false,
-        isAnonymous = false,
-        lastSignInTimestamp = null
-    ), onEvent = {}, onUserEvent = {})
+    CommentInputView(
+        uiState = CommentScreenUiState(
+            contentId = "malesuada",
+            commentInput = "no",
+            addCommentState = Idle,
+            isListEmpty = false,
+            commentList = persistentListOf<CommentItemUiState>(),
+            errorMessage = "vitae"
+        ),
+        userUiState = LoginOperationUiState(
+            isLoading = false,
+            isError = false,
+            errorMessage = "has",
+            isUsernameEmpty = false,
+            isUserDeleted = false,
+            displayName = "Elva Parrish",
+            uid = "dicam",
+            displayNameRemote = "Lucy Evans",
+            photoUrl = "http://www.bing.com/search?q=sed",
+            isLogin = false,
+            isAnonymous = false,
+            lastSignInTimestamp = null
+        ),
+        onEvent = {}, onUserEvent = {}
+    )
 }
 
 @Composable
@@ -208,7 +207,6 @@ fun CommentInputView(
                 trailingIcon = {
                     IconButton(enabled = uiState.commentInput.isNotBlank(), onClick = {
                         onEvent(CommentScreenEvent.OnCommentSubmit)
-
                     }) {
                         Icon(
                             Icons.AutoMirrored.Filled.Send,
@@ -217,9 +215,6 @@ fun CommentInputView(
                     }
                 }
             )
-
         }
-
     }
 }
-

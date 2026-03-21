@@ -19,9 +19,8 @@ fun GenderSegmentedControl(selectedGender: String, onGenderSelected: (String) ->
 
     Row(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth(),
 //            .padding(16.dp),
-        ,
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         genders.forEach { gender ->

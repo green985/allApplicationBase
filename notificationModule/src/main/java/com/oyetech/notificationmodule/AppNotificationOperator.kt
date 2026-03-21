@@ -82,7 +82,6 @@ class AppNotificationOperator(private val context: Context) {
 
         return pendingIntent
     }
-
 }
 
 private fun Builder.setSmallIconWithNotificationType(notificationType: FirebaseNotificationTypeEnum) {

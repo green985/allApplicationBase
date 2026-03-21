@@ -46,7 +46,8 @@ fun LoadingScreenFullSize(modifier: Modifier = Modifier) {
             .background(MaterialTheme.colorScheme.background.copy(alpha = ProjectUtil.loadingBackgroudAlpha))
             .clickable(
                 enabled = false,
-                onClick = {}), // Kullanıcı aksiyonlarını bloklamak için
+                onClick = {}
+            ), // Kullanıcı aksiyonlarını bloklamak için
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(color = MaterialTheme.colorScheme.onBackground)
@@ -95,7 +96,8 @@ fun PagingMoreLoading() {
             .verticalScroll(rememberScrollState())
             .clickable(
                 enabled = false,
-                onClick = {}), // Kullanıcı aksiyonlarını bloklamak için
+                onClick = {}
+            ), // Kullanıcı aksiyonlarını bloklamak için
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
@@ -105,11 +107,11 @@ fun PagingMoreLoading() {
 @Suppress("FunctionName")
 
 @Composable
-fun LoadingDialogFullScreen(
-) {
+fun LoadingDialogFullScreen() {
     androidx.compose.ui.window.Dialog(
         properties = DialogHelper.fullScreenDialogProperties,
-        onDismissRequest = {}) {
+        onDismissRequest = {}
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -119,7 +121,6 @@ fun LoadingDialogFullScreen(
             CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
         }
     }
-
 }
 
 @Suppress("FunctionName")
@@ -132,7 +133,8 @@ fun ErrorDialogFullScreen(
 ) {
     androidx.compose.ui.window.Dialog(
         properties = DialogHelper.fullScreenDialogProperties,
-        onDismissRequest = { onDismiss?.invoke() }) {
+        onDismissRequest = { onDismiss?.invoke() }
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -170,7 +172,7 @@ fun ErrorDialogFullScreen(
     }
 }
 
-//@Deprecated("Use ErrorDialogFullScreen instead")
+// @Deprecated("Use ErrorDialogFullScreen instead")
 @Suppress("FunctionName")
 @Composable
 fun ErrorScreenFullSize(

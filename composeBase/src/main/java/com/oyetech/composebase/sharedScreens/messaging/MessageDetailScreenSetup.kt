@@ -67,7 +67,6 @@ fun MessageDetailScreenSetup(
     }
     val listViewState by vm.listViewState.collectAsStateWithLifecycle()
 
-
     val uiState by vm.uiState.collectAsStateWithLifecycle()
 
     MessageDetailScreen(
@@ -131,9 +130,8 @@ fun MessageDetailScreen(
                 onMessageTextChanged = onMessageTextChanged,
                 onMessageSend = onMessageSend
             )
-        })
-
-
+        }
+    )
 }
 
 @Composable
@@ -157,7 +155,6 @@ private fun MessageDetailToolbarPreview() {
         messageDetailUiState =
             MessageDetailScreenUiState(toolbarTitleText = "deneme texttt")
     )
-
 }
 
 @Composable
@@ -189,7 +186,8 @@ private fun MessageDetailContentView(
                                 uiState = messageDetail,
                                 currentUserId = uiState.currentUserId
                             )
-                        })
+                        }
+                    )
                 },
             )
         }
@@ -226,32 +224,33 @@ private fun MessageDetailContentView(
 private fun MessageDetailPreview() {
     MessageDetailScreen(
         uiState = MessageDetailScreenUiState(
-        isLoading = false,
-        onMessageSendTriggered = false,
-        errorText = "",
-        messageText = "",
-        createdAt = null,
-        createdAtString = "",
-        senderId = "",
-        receiverId = "",
-        toolbarTitleText = "deneme user",
-        currentUserId = "",
-        conversationId = ""
-    ), onMessageTextChanged = {}, onMessageSend = {}, listViewState = GenericListState(
-        items = persistentListOf(
-            MessageDetailUiState(
-                isLoading = false,
-                content = "asdasdasd",
-                createdAt = 21451251525124,
-                createdAtString = TimeFunctions.getDateFromLongWithHour(21451251525124),
-                senderId = "esse",
-                receiverId = "salutatus",
-                messageId = "mi",
-                status = SENT,
-                conversationId = "aliquet"
-            )
+            isLoading = false,
+            onMessageSendTriggered = false,
+            errorText = "",
+            messageText = "",
+            createdAt = null,
+            createdAtString = "",
+            senderId = "",
+            receiverId = "",
+            toolbarTitleText = "deneme user",
+            currentUserId = "",
+            conversationId = ""
         ),
+        onMessageTextChanged = {}, onMessageSend = {},
+        listViewState = GenericListState(
+            items = persistentListOf(
+                MessageDetailUiState(
+                    isLoading = false,
+                    content = "asdasdasd",
+                    createdAt = 21451251525124,
+                    createdAtString = TimeFunctions.getDateFromLongWithHour(21451251525124),
+                    senderId = "esse",
+                    receiverId = "salutatus",
+                    messageId = "mi",
+                    status = SENT,
+                    conversationId = "aliquet"
+                )
+            ),
+        )
     )
-    )
-
 }

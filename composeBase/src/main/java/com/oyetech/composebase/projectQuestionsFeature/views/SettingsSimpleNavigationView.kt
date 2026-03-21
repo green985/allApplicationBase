@@ -50,7 +50,6 @@ fun SettingsSimpleNavigationView(
             contentDescription = "Settings",
             modifier = Modifier.clickable { onClick.invoke() }
         )
-
     }
 }
 

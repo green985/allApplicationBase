@@ -15,7 +15,6 @@ Created by Erdi Özbek
 class RadioAnalyticsOperationRepositoryImp(private val firestore: FirebaseFirestore) :
     RadioAnalyticsOperationRepository {
 
-
     override fun sendRadioPlayingAnalytics(radioPlayingData: RadioPlayingAnalyticsData) {
         firestore.collection(FirebaseDatabaseKeys.Radio_Playing_Time_Collection)
             .add(radioPlayingData)

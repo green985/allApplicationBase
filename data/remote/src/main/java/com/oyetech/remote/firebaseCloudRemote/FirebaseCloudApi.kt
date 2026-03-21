@@ -18,5 +18,4 @@ interface FirebaseCloudApi {
 
     @POST("/sendNotificationWithPayload")
     suspend fun sendNotificationWithPayload(@Body body: FirebaseCloudNotificationBody): Response<Boolean>
-
 }

@@ -181,5 +181,3 @@ fun MessageDetailDataResponse?.canShowPopupMenuForMessage(): Boolean {
     }
     return false
 }
-
-

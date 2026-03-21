@@ -17,7 +17,6 @@ data class AdminApproveQuestionUiState(
     val currentFilter: QueFilter = QueFilter.DEFAULT,
     val currentPage: Int = 0,
 
-
     val currentFilterType: QuestionListAdminFilterType = QuestionListAdminFilterType.ALL,
     val tabs: ImmutableList<Pair<QuestionListAdminFilterType, String>> = persistentListOf(
         QuestionListAdminFilterType.ALL to LanguageKey.all,
@@ -36,7 +35,6 @@ sealed class AdminApproveQuestionUiEvent : BaseUIEvent() {
 sealed class AdminApproveQuestionEvent : BaseEvent() {
     data class OnFilterSelected(val filterType: QuestionListAdminFilterType) :
         AdminApproveQuestionEvent()
-
 
     data class OnTagFilterChanged(
         val tag: QueTag? = null,

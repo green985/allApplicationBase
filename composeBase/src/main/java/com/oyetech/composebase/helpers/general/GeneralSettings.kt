@@ -18,7 +18,6 @@ object GeneralSettings {
         return true
     }
 
-
     fun isRealTimeOperationEnable(): Boolean {
         return false
     }
@@ -47,5 +46,4 @@ object GeneralSettings {
     fun listSize(): Int {
         return 10
     }
-
 }

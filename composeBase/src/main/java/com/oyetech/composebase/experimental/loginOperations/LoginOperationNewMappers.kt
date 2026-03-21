@@ -45,8 +45,6 @@ fun LoginOperationVM.mapToProfileValue(userData: UserProfileProperty?) {
             uiEvent.emit(LoginOperationUiEvent.OnLoginSuccess)
             navigationUseCase.navigateTo("back")
         }
-
-
     } else {
         Timber.d("LoginOperationVM mapToProfileValue profile incomplete: $userData")
         viewModelScope.launch(Dispatchers.Main) {

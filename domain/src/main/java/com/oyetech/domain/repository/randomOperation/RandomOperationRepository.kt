@@ -9,5 +9,4 @@ Created by Erdi Özbek
 interface RandomOperationRepository {
 
     fun getMoonPhase(unixTime: Long): kotlinx.coroutines.flow.Flow<List<com.oyetech.models.randomOperationModels.MoonPhaseResponse>>
-
 }

@@ -24,7 +24,6 @@ fun String.toErrorMessage(): String {
         return LanguageKey.generalErrorText
     }
 
-
     return this
 }
 

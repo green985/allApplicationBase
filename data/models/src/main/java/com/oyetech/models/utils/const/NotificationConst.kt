@@ -27,6 +27,4 @@ object NotificationConst {
 
     const val localPrayNotificationChannelId = "localPrayNotificationChannelId"
     const val localVerseNotificationChannelId = "localVerseNotificationChannelId"
-
-
 }

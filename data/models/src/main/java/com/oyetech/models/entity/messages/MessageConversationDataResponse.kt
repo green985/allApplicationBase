@@ -64,7 +64,6 @@ data class MessageConversationDataResponse(
         @Bindable get() = _unreadMessageCount
         set(value) {
             _unreadMessageCount = value
-
         }
 
     @Json(ignore = true)
@@ -72,7 +71,6 @@ data class MessageConversationDataResponse(
         @Bindable get() = _lastMessageStatus
         set(value) {
             _lastMessageStatus = value
-
         }
 }
 
@@ -122,7 +120,9 @@ fun MessageConversationSubDataResponse.mapToNormalize(): MessageConversationData
     return messageConversationDataResponse
 }
 
-fun List<MessageConversationDataResponse>.containsWithId(messageConversationDataResponse: MessageConversationDataResponse?): Boolean {
+fun List<MessageConversationDataResponse>.containsWithId(
+    messageConversationDataResponse: MessageConversationDataResponse?,
+): Boolean {
     var foundedItem = this.find {
         it.conversationId == messageConversationDataResponse?.conversationId
     }
@@ -158,5 +158,3 @@ fun FeedDataResponse.feedDataToMessageConversationMapper(): MessageConversationD
         )
     return messageConversationDataResponse
 }
-
-

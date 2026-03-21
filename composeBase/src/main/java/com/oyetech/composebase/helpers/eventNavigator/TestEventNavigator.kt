@@ -41,7 +41,6 @@ class TestEventNavigator {
         lifecycleScope.launch(Dispatchers.IO) {
             triggerEvents(EventNavigatorList.userListStartConversationOperation)
         }
-
     }
 
     companion object {
@@ -90,5 +89,4 @@ object EventNavigatorList {
         add(AllScreenNavigatorEvent.OnNavigateToQuestionStart)
         add(AllScreenNavigatorEvent.NavigateListItemClicked(QuestionAppProjectRoutes.QuestionCreateQuestionPage.route))
     }
-
 }

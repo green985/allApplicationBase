@@ -23,6 +23,4 @@ interface RadioOperationRepository {
     fun resumePlayer()
 
     fun setVolume(fullVolume: Float)
-
-
 }

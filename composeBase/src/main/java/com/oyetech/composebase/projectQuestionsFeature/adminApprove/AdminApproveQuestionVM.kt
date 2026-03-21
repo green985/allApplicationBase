@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-
 class AdminApproveQuestionVm(
     appDispatchers: AppDispatchers,
     private val navigationUseCase: NavigationUseCase,
@@ -36,9 +35,7 @@ class AdminApproveQuestionVm(
                 }
 
                 is AdminApproveQuestionEvent.OnTagFilterChanged -> {
-
                 }
-
 
                 AdminApproveQuestionEvent.OnRefreshClicked -> refresh()
             }

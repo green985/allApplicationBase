@@ -78,7 +78,5 @@ object Modules {
     private var BASE_SHARED_PREF_KEY = "BASE_SHARED_PREF_KEY"
 
     val MainModule = module {
-
     }
-
 }

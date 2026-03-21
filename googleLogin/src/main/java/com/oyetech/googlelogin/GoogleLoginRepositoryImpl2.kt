@@ -1,45 +1,45 @@
-//package com.oyetech.googlelogin
+// package com.oyetech.googlelogin
 //
-///**
-//Created by Erdi Özbek
-//-17.06.2024-
-//-00:49-
+// /**
+// Created by Erdi Özbek
+// -17.06.2024-
+// -00:49-
 // **/
-//import androidx.activity.ComponentActivity
-//import androidx.credentials.CredentialManager
-//import androidx.credentials.CustomCredential
-//import androidx.credentials.GetCredentialRequest
-//import androidx.credentials.GetCredentialResponse
-//import androidx.credentials.PasswordCredential
-//import androidx.credentials.PublicKeyCredential
-//import com.google.android.libraries.identity.googleid.GetGoogleIdOption
-//import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-//import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
-//import com.google.firebase.auth.FirebaseAuth
-//import com.google.firebase.auth.FirebaseUser
-//import com.google.firebase.auth.GoogleAuthProvider
-//import com.oyetech.domain.helper.ActivityProviderUseCase
-//import com.oyetech.domain.repository.firebase.FirebaseUserRepository
-//import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
-//import com.oyetech.models.firebaseModels.googleAuth.GetUserWithTokenBody
-//import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData
-//import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData.Companion.getNewWithException
-//import com.oyetech.models.firebaseModels.googleAuth.ProviderDataInfo
-//import com.oyetech.models.firebaseModels.googleAuth.UserMetadata
-//import com.oyetech.models.firebaseModels.googleAuth.isUserHasUID
-//import com.oyetech.tools.coroutineHelper.asResult
-//import kotlinx.coroutines.CoroutineScope
-//import kotlinx.coroutines.Dispatchers
-//import kotlinx.coroutines.flow.MutableStateFlow
-//import kotlinx.coroutines.flow.collectLatest
-//import kotlinx.coroutines.launch
-//import timber.log.Timber
+// import androidx.activity.ComponentActivity
+// import androidx.credentials.CredentialManager
+// import androidx.credentials.CustomCredential
+// import androidx.credentials.GetCredentialRequest
+// import androidx.credentials.GetCredentialResponse
+// import androidx.credentials.PasswordCredential
+// import androidx.credentials.PublicKeyCredential
+// import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+// import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+// import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
+// import com.google.firebase.auth.FirebaseAuth
+// import com.google.firebase.auth.FirebaseUser
+// import com.google.firebase.auth.GoogleAuthProvider
+// import com.oyetech.domain.helper.ActivityProviderUseCase
+// import com.oyetech.domain.repository.firebase.FirebaseUserRepository
+// import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
+// import com.oyetech.models.firebaseModels.googleAuth.GetUserWithTokenBody
+// import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData
+// import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData.Companion.getNewWithException
+// import com.oyetech.models.firebaseModels.googleAuth.ProviderDataInfo
+// import com.oyetech.models.firebaseModels.googleAuth.UserMetadata
+// import com.oyetech.models.firebaseModels.googleAuth.isUserHasUID
+// import com.oyetech.tools.coroutineHelper.asResult
+// import kotlinx.coroutines.CoroutineScope
+// import kotlinx.coroutines.Dispatchers
+// import kotlinx.coroutines.flow.MutableStateFlow
+// import kotlinx.coroutines.flow.collectLatest
+// import kotlinx.coroutines.launch
+// import timber.log.Timber
 //
-//class GoogleLoginRepositoryImpl2(
+// class GoogleLoginRepositoryImpl2(
 //    private val activityProviderUseCase: ActivityProviderUseCase,
 //    private val firebaseUserRepository: FirebaseUserRepository,
 //    private val questionSupabaseRepository: com.oyetech.domain.repository.question.QuestionSupabaseRepository,
-//) : GoogleLoginRepository {
+// ) : GoogleLoginRepository {
 //    override val googleUserStateFlow =
 //        MutableStateFlow(GoogleUserResponseData())
 //    override val userAutoLoginStateFlow =
@@ -55,16 +55,16 @@
 //            googleUserStateFlow.value = GoogleUserResponseData()
 //            val currentUser = firebaseAuth.currentUser
 //            signWithGoogle()
-////            if (currentUser == null) {
-////            } else {
-////                val userGoogleData = getCurrentUserResponse()
-////                if (userGoogleData == null || !userGoogleData.isUserHasUID()) {
-////                    googleUserStateFlow.value =
-////                        getNewWithException("setupGoogleSignInLauncher Google sign in failed")
-////                } else {
-////                    googleUserStateFlow.value = userGoogleData.copy()
-////                }
-////            }
+// //            if (currentUser == null) {
+// //            } else {
+// //                val userGoogleData = getCurrentUserResponse()
+// //                if (userGoogleData == null || !userGoogleData.isUserHasUID()) {
+// //                    googleUserStateFlow.value =
+// //                        getNewWithException("setupGoogleSignInLauncher Google sign in failed")
+// //                } else {
+// //                    googleUserStateFlow.value = userGoogleData.copy()
+// //                }
+// //            }
 //        } catch (e: Exception) {
 //            googleUserStateFlow.value = getNewWithException(e.message)
 //        }
@@ -81,7 +81,7 @@
 //                // Only show accounts previously used to sign in.
 //                .build()
 //
-//// Create the Credential Manager request
+// // Create the Credential Manager request
 //            val request = GetCredentialRequest.Builder()
 //                .addCredentialOption(googleIdOption)
 //                .build()
@@ -104,7 +104,7 @@
 //            is PublicKeyCredential -> {
 //                // Share responseJson such as a GetCredentialResponse on your server to
 //                // validate and authenticate
-////                responseJson = credential.authenticationResponseJson
+// //                responseJson = credential.authenticationResponseJson
 //            }
 //
 //            // Password credential
@@ -304,4 +304,4 @@
 //            }
 //        )
 //    }
-//}
+// }

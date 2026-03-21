@@ -7,7 +7,6 @@ data class GetCatalogListResponse(
     val catalogs: List<CatalogItem>,
 )
 
-
 @Keep
 data class GetCatalogListRequest(
     val queryText: String,

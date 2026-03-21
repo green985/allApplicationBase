@@ -78,7 +78,6 @@ class MessageConversationListVm(
                     listViewState.updateErrorInitial(it)
                 })
             }
-
         }
     }
 
@@ -165,12 +164,10 @@ class MessageConversationListVm(
                             ScreenKey.receiverUserId to event.userId,
                         )
                     )
-
                 }
 
                 is OnConversationClickWithPosition -> {
                     onConversationClickWithPosition(event)
-
                 }
 
                 OnConversationScreenOpen -> {
@@ -194,7 +191,7 @@ class MessageConversationListVm(
             listViewState.value.items.getOrNull(event.conversationPosition)?.userId
                 ?: return
 
-        Timber.d("Conversation Clicked: ${conversationId}")
+        Timber.d("Conversation Clicked: $conversationId")
         messagesAllOperationRepository.currentUsername =
             listViewState.value.items.find { it.conversationId == conversationId }?.username
                 ?: ""

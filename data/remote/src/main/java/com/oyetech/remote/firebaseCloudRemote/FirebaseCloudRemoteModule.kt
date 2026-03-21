@@ -47,7 +47,5 @@ object FirebaseCloudRemoteModule {
 
             retrofit.create(FirebaseCloudApi::class.java)
         }
-
     }
-
 }

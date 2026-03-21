@@ -40,7 +40,8 @@ fun ContentOperationView(
                             contentOperationUiState.contentId
                         )
                     )
-                }) {
+                }
+            ) {
                 Icon(
                     modifier = Modifier,
                     imageVector = if (contentOperationUiState.isLiked) {
@@ -69,7 +70,6 @@ fun ContentOperationView(
 //
 //        )
 //    }
-
 }
 
 @Suppress("FunctionName", "UnusedPrivateMember")

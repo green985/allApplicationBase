@@ -10,6 +10,4 @@ Created by Erdi Özbek
 
 @Composable
 fun CommentScreenWithContentId(contentId: String) {
-
-
 }

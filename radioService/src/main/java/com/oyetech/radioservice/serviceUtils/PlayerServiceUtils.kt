@@ -43,7 +43,6 @@ object PlayerServiceUtils {
             serviceConnection!!,
             Context.BIND_AUTO_CREATE
         )
-
     }
 
     fun bindService() {
@@ -58,7 +57,6 @@ object PlayerServiceUtils {
             serviceConnection!!,
             Context.BIND_AUTO_CREATE
         )
-
     }
 
     fun stopService() {
@@ -93,6 +91,4 @@ object PlayerServiceUtils {
             return PendingIntent.FLAG_UPDATE_CURRENT
         }
     }
-
-
 }

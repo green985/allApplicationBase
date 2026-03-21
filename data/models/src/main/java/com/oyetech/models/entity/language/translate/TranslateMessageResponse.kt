@@ -19,4 +19,3 @@ data class TranslateMessageResponse(
     @Json(name = "translatedContent") var translatedContent: String = "",
     @Json(name = "translationLimitExceeded") var translationLimitExceeded: Boolean = false
 ) : Parcelable
-

@@ -295,7 +295,6 @@ private fun FormTitleSection(
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-
             }
         }
 
@@ -465,4 +464,3 @@ private fun PreviewQuestionFormScreenError() {
         uiState = previewErrorState()
     )
 }
-

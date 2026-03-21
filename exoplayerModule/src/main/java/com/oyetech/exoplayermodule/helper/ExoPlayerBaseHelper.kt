@@ -62,7 +62,8 @@ abstract class ExoPlayerBaseHelper(
 
         exoPlayer.setAudioAttributes(
             Builder().setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
-                .setUsage(if (isAlarm) C.USAGE_ALARM else C.USAGE_MEDIA).build(), false
+                .setUsage(if (isAlarm) C.USAGE_ALARM else C.USAGE_MEDIA).build(),
+            false
         )
     }
 
@@ -92,7 +93,8 @@ abstract class ExoPlayerBaseHelper(
     fun setExoPlayerAlarmMode() {
         exoPlayer.setAudioAttributes(
             Builder().setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
-                .setUsage(C.USAGE_ALARM).build(), false
+                .setUsage(C.USAGE_ALARM).build(),
+            false
         )
     }
 
@@ -107,7 +109,6 @@ abstract class ExoPlayerBaseHelper(
 
             exoPlayer.playWhenReady = true
         }
-
     }
 
     override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
@@ -177,8 +178,8 @@ abstract class ExoPlayerBaseHelper(
         var errorCode = error.errorCode
         Timber.d("errororororr == " + errorCode)
         if (errorCode == 0) {
-            //is Error cause for mediaSource
-            //Try to play again. Type.TYPE_SOURCE = 0
+            // is Error cause for mediaSource
+            // Try to play again. Type.TYPE_SOURCE = 0
             playExoPlayerWithRadioModel(isHlsProblem = true)
         } else {
             stop()

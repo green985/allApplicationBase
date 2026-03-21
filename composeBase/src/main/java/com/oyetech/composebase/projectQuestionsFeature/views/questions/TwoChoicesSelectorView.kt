@@ -40,7 +40,6 @@ fun TwoChoicesSelectorView(
     val selectedId = uiState.selectedAnswer
     val options = uiState.options
 
-
     Row(
         modifier = Modifier
             .fillMaxWidth(QuestionProjectViewAttrs.selectorWidthFraction)

@@ -38,5 +38,4 @@ class FirebaseContactWithMeOperationRepositoryImp(private val firestore: Firebas
     override fun clearFeedbackOperationStateFlow() {
         sendFeedbackOperationStateFlow.tryEmit(null)
     }
-
 }

@@ -92,7 +92,6 @@ class MediaSessionHelper(private var service: Service) : PlayerBroadcastHelper(s
         powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
 
         notificationHelper = RadioNotificationHelper(service, mediaSession)
-
     }
 
     fun fireAndStopDummyNotification() {
@@ -116,12 +115,14 @@ class MediaSessionHelper(private var service: Service) : PlayerBroadcastHelper(s
     }
 
     private fun setMediaPlaybackState(state: Int) {
-        var actions = (PlaybackStateCompat.ACTION_SKIP_TO_NEXT
+        var actions = (
+                PlaybackStateCompat.ACTION_SKIP_TO_NEXT
                 or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
                 or PlaybackStateCompat.ACTION_STOP
                 or PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID
                 or PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH
-                or PlaybackStateCompat.ACTION_PLAY_PAUSE)
+                        or PlaybackStateCompat.ACTION_PLAY_PAUSE
+                )
         actions =
             if (state == PlaybackStateCompat.STATE_BUFFERING || state == PlaybackStateCompat.STATE_PLAYING) {
                 actions or PlaybackStateCompat.ACTION_PAUSE
@@ -134,8 +135,8 @@ class MediaSessionHelper(private var service: Service) : PlayerBroadcastHelper(s
             var error = ""
 
             val currentPlayerState: PlayState = radioOperationUseCase.getPlayerState()
-            if ((currentPlayerState === Paused || currentPlayerState === Idle)
-                && pauseReason === PauseReason.METERED_CONNECTION
+            if ((currentPlayerState === Paused || currentPlayerState === Idle) &&
+                pauseReason === PauseReason.METERED_CONNECTION
             ) {
                 error = context.resources.getString(string.notify_metered_connection)
             } else {

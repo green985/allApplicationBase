@@ -37,7 +37,7 @@ class AudioFocusChangeListener : OnAudioFocusChangeListener {
             if (!radioPlayer.isLocal()) {
                 return
             }
-            
+
              */
             when (focusChange) {
                 AudioManager.AUDIOFOCUS_GAIN -> {
@@ -67,9 +67,6 @@ class AudioFocusChangeListener : OnAudioFocusChangeListener {
                     radioOperationUseCase.setVolume(ServiceConst.DUCK_VOLUME)
                 }
             }
-
         }
     }
-
-
 }

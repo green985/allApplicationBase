@@ -14,11 +14,13 @@ object DeviceHelperExt {
     fun getDeviceName(): String {
         var deviceName = ""
         try {
-            deviceName = (if (MODEL.startsWith(MANUFACTURER, ignoreCase = true)) {
-                MODEL
-            } else {
-                "$MANUFACTURER $MODEL"
-            }).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+            deviceName = (
+                    if (MODEL.startsWith(MANUFACTURER, ignoreCase = true)) {
+                        MODEL
+                    } else {
+                        "$MANUFACTURER $MODEL"
+                    }
+                    ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
         } catch (e: Exception) {
             Log.e("DeviceHelperExt", "getDeviceName: ", e)
         }

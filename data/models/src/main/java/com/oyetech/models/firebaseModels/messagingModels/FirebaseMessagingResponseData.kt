@@ -131,5 +131,4 @@ class MessageStatusTypeConverter {
     fun toMessageStatus(status: String): MessageStatus {
         return MessageStatus.valueOf(status)
     }
-
 }

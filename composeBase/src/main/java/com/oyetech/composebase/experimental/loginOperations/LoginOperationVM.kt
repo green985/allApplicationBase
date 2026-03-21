@@ -92,7 +92,6 @@ class LoginOperationVM(
         }
     }
 
-
     private fun observeGoogleUserStateFlow() {
         viewModelScope.launch(getDispatcherIo()) {
             googleLoginRepository.googleUserStateFlow.asResult().onEach {
@@ -360,5 +359,4 @@ class LoginOperationVM(
 
         return false
     }
-
 }

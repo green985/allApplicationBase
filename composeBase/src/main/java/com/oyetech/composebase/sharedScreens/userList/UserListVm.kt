@@ -88,7 +88,6 @@ class UserListVm(
                                 Timber.d("User added to user list")
                             }
                     }
-
                 }
 
                 UserListEvent.RefreshUserList -> {
@@ -112,7 +111,6 @@ class UserListVm(
                             ScreenKey.receiverUserId to itemDetail.userId,
                         )
                     )
-
                 }
             }
         }

@@ -233,7 +233,6 @@ class MessageDetailVm(
                 )
             }
         }
-
     }
 
     private fun setCurrentConversation(isExit: Boolean) {
@@ -243,5 +242,4 @@ class MessageDetailVm(
             messagingAllOperationRepository.currentConversationId.value = conversationId
         }
     }
-
 }

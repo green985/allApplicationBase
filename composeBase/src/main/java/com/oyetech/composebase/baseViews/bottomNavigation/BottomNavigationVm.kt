@@ -1,4 +1,4 @@
-package com.oyetech.composebase.baseViews.bottomNavigation;
+package com.oyetech.composebase.baseViews.bottomNavigation
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel

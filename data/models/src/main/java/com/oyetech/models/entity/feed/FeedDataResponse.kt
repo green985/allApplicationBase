@@ -55,5 +55,3 @@ fun FeedDataSubResponse.mapToNormalize(): FeedDataResponse {
     )
     return feedDataResponse
 }
-
-

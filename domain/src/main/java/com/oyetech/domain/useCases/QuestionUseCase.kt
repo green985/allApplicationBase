@@ -68,9 +68,7 @@ class QuestionUseCase(
 //            .map {
 //            overlayAnswers(it, answerRepository.answersState.value)
 //        }
-
     }
-
 
     private suspend fun fetchQuestionById(questionId: String): QuestionOperationResponseBody? {
         return try {

@@ -64,7 +64,6 @@ fun MessageConversationItemView(
                     )
                 }
             }
-
         }
 
         Text(
@@ -81,7 +80,6 @@ fun MessageConversationItemView(
                 .align(Alignment.BottomStart)
                 .fillMaxWidth()
         )
-
     }
 }
 

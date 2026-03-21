@@ -188,9 +188,6 @@ class CommentScreenWithContentIdVM(
             copy(errorMessage = "")
         }
 
-
-
-
         onEvent(AddComment(commentContent))
     }
 
@@ -206,13 +203,15 @@ class CommentScreenWithContentIdVM(
                     it.fold(
                         onSuccess = {
                             uiState.updateState {
-                                copy(commentList = commentList.map {
-                                    if (it.commentId != commentId) {
-                                        it
-                                    } else {
-                                        it.copy(isDeleted = true)
-                                    }
-                                }.toImmutableList())
+                                copy(
+                                    commentList = commentList.map {
+                                        if (it.commentId != commentId) {
+                                            it
+                                        } else {
+                                            it.copy(isDeleted = true)
+                                        }
+                                    }.toImmutableList()
+                                )
                             }
                             itemTriggerSingle.value = listOf(DeleteComment(commentId))
                         },
@@ -225,6 +224,4 @@ class CommentScreenWithContentIdVM(
                 }
         }
     }
-
-
 }

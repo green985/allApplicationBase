@@ -31,10 +31,10 @@ class ExoPlayerRepositoryImp(
         CoroutineScope(dispatchers.main).launch {
             exoPlayer.setAudioAttributes(
                 Builder().setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
-                    .setUsage(C.USAGE_MEDIA).build(), false
+                    .setUsage(C.USAGE_MEDIA).build(),
+                false
             )
         }
-
 
         playExoPlayerWithRadioModel()
     }
@@ -58,7 +58,6 @@ class ExoPlayerRepositoryImp(
     override fun resumePlayer() {
         Timber.d("player State === " + exoPlayer.playbackState)
 
-
         if (exoPlayer.playbackState != Player.STATE_IDLE) {
             exoPlayer.play()
         } else {
@@ -74,5 +73,4 @@ class ExoPlayerRepositoryImp(
     override fun pause() {
         exoPlayer.pause()
     }
-
 }

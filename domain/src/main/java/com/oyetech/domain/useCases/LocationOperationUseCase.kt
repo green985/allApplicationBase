@@ -17,5 +17,4 @@ class LocationOperationUseCase(private var repository: LocationHelperRepository)
 
     val locationResultStateFlow: MutableStateFlow<LocationRequestBody>
         get() = repository.locationResultStateFlow
-
 }

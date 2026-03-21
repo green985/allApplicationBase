@@ -59,5 +59,6 @@ fun GeneralOperationScreen(content: @Composable () -> Unit) {
             ) {
                 content()
             }
-        })
+        }
+    )
 }

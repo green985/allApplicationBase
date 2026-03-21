@@ -82,7 +82,6 @@ class ActivityProviderUseCase(application: Application) {
                     activityMutableStateFlow.emit(activity)
                 }
             }
-
         })
     }
 

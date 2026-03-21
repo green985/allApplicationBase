@@ -79,7 +79,6 @@ class AdsHelperRepositoryImp : AdsHelperBase(), AdsHelperRepository {
             }
             admobBannerCreator = AdmobBannerAdCreator(activity)
 
-
             admobInterstitialAdCreator = AdmobInterstitialAdCreator(activity)
             admobInterstitialAdCreator.initClass()
 

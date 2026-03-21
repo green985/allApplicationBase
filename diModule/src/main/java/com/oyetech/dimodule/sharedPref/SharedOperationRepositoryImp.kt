@@ -163,7 +163,6 @@ class SharedOperationRepositoryImp(
                 TimeFunctions.getTimeMilis()
             )
         }
-
     }
 
     override fun getTotalAppOpenCount(): Int {
@@ -317,7 +316,6 @@ class SharedOperationRepositoryImp(
         )
 
         return lastRadioStationResponseData
-
     }
 
     override fun getUserDontWantSeeFlagTimeExpired(): Boolean {
@@ -413,7 +411,6 @@ class SharedOperationRepositoryImp(
             FirebaseLanguageResponseDataWrapper::class.java
         )
         return firebaseLanguageResponseDataWrapper
-
     }
 
     override fun isSubsDialogCanShow(): Boolean {
@@ -472,5 +469,4 @@ class SharedOperationRepositoryImp(
     override fun removeGoogleUserData() {
         sharedHelper.removeData(SharedPrefKey.GOOGLE_USER_FIREBASE_TOKEN)
     }
-
 }

@@ -37,4 +37,3 @@ data class UserAlertInfoAlertStringRequestBody(
     @Json(name = "alertString") var alertString: String = "",
     @Json(name = "languageCode") var languageCode: String = "",
 ) : Parcelable
-

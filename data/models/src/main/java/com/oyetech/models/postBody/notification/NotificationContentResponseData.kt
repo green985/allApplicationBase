@@ -19,4 +19,3 @@ data class NotificationContentResponseData(
     @Json(name = "userId")
     var userId: Int = 0
 ) : Parcelable
-

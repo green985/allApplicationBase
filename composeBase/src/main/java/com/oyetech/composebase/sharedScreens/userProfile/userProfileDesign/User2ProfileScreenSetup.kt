@@ -258,7 +258,8 @@ private fun ProfileContent(
                         shape = SegmentedButtonDefaults.itemShape(
                             index = index,
                             count = uiState.questionListTypes.size
-                        ), icon = {}
+                        ),
+                        icon = {}
                     ) {
                         Text(text = item.title)
                     }
@@ -304,7 +305,8 @@ private fun QuestionListTypeSelector(
                 shape = SegmentedButtonDefaults.itemShape(
                     index = questionListTypes.indexOf(item),
                     count = questionListTypes.size
-                ), icon = {}
+                ),
+                icon = {}
             ) {
                 Text(text = item.title)
             }

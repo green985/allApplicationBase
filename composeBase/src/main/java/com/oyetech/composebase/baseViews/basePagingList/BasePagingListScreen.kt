@@ -36,8 +36,7 @@ fun <T : Any> BasePagingListScreen(
     Box(
         modifier = modifier,
         contentAlignment = androidx.compose.ui.Alignment.Center
-    )
-    {
+    ) {
 
         when (items.loadState.refresh) {
             is LoadState.Loading -> {
@@ -70,9 +69,7 @@ fun <T : Any> BasePagingListScreen(
                         }
                     )
                 }
-
             }
-
         }
 
         LazyColumn(modifier = modifier, state = state, reverseLayout = reverseLayout) {
@@ -107,7 +104,6 @@ fun <T : Any> BasePagingListScreen(
                 }
             }
         }
-
     }
 
     // Trigger event when last visible item index changes
@@ -116,5 +112,4 @@ fun <T : Any> BasePagingListScreen(
     LaunchedEffect(currentLastVisibleIndex) {
         onItemVisible(currentLastVisibleIndex)
     }
-
 }

@@ -71,8 +71,6 @@ class CommentPagingSource(
 //                prevKey = if (page == 1) null else page - 1,
 //                nextKey = if (list.isEmpty()) null else page + 1
             )
-
-
         } catch (e: Exception) {
             commentScreenUiState.updateState {
                 copy(
@@ -117,6 +115,4 @@ class CommentPagingSource(
 //            LoadResult.Error(e)
 //        }
     }
-
-
 }

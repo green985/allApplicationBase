@@ -59,8 +59,6 @@ data class ContentPlayerDetailsModel(
                 return null
             }
 
-
-
             return ContentPlayerDetailsModel(
                 streamUrl = audioFileDetailResponseData.fileUrl,
                 contentName = contentName,
@@ -75,9 +73,6 @@ data class ContentPlayerDetailsModel(
             errorMessage: String? = null,
         ): ContentStateView {
             return ContentStateView(playState, ContentPlayerDetailsModel)
-
         }
     }
-
-
 }

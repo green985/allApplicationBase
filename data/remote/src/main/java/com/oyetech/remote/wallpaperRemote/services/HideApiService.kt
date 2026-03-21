@@ -22,5 +22,4 @@ interface HideApiService {
         @Query("apiKey") apiKey: String,
         @Query("size") size: Int,
     ): Response<HereLocationDataResponse>
-
 }

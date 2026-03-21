@@ -36,7 +36,6 @@ class MediaSessionCallback : MediaSessionCompat.Callback() {
                     } else {
                         radioOperationUseCase.resumePlayer()
                     }
-
                 } catch (e: RemoteException) {
                     e.printStackTrace()
                 }
@@ -56,13 +55,11 @@ class MediaSessionCallback : MediaSessionCompat.Callback() {
     override fun onPlayFromMediaId(mediaId: String?, extras: Bundle?) {
         super.onPlayFromMediaId(mediaId, extras)
         Timber.d("MediaSessionCallback == onPlayFromMediaId")
-
     }
 
     override fun onPlayFromSearch(query: String?, extras: Bundle?) {
         super.onPlayFromSearch(query, extras)
         Timber.d("MediaSessionCallback == onPlayFromSearch")
-
     }
 
     override fun onPause() {

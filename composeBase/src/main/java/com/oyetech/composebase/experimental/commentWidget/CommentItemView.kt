@@ -37,7 +37,8 @@ fun CommentItemView(uiState: CommentItemUiState, onEvent: (CommentScreenEvent) -
     }
 
     Row(
-        Modifier.fillMaxWidth(), horizontalArrangement = if (uiState.isMine) {
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = if (uiState.isMine) {
             Arrangement.End
         } else {
             Arrangement.Start
@@ -75,7 +76,6 @@ fun CommentItemView(uiState: CommentItemUiState, onEvent: (CommentScreenEvent) -
                             }
                         },
                         content = {
-
                         }
                     )
 
@@ -103,7 +103,6 @@ fun CommentItemView(uiState: CommentItemUiState, onEvent: (CommentScreenEvent) -
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
-
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -129,11 +128,8 @@ fun CommentItemView(uiState: CommentItemUiState, onEvent: (CommentScreenEvent) -
                     )
                 }
             }
-
         }
     }
-
-
 }
 
 @Preview(showSystemUi = true)
@@ -149,6 +145,4 @@ fun CommentItemViewPreview() {
             isMine = true
         )
     ) {}
-
-
 }

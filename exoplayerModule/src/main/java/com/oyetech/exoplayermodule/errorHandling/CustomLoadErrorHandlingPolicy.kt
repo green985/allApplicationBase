@@ -17,7 +17,6 @@ class CustomLoadErrorHandlingPolicy(private var radioOperationUseCase: RadioOper
         var exception = loadErrorInfo.exception
         var count = loadErrorInfo.errorCount
 
-
         Timber.d("counttt === " + count)
 
         if (exception is InvalidContentTypeException) {
@@ -41,5 +40,4 @@ class CustomLoadErrorHandlingPolicy(private var radioOperationUseCase: RadioOper
         Timber.d("retry delay ==== " + retryDelay)
         return retryDelay.toLong()
     }
-
 }

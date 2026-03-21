@@ -73,11 +73,9 @@ class FirebaseMessagingRepositoryImpl(
     var sendingOperationJob: Job? = null
 
     override fun idlee() {
-
     }
 
     init {
-
     }
 
     override fun initLocalMessageSendOperation(scope: CoroutineScope) {
@@ -201,7 +199,6 @@ class FirebaseMessagingRepositoryImpl(
         } else {
             throw GeneralException("Message not found")
         }
-
     }
 
     private suspend fun sendMessageWithBody(messageBody: FirebaseMessagingResponseData): FirebaseMessagingResponseData {
@@ -260,7 +257,6 @@ class FirebaseMessagingRepositoryImpl(
 
                 sendMessageNotification(localMessage)
 
-
                 messagesAllOperationRepository.insertMessage(localMessage)
                 emit(newMessage)
 
@@ -283,7 +279,6 @@ class FirebaseMessagingRepositoryImpl(
 
                 emit(result)
                 messagesAllOperationRepository.insertMessage(localMessage.copy(status = SENT))
-
             } catch (e: Exception) {
                 messagesSendingOperationRepository.insertSendingMessage(localMessage)
                 messagesAllOperationRepository.insertMessage(localMessage.copy(status = MessageStatus.ERROR))
@@ -308,11 +303,9 @@ class FirebaseMessagingRepositoryImpl(
         } catch (e: Exception) {
             Timber.d("Notification error = ${e.message}")
         }
-
     }
 
-    override suspend fun getConversationDetailOrCreateFlow(receiverUserId: String)
-            : Flow<FirebaseMessageConversationData> =
+    override suspend fun getConversationDetailOrCreateFlow(receiverUserId: String): Flow<FirebaseMessageConversationData> =
         flow {
             val userId = userRepository.getUserId()
 
@@ -361,13 +354,11 @@ class FirebaseMessagingRepositoryImpl(
                             ?.toObject(FirebaseMessageConversationData::class.java)
                             ?: throw GeneralException(LanguageKey.conversationNotFound)
                     )
-
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
                 throw GeneralException("getConversationDetailOrCreateFlow error: ${e.message}")
             }
-
         }
 
     private suspend fun createUserDataList(
@@ -400,14 +391,12 @@ class FirebaseMessagingRepositoryImpl(
                     userParticipantDataModel,
                     receiverParticipantDataModel
                 )
-
             }
         } else {
             throw GeneralException(LanguageKey.userIdNotFound)
         }
 
         return emptyList()
-
     }
 
     override fun getConversationList() = flow {
@@ -426,8 +415,6 @@ class FirebaseMessagingRepositoryImpl(
                     ?.copy(conversationId = doc.id)
             }
             emit(conversationList)
-
-
         } catch (e: Exception) {
             e.printStackTrace()
             throw e
@@ -466,5 +453,4 @@ class FirebaseMessagingRepositoryImpl(
             listenerRegistration.remove()
         }
     }
-
 }

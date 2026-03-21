@@ -52,14 +52,14 @@ fun LoginOperationSmallButtonSetup() {
             modifier = Modifier.padding(16.dp),
             horizontalArrangement = Arrangement.Center
         ) {
-            Button(onClick = {}
+            Button(
+                onClick = {}
             ) {
                 Text(
                     text = "Login",
                     style = MaterialTheme.typography.labelSmall
                 )
             }
-
         }
     } else {
         val loginOperationVM = koinInject<LoginOperationVM>()
@@ -75,11 +75,9 @@ fun LoginOperationSmallButtonSetup() {
                         style = MaterialTheme.typography.labelSmall
                     )
                 }
-
             }
         }
     }
-
 }
 
 // preview
@@ -89,5 +87,4 @@ fun LoginOperationSmallButtonSetupPreview() {
     // for only preview init button
 
     LoginOperationSmallButtonSetup()
-
 }

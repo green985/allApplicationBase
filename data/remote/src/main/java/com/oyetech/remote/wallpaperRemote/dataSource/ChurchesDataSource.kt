@@ -24,6 +24,5 @@ class ChurchesDataSource(private var service: HideApiService) {
             apiKey = PrivateKeys.HERE_LOCATION_API_KEY,
             size = HelperConstant.HERE_PLACE_SIZE
         )
-
     }
 }

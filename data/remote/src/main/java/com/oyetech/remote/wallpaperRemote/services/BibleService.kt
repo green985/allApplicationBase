@@ -116,8 +116,7 @@ POST /bible/unreadchapter
 }
      */
 
-    //GET /bible/home
+    // GET /bible/home
 
     // /bible/chapters?bibleId=139&bookId=8647
-
 }

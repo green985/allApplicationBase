@@ -51,7 +51,6 @@ fun QuestionFormListScreenSetup(
     )
 }
 
-
 @Composable
 fun QuestionFormListScreen(
     catalogList: ImmutableList<CatalogItemUiState>,
@@ -86,7 +85,8 @@ fun QuestionFormListScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.clickable(
                             enabled = true,
-                            onClick = { onRefresh("") })
+                            onClick = { onRefresh("") }
+                        )
                     )
                 }
             }
@@ -210,5 +210,7 @@ private fun QuestionFormListScreenPreview() {
             title = "deserunt",
             totalQuestions = 5,
             isCompleted = false
-        ), onClick = {})
+        ),
+        onClick = {}
+    )
 }

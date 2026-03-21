@@ -39,7 +39,6 @@ class LocalLanguageHelper(private val context: Context) {
 //                .plus("~~")
             return languageValue
         }
-
     }
 
     private fun readAndInitLanguageHash(fileName: String) {
@@ -57,7 +56,6 @@ class LocalLanguageHelper(private val context: Context) {
             }
 
             languageHashMap = HashMap(sss)
-
         } catch (e: Exception) {
             Timber.d("readJsonFile: ${e.message}")
             // we need to show just error, maybe we can do something more later.
@@ -80,6 +78,4 @@ class LocalLanguageHelper(private val context: Context) {
         }
         return localCode
     }
-
-
 }

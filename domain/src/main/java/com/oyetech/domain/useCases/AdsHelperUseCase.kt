@@ -35,7 +35,6 @@ class AdsHelperUseCase(
             adIdList.add(it)
         }
 
-
         return repository.getAdViewWithIdList(adIdList)
     }
 
@@ -68,6 +67,4 @@ class AdsHelperUseCase(
         repository.adsLoadedStateFlow()?.value = false
         repository.clearAdsView()
     }
-
 }
-

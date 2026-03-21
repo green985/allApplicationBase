@@ -17,5 +17,4 @@ class RandomOperationRepositoryImpl(private val randomOperationDataSource: Rando
     override fun getMoonPhase(unixTime: Long): Flow<List<MoonPhaseResponse>> {
         return randomOperationDataSource.getMoonPhase(unixTime)
     }
-
 }

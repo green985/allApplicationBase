@@ -67,10 +67,9 @@ class AdmobBannerAdCreator(private var activity: Activity) {
             .setTestDeviceIds(Arrays.asList("8B78B0A76FD8B878ED7441185194C491"))
             .build()
         activity.also {
-            //MobileAds.initialize(activity)
+            // MobileAds.initialize(activity)
             MobileAds.setRequestConfiguration(builder)
         }
-
     }
 
     private suspend fun createAdViewWithAdViewIdSuspend(adViewId: String): View {
@@ -79,7 +78,7 @@ class AdmobBannerAdCreator(private var activity: Activity) {
         val bannerView = AdView(activity)
         bannerView.adUnitId = testAppId
 
-        //TODO will be organized for another ad size
+        // TODO will be organized for another ad size
         bannerView.setAdSize(adSizeBanner)
         /*
         if (adViewId == "radioo") {
@@ -110,7 +109,7 @@ class AdmobBannerAdCreator(private var activity: Activity) {
 
         val bannerView = AdView(activity)
         bannerView.adUnitId = testAppId
-        //TODO will be organized for another ad size
+        // TODO will be organized for another ad size
         bannerView.setAdSize(adSizeBanner)
         /*
         if (adViewId == "radioo") {
@@ -131,7 +130,6 @@ class AdmobBannerAdCreator(private var activity: Activity) {
 
         bannerView.loadAd(adRequest)
 
-
         return bannerView
     }
 
@@ -140,7 +138,7 @@ class AdmobBannerAdCreator(private var activity: Activity) {
 
         adIdList.forEach {
             var adIdTmp = if (activity.isDebug()) {
-                //testAppId
+                // testAppId
                 it
             } else {
                 it
@@ -157,7 +155,6 @@ class AdmobBannerAdCreator(private var activity: Activity) {
         }
 
         return adViewList
-
     }
 
     fun getAdViewListWithKeyList(adIdList: List<String>): ArrayList<View> {
@@ -181,7 +178,6 @@ class AdmobBannerAdCreator(private var activity: Activity) {
         }
 
         return adViewList
-
     }
 
     fun setCallbacks(adViewId: String, adView: AdView) {
@@ -216,7 +212,6 @@ class AdmobBannerAdCreator(private var activity: Activity) {
                     adsLoadedStateFlow.value = true
                 }
 
-
                 adView.visibility = View.VISIBLE
             }
 
@@ -226,6 +221,4 @@ class AdmobBannerAdCreator(private var activity: Activity) {
             }
         }
     }
-
-
 }

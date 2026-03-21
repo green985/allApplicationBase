@@ -40,4 +40,3 @@ data class GoogleUserResponseData(
 }
 
 fun GoogleUserResponseData?.isUserHasUID(): Boolean = this?.uid?.isNotEmpty() ?: false
-

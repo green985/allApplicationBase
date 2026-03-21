@@ -50,5 +50,4 @@ open class PlayerBroadcastHelper(private var service: Service) {
     private fun unRegisterBecomingNoisyBroadCastReceiver() {
         service.unregisterReceiver(becomingNoisyReceiver)
     }
-
 }

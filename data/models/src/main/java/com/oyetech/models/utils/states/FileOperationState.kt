@@ -12,4 +12,3 @@ object FileOperationState {
     const val SENDING = 100.00
     const val FAILED = 1.00
 }
-

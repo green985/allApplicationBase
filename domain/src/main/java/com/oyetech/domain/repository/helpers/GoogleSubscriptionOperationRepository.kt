@@ -17,7 +17,7 @@ interface GoogleSubscriptionOperationRepository {
     fun openSubscriptionsSellPage(
         selectedGoogleProductDetailResponseData:
         GoogleProductDetailResponseData,
-        activity: Activity
+        activity: Activity,
     )
 
     val subscriptionStatusChannelFlow: MutableStateFlow<SubscriptionState>

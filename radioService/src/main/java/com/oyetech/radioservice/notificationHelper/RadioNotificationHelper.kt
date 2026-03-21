@@ -117,7 +117,10 @@ class RadioNotificationHelper(
     }
 
     fun sendMessage(
-        theTitle: String, theMessage: String, theTicker: String, radioLogo: String,
+        theTitle: String,
+        theMessage: String,
+        theTicker: String,
+        radioLogo: String,
     ) {
         val itsContext = service as Context
         var theMessagee: String = theMessage
@@ -145,8 +148,8 @@ class RadioNotificationHelper(
             getIntentFlagUpdateWithInMutable()
         )
         val currentPlayerState: PlayState = getPlayState()
-        if ((currentPlayerState === Paused || currentPlayerState === Idle)
-            && pauseReason === PauseReason.METERED_CONNECTION
+        if ((currentPlayerState === Paused || currentPlayerState === Idle) &&
+            pauseReason === PauseReason.METERED_CONNECTION
         ) {
             theMessagee = itsContext.resources
                 .getString(com.oyetech.radioservice.R.string.notify_metered_connection)
@@ -230,7 +233,6 @@ class RadioNotificationHelper(
             itsContext.getString(com.oyetech.radioservice.R.string.action_skip_to_next),
             pendingIntentNext
         )
-
             .setStyle(
                 MediaStyle()
                     .setMediaSession(mediaSessionCompat.sessionToken)
@@ -256,5 +258,4 @@ class RadioNotificationHelper(
     private fun getPlayState(): PlayState {
         return radioOperationUseCase.getPlayerState()
     }
-
 }

@@ -120,6 +120,5 @@ object FirebaseDBModule {
                 get()
             )
         }
-
     }
 }

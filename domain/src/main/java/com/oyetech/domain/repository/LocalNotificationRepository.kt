@@ -4,5 +4,4 @@ interface LocalNotificationRepository {
 
     fun setLocalNotificationsAlarm()
     fun isCanSetAlarm(): Boolean
-
 }

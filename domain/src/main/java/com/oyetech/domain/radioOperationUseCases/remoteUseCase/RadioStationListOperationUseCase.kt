@@ -45,17 +45,14 @@ class RadioStationListOperationUseCase(
 
     fun getLastChangeStationList(): Flow<List<RadioStationResponseData>> {
         return repository.getLastChangeStationList()
-
     }
 
     fun getTopVotedStationList(): Flow<List<RadioStationResponseData>> {
         return repository.getTopVotedStationList()
-
     }
 
     fun getTopClickStationList(): Flow<List<RadioStationResponseData>> {
         return repository.getTopClickStationList()
-
     }
 
     fun getStationListWithTagParams(tagString: String): Flow<List<RadioStationResponseData>> {
@@ -72,7 +69,6 @@ class RadioStationListOperationUseCase(
 
     fun getStationListWithCountryParams(countryString: String): Flow<List<RadioStationResponseData>> {
         return repository.getStationListWithCountryParams(countryString)
-
     }
 
     fun getStationListWithFavListUuid(): Flow<List<RadioStationResponseData>> {
@@ -91,5 +87,4 @@ class RadioStationListOperationUseCase(
             emit(repository.getStationListWithUuid(postBody).first())
         }
     }
-
 }

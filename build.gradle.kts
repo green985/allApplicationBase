@@ -18,12 +18,16 @@ detekt {
     buildUponDefaultConfig = true
     autoCorrect = true
 }
-
 subprojects {
     apply(plugin = "io.gitlab.arturbosch.detekt")
 
     configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
         config.setFrom(files("$rootDir/detekt.yml"))
         buildUponDefaultConfig = true
+        autoCorrect = true
+    }
+
+    dependencies {
+        "detektPlugins"("io.gitlab.arturbosch.detekt:detekt-formatting:1.20.0-RC2")
     }
 }

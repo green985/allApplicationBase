@@ -34,7 +34,6 @@ fun showKeyboard() {
     val windowInfo = LocalWindowInfo.current
     val focusRequester = remember { FocusRequester() }
 
-
     LaunchedEffect(windowInfo) {
         snapshotFlow { windowInfo.isWindowFocused }.collect { isWindowFocused ->
             if (isWindowFocused) {
@@ -51,4 +50,3 @@ fun Context.hideKeyboard() {
         imm?.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }
-

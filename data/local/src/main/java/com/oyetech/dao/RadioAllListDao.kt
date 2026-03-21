@@ -42,6 +42,4 @@ interface RadioAllListDao : BaseDao<RadioStationResponseData> {
 //        deleteAllList()
         insert(list)
     }
-
-
 }

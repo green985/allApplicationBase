@@ -7,26 +7,22 @@ import kotlinx.coroutines.flow.MutableStateFlow
 abstract class BaseUIEvent {
 
     fun classnameOrSomething() {
-
     }
 }
 
 abstract class BaseEvent {
 
     fun classnameOrSomething() {
-
     }
 }
 
-abstract class BaseUIState(
-)
+abstract class BaseUIState()
 
 inline fun <T> MutableStateFlow<T>.updateState(update: T.() -> T) {
     value = value.update()
 }
 
 private fun <T> MutableSharedFlow<T>.updateState(update: T.() -> T) {
-
 }
 
 suspend inline fun <T> MutableStateFlow<T>.updateListStateWithDelay(
@@ -36,4 +32,3 @@ suspend inline fun <T> MutableStateFlow<T>.updateListStateWithDelay(
     delay(delay)
     value = value.update()
 }
-

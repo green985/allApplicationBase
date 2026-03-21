@@ -38,7 +38,6 @@ fun FormAcceptOperationViewSetup(
         }
         HorizontalDivider()
     }
-
 }
 
 @Preview(showSystemUi = true, showBackground = true)
@@ -46,5 +45,4 @@ fun FormAcceptOperationViewSetup(
 @Suppress("FunctionNaming")
 private fun FormAcceptOperationViewPreview() {
     FormAcceptOperationViewSetup(onCancelOperation = {}, onAcceptOperation = {})
-
 }

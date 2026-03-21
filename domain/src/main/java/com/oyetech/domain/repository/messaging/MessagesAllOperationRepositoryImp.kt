@@ -77,7 +77,6 @@ class MessagesAllOperationRepositoryImp(
         }.onEach {
             messagesAllDao.insertLastList(it)
         }
-
     }
 
     override fun getMessageWithId(messageId: String): FirebaseMessagingLocalData? {

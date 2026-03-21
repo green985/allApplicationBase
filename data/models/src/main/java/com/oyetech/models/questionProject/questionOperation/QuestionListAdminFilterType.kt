@@ -34,4 +34,3 @@ fun QuestionListAdminFilterType.toModerationStatusOrNull(): ModerationStatus? {
         QuestionListAdminFilterType.ALL -> ModerationStatus.ALL
     }
 }
-

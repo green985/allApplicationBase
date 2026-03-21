@@ -68,7 +68,6 @@ class FacSettingsVm(
 
                 FacSettingsUiEvent.TermsAndConditionsClicked -> {
                     UrlHelper.openUrl(context, WebSiteUrls.Fac_Terms_Conditions_URL)
-
                 }
 
                 FacSettingsUiEvent.LogoutClicked -> {

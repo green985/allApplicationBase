@@ -23,7 +23,7 @@ data class FirebaseCloudNotificationTypeWrapper(
 @Keep
 enum class FirebaseNotificationTypeEnum {
     //    DEFAULT,
-    Message,  // firebaseMessagingLocalData
+    Message, // firebaseMessagingLocalData
 //    CALL,
 //    OTHER
 }

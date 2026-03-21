@@ -54,12 +54,9 @@ fun UserListItemView(
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-
         }
         HorizontalDivider()
     }
-
-
 }
 
 @Preview(showSystemUi = true, showBackground = true)

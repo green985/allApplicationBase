@@ -21,6 +21,4 @@ data class Route(val route: String) {
         Timber.d(" Route: $buildString")
         return buildString
     }
-
-
 }

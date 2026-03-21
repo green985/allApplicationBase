@@ -80,5 +80,4 @@ interface SharedOperationRepository {
     fun saveGoogleUserData(userProfileProperty: UserProfileProperty)
     fun getGoogleUserData(): UserProfileProperty?
     fun removeGoogleUserData()
-
 }

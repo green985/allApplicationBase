@@ -42,11 +42,8 @@ class GlideOperationRepositoryImp(private val context: Context) : GlideOperation
                 }
 
                 override fun onLoadCleared(placeholder: Drawable?) {
-
                 }
             })
-
-
     }
 
     override fun setUseCaseContext(context: Context) {
@@ -56,7 +53,6 @@ class GlideOperationRepositoryImp(private val context: Context) : GlideOperation
     private fun getAppIconUrl(): Bitmap? {
 
         val bm = context.getApplicationLogo()?.toBitmap()
-
 
         if (bm == null) {
             Timber.d("logoooo booşşş")
@@ -80,5 +76,4 @@ class GlideOperationRepositoryImp(private val context: Context) : GlideOperation
         }
 
      */
-
 }
