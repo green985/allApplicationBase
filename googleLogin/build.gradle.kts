@@ -1,12 +1,15 @@
-apply plugin: 'com.android.library'
-apply from: '../android_commons.gradle'
+plugins {
+    alias(libs.plugins.android.library)
+}
 
 android {
-    namespace 'com.oyetech.googlelogin'
+    namespace = "com.oyetech.googlelogin"
+    compileSdk = libs.versions.compile.sdk.get().toInt()
 }
 
 dependencies {
-    implementation project(Modules.domain)
+    implementation(project(":domain"))
+    implementation(project(":data:models"))
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
@@ -14,6 +17,8 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.androidx.appcompat)
     implementation(libs.credentials)
+    implementation(libs.timber)
     implementation(libs.credentials.play.services.auth)
     implementation(libs.googleid)
 }
+
