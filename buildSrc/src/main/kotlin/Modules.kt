@@ -66,6 +66,4 @@ object Modules {
     const val glideModule = ":glideModule"
     const val languageimp = ":subImpl:languageImp"
     const val tools = ":subImpl:tools"
-
-
 }
