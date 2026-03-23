@@ -13,6 +13,7 @@ data class AuthOperationUiState(
 
 sealed class AuthOperationUiEvent : BaseUIEvent() {
     object OnLoginSuccess : AuthOperationUiEvent()
+    object OnProfileIncomplete : AuthOperationUiEvent()
 }
 
 sealed class AuthOperationEvent : BaseEvent() {

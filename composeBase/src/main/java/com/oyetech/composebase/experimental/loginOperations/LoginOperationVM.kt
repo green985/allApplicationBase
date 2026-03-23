@@ -5,6 +5,7 @@ import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent
+import com.oyetech.composebase.experimental.authOperation.AuthOperationUiEvent
 import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.AgeChanged
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.DeleteAccountClick
@@ -15,6 +16,7 @@ import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.OnSubmit
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.UsernameChanged
 import com.oyetech.composebase.helpers.general.GeneralSettings
+import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseNotificationTokenOperationRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
@@ -62,6 +64,7 @@ class LoginOperationVM(
 
     init {
         Timber.d("LoginOperationVM init")
+        observeAuthOperationUiEvents()
         if (GeneralSettings.isLoginOperationEnable()) {
             observeGoogleUserStateFlow()
             observeGoogleUserDataStateFlow()
@@ -119,6 +122,35 @@ class LoginOperationVM(
                     }
                 )
             }.collect()
+        }
+    }
+
+    private fun observeAuthOperationUiEvents() {
+        viewModelScope.launch(getDispatcherIo()) {
+            authOperationVM.uiEvent.collectLatest { authEvent ->
+                when (authEvent) {
+                    AuthOperationUiEvent.OnLoginSuccess -> {
+                        loginOperationState.updateState {
+                            copy(
+                                isLoading = false,
+                                isRegistrationCompleteNeeded = false
+                            )
+                        }
+                        uiEvent.emit(LoginOperationUiEvent.OnLoginSuccess)
+                        navigationUseCase.navigateTo("back")
+                    }
+
+                    AuthOperationUiEvent.OnProfileIncomplete -> {
+                        loginOperationState.updateState {
+                            copy(
+                                isLoading = false,
+                                isRegistrationCompleteNeeded = true
+                            )
+                        }
+                        navigationUseCase.navigateTo(QuestionAppProjectRoutes.CompleteProfileScreen.route)
+                    }
+                }
+            }
         }
     }
 

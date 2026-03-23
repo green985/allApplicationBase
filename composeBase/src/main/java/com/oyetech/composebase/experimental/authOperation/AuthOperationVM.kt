@@ -5,6 +5,7 @@ import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent.LoginClicked
 import com.oyetech.domain.repository.loginOperation.AuthOperationRepository
+import com.oyetech.models.firebaseModels.userModel.isProfileCompletedForAuth
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,15 +49,19 @@ class AuthOperationVM(
         viewModelScope.launch(getDispatcherIo()) {
             authOperationRepository.loginWithGoogleAndSyncUser().fold(
                 onSuccess = { userData ->
+                    val isProfileCompleted = userData.isProfileCompletedForAuth()
 
-                    
                     authOperationState.updateState {
                         copy(
                             isLoading = false,
                             userDataProperty = userData
                         )
                     }
-                    uiEvent.emit(AuthOperationUiEvent.OnLoginSuccess)
+                    if (isProfileCompleted) {
+                        uiEvent.emit(AuthOperationUiEvent.OnLoginSuccess)
+                    } else {
+                        uiEvent.emit(AuthOperationUiEvent.OnProfileIncomplete)
+                    }
                 },
                 onFailure = { error ->
                     authOperationState.updateState {
