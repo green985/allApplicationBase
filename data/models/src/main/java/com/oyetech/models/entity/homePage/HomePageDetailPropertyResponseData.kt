@@ -12,13 +12,13 @@ import kotlinx.parcelize.Parcelize
 @JsonClass(generateAdapter = true)
 @Parcelize
 data class HomePageDetailPropertyResponseData(
-    @Json(name = "lastReadBibleId")
+    @param:Json(name = "lastReadBibleId")
     var lastReadBibleId: Int? = 0,
-    @Json(name = "lastReadPercentage")
+    @param:Json(name = "lastReadPercentage")
     var lastReadPercentage: Double? = 0.0,
-    @Json(name = "prayerOfTheDay")
+    @param:Json(name = "prayerOfTheDay")
     var prayerOfTheDay: String? = "",
-    @Json(name = "verseOfTheDay")
+    @param:Json(name = "verseOfTheDay")
     var verseOfTheDay: BibleVersePropertyData? = BibleVersePropertyData(),
 
     var biblePropertyResponseData: BiblePropertyResponseData = BiblePropertyResponseData(),
@@ -29,13 +29,13 @@ data class HomePageDetailPropertyResponseData(
 @JsonClass(generateAdapter = true)
 @Parcelize
 data class HomePagePropertyResponseData(
-    @Json(name = "lastReadBibleId")
+    @param:Json(name = "lastReadBibleId")
     var lastReadBibleId: Int? = 0,
-    @Json(name = "lastReadPercentage")
+    @param:Json(name = "lastReadPercentage")
     var lastReadPercentage: Double? = 0.0,
-    @Json(name = "verses")
+    @param:Json(name = "verses")
     var verses: List<BibleVersePropertyData>? = emptyList(),
-    @Json(name = "prays")
+    @param:Json(name = "prays")
     var prays: List<String>? = emptyList(),
 
     ) : Parcelable

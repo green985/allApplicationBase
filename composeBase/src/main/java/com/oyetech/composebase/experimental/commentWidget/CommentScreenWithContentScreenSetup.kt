@@ -153,15 +153,8 @@ private fun CommentInputViewPreview() {
             isLoading = false,
             isError = false,
             errorMessage = "has",
-            isUsernameEmpty = false,
             isUserDeleted = false,
             displayName = "Elva Parrish",
-            uid = "dicam",
-            displayNameRemote = "Lucy Evans",
-            photoUrl = "http://www.bing.com/search?q=sed",
-            isLogin = false,
-            isAnonymous = false,
-            lastSignInTimestamp = null
         ),
         onEvent = {}, onUserEvent = {}
     )

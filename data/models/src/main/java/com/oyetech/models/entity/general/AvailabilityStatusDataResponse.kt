@@ -10,7 +10,7 @@ import kotlinx.parcelize.Parcelize
 @JsonClass(generateAdapter = true)
 @Parcelize
 data class AvailabilityStatusDataResponse(
-    @Json(name = "isOnline") var isOnline: Boolean = false,
+    @param:Json(name = "isOnline") var isOnline: Boolean = false,
     @Json(name = "lastOnline") var lastOnline: String = "",
     @Json(name = "lastOnlineText") var lastOnlineText: String = "",
     @Json(name = "userId") var userId: Long = 0,

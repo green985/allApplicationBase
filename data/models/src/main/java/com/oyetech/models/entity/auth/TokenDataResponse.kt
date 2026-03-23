@@ -10,15 +10,15 @@ import kotlinx.parcelize.Parcelize
 @Keep
 @JsonClass(generateAdapter = true)
 data class TokenDataResponse(
-    @Json(name = "expires") var expires: String = "",
-    @Json(name = "issueAt") var issueAt: String = "",
-    @Json(name = "token") var token: String = "",
+    @param:Json(name = "expires") var expires: String = "",
+    @param:Json(name = "issueAt") var issueAt: String = "",
+    @param:Json(name = "token") var token: String = "",
 ) : Parcelable
 
 @Keep
 @JsonClass(generateAdapter = true)
 data class TokenDataResponse22(
-    @Json(name = "expires") var expires: String = "",
-    @Json(name = "issueAt") var issueAt: String = "",
-    @Json(name = "token") var token: String = "",
+    @param:Json(name = "expires") var expires: String = "",
+    @param:Json(name = "issueAt") var issueAt: String = "",
+    @param:Json(name = "token") var token: String = "",
 )

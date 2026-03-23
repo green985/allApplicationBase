@@ -10,7 +10,7 @@ import kotlinx.parcelize.Parcelize
 @JsonClass(generateAdapter = true)
 @Parcelize
 data class VerseOfTheDayResponseData(
-    @Json(name = "chapter")
+    @param:Json(name = "chapter")
     var chapter: String? = "",
     @Json(name = "content")
     var content: String? = "",

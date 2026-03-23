@@ -20,7 +20,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,16 +27,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.base.updateState
+import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
 import org.koin.compose.koinInject
 import kotlin.random.Random
 
 @Composable
 fun LoginOperationQuickScreen(
-    loginOperationVM: LoginOperationVM = koinInject(),
+    authOperationVM: AuthOperationVM = koinInject(),
     onDismiss: () -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
-    val state by loginOperationVM.loginOperationState.collectAsState()
+    val state by authOperationVM.authOperationState.collectAsState()
     var isVisible by remember { mutableStateOf(true) }
 
     if (!isVisible) return
@@ -63,8 +62,7 @@ fun LoginOperationQuickScreen(
                 )
                 Text(
                     text = "✕",
-                    modifier = Modifier
-                        .clickable { isVisible = false; onDismiss() },
+                    modifier = Modifier.clickable { isVisible = false; onDismiss() },
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.Red
                 )
@@ -74,11 +72,10 @@ fun LoginOperationQuickScreen(
 
             Button(
                 onClick = {
-                    // Auto populate and submit
                     val randomId = Random.nextInt(1000, 9999)
-                    loginOperationVM.loginOperationState.updateState {
+                    authOperationVM.authOperationState.updateState {
                         copy(
-                            displayName = "balbazar$randomId",
+                            username = "balbazar$randomId",
                             age = (Random.nextInt(18, 40)).toString(),
                             gender = if (randomId % 2 == 0) "male" else "female"
                         )

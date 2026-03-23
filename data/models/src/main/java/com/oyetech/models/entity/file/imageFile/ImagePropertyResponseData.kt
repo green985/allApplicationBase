@@ -10,6 +10,6 @@ import kotlinx.parcelize.Parcelize
 @JsonClass(generateAdapter = true)
 @Parcelize
 data class ImagePropertyResponseData(
-    @Json(name = "height") var height: Int = 0,
-    @Json(name = "width") var width: Int = 0,
+    @param:Json(name = "height") var height: Int = 0,
+    @param:Json(name = "width") var width: Int = 0,
 ) : Parcelable

@@ -2,8 +2,10 @@ package com.oyetech.composebase.experimental.loginOperations
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.updateState
+import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
+import com.oyetech.models.firebaseModels.userModel.isProfileCompletedForAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -28,17 +30,11 @@ fun LoginOperationVM.mapToProfileValue(userData: UserProfileProperty?) {
         return
     }
 
-    // Profile complete kontrolü
-    if (userData.username.isNotBlank() && userData.age.isNotBlank() && userData.gender.isNotBlank()) {
+    if (userData.isProfileCompletedForAuth()) {
         Timber.d("LoginOperationVM mapToProfileValue user profile complete: $userData")
         viewModelScope.launch(Dispatchers.Main) {
             loginOperationState.updateState {
-                LoginOperationUiState(
-                    displayNameRemote = userData.username,
-                    uid = userData.userId,
-                    isAnonymous = userData.isAnonymous,
-                    lastSignInTimestamp = userData.lastSignInTimestampTmp,
-                )
+                LoginOperationUiState(displayName = userData.username)
             }
         }
         viewModelScope.launch(getDispatcherIo()) {
@@ -48,7 +44,7 @@ fun LoginOperationVM.mapToProfileValue(userData: UserProfileProperty?) {
     } else {
         Timber.d("LoginOperationVM mapToProfileValue profile incomplete: $userData")
         viewModelScope.launch(Dispatchers.Main) {
-            navigationUseCase.navigateTo(com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.CompleteProfileScreen.route)
+            navigationUseCase.navigateTo(QuestionAppProjectRoutes.CompleteProfileScreen.route)
             loginOperationState.updateState {
                 LoginOperationUiState(isRegistrationCompleteNeeded = true)
             }

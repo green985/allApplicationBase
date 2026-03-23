@@ -22,7 +22,6 @@ data class UserProfileProperty(
 
     val userId: String = "",
     val username: String = "",
-    val displayName: String = "",
     val gender: String = "",
     val age: String = "",
     val biography: String = "",

@@ -3,8 +3,14 @@ package com.oyetech.composebase.experimental.authOperation
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
+import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent.AgeChanged
+import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent.GenderChanged
 import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent.LoginClicked
+import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent.OnCancelProfile
+import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent.OnSubmitProfile
+import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent.UsernameChanged
 import com.oyetech.domain.repository.loginOperation.AuthOperationRepository
+import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.firebaseModels.userModel.isProfileCompletedForAuth
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -33,31 +39,28 @@ class AuthOperationVM(
         if (event is AuthOperationEvent) {
             when (event) {
                 LoginClicked -> handleLoginClicked()
+                is UsernameChanged -> authOperationState.updateState {
+                    copy(username = event.username, isUsernameEmpty = event.username.isBlank())
+                }
+
+                is AgeChanged -> authOperationState.updateState { copy(age = event.age) }
+                is GenderChanged -> authOperationState.updateState { copy(gender = event.gender) }
+                OnSubmitProfile -> handleSubmitProfile()
+                OnCancelProfile -> handleCancelProfile()
             }
         }
     }
 
     private fun handleLoginClicked() {
         authOperationState.updateState {
-            copy(
-                isLoading = true,
-                isError = false,
-                errorMessage = ""
-            )
+            copy(isLoading = true, isError = false, errorMessage = "")
         }
 
         viewModelScope.launch(getDispatcherIo()) {
             authOperationRepository.loginWithGoogleAndSyncUser().fold(
                 onSuccess = { userData ->
-                    val isProfileCompleted = userData.isProfileCompletedForAuth()
-
-                    authOperationState.updateState {
-                        copy(
-                            isLoading = false,
-                            userDataProperty = userData
-                        )
-                    }
-                    if (isProfileCompleted) {
+                    authOperationState.updateState { copy(isLoading = false) }
+                    if (userData.isProfileCompletedForAuth()) {
                         uiEvent.emit(AuthOperationUiEvent.OnLoginSuccess)
                     } else {
                         uiEvent.emit(AuthOperationUiEvent.OnProfileIncomplete)
@@ -75,5 +78,92 @@ class AuthOperationVM(
             )
         }
     }
-}
 
+    private fun handleSubmitProfile() {
+        if (isErrorInProfileForm()) return
+
+        authOperationState.updateState {
+            copy(
+                isLoading = true,
+                isError = false,
+                errorMessage = ""
+            )
+        }
+
+        viewModelScope.launch(getDispatcherIo()) {
+            val state = authOperationState.value
+            authOperationRepository.updateUserProfile(
+                username = state.username,
+                age = state.age,
+                gender = state.gender,
+            ).fold(
+                onSuccess = {
+                    authOperationState.updateState { copy(isLoading = false) }
+                    uiEvent.emit(AuthOperationUiEvent.OnLoginSuccess)
+                },
+                onFailure = { error ->
+                    Timber.e("updateUserProfile error: ${error.message}")
+                    authOperationState.updateState {
+                        copy(
+                            isLoading = false,
+                            isError = true,
+                            errorMessage = error.message ?: "Update failed"
+                        )
+                    }
+                }
+            )
+        }
+    }
+
+    private fun handleCancelProfile() {
+        viewModelScope.launch(getDispatcherIo()) {
+            uiEvent.emit(AuthOperationUiEvent.OnProfileCancelled)
+        }
+    }
+
+    private fun isErrorInProfileForm(): Boolean {
+        val state = authOperationState.value
+
+        if (state.username.isBlank()) {
+            authOperationState.updateState {
+                copy(
+                    isError = true,
+                    isUsernameEmpty = true,
+                    errorMessage = LanguageKey.usernameIsEmpty
+                )
+            }
+            return true
+        }
+
+        if (state.age.isBlank()) {
+            authOperationState.updateState {
+                copy(isError = true, errorMessage = LanguageKey.ageCannotBeNull)
+            }
+            return true
+        }
+
+        try {
+            val ageVal = state.age.toInt()
+            if (ageVal < 18 || ageVal > 100) {
+                authOperationState.updateState {
+                    copy(isError = true, errorMessage = LanguageKey.invalidAgeError)
+                }
+                return true
+            }
+        } catch (e: Exception) {
+            authOperationState.updateState {
+                copy(isError = true, errorMessage = LanguageKey.ageCannotBeNull)
+            }
+            return true
+        }
+
+        if (state.gender.isBlank()) {
+            authOperationState.updateState {
+                copy(isError = true, errorMessage = LanguageKey.genderCannotBeEmpty)
+            }
+            return true
+        }
+
+        return false
+    }
+}

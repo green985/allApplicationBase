@@ -37,7 +37,7 @@ class FacSettingsVm(
         viewModelScope.launch(getDispatcherIo()) {
             loginOperationVM.getLoginOperationSharedState().onEach {
                 uiState.updateState {
-                    copy(isUserLoggedIn = it.isLogin, username = it.displayNameRemote)
+                    copy(isUserLoggedIn = it.isLogin, username = it.displayName)
                 }
             }.collect {}
         }

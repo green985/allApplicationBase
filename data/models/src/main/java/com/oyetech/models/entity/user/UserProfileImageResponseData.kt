@@ -16,17 +16,17 @@ Created by Erdi Özbek
 @JsonClass(generateAdapter = true)
 @Parcelize
 data class UserProfileImageResponseData(
-    @Json(name = "id")
+    @param:Json(name = "id")
     var id: Long = 0,
-    @Json(name = "isMainImage")
+    @param:Json(name = "isMainImage")
     var isMainImage: Boolean = false,
-    @Json(name = "itemOrder")
+    @param:Json(name = "itemOrder")
     var itemOrder: Int = 0,
-    @Json(name = "largeImageUrl")
+    @param:Json(name = "largeImageUrl")
     var largeImageUrl: String = "",
-    @Json(name = "smallImageUrl")
+    @param:Json(name = "smallImageUrl")
     var smallImageUrl: String = "",
-    @Json(name = "smallImageUrl")
+    @param:Json(name = "smallImageUrl")
 
     @Transient
     var isLoading: Boolean = false,

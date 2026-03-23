@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
+import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
 import com.oyetech.composebase.experimental.commentWidget.CommentOptionsEvent.AddComment
 import com.oyetech.composebase.experimental.commentWidget.CommentOptionsEvent.AddCommentSuccess
 import com.oyetech.composebase.experimental.commentWidget.CommentOptionsEvent.DeleteComment
@@ -14,7 +15,6 @@ import com.oyetech.composebase.experimental.commentWidget.CommentOptionsEvent.Re
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenEvent.CommentOperationClicked
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenEvent.OnCommentInputChanged
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenEvent.OnCommentSubmit
-import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
 import com.oyetech.composebase.helpers.errorHelper.ErrorHelper
 import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
@@ -42,7 +42,7 @@ class CommentScreenWithContentIdVM(
     private val contentId: String,
     private val userRepository: FirebaseUserRepository,
     private val commentOperationRepository: FirebaseCommentOperationRepository,
-    val loginOperationVM: LoginOperationVM,
+    val loginOperationVM: AuthOperationVM,
 ) :
     BaseViewModel(appDispatchers) {
 

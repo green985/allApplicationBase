@@ -10,9 +10,9 @@ import kotlinx.parcelize.Parcelize
 @JsonClass(generateAdapter = true)
 @Parcelize
 data class UserPreferencesDataResponse(
-    @Json(name = "allowMessagesFrom") var allowMessagesFrom: String = "",
-    @Json(name = "hideAvailability") var hideAvailability: Boolean = false,
-    @Json(name = "hideFollowers") var hideFollowers: Boolean = false,
-    @Json(name = "hideFollowings") var hideFollowings: Boolean = false,
-    @Json(name = "hideMessageSeenStatus") var hideMessageSeenStatus: Boolean = false,
+    @param:Json(name = "allowMessagesFrom") var allowMessagesFrom: String = "",
+    @param:Json(name = "hideAvailability") var hideAvailability: Boolean = false,
+    @param:Json(name = "hideFollowers") var hideFollowers: Boolean = false,
+    @param:Json(name = "hideFollowings") var hideFollowings: Boolean = false,
+    @param:Json(name = "hideMessageSeenStatus") var hideMessageSeenStatus: Boolean = false,
 ) : Parcelable

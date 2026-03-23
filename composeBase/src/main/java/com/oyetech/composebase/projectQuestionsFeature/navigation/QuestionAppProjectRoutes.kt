@@ -47,36 +47,35 @@ object QuestionAppProjectBottomNavigationDestinations {
 sealed class QuestionAppNavItem {
     object TabQuestionAppHomepage :
         BottomNavigationItem(
-            path = QuestionAppHomepage.route.toString(),
+            path = QuestionAppHomepage.route,
             titleText = LanguageKey.home,
             icon = R.drawable.ic_tab_all_radio
         )
 
     object TabQuestionList :
         BottomNavigationItem(
-            path = QuestionPager.route.toString(),
+            path = QuestionPager.route,
             titleText = LanguageKey.home,
             icon = R.drawable.ic_tab_all_radio
         )
 
     object QuestionAppSettingsTab :
         BottomNavigationItem(
-            path = QuestionAppSettings.route.toString(),
+            path = QuestionAppSettings.route,
             title = R.string.nav_item_settings,
             icon = R.drawable.ic_settings
         )
 
     object QuestionAppMessageTab :
         BottomNavigationItem(
-            path = QuestionAppSettings.route.toString(),
+            path = QuestionAppSettings.route,
             title = R.string.nav_item_settings,
             icon = R.drawable.ic_settings
         )
 
     object UserProfileTab :
         BottomNavigationItem(
-            path = QuestionAppProjectRoutes.UserProfile.route
-                .toString(),
+            path = QuestionAppProjectRoutes.UserProfile.route,
             title = R.string.nav_item_settings,
             icon = R.drawable.ic_settings
         )

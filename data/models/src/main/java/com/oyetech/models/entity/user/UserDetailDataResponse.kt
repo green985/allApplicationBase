@@ -11,29 +11,29 @@ import kotlinx.parcelize.Parcelize
 @Keep
 @Parcelize
 data class UserDetailDataResponse(
-    @Json(name = "biography")
+    @param:Json(name = "biography")
     var biography: String = "",
-    @Json(name = "blockedProfile")
+    @param:Json(name = "blockedProfile")
     var blockedProfile: Boolean = false,
-    @Json(name = "followInfo")
+    @param:Json(name = "followInfo")
     var followInfo: String = "",
-    @Json(name = "followerCount")
+    @param:Json(name = "followerCount")
     var followerCount: Int = 0,
-    @Json(name = "following")
+    @param:Json(name = "following")
     var following: Boolean = false,
-    @Json(name = "likedProfile")
+    @param:Json(name = "likedProfile")
     var likedProfile: Boolean = false,
-    @Json(name = "followingCount")
+    @param:Json(name = "followingCount")
     var followingCount: Int = 0,
-    @Json(name = "followsYou")
+    @param:Json(name = "followsYou")
     var followsYou: Boolean = false,
-    @Json(name = "likeCount")
+    @param:Json(name = "likeCount")
     var likeCount: Int = 0,
-    @Json(name = "messagingAllowed")
+    @param:Json(name = "messagingAllowed")
     var messagingAllowed: Boolean = false,
-    @Json(name = "nick")
+    @param:Json(name = "nick")
     var nick: String = "",
-    @Json(name = "ownProfile")
+    @param:Json(name = "ownProfile")
     var ownProfile: Boolean = false,
     @Json(name = "isPremiumMember")
     var isPremiumMember: Boolean = false,
@@ -50,7 +50,7 @@ data class UserDetailDataResponse(
     @Json(name = "showAvailability")
     var showAvailability: Boolean = false,
     @Json(name = "userId")
-    var userId: Long = 0
+    var userId: Long = 0,
 ) : Parcelable, IsOnlineBaseData(
     baseUserId = availabilityStatus.userId,
     _isOnline = availabilityStatus.isOnline
@@ -94,12 +94,12 @@ data class UserDetailSubDataResponse(
     @Json(name = "availabilityStatus")
     var availabilityStatus: AvailabilityStatusDataResponse = AvailabilityStatusDataResponse(),
 
-    @Json(name = "profileImages")
+    @param:Json(name = "profileImages")
     var profileImages: List<UserProfileImageResponseData> = listOf(),
     @Json(name = "showAvailability")
     var showAvailability: Boolean = false,
     @Json(name = "userId")
-    var userId: Long = 0
+    var userId: Long = 0,
 ) : Parcelable
 
 fun UserDetailSubDataResponse.mapToNormalize(): UserDetailDataResponse {

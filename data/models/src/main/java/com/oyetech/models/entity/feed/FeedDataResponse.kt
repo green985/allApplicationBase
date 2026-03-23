@@ -30,15 +30,15 @@ data class FeedDataResponse(
 @Keep
 @JsonClass(generateAdapter = true)
 data class FeedDataSubResponse(
-    @Json(name = "distanceInMeters") var distanceInMeters: Double = 0.0,
-    @Json(name = "isOnline") var isOnline: Boolean = false,
-    @Json(name = "isPremiumMember") var isPremiumMember: Boolean = false,
-    @Json(name = "lastOnline") var lastOnline: String = "",
-    @Json(name = "lastOnlineText") var lastOnlineText: String = "",
-    @Json(name = "nick") var nick: String = "",
-    @Json(name = "biography") var biography: String = "",
-    @Json(name = "profilePhoto") var profilePhoto: String = "",
-    @Json(name = "userId") var userId: Long = 0,
+    @param:Json(name = "distanceInMeters") var distanceInMeters: Double = 0.0,
+    @param:Json(name = "isOnline") var isOnline: Boolean = false,
+    @param:Json(name = "isPremiumMember") var isPremiumMember: Boolean = false,
+    @param:Json(name = "lastOnline") var lastOnline: String = "",
+    @param:Json(name = "lastOnlineText") var lastOnlineText: String = "",
+    @param:Json(name = "nick") var nick: String = "",
+    @param:Json(name = "biography") var biography: String = "",
+    @param:Json(name = "profilePhoto") var profilePhoto: String = "",
+    @param:Json(name = "userId") var userId: Long = 0,
 )
 
 fun FeedDataSubResponse.mapToNormalize(): FeedDataResponse {

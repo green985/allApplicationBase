@@ -7,14 +7,9 @@ import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent
 import com.oyetech.composebase.experimental.authOperation.AuthOperationUiEvent
 import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
-import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.AgeChanged
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.DeleteAccountClick
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.ErrorDismiss
-import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.GenderChanged
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.LoginClicked
-import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.OnCancel
-import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.OnSubmit
-import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.UsernameChanged
 import com.oyetech.composebase.helpers.general.GeneralSettings
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.domain.repository.SharedOperationRepository
@@ -25,7 +20,6 @@ import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData
 import com.oyetech.models.firebaseModels.googleAuth.isUserHasUID
 import com.oyetech.models.firebaseModels.googleAuth.toGoogleUserPostData
-import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.delay
@@ -88,7 +82,6 @@ class LoginOperationVM(
                                     "LoginOperationVM updateUserToken + " +
                                             "${firebaseTokenOperationModel.notificationToken}"
                                 )
-                                // Token update GoogleLoginRepository üzerinden yapılacak
                             } else {
                                 Timber.d("LoginOperationVM updateUserToken else")
                             }
@@ -113,10 +106,10 @@ class LoginOperationVM(
                             )
                         }
                     },
-                    onFailure = {
+                    onFailure = { it1 ->
                         loginOperationState.value = LoginOperationUiState(
                             isError = true,
-                            errorMessage = it.message ?: ""
+                            errorMessage = it1.message ?: ""
                         )
                         Timber.d(" Google User State Flow Error: $it")
                     }
@@ -148,6 +141,14 @@ class LoginOperationVM(
                             )
                         }
                         navigationUseCase.navigateTo(QuestionAppProjectRoutes.CompleteProfileScreen.route)
+                    }
+
+                    AuthOperationUiEvent.OnProfileCancelled -> {
+                        viewModelScope.launch(getDispatcherIo()) {
+                            googleLoginRepository.removeUser(googleLoginRepository.getUserUid())
+                            navigationUseCase.navigateTo("back")
+                            uiEvent.emit(LoginOperationUiEvent.OnCancelUserCreation)
+                        }
                     }
                 }
             }
@@ -194,22 +195,7 @@ class LoginOperationVM(
     override fun onEvent(event: Any) {
         if (event is LoginOperationEvent) {
             when (event) {
-                LoginClicked -> {
-                    authOperationVM.onEvent(AuthOperationEvent.LoginClicked)
-                    return
-
-
-                    loginOperationState.updateState {
-                        LoginOperationUiState(isLoading = true)
-                    }
-                    viewModelScope.launch(getDispatcherIo()) {
-                        try {
-                            googleLoginRepository.signInWithGoogle()
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    }
-                }
+                LoginClicked -> authOperationVM.onEvent(AuthOperationEvent.LoginClicked)
 
                 ErrorDismiss -> {
                     loginOperationState.updateState {
@@ -226,46 +212,11 @@ class LoginOperationVM(
                     }
                     deleteUserOperation()
                 }
-
-                is UsernameChanged -> {
-                    loginOperationState.updateState {
-                        copy(
-                            displayName = event.username,
-                            isUsernameEmpty = event.username.isBlank()
-                        )
-                    }
-                }
-
-                OnSubmit -> {
-                    if (onSubmitOperation()) return
-                }
-
-                OnCancel -> {
-                    viewModelScope.launch(getDispatcherIo()) {
-                        googleLoginRepository.removeUser(googleLoginRepository.getUserUid())
-                        navigationUseCase.navigateTo("back")
-                        uiEvent.emit(LoginOperationUiEvent.OnCancelUserCreation)
-                    }
-                }
-
-                is AgeChanged -> {
-                    loginOperationState.updateState {
-                        copy(
-                            age = event.age.toString()
-                        )
-                    }
-                }
-
-                is GenderChanged -> {
-                    loginOperationState.updateState {
-                        copy(gender = event.gender)
-                    }
-                }
             }
         }
     }
 
-    private fun deleteUserOperation(): Boolean {
+    private fun deleteUserOperation() {
         viewModelScope.launch(getDispatcherIo()) {
             googleLoginRepository.removeUser(googleLoginRepository.getUserUid())
             delay(500)
@@ -274,128 +225,5 @@ class LoginOperationVM(
             uiEvent.emit(LoginOperationUiEvent.OnCancelUserCreation)
             navigationUseCase.navigateTo("back")
         }
-        return true
-    }
-
-    private fun onSubmitOperation(): Boolean {
-        if (isErrorInLoginForm()) {
-            Timber.d("onSubmitOperation: isErrorInLoginForm true")
-            Timber.d("onSubmitOperation: isErrorInLoginForm ${loginOperationState.value.errorMessage}")
-            return true
-        }
-
-        loginOperationState.updateState {
-            copy(isLoading = true)
-        }
-        viewModelScope.launch(getDispatcherIo()) {
-            val userData = googleLoginRepository.googleUserStateFlow.value
-            if (userData == null) {
-                Timber.d("onSubmitOperation: userData null")
-                loginOperationState.updateState {
-                    copy(
-                        isLoading = false,
-                        isError = true,
-                        errorMessage = LanguageKey.loginUserDataNullError
-                    )
-                }
-                return@launch
-            }
-
-            val userProfileProperty =
-                UserProfileProperty(
-                    token = userData.token,
-                    userId = userData.uid,
-                    username = loginOperationState.value.displayName,
-                    age = loginOperationState.value.age,
-                    gender = loginOperationState.value.gender,
-                )
-
-            questionSupabaseRepository.updateUser(userProfileProperty).asResult().collectLatest {
-                Timber.d("updateUser response: $it")
-                it.fold(
-                    onSuccess = { updatedUser ->
-                        loginOperationState.updateState {
-                            copy(
-                                isLoading = false,
-                                isError = false,
-                                errorMessage = "",
-                                displayName = updatedUser.displayName,
-                                age = updatedUser.age,
-                                gender = updatedUser.gender,
-
-                                )
-                        }
-                        sharedOperationRepository.saveGoogleUserData(updatedUser)
-                        uiEvent.emit(LoginOperationUiEvent.OnLoginSuccess)
-                        navigationUseCase.navigateTo("back")
-                    },
-                    onFailure = { error ->
-                        Timber.e("updateUser error: ${error.message}")
-                        loginOperationState.updateState {
-                            copy(
-                                isLoading = false,
-                                isError = true,
-                                errorMessage = error.message ?: "Update failed"
-                            )
-                        }
-                    }
-                )
-            }
-        }
-        return false
-    }
-
-    private fun isErrorInLoginForm(): Boolean {
-        if (loginOperationState.value.displayName.isBlank()) {
-            loginOperationState.updateState {
-                copy(
-                    isError = true,
-                    errorMessage = LanguageKey.usernameIsEmpty
-                )
-            }
-            return true
-        }
-        if (loginOperationState.value.age.isBlank()) {
-            loginOperationState.updateState {
-                copy(
-                    isError = true,
-                    errorMessage = LanguageKey.ageCannotBeNull
-                )
-            }
-            return true
-        }
-        try {
-            val ageInvalid =
-                loginOperationState.value.age.toInt() < 18 || loginOperationState.value.age.toInt() > 100
-            loginOperationState.updateState {
-                copy(
-                    isError = true,
-                    errorMessage = LanguageKey.invalidAgeError
-                )
-            }
-            if (ageInvalid) {
-                return true
-            }
-        } catch (e: Exception) {
-            loginOperationState.updateState {
-                copy(
-                    isError = true,
-                    errorMessage = LanguageKey.ageCannotBeNull
-                )
-            }
-            return true
-        }
-
-        if (loginOperationState.value.gender.isBlank()) {
-            loginOperationState.updateState {
-                copy(
-                    isError = true,
-                    errorMessage = LanguageKey.genderCannotBeEmpty
-                )
-            }
-            return true
-        }
-
-        return false
     }
 }

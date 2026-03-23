@@ -10,14 +10,14 @@ import kotlinx.parcelize.Parcelize
 @JsonClass(generateAdapter = true)
 @Parcelize
 data class UserConnectResponseData(
-    @Json(name = "isFollowedByMe")
+    @param:Json(name = "isFollowedByMe")
     var isFollowedByMe: Boolean = false,
-    @Json(name = "isMe")
+    @param:Json(name = "isMe")
     var isMe: Boolean = false,
-    @Json(name = "nick")
+    @param:Json(name = "nick")
     var nick: String = "",
-    @Json(name = "profilePhoto")
+    @param:Json(name = "profilePhoto")
     var profilePhoto: String = "",
-    @Json(name = "userId")
-    var userId: Long = 0
+    @param:Json(name = "userId")
+    var userId: Long = 0,
 ) : Parcelable

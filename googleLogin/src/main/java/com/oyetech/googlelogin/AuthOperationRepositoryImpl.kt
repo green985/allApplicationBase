@@ -21,6 +21,7 @@ import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData
 import com.oyetech.models.firebaseModels.googleAuth.isUserHasUID
 import com.oyetech.models.firebaseModels.googleAuth.toGoogleUserPostData
 import com.oyetech.models.firebaseModels.userModel.UserDataProperty
+import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import timber.log.Timber
@@ -126,6 +127,33 @@ class AuthOperationRepositoryImpl(
             }
 
             else -> GoogleUserResponseData(errorException = Exception("Unexpected credential"))
+        }
+    }
+
+    @Suppress("TooGenericExceptionCaught")
+    override suspend fun updateUserProfile(
+        username: String,
+        age: String,
+        gender: String,
+    ): Result<UserDataProperty> {
+        return try {
+            val currentUser = userDataStateFlow.value
+                ?: return Result.failure(Exception("User session not found"))
+
+            val profileToUpdate = UserProfileProperty(
+                token = currentUser.token,
+                userId = currentUser.userId,
+                username = username,
+                age = age,
+                gender = gender,
+            )
+
+            val updatedUser = questionSupabaseRepository.updateUser(profileToUpdate).first()
+            sharedOperationRepository.saveGoogleUserData(updatedUser)
+            userDataStateFlow.value = updatedUser
+            Result.success(updatedUser)
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 

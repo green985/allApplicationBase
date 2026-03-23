@@ -11,17 +11,17 @@ import kotlinx.parcelize.Parcelize
 @JsonClass(generateAdapter = true)
 @Parcelize
 data class ChatPreferencesDataResponse(
-    @Json(name = "currentLocation")
+    @param:Json(name = "currentLocation")
     var currentLocation: LocationDataResponse = LocationDataResponse(),
-    @Json(name = "discoveryEnabled") var discoveryEnabled: Boolean = false,
-    @Json(name = "lookingForAgeFrom") var lookingForAgeFrom: Int = 0,
-    @Json(name = "lookingForAgeTo") var lookingForAgeTo: Int = 0,
-    @Json(name = "lookingForGender") var lookingForGender: String = "",
-    @Json(name = "maxDistanceInMeters") var maxDistanceInMeters: Int = 0,
-    @Json(name = "preferredAgeFrom") var preferredAgeFrom: Int = 0,
-    @Json(name = "preferredAgeTo") var preferredAgeTo: Int = 0,
-    @Json(name = "preferredGender") var preferredGender: String = "",
-    @Json(name = "lookingForCountry") var country: String = "",
-    @Json(name = "selectedLocation")
+    @param:Json(name = "discoveryEnabled") var discoveryEnabled: Boolean = false,
+    @param:Json(name = "lookingForAgeFrom") var lookingForAgeFrom: Int = 0,
+    @param:Json(name = "lookingForAgeTo") var lookingForAgeTo: Int = 0,
+    @param:Json(name = "lookingForGender") var lookingForGender: String = "",
+    @param:Json(name = "maxDistanceInMeters") var maxDistanceInMeters: Int = 0,
+    @param:Json(name = "preferredAgeFrom") var preferredAgeFrom: Int = 0,
+    @param:Json(name = "preferredAgeTo") var preferredAgeTo: Int = 0,
+    @param:Json(name = "preferredGender") var preferredGender: String = "",
+    @param:Json(name = "lookingForCountry") var country: String = "",
+    @param:Json(name = "selectedLocation")
     var selectedLocation: LocationDataResponse = LocationDataResponse(),
 ) : Parcelable

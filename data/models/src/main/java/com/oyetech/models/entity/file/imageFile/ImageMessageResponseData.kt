@@ -20,17 +20,17 @@ Created by Erdi Özbek
 @Parcelize
 @Suppress("ConstructorParameterNaming")
 data class ImageMessageResponseData(
-    @Json(name = "aspectRatio") var aspectRatio: Double = 0.0,
-    @Json(name = "aspectRatioString") var aspectRatioString: String = "",
-    @Json(name = "blurredImageBase64") var blurredImageBase64: String = "",
-    @Json(name = "largeImageId") var largeImageId: String = "",
-    @Json(name = "largeImageSize")
+    @param:Json(name = "aspectRatio") var aspectRatio: Double = 0.0,
+    @param:Json(name = "aspectRatioString") var aspectRatioString: String = "",
+    @param:Json(name = "blurredImageBase64") var blurredImageBase64: String = "",
+    @param:Json(name = "largeImageId") var largeImageId: String = "",
+    @param:Json(name = "largeImageSize")
     var largeImageSize: ImagePropertyResponseData = ImagePropertyResponseData(),
-    @Json(name = "largeImageUrl") var largeImageUrl: String = "",
-    @Json(name = "thumbnailImageId") var thumbnailImageId: String = "",
-    @Json(name = "thumbnailImageSize")
+    @param:Json(name = "largeImageUrl") var largeImageUrl: String = "",
+    @param:Json(name = "thumbnailImageId") var thumbnailImageId: String = "",
+    @param:Json(name = "thumbnailImageSize")
     var thumbnailImageSize: ImagePropertyResponseData = ImagePropertyResponseData(),
-    @Json(name = "thumbnailImageUrl") var thumbnailImageUrl: String = "",
+    @param:Json(name = "thumbnailImageUrl") var thumbnailImageUrl: String = "",
 
     var imageFilePath: String = "",
 
@@ -59,9 +59,9 @@ data class ImageMessageResponseData(
 @Parcelize
 @Suppress("ConstructorParameterNaming")
 data class ImageMessageResponseSubData(
-    @Json(name = "aspectRatio") var aspectRatio: Double = 0.0,
-    @Json(name = "aspectRatioString") var aspectRatioString: String = "",
-    @Json(name = "blurredImageBase64") var blurredImageBase64: String = "",
+    @param:Json(name = "aspectRatio") var aspectRatio: Double = 0.0,
+    @param:Json(name = "aspectRatioString") var aspectRatioString: String = "",
+    @param:Json(name = "blurredImageBase64") var blurredImageBase64: String = "",
     @Json(name = "largeImageId") var largeImageId: String = "",
     @Json(name = "largeImageSize")
     var largeImageSize: ImagePropertyResponseData = ImagePropertyResponseData(),

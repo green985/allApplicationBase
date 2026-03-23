@@ -8,10 +8,10 @@ import kotlinx.parcelize.Parcelize
 @JsonClass(generateAdapter = true)
 @Parcelize
 data class UserPersonalInfoDataResponse(
-    @Json(name = "birthDate")
+    @param:Json(name = "birthDate")
     var birthDate: String = "",
-    @Json(name = "country")
+    @param:Json(name = "country")
     var country: String = "",
-    @Json(name = "nick")
-    var nick: String = ""
+    @param:Json(name = "nick")
+    var nick: String = "",
 ) : Parcelable

@@ -15,25 +15,25 @@ Created by Erdi Özbek
 @Keep
 @Parcelize
 data class UserAlertInfoResponseData(
-    @Json(name = "alertCode")
+    @param:Json(name = "alertCode")
     var alertCode: Int,
-    @Json(name = "alertStringList")
-    var alertStringList: List<UserAlertInfoAlertStringRequestBody>
+    @param:Json(name = "alertStringList")
+    var alertStringList: List<UserAlertInfoAlertStringRequestBody>,
 ) : Parcelable
 
 @Keep
 @Parcelize
 data class UserAlertInfoStringResponseData(
-    @Json(name = "alertCode")
+    @param:Json(name = "alertCode")
     var alertCode: Int,
-    @Json(name = "alertString")
-    var alertString: String
+    @param:Json(name = "alertString")
+    var alertString: String,
 ) : Parcelable
 
 @Keep
 @JsonClass(generateAdapter = true)
 @Parcelize
 data class UserAlertInfoAlertStringRequestBody(
-    @Json(name = "alertString") var alertString: String = "",
-    @Json(name = "languageCode") var languageCode: String = "",
+    @param:Json(name = "alertString") var alertString: String = "",
+    @param:Json(name = "languageCode") var languageCode: String = "",
 ) : Parcelable

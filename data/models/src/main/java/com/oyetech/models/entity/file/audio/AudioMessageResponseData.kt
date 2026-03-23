@@ -14,9 +14,9 @@ import kotlinx.parcelize.Parcelize
 @Keep
 @Parcelize
 data class AudioMessageResponseData(
-    @Json(name = "audioId") var audioId: String = "",
-    @Json(name = "audioUrl") var audioUrl: String = "",
-    @Json(name = "duration") var totalDuration: Long = 0L,
+    @param:Json(name = "audioId") var audioId: String = "",
+    @param:Json(name = "audioUrl") var audioUrl: String = "",
+    @param:Json(name = "duration") var totalDuration: Long = 0L,
 
     var audioFilePath: String = "",
 
@@ -45,9 +45,9 @@ data class AudioMessageResponseData(
 @JsonClass(generateAdapter = true)
 @Parcelize
 data class AudioMessageResponseSubData(
-    @Json(name = "audioId") var audioId: String = "",
-    @Json(name = "audioUrl") var audioUrl: String = "",
-    @Json(name = "duration") var totalDuration: Long = 0L,
+    @param:Json(name = "audioId") var audioId: String = "",
+    @param:Json(name = "audioUrl") var audioUrl: String = "",
+    @param:Json(name = "duration") var totalDuration: Long = 0L,
     var audioFilePath: String = "",
 
     ) : Parcelable
@@ -57,9 +57,9 @@ data class AudioMessageResponseSubData(
 @JsonClass(generateAdapter = true)
 @Parcelize
 data class AudioMessageResponseSocketData(
-    @Json(name = "audioId") var audioId: String = "",
-    @Json(name = "audioUrl") var audioUrl: String = "",
-    @Json(name = "duration") var totalDuration: Long = 0L,
+    @param:Json(name = "audioId") var audioId: String = "",
+    @param:Json(name = "audioUrl") var audioUrl: String = "",
+    @param:Json(name = "duration") var totalDuration: Long = 0L,
 ) : Parcelable
 
 fun AudioMessageResponseSubData.mapToNormalize(): AudioMessageResponseData {

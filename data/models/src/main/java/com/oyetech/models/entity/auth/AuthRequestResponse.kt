@@ -10,12 +10,12 @@ import kotlinx.parcelize.Parcelize
 @Keep
 @JsonClass(generateAdapter = true)
 data class AuthRequestResponse(
-    @Json(name = "accessToken") var accessToken: TokenDataResponse = TokenDataResponse(),
-    @Json(name = "message") var message: String = "",
-    @Json(name = "nick") var nick: String = "",
-    @Json(name = "language") var languageCode: String = "",
-    @Json(name = "refreshToken") var refreshToken: TokenDataResponse = TokenDataResponse(),
-    @Json(name = "userId") var userId: Long = 0,
+    @param:Json(name = "accessToken") var accessToken: TokenDataResponse = TokenDataResponse(),
+    @param:Json(name = "message") var message: String = "",
+    @param:Json(name = "nick") var nick: String = "",
+    @param:Json(name = "language") var languageCode: String = "",
+    @param:Json(name = "refreshToken") var refreshToken: TokenDataResponse = TokenDataResponse(),
+    @param:Json(name = "userId") var userId: Long = 0,
 ) : Parcelable {
 
     fun isNeedRegisterComplete(): Boolean {

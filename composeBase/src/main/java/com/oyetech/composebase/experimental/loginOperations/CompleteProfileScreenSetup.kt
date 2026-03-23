@@ -22,38 +22,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.baseViews.helper.GenderSegmentedControl
-import com.oyetech.composebase.experimental.loginOperations.LoginOperationUiEvent.OnCancelUserCreation
-import com.oyetech.composebase.experimental.loginOperations.LoginOperationUiEvent.OnLoginSuccess
+import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent
+import com.oyetech.composebase.experimental.authOperation.AuthOperationUiState
+import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
 import com.oyetech.composebase.helpers.viewProperties.DialogHelper
 import org.koin.compose.koinInject
 import timber.log.Timber
 
 @Composable
 fun CompleteProfileScreenSetup() {
-    val vm = koinInject<LoginOperationVM>()
-    val uiState by vm.loginOperationState.collectAsStateWithLifecycle()
-    val uiEventFlow by vm.uiEvent.collectAsStateWithLifecycle(null)
-
-    when (uiEventFlow) {
-        OnCancelUserCreation -> {
-        }
-
-        OnLoginSuccess -> {
-            Timber.d("OnLoginSuccess navigationRoute to home")
-        }
-
-        null -> {
-        }
-    }
-
+    val vm = koinInject<AuthOperationVM>()
+    val uiState by vm.authOperationState.collectAsStateWithLifecycle()
+    // Navigation is handled centrally by LoginOperationVM which observes AuthOperationVM.uiEvent
     CompleteProfileScreen(uiState = uiState, onEvent = { vm.onEvent(it) })
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CompleteProfileScreen(
-    uiState: LoginOperationUiState,
-    onEvent: (LoginOperationEvent) -> Unit,
+    uiState: AuthOperationUiState,
+    onEvent: (AuthOperationEvent) -> Unit,
 ) {
     androidx.compose.ui.window.Dialog(
         properties = DialogHelper.fullScreenDialogProperties,
@@ -82,9 +70,8 @@ fun CompleteProfileScreen(
 
                 LoginOperationQuickScreen {
                     Timber.d("LoginOperationQuickScreen clicked")
-                    // Handle quick screen click if needed
                 }
-//                    onEvent(LoginOperationEvent.OnCancel)
+
                 Spacer(modifier = Modifier.height(32.dp))
                 Text(
                     "Complete your profile",
@@ -92,10 +79,9 @@ fun CompleteProfileScreen(
                 )
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // Username Field
                 OutlinedTextField(
-                    value = uiState.displayName,
-                    onValueChange = { onEvent(LoginOperationEvent.UsernameChanged(it)) },
+                    value = uiState.username,
+                    onValueChange = { onEvent(AuthOperationEvent.UsernameChanged(it)) },
                     label = { Text("Name") },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
@@ -112,12 +98,9 @@ fun CompleteProfileScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Age Field
                 OutlinedTextField(
-                    value = uiState.age.toString(),
-                    onValueChange = {
-                        onEvent(LoginOperationEvent.AgeChanged(it))
-                    },
+                    value = uiState.age,
+                    onValueChange = { onEvent(AuthOperationEvent.AgeChanged(it)) },
                     label = { Text("Age") },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -128,15 +111,15 @@ fun CompleteProfileScreen(
 
                 GenderSegmentedControl(
                     selectedGender = uiState.gender,
-                    onGenderSelected = { onEvent.invoke(LoginOperationEvent.GenderChanged(it)) }
+                    onGenderSelected = { onEvent(AuthOperationEvent.GenderChanged(it)) }
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
-                Button({ onEvent.invoke(LoginOperationEvent.OnSubmit) }) {
+                Button({ onEvent(AuthOperationEvent.OnSubmitProfile) }) {
                     Text(text = "Set Your Profile")
                 }
                 Spacer(modifier = Modifier.height(64.dp))
-                Button({ onEvent.invoke(LoginOperationEvent.OnCancel) }) {
+                Button({ onEvent(AuthOperationEvent.OnCancelProfile) }) {
                     Text(text = "Cancel")
                 }
             }
@@ -147,5 +130,5 @@ fun CompleteProfileScreen(
 @Preview(showBackground = true)
 @Composable
 private fun CompleteProfileScreenPreview() {
-    CompleteProfileScreen(LoginOperationUiState()) { }
+    CompleteProfileScreen(AuthOperationUiState()) { }
 }

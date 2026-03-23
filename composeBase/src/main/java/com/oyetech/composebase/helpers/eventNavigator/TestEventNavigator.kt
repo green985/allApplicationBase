@@ -69,7 +69,7 @@ object EventNavigatorList {
     val cancelUserRegistrationOperation = buildList<BaseEvent> {
         add(AllScreenNavigatorEvent.OnNavigateToQuestionStart)
         add(LoginOperationEvent.LoginClicked)
-        add(LoginOperationEvent.OnCancel)
+//        add(LoginOperationEvent.OnCancel)
     }
 
     val contactWithUsFullScopeOperation = buildList<BaseEvent> {

@@ -10,6 +10,6 @@ import kotlinx.parcelize.Parcelize
 @Keep
 @JsonClass(generateAdapter = true)
 data class UserPropertyDataResponse(
-    @Json(name = "id") var id: Long = 0,
-    @Json(name = "nick") var nick: String = "",
+    @param:Json(name = "id") var id: Long = 0,
+    @param:Json(name = "nick") var nick: String = "",
 ) : Parcelable

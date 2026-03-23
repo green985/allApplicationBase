@@ -2,21 +2,29 @@ package com.oyetech.composebase.experimental.authOperation
 
 import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.base.BaseUIEvent
-import com.oyetech.models.firebaseModels.userModel.UserDataProperty
 
 data class AuthOperationUiState(
     val isLoading: Boolean = false,
     val isError: Boolean = false,
     val errorMessage: String = "",
-    val userDataProperty: UserDataProperty? = null,
+    // Complete profile form fields
+    val username: String = "",
+    val age: String = "",
+    val gender: String = "",
+    val isUsernameEmpty: Boolean = false,
 )
 
 sealed class AuthOperationUiEvent : BaseUIEvent() {
     object OnLoginSuccess : AuthOperationUiEvent()
     object OnProfileIncomplete : AuthOperationUiEvent()
+    object OnProfileCancelled : AuthOperationUiEvent()
 }
 
 sealed class AuthOperationEvent : BaseEvent() {
     object LoginClicked : AuthOperationEvent()
+    data class UsernameChanged(val username: String) : AuthOperationEvent()
+    data class AgeChanged(val age: String) : AuthOperationEvent()
+    data class GenderChanged(val gender: String) : AuthOperationEvent()
+    object OnSubmitProfile : AuthOperationEvent()
+    object OnCancelProfile : AuthOperationEvent()
 }
-
