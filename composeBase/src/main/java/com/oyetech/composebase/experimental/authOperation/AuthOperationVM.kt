@@ -44,11 +44,7 @@ class AuthOperationVM(
         // Restore login state from persisted user data on app start
         viewModelScope.launch(getDispatcherIo()) {
             authOperationRepository.userDataStateFlow.collectLatest { userData ->
-                if (userData != null && userData.isProfileCompletedForAuth()) {
-                    authOperationState.updateState {
-                        copy(isLogin = true, username = userData.username)
-                    }
-                }
+                mapUserDataToState(userData)
             }
         }
     }
@@ -81,11 +77,9 @@ class AuthOperationVM(
         viewModelScope.launch(getDispatcherIo()) {
             authOperationRepository.loginWithGoogleAndSyncUser().fold(
                 onSuccess = { userData ->
+                    mapUserDataToState(userData)
                     authOperationState.updateState { copy(isLoading = false) }
                     if (userData.isProfileCompletedForAuth()) {
-                        authOperationState.updateState {
-                            copy(isLogin = true, username = userData.username)
-                        }
                         uiEvent.emit(AuthOperationUiEvent.OnLoginSuccess)
                         navigationUseCase.navigateTo("back")
                     } else {
@@ -125,9 +119,8 @@ class AuthOperationVM(
                 gender = state.gender,
             ).fold(
                 onSuccess = { userData ->
-                    authOperationState.updateState {
-                        copy(isLoading = false, isLogin = true, username = userData.username)
-                    }
+                    mapUserDataToState(userData)
+                    authOperationState.updateState { copy(isLoading = false) }
                     uiEvent.emit(AuthOperationUiEvent.OnLoginSuccess)
                     navigationUseCase.navigateTo("back")
                 },

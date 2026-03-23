@@ -7,6 +7,9 @@ data class AuthOperationUiState(
     val isLoading: Boolean = false,
     val isError: Boolean = false,
     val errorMessage: String = "",
+    // User identity
+    val userId: String = "",
+    val isAnonymous: Boolean = false,
     // Complete profile form fields
     val username: String = "",
     val age: String = "",
@@ -14,6 +17,9 @@ data class AuthOperationUiState(
     val isUsernameEmpty: Boolean = false,
     // Login state
     val isLogin: Boolean = false,
+    
+    // User profile fields (for profile completion)
+    val biography: String = "",
 )
 
 sealed class AuthOperationUiEvent : BaseUIEvent() {
