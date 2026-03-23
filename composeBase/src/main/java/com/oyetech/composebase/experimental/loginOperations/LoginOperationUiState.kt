@@ -14,9 +14,9 @@ data class LoginOperationUiState(
     val isError: Boolean = false,
     val errorMessage: String = "",
     val isUserDeleted: Boolean = false,
-    val displayName: String = "",
+    val username: String = "",
     // true when the user has a non-empty display name (set after successful login)
-    val isLogin: Boolean = displayName.isNotBlank(),
+    val isLogin: Boolean = username.isNotBlank(),
     val isRegistrationCompleteNeeded: Boolean = false,
 )
 

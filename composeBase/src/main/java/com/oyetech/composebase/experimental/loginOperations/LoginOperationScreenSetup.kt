@@ -18,6 +18,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorDialogFullScreen
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingDialogFullScreen
+import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent
+import com.oyetech.composebase.experimental.authOperation.AuthOperationUiState
+import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
 import org.koin.compose.koinInject
 
 /**
@@ -27,7 +30,7 @@ Created by Erdi Özbek
  **/
 @Composable
 fun LoginOperationScreenSetup(
-    uiState: LoginOperationUiState,
+    uiState: AuthOperationUiState,
     onErrorDismiss: () -> Unit,
     content: @Composable () -> Unit,
 ) {
@@ -62,16 +65,16 @@ fun LoginOperationSmallButtonSetup() {
             }
         }
     } else {
-        val loginOperationVM = koinInject<LoginOperationVM>()
-        val loginUiState by loginOperationVM.loginOperationState.collectAsState()
+        val authOperationVM = koinInject<AuthOperationVM>()
+        val authUiState by authOperationVM.authOperationState.collectAsState()
 
-        if (!loginUiState.isLogin) {
+        if (!authUiState.isLogin) {
             Row(modifier = Modifier.size(100.dp)) {
                 Button(
-                    onClick = { loginOperationVM.onEvent(LoginOperationEvent.LoginClicked) }
+                    onClick = { authOperationVM.onEvent(AuthOperationEvent.LoginClicked) }
                 ) {
                     Text(
-                        text = if (loginUiState.isLoading) "Loading..." else "Login",
+                        text = if (authUiState.isLoading) "Loading..." else "Login",
                         style = MaterialTheme.typography.labelSmall
                     )
                 }
@@ -84,7 +87,5 @@ fun LoginOperationSmallButtonSetup() {
 @Preview(showBackground = true)
 @Composable
 fun LoginOperationSmallButtonSetupPreview() {
-    // for only preview init button
-
     LoginOperationSmallButtonSetup()
 }

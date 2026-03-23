@@ -3,8 +3,8 @@ package com.oyetech.composebase.sharedScreens.settings
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
-import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent
-import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
+import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent
+import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.composebase.sharedScreens.navigation.ScreenKey
 import com.oyetech.cripto.stringKeys.WebSiteUrls
@@ -24,7 +24,7 @@ Created by Erdi Özbek
 
 class FacSettingsVm(
     appDispatchers: AppDispatchers,
-    private val loginOperationVM: LoginOperationVM,
+    private val authOperationVM: AuthOperationVM,
     private val navigationUseCase: com.oyetech.domain.useCases.NavigationUseCase,
     private val firebaseUserRepository: FirebaseUserRepository,
 ) : BaseViewModel(appDispatchers) {
@@ -35,9 +35,9 @@ class FacSettingsVm(
 
     init {
         viewModelScope.launch(getDispatcherIo()) {
-            loginOperationVM.getLoginOperationSharedState().onEach {
+            authOperationVM.authOperationState.onEach {
                 uiState.updateState {
-                    copy(isUserLoggedIn = it.isLogin, username = it.displayName)
+                    copy(isUserLoggedIn = it.isLogin, username = it.username)
                 }
             }.collect {}
         }
@@ -84,7 +84,7 @@ class FacSettingsVm(
                 }
 
                 FacSettingsUiEvent.DeleteAccountConfirmed -> {
-                    loginOperationVM.onEvent(LoginOperationEvent.DeleteAccountClick)
+                    authOperationVM.onEvent(AuthOperationEvent.DeleteAccountClick)
                     uiState.updateState {
                         copy(isDeleteAccountShown = false)
                     }

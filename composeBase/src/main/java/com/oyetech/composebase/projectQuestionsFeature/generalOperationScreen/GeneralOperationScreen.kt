@@ -10,9 +10,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.oyetech.composebase.baseViews.snackbar.SnacbarScreenSetup
-import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent
+import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent
+import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationScreenSetup
-import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
 import com.oyetech.composebase.projectQuestionsFeature.generalOperationScreen.generalPlayground.GeneralPlaygroundVm
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -31,13 +31,13 @@ fun GeneralOperationScreenSetup(
     val generalPlaygroundVm = koinViewModel<GeneralPlaygroundVm>()
 
     viewModel.hashCode()
-    val loginOperationVM = koinInject<LoginOperationVM>()
+    val authOperationVM = koinInject<AuthOperationVM>()
 
-    val loginUiState by loginOperationVM.loginOperationState.collectAsState()
+    val authUiState by authOperationVM.authOperationState.collectAsState()
 
     LoginOperationScreenSetup(
-        uiState = loginUiState,
-        onErrorDismiss = { loginOperationVM.onEvent(LoginOperationEvent.ErrorDismiss) }
+        uiState = authUiState,
+        onErrorDismiss = { authOperationVM.onEvent(AuthOperationEvent.ErrorDismiss) }
     ) {
         GeneralOperationScreen {
             content()

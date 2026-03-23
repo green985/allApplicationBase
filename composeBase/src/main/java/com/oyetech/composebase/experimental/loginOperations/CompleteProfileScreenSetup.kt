@@ -33,7 +33,7 @@ import timber.log.Timber
 fun CompleteProfileScreenSetup() {
     val vm = koinInject<AuthOperationVM>()
     val uiState by vm.authOperationState.collectAsStateWithLifecycle()
-    // Navigation is handled centrally by LoginOperationVM which observes AuthOperationVM.uiEvent
+    // Navigation is handled centrally by AuthOperationVM after profile submission
     CompleteProfileScreen(uiState = uiState, onEvent = { vm.onEvent(it) })
 }
 

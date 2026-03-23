@@ -31,8 +31,8 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.oyetech.composebase.baseViews.basePagingList.BasePagingListScreen
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingDialogFullScreen
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
-import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent
-import com.oyetech.composebase.experimental.loginOperations.LoginOperationUiState
+import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent
+import com.oyetech.composebase.experimental.authOperation.AuthOperationUiState
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.newPackages.helpers.OperationState.Error
 import com.oyetech.models.newPackages.helpers.OperationState.Idle
@@ -60,12 +60,9 @@ fun CommentScreenWithContentScreenSetup(
         )
     }
     val snackbarDelegate = koinInject<SnackbarDelegate>()
-    val loginOperationVM = vm.loginOperationVM
+    val authOperationVM = vm.authOperationVM
     val uiState by vm.uiState.collectAsStateWithLifecycle()
-    val loginOperationState by loginOperationVM.getLoginOperationSharedState()
-        .collectAsStateWithLifecycle(
-            initialValue = LoginOperationUiState()
-        )
+    val authOperationState by authOperationVM.authOperationState.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -79,13 +76,13 @@ fun CommentScreenWithContentScreenSetup(
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f),
-            items = lazyPagingItems, // This parameter is abstracted, not used here
+            items = lazyPagingItems,
             itemKey = { item -> item.createdAt.time },
             onBindItem = { item ->
                 AnimatedVisibility(
                     visible = !item.isDeleted,
                     exit = fadeOut(
-                        animationSpec = tween(durationMillis = 300) // Silinme animasyon süresi
+                        animationSpec = tween(durationMillis = 300)
                     ) + shrinkVertically(
                         animationSpec = tween(durationMillis = 300),
                         shrinkTowards = Alignment.Top
@@ -105,9 +102,9 @@ fun CommentScreenWithContentScreenSetup(
             onEvent = { event ->
                 vm.onEvent(event)
             },
-            userUiState = loginOperationState,
+            userUiState = authOperationState,
             onUserEvent = { event ->
-                loginOperationVM.onEvent(event)
+                authOperationVM.onEvent(event)
             }
         )
     }
@@ -149,12 +146,11 @@ private fun CommentInputViewPreview() {
             commentList = persistentListOf<CommentItemUiState>(),
             errorMessage = "vitae"
         ),
-        userUiState = LoginOperationUiState(
+        userUiState = AuthOperationUiState(
             isLoading = false,
             isError = false,
             errorMessage = "has",
-            isUserDeleted = false,
-            displayName = "Elva Parrish",
+            username = "Elva Parrish",
         ),
         onEvent = {}, onUserEvent = {}
     )
@@ -163,9 +159,9 @@ private fun CommentInputViewPreview() {
 @Composable
 fun CommentInputView(
     uiState: CommentScreenUiState,
-    userUiState: LoginOperationUiState,
+    userUiState: AuthOperationUiState,
     onEvent: (CommentScreenEvent) -> (Unit),
-    onUserEvent: (LoginOperationEvent) -> (Unit),
+    onUserEvent: (AuthOperationEvent) -> (Unit),
 ) {
     Row(
         modifier = Modifier
@@ -183,7 +179,7 @@ fun CommentInputView(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Button(onClick = {
-                    onUserEvent(LoginOperationEvent.LoginClicked)
+                    onUserEvent(AuthOperationEvent.LoginClicked)
                 }) {
                     Text(LanguageKey.commentLoginButtonText)
                 }

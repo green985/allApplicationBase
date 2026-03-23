@@ -12,6 +12,8 @@ data class AuthOperationUiState(
     val age: String = "",
     val gender: String = "",
     val isUsernameEmpty: Boolean = false,
+    // Login state
+    val isLogin: Boolean = false,
 )
 
 sealed class AuthOperationUiEvent : BaseUIEvent() {
@@ -27,4 +29,6 @@ sealed class AuthOperationEvent : BaseEvent() {
     data class GenderChanged(val gender: String) : AuthOperationEvent()
     object OnSubmitProfile : AuthOperationEvent()
     object OnCancelProfile : AuthOperationEvent()
+    object DeleteAccountClick : AuthOperationEvent()
+    object ErrorDismiss : AuthOperationEvent()
 }

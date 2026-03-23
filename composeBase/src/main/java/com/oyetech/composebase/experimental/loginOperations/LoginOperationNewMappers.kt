@@ -34,7 +34,7 @@ fun LoginOperationVM.mapToProfileValue(userData: UserProfileProperty?) {
         Timber.d("LoginOperationVM mapToProfileValue user profile complete: $userData")
         viewModelScope.launch(Dispatchers.Main) {
             loginOperationState.updateState {
-                LoginOperationUiState(displayName = userData.username)
+                LoginOperationUiState(username = userData.username)
             }
         }
         viewModelScope.launch(getDispatcherIo()) {

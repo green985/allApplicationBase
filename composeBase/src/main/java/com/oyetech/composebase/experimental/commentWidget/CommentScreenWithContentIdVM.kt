@@ -42,7 +42,7 @@ class CommentScreenWithContentIdVM(
     private val contentId: String,
     private val userRepository: FirebaseUserRepository,
     private val commentOperationRepository: FirebaseCommentOperationRepository,
-    val loginOperationVM: AuthOperationVM,
+    val authOperationVM: AuthOperationVM,
 ) :
     BaseViewModel(appDispatchers) {
 

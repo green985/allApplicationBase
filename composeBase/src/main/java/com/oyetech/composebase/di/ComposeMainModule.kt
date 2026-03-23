@@ -5,7 +5,6 @@ import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationVm
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenWithContentIdVM
-import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
 import com.oyetech.composebase.experimental.moonOperation.MoonOperationVm
 import com.oyetech.composebase.helpers.adViewDelegate.AdViewOperationDelegate
 import com.oyetech.composebase.helpers.adViewDelegate.AdViewOperationDelegateImpl
@@ -44,7 +43,6 @@ object ComposeMainModule {
         singleOf(::GeneralOperationVM)
         singleOf(::GeneralPlaygroundVm)
         singleOf(::AuthOperationVM)
-        singleOf(::LoginOperationVM)
 
         viewModelOf(::CommentScreenWithContentIdVM)
 

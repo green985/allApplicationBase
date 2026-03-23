@@ -3,16 +3,21 @@ package com.oyetech.composebase.experimental.authOperation
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
+import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent.AgeChanged
 import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent.GenderChanged
 import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent.LoginClicked
 import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent.OnCancelProfile
 import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent.OnSubmitProfile
 import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent.UsernameChanged
+import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.domain.repository.loginOperation.AuthOperationRepository
+import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
+import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.firebaseModels.userModel.isProfileCompletedForAuth
 import com.oyetech.tools.coroutineHelper.AppDispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -22,6 +27,9 @@ import timber.log.Timber
 class AuthOperationVM(
     appDispatchers: AppDispatchers,
     private val authOperationRepository: AuthOperationRepository,
+    val navigationUseCase: NavigationUseCase,
+    private val googleLoginRepository: GoogleLoginRepository,
+    private val snackbarDelegate: SnackbarDelegate,
 ) : BaseViewModel(appDispatchers) {
 
     val authOperationState = MutableStateFlow(AuthOperationUiState())
@@ -31,6 +39,16 @@ class AuthOperationVM(
         viewModelScope.launch(getDispatcherIo()) {
             authOperationState.collectLatest {
                 Timber.d("AuthOperationState updated: $it")
+            }
+        }
+        // Restore login state from persisted user data on app start
+        viewModelScope.launch(getDispatcherIo()) {
+            authOperationRepository.userDataStateFlow.collectLatest { userData ->
+                if (userData != null && userData.isProfileCompletedForAuth()) {
+                    authOperationState.updateState {
+                        copy(isLogin = true, username = userData.username)
+                    }
+                }
             }
         }
     }
@@ -47,6 +65,10 @@ class AuthOperationVM(
                 is GenderChanged -> authOperationState.updateState { copy(gender = event.gender) }
                 OnSubmitProfile -> handleSubmitProfile()
                 OnCancelProfile -> handleCancelProfile()
+                AuthOperationEvent.DeleteAccountClick -> handleDeleteAccount()
+                AuthOperationEvent.ErrorDismiss -> authOperationState.updateState {
+                    copy(isError = false, errorMessage = "")
+                }
             }
         }
     }
@@ -61,9 +83,14 @@ class AuthOperationVM(
                 onSuccess = { userData ->
                     authOperationState.updateState { copy(isLoading = false) }
                     if (userData.isProfileCompletedForAuth()) {
+                        authOperationState.updateState {
+                            copy(isLogin = true, username = userData.username)
+                        }
                         uiEvent.emit(AuthOperationUiEvent.OnLoginSuccess)
+                        navigationUseCase.navigateTo("back")
                     } else {
                         uiEvent.emit(AuthOperationUiEvent.OnProfileIncomplete)
+                        navigationUseCase.navigateTo(QuestionAppProjectRoutes.CompleteProfileScreen.route)
                     }
                 },
                 onFailure = { error ->
@@ -97,9 +124,12 @@ class AuthOperationVM(
                 age = state.age,
                 gender = state.gender,
             ).fold(
-                onSuccess = {
-                    authOperationState.updateState { copy(isLoading = false) }
+                onSuccess = { userData ->
+                    authOperationState.updateState {
+                        copy(isLoading = false, isLogin = true, username = userData.username)
+                    }
                     uiEvent.emit(AuthOperationUiEvent.OnLoginSuccess)
+                    navigationUseCase.navigateTo("back")
                 },
                 onFailure = { error ->
                     Timber.e("updateUserProfile error: ${error.message}")
@@ -117,7 +147,21 @@ class AuthOperationVM(
 
     private fun handleCancelProfile() {
         viewModelScope.launch(getDispatcherIo()) {
+            googleLoginRepository.removeUser(googleLoginRepository.getUserUid())
             uiEvent.emit(AuthOperationUiEvent.OnProfileCancelled)
+            navigationUseCase.navigateTo("back")
+        }
+    }
+
+    private fun handleDeleteAccount() {
+        authOperationState.updateState { copy(isLoading = true) }
+        viewModelScope.launch(getDispatcherIo()) {
+            googleLoginRepository.removeUser(googleLoginRepository.getUserUid())
+            delay(500)
+            snackbarDelegate.triggerSnackbarState(LanguageKey.deleteAccountSuccess)
+            authOperationState.value = AuthOperationUiState()
+            uiEvent.emit(AuthOperationUiEvent.OnProfileCancelled)
+            navigationUseCase.navigateTo("back")
         }
     }
 
