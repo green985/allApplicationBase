@@ -4,6 +4,8 @@ import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
+import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent
+import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.AgeChanged
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.DeleteAccountClick
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.ErrorDismiss
@@ -50,6 +52,7 @@ class LoginOperationVM(
     private val snackbarDelegate: SnackbarDelegate,
     private val questionSupabaseRepository: com.oyetech.domain.repository.question.QuestionSupabaseRepository,
     private val sharedOperationRepository: SharedOperationRepository,
+    private val authOperationVM: AuthOperationVM,
 ) : BaseViewModel(appDispatchers) {
 
     val loginOperationState =
@@ -160,6 +163,10 @@ class LoginOperationVM(
         if (event is LoginOperationEvent) {
             when (event) {
                 LoginClicked -> {
+                    authOperationVM.onEvent(AuthOperationEvent.LoginClicked)
+                    return
+
+
                     loginOperationState.updateState {
                         LoginOperationUiState(isLoading = true)
                     }

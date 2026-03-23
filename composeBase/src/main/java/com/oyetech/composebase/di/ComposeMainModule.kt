@@ -3,6 +3,7 @@ package com.oyetech.composebase.di
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationDelegate
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationVm
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
+import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
 import com.oyetech.composebase.experimental.commentWidget.CommentScreenWithContentIdVM
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationVM
 import com.oyetech.composebase.experimental.moonOperation.MoonOperationVm
@@ -21,8 +22,8 @@ import com.oyetech.composebase.sharedScreens.messaging.MessageOperationVM
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListVm
 import com.oyetech.composebase.sharedScreens.userList.UserListVm
 import com.oyetech.composebase.sharedScreens.userProfile.editProfile.EditProfileVm
-import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 /**
@@ -42,6 +43,7 @@ object ComposeMainModule {
 
         singleOf(::GeneralOperationVM)
         singleOf(::GeneralPlaygroundVm)
+        singleOf(::AuthOperationVM)
         singleOf(::LoginOperationVM)
 
         viewModelOf(::CommentScreenWithContentIdVM)

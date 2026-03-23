@@ -23,3 +23,16 @@ interface GoogleLoginRepository {
     fun removeUser(uid: String)
     fun getUserUid(): String
 }
+
+interface GoogleLoginOperationRepository {
+//    val userAutoLoginStateFlow: MutableStateFlow<Boolean>
+
+//    val googleUserStateFlow: MutableStateFlow<GoogleUserResponseData>
+
+    val googleUserDataStateFlow: MutableStateFlow<UserProfileProperty?>
+
+    suspend fun signInWithGoogle()
+
+//    fun removeUser(uid: String)
+//    fun getUserUid(): String
+}
