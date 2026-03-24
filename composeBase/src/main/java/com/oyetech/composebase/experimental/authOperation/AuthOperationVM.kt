@@ -175,6 +175,7 @@ class AuthOperationVM(
         }
     }
 
+    @Suppress("ReturnCount")
     private fun isErrorInProfileForm(): Boolean {
         val state = authOperationState.value
 

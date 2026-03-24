@@ -163,7 +163,7 @@ class AuthOperationRepositoryImpl(
             val currentUser = userDataStateFlow.value
                 ?: return Result.failure(Exception("User session not found"))
 
-            questionSupabaseRepository.deleteAccount(currentUser.userId).first()
+            questionSupabaseRepository.deleteAccount().first()
             sharedOperationRepository.removeGoogleUserData()
             userDataStateFlow.value = null
             Result.success(Unit)

@@ -4,6 +4,7 @@ import com.oyetech.domain.repository.question.QuestionSupabaseRepository
 import com.oyetech.models.firebaseModels.googleAuth.GetUserWithTokenBody
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserPostData
 import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
+import com.oyetech.models.questionProject.questionOperation.DeleteAccountResponse
 import com.oyetech.models.questionProject.questionOperation.GenerateFormResultResponse
 import com.oyetech.models.questionProject.questionOperation.GetCatalogListResponse
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
@@ -71,8 +72,8 @@ class QuestionSupabaseRepositoryImpl(
         return questionSupabaseDataSource.deleteAnswer(userId, questionId)
     }
 
-    override fun deleteAccount(userId: String): Flow<Boolean> {
-        return questionSupabaseDataSource.deleteAccount(userId)
+    override fun deleteAccount(): Flow<DeleteAccountResponse> {
+        return questionSupabaseDataSource.deleteAccount()
     }
 
     override fun getCatalogDetail(
