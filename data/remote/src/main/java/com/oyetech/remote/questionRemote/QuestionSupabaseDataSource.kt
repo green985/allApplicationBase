@@ -99,7 +99,7 @@ class QuestionSupabaseDataSource(private val questionSupabaseApi: QuestionSupaba
     fun deleteAccount(userId: String): Flow<Boolean> {
         return interceptGenericResponseTrueForm {
             val request = DeleteAccountRequest(userId = userId)
-            questionSupabaseApi.deleteAccount(request)
+            questionSupabaseApi.deleteAccount()
         }
     }
 
