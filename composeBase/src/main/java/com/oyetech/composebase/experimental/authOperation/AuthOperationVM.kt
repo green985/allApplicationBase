@@ -15,6 +15,7 @@ import com.oyetech.domain.repository.loginOperation.AuthOperationRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.models.errors.ErrorMessage
 import com.oyetech.models.firebaseModels.userModel.isProfileCompletedForAuth
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import kotlinx.coroutines.delay
@@ -92,7 +93,7 @@ class AuthOperationVM(
                         copy(
                             isLoading = false,
                             isError = true,
-                            errorMessage = error.message ?: "Google login failed"
+                            errorMessage = ErrorMessage.fetchErrorMessage(error.message)
                         )
                     }
                 }
@@ -130,7 +131,7 @@ class AuthOperationVM(
                         copy(
                             isLoading = false,
                             isError = true,
-                            errorMessage = error.message ?: "Update failed"
+                            errorMessage = ErrorMessage.fetchErrorMessage(error.message)
                         )
                     }
                 }

@@ -80,7 +80,9 @@ class AuthOperationRepositoryImpl(
             val result = CredentialManager.create(activity).getCredential(activity, request)
             handleGoogleCredential(result)
         } catch (e: Exception) {
-            GoogleUserResponseData(errorException = Exception(e.message ?: "Google sign in failed"))
+            GoogleUserResponseData(
+                errorException = Exception(e.message ?: "Google sign in failed")
+            )
         }
     }
 
@@ -116,9 +118,7 @@ class AuthOperationRepositoryImpl(
                         }
                     } catch (e: GoogleIdTokenParsingException) {
                         GoogleUserResponseData(
-                            errorException = Exception(
-                                e.message ?: "Invalid Google token"
-                            )
+                            errorException = Exception(e.message ?: "Invalid Google token")
                         )
                     }
                 } else {

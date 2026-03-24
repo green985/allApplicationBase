@@ -5,10 +5,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.baseViews.snackbar.SnacbarScreenSetup
 import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent
 import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
@@ -33,7 +33,7 @@ fun GeneralOperationScreenSetup(
     viewModel.hashCode()
     val authOperationVM = koinInject<AuthOperationVM>()
 
-    val authUiState by authOperationVM.authOperationState.collectAsState()
+    val authUiState by authOperationVM.authOperationState.collectAsStateWithLifecycle()
 
     LoginOperationScreenSetup(
         uiState = authUiState,

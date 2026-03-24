@@ -14,8 +14,16 @@ object ErrorMessage {
     var JsonParseError = "Expected BEGIN_OBJECT but was false"
     var PROFILE_NOT_FOUND_ERROR_STRING = "USER_PROFILE_DOES_NOT_EXISTS"
 
+    // Google Identity / Credential Manager error codes
+    var ID_TOKEN_RETRIEVAL_FAILED = "[28404] Failed to retrieve an ID token"
+
     fun fetchErrorMessage(message: String?): String {
         if (message.isNullOrEmpty()) {
+            return unknownErrorMessage
+        }
+        if (message.contains("28404", ignoreCase = true) ||
+            message.contains(ID_TOKEN_RETRIEVAL_FAILED, ignoreCase = true)
+        ) {
             return unknownErrorMessage
         }
         if (message.contains("Certificate pinning failure!", ignoreCase = true) || message.contains(

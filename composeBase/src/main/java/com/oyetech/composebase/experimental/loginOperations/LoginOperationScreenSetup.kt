@@ -22,6 +22,7 @@ import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent
 import com.oyetech.composebase.experimental.authOperation.AuthOperationUiState
 import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
 import org.koin.compose.koinInject
+import timber.log.Timber
 
 /**
 Created by Erdi Özbek
@@ -34,6 +35,7 @@ fun LoginOperationScreenSetup(
     onErrorDismiss: () -> Unit,
     content: @Composable () -> Unit,
 ) {
+    Timber.d("LoginOperationScreenSetup: isLoading=${uiState.isLoading}, isError=${uiState.isError}, errorMessage=${uiState.errorMessage}")
     Box(modifier = Modifier.fillMaxSize()) {
         content()
 
