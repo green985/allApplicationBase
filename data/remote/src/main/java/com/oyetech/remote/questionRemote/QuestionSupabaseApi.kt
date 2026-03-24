@@ -4,6 +4,7 @@ import com.oyetech.models.GenericResponse
 import com.oyetech.models.firebaseModels.googleAuth.GetUserWithTokenBody
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserPostData
 import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
+import com.oyetech.models.questionProject.questionOperation.DeleteAccountRequest
 import com.oyetech.models.questionProject.questionOperation.DeleteAnswerRequest
 import com.oyetech.models.questionProject.questionOperation.GenerateFormResultRequest
 import com.oyetech.models.questionProject.questionOperation.GenerateFormResultResponse
@@ -84,6 +85,11 @@ interface QuestionSupabaseApi {
     @POST("v1/deleteAnswer")
     suspend fun deleteAnswer(
         @Body request: DeleteAnswerRequest,
+    ): Response<GenericResponse<Boolean>>
+
+    @POST("v1/deleteAccount")
+    suspend fun deleteAccount(
+        @Body request: DeleteAccountRequest,
     ): Response<GenericResponse<Boolean>>
 
     @POST("v1/getCatalogDetail")

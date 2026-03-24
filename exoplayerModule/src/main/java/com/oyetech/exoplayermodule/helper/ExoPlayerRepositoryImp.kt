@@ -39,18 +39,6 @@ class ExoPlayerRepositoryImp(
         playExoPlayerWithRadioModel()
     }
 
-    override fun startPlayerForAlarm(radioModel: RadioStationResponseData?) {
-
-        if (radioModel == null) {
-            Timber.d("some errorooror")
-            return
-        }
-
-        currentRadioModel = radioModel
-
-        playExoPlayerWithRadioModel()
-    }
-
     override fun stop() {
         exoPlayer.stop()
     }

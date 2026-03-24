@@ -71,6 +71,10 @@ class QuestionSupabaseRepositoryImpl(
         return questionSupabaseDataSource.deleteAnswer(userId, questionId)
     }
 
+    override fun deleteAccount(userId: String): Flow<Boolean> {
+        return questionSupabaseDataSource.deleteAccount(userId)
+    }
+
     override fun getCatalogDetail(
         formId: String,
         userId: String,

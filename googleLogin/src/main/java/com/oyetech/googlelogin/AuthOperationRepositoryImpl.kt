@@ -157,6 +157,21 @@ class AuthOperationRepositoryImpl(
         }
     }
 
+    @Suppress("TooGenericExceptionCaught")
+    override suspend fun deleteAccount(): Result<Unit> {
+        return try {
+            val currentUser = userDataStateFlow.value
+                ?: return Result.failure(Exception("User session not found"))
+
+            questionSupabaseRepository.deleteAccount(currentUser.userId).first()
+            sharedOperationRepository.removeGoogleUserData()
+            userDataStateFlow.value = null
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     private suspend fun loginOrRegisterUser(googleUser: GoogleUserResponseData): UserDataProperty {
         return runCatching {
             questionSupabaseRepository

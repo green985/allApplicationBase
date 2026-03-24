@@ -27,6 +27,7 @@ interface QuestionSupabaseRepository {
     suspend fun getAnswersByQuestion(questionId: String): Flow<List<QueAnswer>>
     fun updateAnswer(answer: QueAnswer): Flow<QueAnswer>
     fun deleteAnswer(userId: String, questionId: String): Flow<Boolean>
+    fun deleteAccount(userId: String): Flow<Boolean>
     fun getCatalogDetail(formId: String, userId: String): Flow<QuestionFormDetailResponse>
     fun submitCatalog(
         formId: String,

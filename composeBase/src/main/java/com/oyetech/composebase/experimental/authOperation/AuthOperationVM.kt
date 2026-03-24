@@ -18,7 +18,6 @@ import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.errors.ErrorMessage
 import com.oyetech.models.firebaseModels.userModel.isProfileCompletedForAuth
 import com.oyetech.tools.coroutineHelper.AppDispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -148,14 +147,31 @@ class AuthOperationVM(
     }
 
     private fun handleDeleteAccount() {
-        authOperationState.updateState { copy(isLoading = true) }
+        authOperationState.updateState {
+            copy(
+                isLoading = true,
+                isError = false,
+                errorMessage = ""
+            )
+        }
         viewModelScope.launch(getDispatcherIo()) {
-            googleLoginRepository.removeUser(googleLoginRepository.getUserUid())
-            delay(500)
-            snackbarDelegate.triggerSnackbarState(LanguageKey.deleteAccountSuccess)
-            authOperationState.value = AuthOperationUiState()
-            uiEvent.emit(AuthOperationUiEvent.OnProfileCancelled)
-            navigationUseCase.navigateTo("back")
+            authOperationRepository.deleteAccount().fold(
+                onSuccess = {
+                    authOperationState.value = AuthOperationUiState()
+                    snackbarDelegate.triggerSnackbarState(LanguageKey.deleteAccountSuccess)
+                    uiEvent.emit(AuthOperationUiEvent.OnProfileCancelled)
+                    navigationUseCase.navigateTo("back")
+                },
+                onFailure = { error ->
+                    authOperationState.updateState {
+                        copy(
+                            isLoading = false,
+                            isError = true,
+                            errorMessage = ErrorMessage.fetchErrorMessage(error.message)
+                        )
+                    }
+                }
+            )
         }
     }
 

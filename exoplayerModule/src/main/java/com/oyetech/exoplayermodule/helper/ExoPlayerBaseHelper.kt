@@ -7,7 +7,6 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.MediaMetadata
 import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.Player.Listener
 import com.google.android.exoplayer2.audio.AudioAttributes.Builder
 import com.google.android.exoplayer2.source.MediaSource
 import com.oyetech.domain.repository.contentOperation.ExoPlayerOperationRepository
@@ -33,7 +32,7 @@ abstract class ExoPlayerBaseHelper(
     private var exoPlayer: ExoPlayer,
 ) : ExoPlayerDiHelper(),
     ExoPlayerOperationRepository,
-    Listener {
+    Player.Listener {
 
     val exoplayerAnalyticsListener: ExoplayerAnalyticsListener by KoinJavaComponent.inject(
         ExoplayerAnalyticsListener::class.java

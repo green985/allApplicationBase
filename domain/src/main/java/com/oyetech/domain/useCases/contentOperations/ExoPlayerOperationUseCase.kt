@@ -36,9 +36,6 @@ class ExoPlayerOperationUseCase(
         exoPlayerOperationRepository.startPlayer(radioModel)
     }
 
-    fun startPlayerForAlarm(radioModel: RadioStationResponseData?) {
-        exoPlayerOperationRepository.startPlayerForAlarm(radioModel)
-    }
 }
 
 var examplePodcastUrl =

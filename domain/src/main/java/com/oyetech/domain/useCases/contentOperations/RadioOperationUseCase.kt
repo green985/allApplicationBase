@@ -114,16 +114,6 @@ class RadioOperationUseCase(
         }
     }
 
-    fun startPlayerForAlarm(radioModel: RadioStationResponseData) {
-        lastStation = radioModel
-        setRadioViewStateData(PrePlaying)
-        radioOperationRepository.startPlayerForAlarm(radioModel)
-
-        if (radioModel != null) {
-            prepareRadioDataOperation(radioModel, null)
-        }
-    }
-
     fun prepareRadioDataOperation(
         radioModel: RadioStationResponseData,
         radioListFromLiveData: List<RadioStationResponseData>? = null,

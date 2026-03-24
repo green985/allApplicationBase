@@ -17,7 +17,7 @@ data class AuthOperationUiState(
     val isUsernameEmpty: Boolean = false,
     // Login state
     val isLogin: Boolean = false,
-    
+
     // User profile fields (for profile completion)
     val biography: String = "",
 )

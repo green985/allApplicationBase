@@ -14,5 +14,7 @@ interface AuthOperationRepository {
         age: String,
         gender: String,
     ): Result<UserDataProperty>
+
+    suspend fun deleteAccount(): Result<Unit>
 }
 

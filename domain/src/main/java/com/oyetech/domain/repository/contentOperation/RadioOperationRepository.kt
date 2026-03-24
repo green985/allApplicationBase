@@ -12,8 +12,6 @@ interface RadioOperationRepository {
 
     fun startPlayer(radioModel: RadioStationResponseData? = null)
 
-    fun startPlayerForAlarm(radioModel: RadioStationResponseData? = null)
-
     fun startPlayer()
 
     fun stopPlayer()

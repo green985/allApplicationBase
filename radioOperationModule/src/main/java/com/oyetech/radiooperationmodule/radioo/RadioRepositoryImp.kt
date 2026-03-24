@@ -21,10 +21,6 @@ class RadioRepositoryImp(
         exoPlayerOperationUseCase.startPlayer(radioModel)
     }
 
-    override fun startPlayerForAlarm(radioModel: RadioStationResponseData?) {
-        this.lastRadioDataModel = radioModel
-        exoPlayerOperationUseCase.startPlayerForAlarm(radioModel)
-    }
 
     override fun startPlayer() {
         exoPlayerOperationUseCase.startPlayer(lastRadioDataModel)

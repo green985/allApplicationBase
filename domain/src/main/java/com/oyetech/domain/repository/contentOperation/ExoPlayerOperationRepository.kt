@@ -12,8 +12,6 @@ interface ExoPlayerOperationRepository {
 
     fun startPlayer(radioModel: RadioStationResponseData? = null)
 
-    fun startPlayerForAlarm(radioModel: RadioStationResponseData? = null)
-
     fun pause()
 
     fun stop()

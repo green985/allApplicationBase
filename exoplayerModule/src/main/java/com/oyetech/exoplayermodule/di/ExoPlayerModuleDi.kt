@@ -75,7 +75,7 @@ fun provideDefaultExtractorsFactory(): DefaultExtractorsFactory {
 }
 
 fun provideDefaultHlsDataSourceFactory(
-    defaultExtractorsFactory: DefaultDataSource.Factory
+    defaultExtractorsFactory: DefaultDataSource.Factory,
 ): DefaultHlsDataSourceFactory {
     return DefaultHlsDataSourceFactory(defaultExtractorsFactory)
 }
@@ -91,7 +91,7 @@ fun provideProgressiveMediaSourceFactory(): ProgressiveMediaSource.Factory {
 fun provideSimpleExoPlayer(
     context: Context,
 ): ExoPlayer {
-    var factoryy = DefaultMediaSourceFactory(context)
+    val factoryy = DefaultMediaSourceFactory(context)
     return ExoPlayer.Builder(context, factoryy).build()
 }
 
