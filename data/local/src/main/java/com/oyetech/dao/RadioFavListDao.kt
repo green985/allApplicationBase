@@ -39,7 +39,7 @@ interface RadioFavListDao : BaseDao<RadioStationFavModel> {
 
     @Transaction
     fun clearLastListTable() {
-        var list = getRadioFavList()
+        val list = getRadioFavList()
         if (list.isNullOrEmpty()) {
             return
         }

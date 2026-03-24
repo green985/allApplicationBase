@@ -24,7 +24,7 @@ interface RadioHistoryDao : BaseDao<RadioStationResponseData> {
     fun deleteHistoryList(idList: List<String>): Int
 
     fun clearHistoryTable() {
-        var list = getRadioHistoryList()
+        val list = getRadioHistoryList()
         if (list.isNullOrEmpty()) {
             return
         }

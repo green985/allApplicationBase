@@ -17,4 +17,3 @@ interface AuthOperationRepository {
 
     suspend fun deleteAccount(): Result<Unit>
 }
-

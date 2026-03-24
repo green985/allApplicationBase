@@ -30,7 +30,7 @@ interface RadioAllListDao : BaseDao<RadioStationResponseData> {
     fun findRadioStationWithStationIdList(stationUuidList: List<String>): List<RadioStationResponseData>
 
     fun clearLastListTable() {
-        var list = getRadioLastList()
+        val list = getRadioLastList()
         if (list.isNullOrEmpty()) {
             return
         }

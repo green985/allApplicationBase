@@ -93,7 +93,7 @@ data class ImageMessageResponseSocketSendData(
 ) : Parcelable
 
 fun ImageMessageResponseSubData.mapToNormalize(): ImageMessageResponseData {
-    var imageMessageResponseData = ImageMessageResponseData(
+    val imageMessageResponseData = ImageMessageResponseData(
         aspectRatio = this.aspectRatio,
         aspectRatioString = this.aspectRatioString,
         blurredImageBase64 = this.blurredImageBase64,
@@ -115,7 +115,7 @@ fun ImageMessageResponseSubData.mapToNormalize(): ImageMessageResponseData {
 }
 
 fun ImageMessageResponseData.serializeContent(): String {
-    var imageMessageResponseData = ImageMessageResponseSubData(
+    val imageMessageResponseData = ImageMessageResponseSubData(
         aspectRatio = this.aspectRatio,
         aspectRatioString = this.aspectRatioString,
         blurredImageBase64 = this.blurredImageBase64,

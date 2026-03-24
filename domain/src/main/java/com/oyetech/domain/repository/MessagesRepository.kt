@@ -68,12 +68,16 @@ interface MessagesRepository {
     suspend fun reportMessages(params: ReportMessagesRequestBody): Flow<Boolean>
     suspend fun insertMessageDeletedToDBWithRowId(eventBody: DeleteMessageRequestBody?)
     suspend fun getConversationListWithSearchQuery(searchQuery: String): Flow<List<MessageConversationDataResponse>>
-    suspend fun getConversationListWithSearchQueryWithoutFlow(searchQuery: String): List<MessageConversationDataResponse>
+    suspend fun getConversationListWithSearchQueryWithoutFlow(
+        searchQuery: String,
+    ): List<MessageConversationDataResponse>
     fun clearConversationUnreadCount(conversationId: Long)
     suspend fun getConversationUnreadList(): Flow<List<UnreadMessagesData>>
 
     fun getConversationIdWithConversationId(conversationId: Long): MessageConversationDataResponse?
-    suspend fun getReceivedMessageFromConversation(params: MessagesBeforeAfterRequestBody): Flow<MessageDetailDataResponse>
+    suspend fun getReceivedMessageFromConversation(
+        params: MessagesBeforeAfterRequestBody,
+    ): Flow<MessageDetailDataResponse>
     fun getReceivedMessageCount(): Int
 
     suspend fun isMessagingLimitExceeded(): Flow<Boolean>

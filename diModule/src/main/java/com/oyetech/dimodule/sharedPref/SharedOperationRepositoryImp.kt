@@ -28,7 +28,7 @@ class SharedOperationRepositoryImp(
 ) : SharedOperationRepository {
 
     override fun getToken(): String {
-        var userTokenResponse =
+        val userTokenResponse =
             sharedHelper.retrieveData(SharedPrefKey.USER_TOKEN_MODEL, TokenDataResponse::class.java)
 
         if (userTokenResponse == null) {
@@ -42,7 +42,7 @@ class SharedOperationRepositoryImp(
     }
 
     override fun getRefreshToken(): String {
-        var userAuthModel =
+        val userAuthModel =
             getUserAuthModel()
 
         if (userAuthModel == null) {
@@ -52,7 +52,7 @@ class SharedOperationRepositoryImp(
     }
 
     override fun getUserId(): Long {
-        var userAuthModel = getUserAuthModel()
+        val userAuthModel = getUserAuthModel()
 
         if (userAuthModel == null) {
             return 0L
@@ -72,7 +72,7 @@ class SharedOperationRepositoryImp(
     }
 
     override fun getUserAuthModel(): AuthRequestResponse? {
-        var userAuthModel =
+        val userAuthModel =
             sharedHelper.retrieveData(
                 SharedPrefKey.USER_AUTH_MODEL,
                 AuthRequestResponse::class.java
@@ -88,7 +88,7 @@ class SharedOperationRepositoryImp(
     }
 
     override fun getUserNickname(): String {
-        var userAuthModel = getUserAuthModel()
+        val userAuthModel = getUserAuthModel()
 
         if (userAuthModel == null) {
             return ""
@@ -97,12 +97,12 @@ class SharedOperationRepositoryImp(
     }
 
     override fun getLastGuid(): String {
-        var clientSecret = sharedHelper.getStringData(SharedPrefKey.Client_Secret, "") ?: ""
+        val clientSecret = sharedHelper.getStringData(SharedPrefKey.Client_Secret, "") ?: ""
         return clientSecret
     }
 
     override fun getLanguageValueOrNull(): TextResourcesDataResponse? {
-        var textResourcesDataResponse = sharedHelper.retrieveData(
+        val textResourcesDataResponse = sharedHelper.retrieveData(
             SharedPrefKey.FirebaseTextResourcesDataResponse,
             TextResourcesDataResponse::class.java
         )
@@ -114,14 +114,14 @@ class SharedOperationRepositoryImp(
     }
 
     override fun getLastClientUniqId(): String {
-        var clientSecret = sharedHelper.getStringData(SharedPrefKey.Client_Secret_Uniq, "") ?: ""
+        val clientSecret = sharedHelper.getStringData(SharedPrefKey.Client_Secret_Uniq, "") ?: ""
         return clientSecret
     }
 
     override fun removeSharedPrefValues() {
 //        BaseViewModel.deleteDatabaseLiveData.postValue(true)
-        var languageData = getLanguageValueOrNull()
-        var languageSaveTimeMilis = getLanguageTimeValue()
+        val languageData = getLanguageValueOrNull()
+        val languageSaveTimeMilis = getLanguageTimeValue()
         sharedHelper.clear()
         if (languageData != null && languageSaveTimeMilis != 0L) {
             saveLanguageData(languageData, languageSaveTimeMilis)
@@ -166,7 +166,7 @@ class SharedOperationRepositoryImp(
     }
 
     override fun getTotalAppOpenCount(): Int {
-        var openCount = sharedHelper.getIntData(SharedPrefKey.APP_FIRST_OPEN_COUNT, 0)
+        val openCount = sharedHelper.getIntData(SharedPrefKey.APP_FIRST_OPEN_COUNT, 0)
 
         return openCount
     }
@@ -180,7 +180,7 @@ class SharedOperationRepositoryImp(
     }
 
     override fun isReviewAlreadyShown(): Boolean {
-        var isReviewAlreadyShown =
+        val isReviewAlreadyShown =
             sharedHelper.getBooleanData(SharedPrefKey.IS_REVIEW_ALREADY_SHOWN, false)
         return isReviewAlreadyShown
     }
@@ -190,8 +190,8 @@ class SharedOperationRepositoryImp(
     }
 
     override fun getConversationListExpireFlag(): Boolean {
-        var timeMilis = sharedHelper.getLongData(SharedPrefKey.CONVERSATION_LIST_TIME_FLAG, 0L)
-        var isTimeExpired = TimeFunctions.isTimeExpiredFromParamHourWithMilis(
+        val timeMilis = sharedHelper.getLongData(SharedPrefKey.CONVERSATION_LIST_TIME_FLAG, 0L)
+        val isTimeExpired = TimeFunctions.isTimeExpiredFromParamHourWithMilis(
             timeMilis,
             HelperConstant.LANGUAGE_EXPIRED_TIME
         )
@@ -243,7 +243,7 @@ class SharedOperationRepositoryImp(
             sharedHelper.addListData(SharedPrefKey.lastWeekDayModel, list)
         }
 
-        var subList = arrayListOf<WeekDaysModel>()
+        val subList = arrayListOf<WeekDaysModel>()
         subList.addAll(list)
         return subList
     }
@@ -268,7 +268,7 @@ class SharedOperationRepositoryImp(
     override fun getDomainList(): List<String> {
         Timber.d("get domain List === ")
         val typeToken = object : TypeToken<List<String>>() {}
-        var domainList = sharedHelper.retrieveListData(SharedPrefKey.Domain_List, typeToken)
+        val domainList = sharedHelper.retrieveListData(SharedPrefKey.Domain_List, typeToken)
 
         if (domainList.isNullOrEmpty()) {
             return emptyList()
@@ -287,12 +287,12 @@ class SharedOperationRepositoryImp(
     }
 
     override fun getFirstOpenApplicationTimeMilis(): Long {
-        var timeMilis = sharedHelper.getLongData(SharedPrefKey.Application_First_Open, 0L)
+        val timeMilis = sharedHelper.getLongData(SharedPrefKey.Application_First_Open, 0L)
         return timeMilis
     }
 
     override fun setFirstAlarmSetTimeMilis() {
-        var timeMilis = TimeFunctions.getTimeMilis()
+        val timeMilis = TimeFunctions.getTimeMilis()
         sharedHelper.putLongData(SharedPrefKey.Alarm_First_Set_Time_Milis, timeMilis)
     }
 
@@ -305,12 +305,12 @@ class SharedOperationRepositoryImp(
     }
 
     override fun getFirstAlarmSetTimeMilis(): Long {
-        var timeMilis = sharedHelper.getLongData(SharedPrefKey.Alarm_First_Set_Time_Milis, 0L)
+        val timeMilis = sharedHelper.getLongData(SharedPrefKey.Alarm_First_Set_Time_Milis, 0L)
         return timeMilis
     }
 
     override fun getSavedLastRadio(): RadioStationResponseData? {
-        var lastRadioStationResponseData = sharedHelper.retrieveData(
+        val lastRadioStationResponseData = sharedHelper.retrieveData(
             SharedPrefKey.lastRadioModel,
             RadioStationResponseData::class.java
         )
@@ -319,12 +319,12 @@ class SharedOperationRepositoryImp(
     }
 
     override fun getUserDontWantSeeFlagTimeExpired(): Boolean {
-        var time = sharedHelper.getLongData(SharedPrefKey.IS_REVIEW_USER_DONT_WANT_SEE_TIME, -1)
+        val time = sharedHelper.getLongData(SharedPrefKey.IS_REVIEW_USER_DONT_WANT_SEE_TIME, -1)
         if (time == -1L) {
             Timber.d("first init, can show")
             return true
         }
-        var isTimeExpired = TimeFunctions.isTimeExpiredFromParamHourWithMilis(
+        val isTimeExpired = TimeFunctions.isTimeExpiredFromParamHourWithMilis(
             time,
             HelperConstant.REVIEW_ASK_EXPIRED_TIME
         )
@@ -340,7 +340,7 @@ class SharedOperationRepositoryImp(
     }
 
     override fun getReviewUserDontWantSee(): Boolean {
-        var userDontWantSeeFlag =
+        val userDontWantSeeFlag =
             sharedHelper.getBooleanData(SharedPrefKey.IS_REVIEW_USER_DONT_WANT_SEE, false)
 
         if (!userDontWantSeeFlag) {
@@ -349,7 +349,7 @@ class SharedOperationRepositoryImp(
         }
 
         if (userDontWantSeeFlag) {
-            var userDontWantSeeFlagTimeExpired = getUserDontWantSeeFlagTimeExpired()
+            val userDontWantSeeFlagTimeExpired = getUserDontWantSeeFlagTimeExpired()
             if (userDontWantSeeFlagTimeExpired) {
                 Timber.d("time expriredd show dialog again")
                 return false
@@ -361,14 +361,14 @@ class SharedOperationRepositoryImp(
     }
 
     override fun setReviewUserDontWantSee(status: Boolean) {
-        var timeMilis = Calendar.getInstance().timeInMillis
+        val timeMilis = Calendar.getInstance().timeInMillis
         sharedHelper.putLongData(SharedPrefKey.IS_REVIEW_USER_DONT_WANT_SEE_TIME, timeMilis)
         sharedHelper.putBooleanData(SharedPrefKey.IS_REVIEW_USER_DONT_WANT_SEE, status)
     }
 
     fun setReviewDontWantSee(status: Boolean) {
 
-        var timeMilis = Calendar.getInstance().timeInMillis
+        val timeMilis = Calendar.getInstance().timeInMillis
         sharedHelper.putLongData(SharedPrefKey.IS_REVIEW_USER_DONT_WANT_SEE_TIME, timeMilis)
         sharedHelper.putBooleanData(SharedPrefKey.IS_REVIEW_USER_DONT_WANT_SEE, status)
     }
@@ -414,13 +414,13 @@ class SharedOperationRepositoryImp(
     }
 
     override fun isSubsDialogCanShow(): Boolean {
-        var timeMilis = sharedHelper.getLongData(SharedPrefKey.SUBS_DIALOG_SHOWN_TIME_MILIS, 0L)
+        val timeMilis = sharedHelper.getLongData(SharedPrefKey.SUBS_DIALOG_SHOWN_TIME_MILIS, 0L)
         if (timeMilis == 0L) {
             Timber.d("totalAppCopunt first init")
             return false
         }
 
-        var isTimeExpired =
+        val isTimeExpired =
             TimeFunctions.isTimeExpiredFromParamHourWithMilis(
                 timeMilis,
                 HelperConstant.SUBS_DIALOG_RESOW_USER_EXPIRED_TIME
@@ -437,7 +437,7 @@ class SharedOperationRepositoryImp(
     }
 
     override fun getIsDateWhenSubsDialogShow(): Boolean {
-        var timeMilis = sharedHelper.getLongData(SharedPrefKey.SUBS_DIALOG_SHOWN_TIME_MILIS, 0L)
+        val timeMilis = sharedHelper.getLongData(SharedPrefKey.SUBS_DIALOG_SHOWN_TIME_MILIS, 0L)
         if (timeMilis == 0L) {
             Timber.d("totalAppCopunt first init")
             return false

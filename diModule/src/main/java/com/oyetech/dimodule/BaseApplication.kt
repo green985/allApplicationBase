@@ -15,9 +15,6 @@ import timber.log.Timber
 
 class BaseApplication : Application() {
 
-    init {
-    }
-
     val activityProviderUseCase: ActivityProviderUseCase by KoinJavaComponent.inject(
         ActivityProviderUseCase::class.java
     )

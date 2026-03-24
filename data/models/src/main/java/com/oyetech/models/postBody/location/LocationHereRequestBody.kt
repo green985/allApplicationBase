@@ -27,7 +27,7 @@ fun createLocationHereRequestBody(
     apiKey: String,
     locationRequestBody: LocationRequestBody,
 ): LocationHereRequestBody {
-    var locationRequestBody = LocationHereRequestBody(
+    val locationRequestBody = LocationHereRequestBody(
         apiKey = apiKey,
         locationString = locationRequestBody.createStringForHereApi(),
         searchParams = "church",

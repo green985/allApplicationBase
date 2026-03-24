@@ -109,7 +109,7 @@ abstract class PlayerServiceHelper : Service() {
 
     fun resume() {
         Timber.d("service resume called")
-        var isPlaying = radioOperationUseCase.isPlaying()
+        val isPlaying = radioOperationUseCase.isPlaying()
 
         if (!isPlaying) {
             acquireAudioFocus()
@@ -170,7 +170,7 @@ abstract class PlayerServiceHelper : Service() {
     }
 
     fun getRadioOperationServiceCollector(): FlowCollector<RadioViewStateNew> {
-        var collector = object : FlowCollector<RadioViewStateNew> {
+        val collector = object : FlowCollector<RadioViewStateNew> {
             override suspend fun emit(value: RadioViewStateNew) {
                 if (!currentCoroutineContext().isActive) {
                     Timber.d("jobs cannecled")
@@ -202,7 +202,7 @@ abstract class PlayerServiceHelper : Service() {
     }
 
     fun getRadioPauseReasonServiceCollector(): FlowCollector<PauseReason> {
-        var collector = object : FlowCollector<PauseReason> {
+        val collector = object : FlowCollector<PauseReason> {
             override suspend fun emit(value: PauseReason) {
                 if (!currentCoroutineContext().isActive) {
                     Timber.d("jobs cannecled")
@@ -246,11 +246,11 @@ abstract class PlayerServiceHelper : Service() {
     private fun acquireWakeLockAndWifiLock() {
         var wakeLock = mediaSessionHelper.wakeLock
         var wifiLock = mediaSessionHelper.wifiLock
-        var powerManager = mediaSessionHelper.powerManager
+        val powerManager = mediaSessionHelper.powerManager
 
         if (powerManager == null) return
 
-        var TAG = "asdadass"
+        val TAG = "asdadass"
         if (context.isDebug()) Timber.d("acquiring wake lock and wifi lock.")
 
         if (wakeLock == null) {

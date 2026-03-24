@@ -24,7 +24,7 @@ interface RadioLastListDao : BaseDao<RadioStationResponseData> {
     fun deleteAllList()
 
     fun clearLastListTable() {
-        var list = getRadioLastList()
+        val list = getRadioLastList()
         if (list.isNullOrEmpty()) {
             return
         }

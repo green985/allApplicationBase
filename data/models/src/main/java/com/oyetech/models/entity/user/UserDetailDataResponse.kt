@@ -103,7 +103,7 @@ data class UserDetailSubDataResponse(
 ) : Parcelable
 
 fun UserDetailSubDataResponse.mapToNormalize(): UserDetailDataResponse {
-    var userDetailDataResponse = UserDetailDataResponse(
+    val userDetailDataResponse = UserDetailDataResponse(
         biography = this.biography,
         blockedProfile = this.blockedProfile,
         followInfo = this.followInfo,

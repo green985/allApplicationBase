@@ -12,7 +12,7 @@ Created by Erdi Özbek
 fun MessageRequestBody.mapToMessageDetailResponse(
     status: Int = 0,
 ): MessageDetailDataResponse {
-    var messageRequestBody = this
+    val messageRequestBody = this
     var conversationID = 0L
 
     if (messageRequestBody.conversationId == 0L) {
@@ -21,7 +21,7 @@ fun MessageRequestBody.mapToMessageDetailResponse(
         conversationID = conversationId
     }
 
-    var messageDetailDataResponse =
+    val messageDetailDataResponse =
         MessageDetailDataResponse(
             tempId = messageRequestBody.tempId,
             content = messageRequestBody.content,

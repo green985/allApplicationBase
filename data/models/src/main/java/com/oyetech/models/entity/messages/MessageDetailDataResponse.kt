@@ -126,7 +126,7 @@ data class MessageDetailDataResponse(
 }
 
 fun MessageDetailDataResponse.mapToMessageRequestBody(): MessageRequestBody {
-    var messageRequestBody =
+    val messageRequestBody =
         MessageRequestBody(
             tempId = this.tempId,
             id = 0,
@@ -140,7 +140,7 @@ fun MessageDetailDataResponse.mapToMessageRequestBody(): MessageRequestBody {
 }
 
 fun MessageDetailDataResponse.mapToMessageConversationRequestBody(): MessageConversationDataResponse {
-    var messageConversationDataResponse =
+    val messageConversationDataResponse =
         MessageConversationDataResponse(
             conversationId = this.conversationId,
             content = this.content,
@@ -155,21 +155,21 @@ fun MessageDetailDataResponse.mapToMessageConversationRequestBody(): MessageConv
 }
 
 fun List<MessageDetailDataResponse>.containsWithId(messageDetailDataResponse: MessageDetailDataResponse?): Boolean {
-    var foundedItem = this.find {
+    val foundedItem = this.find {
         it.messageId == messageDetailDataResponse?.messageId
     }
     return foundedItem != null
 }
 
 fun List<MessageDetailDataResponse>.containsWithTempId(messageDetailDataResponse: MessageDetailDataResponse?): Boolean {
-    var foundedItem = this.find {
+    val foundedItem = this.find {
         it.tempId == messageDetailDataResponse?.tempId
     }
     return foundedItem != null
 }
 
 fun MessageDetailDataResponse.generateUserOperationBody(operationType: SocketUserOperation): UserTypingSendingOperationStatusData {
-    var data = UserTypingSendingOperationStatusData(this.fromUserId, operationType)
+    val data = UserTypingSendingOperationStatusData(this.fromUserId, operationType)
     return data
 }
 

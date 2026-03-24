@@ -46,7 +46,7 @@ fun HomePagePropertyResponseData.mapToHomePageDetailProperty(
     verseOfTheDay: BibleVersePropertyData?,
 ): HomePageDetailPropertyResponseData {
     this.let {
-        var data = HomePageDetailPropertyResponseData(
+        val data = HomePageDetailPropertyResponseData(
             lastReadBibleId = it.lastReadBibleId,
             lastReadPercentage = it.lastReadPercentage,
             prayerOfTheDay = prayerOfTheDay,

@@ -29,7 +29,7 @@ object AppUtil {
     }
 
     fun dumpIntent(i: Intent) {
-        var LOG_TAG = "intentnnn"
+        val LOG_TAG = "intentnnn"
         val bundle = i.extras
 
         if (bundle != null) {

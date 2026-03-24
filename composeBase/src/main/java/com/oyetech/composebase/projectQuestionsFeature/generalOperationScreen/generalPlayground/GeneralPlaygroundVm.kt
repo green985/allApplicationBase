@@ -20,11 +20,6 @@ class GeneralPlaygroundVm(
     private val firebaseCommentOperationRepository: FirebaseCommentOperationRepository,
 ) : BaseViewModel(appDispatchers) {
 
-    init {
-//        fetchRandomQuotes()
-//        firebaseCommentOperationRepository.getCommentsWithId("commentId")
-    }
-
     fun initt() {
         Timber.d(" initt")
     }

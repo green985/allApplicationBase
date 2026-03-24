@@ -42,7 +42,7 @@ data class FeedDataSubResponse(
 )
 
 fun FeedDataSubResponse.mapToNormalize(): FeedDataResponse {
-    var feedDataResponse = FeedDataResponse(
+    val feedDataResponse = FeedDataResponse(
         distanceInMeters = this.distanceInMeters,
         isOnline = this.isOnline,
         lastOnline = this.lastOnline,

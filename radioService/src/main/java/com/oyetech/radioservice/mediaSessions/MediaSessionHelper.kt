@@ -162,13 +162,13 @@ class MediaSessionHelper(private var service: Service) : PlayerBroadcastHelper(s
 
     fun updateNotification(radioModel: RadioViewStateNew) {
         Timber.e("updateNotification === " + radioModel.status)
-        var playState = radioModel.status
-        var radioDataModel = radioModel.data
+        val playState = radioModel.status
+        val radioDataModel = radioModel.data
         if (radioDataModel == null) {
             Timber.e("Radio model cannot be nullllll")
             return
         }
-        var currentStationName = radioDataModel.radioName
+        val currentStationName = radioDataModel.radioName
 
         when (playState) {
             Idle -> {

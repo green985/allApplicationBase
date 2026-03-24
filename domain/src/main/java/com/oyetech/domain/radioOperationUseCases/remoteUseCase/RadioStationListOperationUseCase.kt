@@ -73,8 +73,8 @@ class RadioStationListOperationUseCase(
 
     fun getStationListWithFavListUuid(): Flow<List<RadioStationResponseData>> {
         return flow {
-            var favList = databaseRepository.getRadioFavList()
-            var postBody = StationUuidPostBody().generateStationUuidClassWithFavList(favList)
+            val favList = databaseRepository.getRadioFavList()
+            val postBody = StationUuidPostBody().generateStationUuidClassWithFavList(favList)
 
             emit(repository.getStationListWithUuid(postBody).first())
         }
@@ -82,7 +82,7 @@ class RadioStationListOperationUseCase(
 
     fun getStationListWithUuid(listUUid: List<String>): Flow<List<RadioStationResponseData>> {
         return flow {
-            var postBody = StationUuidPostBody().generateStationUuidClass(listUUid)
+            val postBody = StationUuidPostBody().generateStationUuidClass(listUUid)
 
             emit(repository.getStationListWithUuid(postBody).first())
         }

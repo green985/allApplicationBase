@@ -14,8 +14,8 @@ class CustomLoadErrorHandlingPolicy(private var radioOperationUseCase: RadioOper
     val sanitizedRetryDelaySettingsMs = 500
 
     override fun getRetryDelayMsFor(loadErrorInfo: LoadErrorInfo): Long {
-        var exception = loadErrorInfo.exception
-        var count = loadErrorInfo.errorCount
+        val exception = loadErrorInfo.exception
+        val count = loadErrorInfo.errorCount
 
         Timber.d("counttt === " + count)
 

@@ -15,19 +15,19 @@ class AnalyticsOperationUseCase(private var analyticsRepository: AnalyticsReposi
 
     fun makeThrowableWithMessageDetail(messageDetailString: MessageDetailDataResponse?) {
         Timber.d("makeThrowableWithMessageDetail added...")
-        var stringg = messageDetailString.serialize()
+        val stringg = messageDetailString.serialize()
         analyticsRepository.makeThrowableWithMessageDetail(stringg)
     }
 
     fun makeThrowableWithExceptions(exception: Exception?) {
         Timber.d("makeThrowableWithMessageDetail added...")
-        var stringg = exception.toString()
+        val stringg = exception.toString()
         analyticsRepository.makeThrowableWithMessageDetail(stringg)
     }
 
     fun makeThrowableWithExceptions(exception: String?) {
         Timber.d("makeThrowableWithMessageDetail added...")
-        var stringg = exception.toString()
+        val stringg = exception.toString()
         analyticsRepository.makeThrowableWithString(stringg)
     }
 

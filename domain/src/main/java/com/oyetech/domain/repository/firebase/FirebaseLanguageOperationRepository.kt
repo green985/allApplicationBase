@@ -5,5 +5,7 @@ import com.oyetech.models.postBody.world.LanguageCodeRequestBody
 import kotlinx.coroutines.flow.Flow
 
 interface FirebaseLanguageOperationRepository {
-    suspend fun getApplicationTextResources(languageCodeRequestBody: LanguageCodeRequestBody): Flow<List<FirebaseLanguageResponseData>>
+    suspend fun getApplicationTextResources(
+        languageCodeRequestBody: LanguageCodeRequestBody,
+    ): Flow<List<FirebaseLanguageResponseData>>
 }

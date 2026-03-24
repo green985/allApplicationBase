@@ -12,7 +12,7 @@ Created by Erdi Özbek
 object RandomHelper {
 
     fun getMinusRandomLong(): Long {
-        var randomInt = getRandomNumber(500, 100000)
+        val randomInt = getRandomNumber(500, 100000)
 
         return (-randomInt.toLong())
     }

@@ -105,7 +105,7 @@ fun Context.getMainActivityStartIntent(): Intent {
 }
 
 fun Context.getAppName(): String {
-    var context = this
+    val context = this
     val pm: PackageManager = context.packageManager
     val ai: ApplicationInfo?
     ai = try {

@@ -45,8 +45,8 @@ object StringHelper {
             return null
         }
 
-        var pureBase64Encoded = base64String.substring(base64String.indexOf(",") + 1)
-        var byteArray = Base64.decode(pureBase64Encoded, Base64.DEFAULT)
+        val pureBase64Encoded = base64String.substring(base64String.indexOf(",") + 1)
+        val byteArray = Base64.decode(pureBase64Encoded, Base64.DEFAULT)
         return byteArray
     }
 
@@ -71,9 +71,9 @@ object StringHelper {
         s: String?,
     ): String {
         if (s.isNullOrEmpty()) return ""
-        var stringg = s.replace("\n", "")
+        val stringg = s.replace("\n", "")
         val spanned = SpannableString(stringg)
-        var queryText = removeSpan(spanned)
+        val queryText = removeSpan(spanned)
         return queryText ?: ""
     }
 

@@ -52,7 +52,7 @@ class AdmobBannerAdCreator(private var activity: Activity) {
 
                 val density = outMetrics.density
 
-                var adWidthPixels = outMetrics.widthPixels.toFloat()
+                val adWidthPixels = outMetrics.widthPixels.toFloat()
 
                 val adWidth = (adWidthPixels / density).toInt()
                 return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(this, adWidth)
@@ -134,21 +134,21 @@ class AdmobBannerAdCreator(private var activity: Activity) {
     }
 
     suspend fun getAdViewListWithKeyListSuspend(adIdList: List<String>): ArrayList<View> {
-        var adViewList = arrayListOf<View>()
+        val adViewList = arrayListOf<View>()
 
         adIdList.forEach {
-            var adIdTmp = if (activity.isDebug()) {
+            val adIdTmp = if (activity.isDebug()) {
                 // testAppId
                 it
             } else {
                 it
             }
 
-            var adView = adViewHashMap.get(adIdTmp)
+            val adView = adViewHashMap.get(adIdTmp)
             if (adView != null) {
                 adViewList.add(adView)
             } else {
-                var newAdView = createAdViewWithAdViewIdSuspend(adIdTmp)
+                val newAdView = createAdViewWithAdViewIdSuspend(adIdTmp)
                 adViewHashMap[adIdTmp] = newAdView
                 adViewList.add(newAdView)
             }
@@ -158,20 +158,20 @@ class AdmobBannerAdCreator(private var activity: Activity) {
     }
 
     fun getAdViewListWithKeyList(adIdList: List<String>): ArrayList<View> {
-        var adViewList = arrayListOf<View>()
+        val adViewList = arrayListOf<View>()
 
         adIdList.forEach {
-            var adIdTmp = if (activity.isDebug()) {
+            val adIdTmp = if (activity.isDebug()) {
                 testAppId
             } else {
                 it
             }
 
-            var adView = adViewHashMap.get(adIdTmp)
+            val adView = adViewHashMap.get(adIdTmp)
             if (adView != null) {
                 adViewList.add(adView)
             } else {
-                var newAdView = createAdViewWithAdViewId(adIdTmp)
+                val newAdView = createAdViewWithAdViewId(adIdTmp)
                 adViewHashMap[adIdTmp] = newAdView
                 adViewList.add(newAdView)
             }
@@ -193,8 +193,9 @@ class AdmobBannerAdCreator(private var activity: Activity) {
 
             override fun onAdFailedToLoad(adError: LoadAdError) {
                 Timber.d("onAdFailedToLoad     ===" + adViewId)
-                if (isErrorLogOpen)
+                if (isErrorLogOpen) {
                     Timber.d("onAdFailedToLoad     ===" + adError.message)
+                }
 
                 // Code to be executed when an ad request fails.
             }

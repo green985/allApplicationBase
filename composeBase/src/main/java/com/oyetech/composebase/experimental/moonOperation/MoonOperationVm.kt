@@ -23,9 +23,6 @@ class MoonOperationVm(
 ) : BaseViewModel(appDispatchers) {
     val uiState = MutableStateFlow(MoonOperationUiState("moon"))
 
-    init {
-    }
-
     override fun onEvent(event: Any) {
         if (event is MoonOperationEvent) {
             when (event) {

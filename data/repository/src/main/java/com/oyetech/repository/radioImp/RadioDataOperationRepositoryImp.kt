@@ -45,7 +45,7 @@ class RadioDataOperationRepositoryImp(
     }
 
     override fun getRadioFavList(): List<RadioStationFavModel> {
-        var favModelList = radioFavListDao.getRadioFavList()
+        val favModelList = radioFavListDao.getRadioFavList()
         return favModelList ?: emptyList()
     }
 
@@ -54,7 +54,7 @@ class RadioDataOperationRepositoryImp(
     }
 
     override fun addToFavList(radioModel: RadioStationResponseData) {
-        var radioStationFavModel = RadioStationFavModel(radioModel.stationuuid)
+        val radioStationFavModel = RadioStationFavModel(radioModel.stationuuid)
         radioFavListDao.addToFavList(radioStationFavModel)
     }
 
@@ -68,14 +68,14 @@ class RadioDataOperationRepositoryImp(
     }
 
     override fun getNextRadioStation(): RadioStationResponseData? {
-        var lastStationId = getLastStationId() ?: return null
-        var lastList = getLastRadioList()
-        var foundModel = lastList.find {
+        val lastStationId = getLastStationId() ?: return null
+        val lastList = getLastRadioList()
+        val foundModel = lastList.find {
             it.stationuuid == lastStationId
         }
         Timber.d("first found model ==  " + foundModel)
 
-        var foundedModelIndex = lastList.indexOf(foundModel)
+        val foundedModelIndex = lastList.indexOf(foundModel)
 
         Timber.d("founded index == " + foundedModelIndex)
 
@@ -87,7 +87,7 @@ class RadioDataOperationRepositoryImp(
             Timber.d("last radio, return first")
             return lastList[0]
         }
-        var model = lastList.get(foundedModelIndex + 1)
+        val model = lastList.get(foundedModelIndex + 1)
 
         Timber.d("modellll == " + model)
 
@@ -95,14 +95,14 @@ class RadioDataOperationRepositoryImp(
     }
 
     override fun getPreviousRadioStation(): RadioStationResponseData? {
-        var lastStationId = getLastStationId() ?: return null
-        var lastList = getLastRadioList()
-        var foundModel = lastList.find {
+        val lastStationId = getLastStationId() ?: return null
+        val lastList = getLastRadioList()
+        val foundModel = lastList.find {
             it.stationuuid == lastStationId
         }
         Timber.d("first found model ==  " + foundModel)
 
-        var foundedModelIndex = lastList.indexOf(foundModel)
+        val foundedModelIndex = lastList.indexOf(foundModel)
 
         Timber.d("founded index == " + foundedModelIndex)
 
@@ -114,7 +114,7 @@ class RadioDataOperationRepositoryImp(
             Timber.d("first radio, return last")
             return lastList[lastList.size - 1]
         }
-        var model = lastList.get(foundedModelIndex - 1)
+        val model = lastList.get(foundedModelIndex - 1)
 
         Timber.d("modellll == " + model)
 
@@ -124,7 +124,7 @@ class RadioDataOperationRepositoryImp(
     private fun getLastStationId(): String? {
         Timber.d("last station name == " + lastRadioData?.radioName)
 
-        var lastRadioStationId = lastRadioData?.stationuuid
+        val lastRadioStationId = lastRadioData?.stationuuid
         if (lastRadioStationId == null) {
             Timber.d("station id == null")
         }

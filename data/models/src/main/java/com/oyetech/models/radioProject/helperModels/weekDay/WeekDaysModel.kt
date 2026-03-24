@@ -29,11 +29,11 @@ fun generateWeekDaysList(): ArrayList<WeekDaysModel> {
         Calendar.FRIDAY,
         Calendar.SATURDAY
     )
-    var list = arrayListOf<WeekDaysModel>()
+    val list = arrayListOf<WeekDaysModel>()
     weekOfCalendar.forEach {
-        var calendar = Calendar.getInstance()
+        val calendar = Calendar.getInstance()
         calendar.set(Calendar.DAY_OF_WEEK, it)
-        var dayNameString = SimpleDateFormat("EEEE", Locale.getDefault()).format(calendar.time)
+        val dayNameString = SimpleDateFormat("EEEE", Locale.getDefault()).format(calendar.time)
 
         list.add(WeekDaysModel(dayNameString, isSelected = true, id = it))
     }

@@ -54,7 +54,7 @@ abstract class ExoPlayerBaseHelper(
     }
 
     private fun prepareExoPlayerProperty() {
-        var isAlarm = false
+        val isAlarm = false
 
         exoPlayer.addAnalyticsListener(exoplayerAnalyticsListener)
         exoPlayer.addListener(this)
@@ -67,13 +67,13 @@ abstract class ExoPlayerBaseHelper(
     }
 
     fun createMediaSource(isHlsProblem: Boolean = false): MediaSource {
-        var streamUrl = currentRadioModel.radioStreamUrl
+        val streamUrl = currentRadioModel.radioStreamUrl
         var isHls = urlIndicatesHlsStream(streamUrl)
         if (isHlsProblem) {
             isHls = !isHls
         }
 
-        var mediaItem = MediaItem.fromUri(streamUrl)
+        val mediaItem = MediaItem.fromUri(streamUrl)
         var audioSource: MediaSource
 
         if (isHls) {
@@ -102,7 +102,7 @@ abstract class ExoPlayerBaseHelper(
         CoroutineScope(dispatchers.main).launch {
             exoPlayer.stop()
 
-            var mediaSource = createMediaSource(isHlsProblem)
+            val mediaSource = createMediaSource(isHlsProblem)
             exoPlayer.setMediaSource(mediaSource)
             exoPlayer.prepare()
 
@@ -112,7 +112,7 @@ abstract class ExoPlayerBaseHelper(
 
     override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
         super.onMediaMetadataChanged(mediaMetadata)
-        var radioTitle = mediaMetadata.title.toString()
+        val radioTitle = mediaMetadata.title.toString()
         Timber.d("media dataaa === " + radioTitle)
 
         if (radioTitle.isNotBlank() && radioTitle != "null") {
@@ -174,7 +174,7 @@ abstract class ExoPlayerBaseHelper(
     }
 
     override fun onPlayerError(error: PlaybackException) {
-        var errorCode = error.errorCode
+        val errorCode = error.errorCode
         Timber.d("errororororr == " + errorCode)
         if (errorCode == 0) {
             // is Error cause for mediaSource

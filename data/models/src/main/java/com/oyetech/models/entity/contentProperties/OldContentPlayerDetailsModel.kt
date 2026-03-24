@@ -69,7 +69,7 @@ data class OldContentPlayerDetailsModel(
             contentName: String,
             selectedAccent: String,
         ): OldContentPlayerDetailsModel? {
-            var audioFileDetailResponseData =
+            val audioFileDetailResponseData =
                 bibleAudioPropertyResponseData.audioFileDetailList.find {
                     it.accent == selectedAccent
                 }

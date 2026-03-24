@@ -25,9 +25,6 @@ class BottomNavigationVm(
 
     var selectedItem = MutableStateFlow<Int>(0)
 
-    init {
-    }
-
     override fun onEvent(event: Any) {
         if (event is BottomNavigationEvent) {
 

@@ -49,7 +49,7 @@ data class MessageDetailSubDataResponse(
 ) : Parcelable
 
 fun MessageDetailSubDataResponse.mapToNormalize(): MessageDetailDataResponse {
-    var messageDetailDataResponse = MessageDetailDataResponse(
+    val messageDetailDataResponse = MessageDetailDataResponse(
         messageId = this.messageId,
         tempId = this.tempId,
         content = this.content,

@@ -80,7 +80,7 @@ data class RadioStationResponse(
 )
 
 fun RadioStationResponseData.mapToResponseData(): RadioStationResponse {
-    var data = RadioStationResponse(
+    val data = RadioStationResponse(
         /*
 
                 bitrate = this.bitrate,

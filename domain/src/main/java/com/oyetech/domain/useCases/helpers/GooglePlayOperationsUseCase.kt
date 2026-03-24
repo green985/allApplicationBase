@@ -46,7 +46,7 @@ class GooglePlayOperationsUseCase(private var repository: GoogleSubscriptionOper
 
     fun onProductListShownWithFlag(
         isFromMessageLimit: Boolean,
-        messageLimitInfoResponseData: MessagesLimitInfoResponseData
+        messageLimitInfoResponseData: MessagesLimitInfoResponseData,
     ) {
         uiRepository?.onProductListShownWithFlag(isFromMessageLimit, messageLimitInfoResponseData)
     }
@@ -84,7 +84,7 @@ class GooglePlayOperationsUseCase(private var repository: GoogleSubscriptionOper
 
     fun openSubscriptionsSellPage(
         selectedGoogleProductDetailResponseData: GoogleProductDetailResponseData,
-        activity: Activity
+        activity: Activity,
     ) {
         repository.openSubscriptionsSellPage(
             selectedGoogleProductDetailResponseData = selectedGoogleProductDetailResponseData,
@@ -100,7 +100,7 @@ class GooglePlayOperationsUseCase(private var repository: GoogleSubscriptionOper
             Timber.d("totalAppCopunt is not premium userr.....")
         }
 
-        var totalAppOpenCount = sharedOperationRepository.getTotalAppOpenCount()
+        val totalAppOpenCount = sharedOperationRepository.getTotalAppOpenCount()
 
         Timber.d("totalAppCopunt === " + totalAppOpenCount)
 
@@ -111,12 +111,10 @@ class GooglePlayOperationsUseCase(private var repository: GoogleSubscriptionOper
 
         if (totalAppOpenCount > HelperConstant.APP_SUBS_DIALOG_SHOW_THRESHOLD
         ) {
-
             if (!sharedOperationRepository.getIsDateWhenSubsDialogShow()) {
-
                 onProductListShownWithAppUsageCount()
             } else {
-                var isSubsDialogCanShow = sharedOperationRepository.isSubsDialogCanShow()
+                val isSubsDialogCanShow = sharedOperationRepository.isSubsDialogCanShow()
                 Timber.d("totalAppCopunt === " + isSubsDialogCanShow)
 
                 if (isSubsDialogCanShow) {

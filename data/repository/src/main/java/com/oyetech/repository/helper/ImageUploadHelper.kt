@@ -65,7 +65,7 @@ suspend fun createCountingRequestForImageMessageBody(
             Timber.d("progressss = " + progress)
             try {
                 GlobalScope.launch(emitter.coroutineContext) {
-                    var model = ImageMessageResponseData()
+                    val model = ImageMessageResponseData()
                     model.progressStatus = progress
                     emitter.send(model)
                 }
@@ -88,7 +88,7 @@ suspend fun createCountingRequestForAudioMessageBody(
             Timber.d("progressss = " + progress)
             try {
                 GlobalScope.launch(emitter.coroutineContext) {
-                    var model = AudioMessageResponseData()
+                    val model = AudioMessageResponseData()
                     model.progressStatus = progress
                     emitter.send(model)
                 }

@@ -48,7 +48,7 @@ inline fun <reified T> convertFromRawJsonFile(inputStream: InputStream): List<T>
     val type = Types.newParameterizedType(MutableList::class.java, T::class.java)
     val jsonAdapter: JsonAdapter<List<T>> = MoshiExtensions.moshi.adapter<List<T>?>(type).lenient()
 
-    var value = jsonAdapter.fromJson(inputStream.source().buffer())
+    val value = jsonAdapter.fromJson(inputStream.source().buffer())
 
     return value
 }

@@ -98,7 +98,7 @@ data class MessageConversationSubDataResponse(
     ) : Parcelable
 
 fun MessageConversationSubDataResponse.mapToNormalize(): MessageConversationDataResponse {
-    var messageConversationDataResponse = MessageConversationDataResponse(
+    val messageConversationDataResponse = MessageConversationDataResponse(
         rowId = 0,
         conversationId = this.conversationId,
         content = this.content,
@@ -123,7 +123,7 @@ fun MessageConversationSubDataResponse.mapToNormalize(): MessageConversationData
 fun List<MessageConversationDataResponse>.containsWithId(
     messageConversationDataResponse: MessageConversationDataResponse?,
 ): Boolean {
-    var foundedItem = this.find {
+    val foundedItem = this.find {
         it.conversationId == messageConversationDataResponse?.conversationId
     }
     return foundedItem != null
@@ -134,7 +134,7 @@ fun UserDetailDataResponse.mapFromUserDataToMessageConversation(userData: UserDe
     if (!userData.profileImages.isNullOrEmpty()) {
         profileUrl = userData.profileImages?.get(0)?.largeImageUrl ?: ""
     }
-    var messageConversationDataResponse =
+    val messageConversationDataResponse =
         MessageConversationDataResponse(
             userId = userData.userId,
             nick = userData.nick,
@@ -147,8 +147,8 @@ fun UserDetailDataResponse.mapFromUserDataToMessageConversation(userData: UserDe
 }
 
 fun FeedDataResponse.feedDataToMessageConversationMapper(): MessageConversationDataResponse {
-    var itemData = this
-    var messageConversationDataResponse =
+    val itemData = this
+    val messageConversationDataResponse =
         MessageConversationDataResponse(
             userId = itemData.userId,
             nick = itemData.nick,

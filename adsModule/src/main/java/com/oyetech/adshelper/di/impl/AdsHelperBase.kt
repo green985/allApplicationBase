@@ -13,19 +13,16 @@ abstract class AdsHelperBase {
 
     var adViewHashMap = HashMap<String, View>()
 
-    init {
-    }
-
     fun setAdViewHashMapWithLogg(adViewHashMap: HashMap<String, View>) {
         Timber.d("ad views set")
         this.adViewHashMap = adViewHashMap
     }
 
     fun getAdViewListWithKeyList(adIdList: List<String>): ArrayList<View> {
-        var adViewList = arrayListOf<View>()
+        val adViewList = arrayListOf<View>()
 
         adIdList.forEach {
-            var adView = adViewHashMap.get(it)
+            val adView = adViewHashMap.get(it)
             if (adView != null) {
                 adViewList.add(adView)
             }

@@ -101,7 +101,6 @@ class RadioDataOperationUseCase(
     }
 
     fun getPreviousRadioStation(): RadioStationResponseData? {
-
         return radioDataOperationRepository.getPreviousRadioStation()
     }
 

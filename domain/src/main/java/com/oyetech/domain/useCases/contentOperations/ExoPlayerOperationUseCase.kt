@@ -27,7 +27,6 @@ class ExoPlayerOperationUseCase(
     }
 
     fun setVolume(volume: Float) {
-
         exoPlayerOperationRepository.setVolume(volume)
     }
 
@@ -35,7 +34,6 @@ class ExoPlayerOperationUseCase(
 //        analyticsOperationUseCase.logEventWithKey(AnalyticsKeys.radio_play_click)
         exoPlayerOperationRepository.startPlayer(radioModel)
     }
-
 }
 
 var examplePodcastUrl =

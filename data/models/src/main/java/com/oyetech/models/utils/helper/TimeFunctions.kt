@@ -24,15 +24,15 @@ object TimeFunctions {
     var A_WEEK_TIME_HOUR = (7 * 24).toLong()
 
     fun isTimeExpired(expiredDateString: String): Boolean {
-        var expiredDate = getDateFromString(expiredDateString)
+        val expiredDate = getDateFromString(expiredDateString)
         if (expiredDate == null) {
             Timber.d("Expireddd problem with date parse")
 
             return true
         }
-        var calendar = Calendar.getInstance()
+        val calendar = Calendar.getInstance()
         calendar.timeZone = SimpleTimeZone(0, "GMT")
-        var currentDate = Date(calendar.timeInMillis)
+        val currentDate = Date(calendar.timeInMillis)
         if (currentDate.after(expiredDate)) {
             Timber.d("Expireddd")
             return true
@@ -44,7 +44,7 @@ object TimeFunctions {
 
     fun getDateFromLongWithHour(timeMilis: Long): String {
 
-        var outputDateFormat =
+        val outputDateFormat =
             getSimpleDateFormatTimeZone("dd.MM.yyyy HH:mm", isDeviceTimeZone = true)
         var outputDateString = ""
 
@@ -58,9 +58,9 @@ object TimeFunctions {
     }
 
     fun isTimeExpiredFromParamHourWithMilis(expiredDateMilis: Long, afterHour: Long): Boolean {
-        var expiredDate = Date(expiredDateMilis + calculateHourMilis(afterHour))
+        val expiredDate = Date(expiredDateMilis + calculateHourMilis(afterHour))
 
-        var currentDate = Date(Calendar.getInstance().timeInMillis)
+        val currentDate = Date(Calendar.getInstance().timeInMillis)
         if (currentDate.after(expiredDate)) {
             Timber.d("Expireddd")
             return true
@@ -72,7 +72,7 @@ object TimeFunctions {
 
     fun getDateFromString(sourceDate: String): Date? {
         if (sourceDate == "") return null
-        var dateFormat = getSimpleDateFormatTimeZone(HelperConstant.DATE_FORMAT)
+        val dateFormat = getSimpleDateFormatTimeZone(HelperConstant.DATE_FORMAT)
         try {
             val date = dateFormat.parse(sourceDate)
             return date
@@ -86,7 +86,7 @@ object TimeFunctions {
 
     fun getDateFromStringGTM0(sourceDate: String): Date? {
         if (sourceDate == "") return null
-        var dateFormat = getSimpleDateFormatTimeZone(HelperConstant.DATE_FORMAT)
+        val dateFormat = getSimpleDateFormatTimeZone(HelperConstant.DATE_FORMAT)
         try {
             val date = dateFormat.parse(sourceDate)
             return date
@@ -99,8 +99,8 @@ object TimeFunctions {
     }
 
     fun getDateFromStringWithoutHour(dateString: String): String {
-        var dateFormat1 = getSimpleDateFormatTimeZone(HelperConstant.DATE_FORMAT)
-        var outputDateFormat = getSimpleDateFormatTimeZone("dd.MM.yyyy", isDeviceTimeZone = true)
+        val dateFormat1 = getSimpleDateFormatTimeZone(HelperConstant.DATE_FORMAT)
+        val outputDateFormat = getSimpleDateFormatTimeZone("dd.MM.yyyy", isDeviceTimeZone = true)
         var outputDateString = ""
 
         try {
@@ -114,7 +114,7 @@ object TimeFunctions {
 
     fun getDateFromLongWithoutHour(timeMilis: Long): String {
 
-        var outputDateFormat = getSimpleDateFormatTimeZone("dd.MM.yyyy", isDeviceTimeZone = true)
+        val outputDateFormat = getSimpleDateFormatTimeZone("dd.MM.yyyy", isDeviceTimeZone = true)
         var outputDateString = ""
 
         try {
@@ -128,7 +128,7 @@ object TimeFunctions {
 
     fun getDateFromLongWithoutHourLongMonthName(timeMilis: Long): String {
 
-        var outputDateFormat = getSimpleDateFormatTimeZone("dd MMM yyyy", isDeviceTimeZone = true)
+        val outputDateFormat = getSimpleDateFormatTimeZone("dd MMM yyyy", isDeviceTimeZone = true)
         var outputDateString = ""
 
         try {
@@ -142,7 +142,7 @@ object TimeFunctions {
 
     fun getDateFromLongJustHourSecond(timeMilis: Long): String {
 
-        var outputDateFormat = getSimpleDateFormatTimeZone(
+        val outputDateFormat = getSimpleDateFormatTimeZone(
             HelperConstant.HOUR_SECOND_TIME_FORMAT,
             isDeviceTimeZone = true
         )
@@ -158,7 +158,7 @@ object TimeFunctions {
     }
 
     fun getDateStringFromLongMilis(timeMilis: Long): String {
-        var outputDateFormat =
+        val outputDateFormat =
             getSimpleDateFormatTimeZone(HelperConstant.HOUR_TIME_FORMAT, isDeviceTimeZone = true)
         var outputDateString = ""
 
@@ -172,7 +172,7 @@ object TimeFunctions {
     }
 
     fun getFullDateFromLongMilis(timeMilis: Long): String {
-        var outputDateFormat =
+        val outputDateFormat =
             getSimpleDateFormatTimeZone(HelperConstant.DATE_FORMAT, isDeviceTimeZone = true)
         var outputDateString = ""
 
@@ -187,8 +187,8 @@ object TimeFunctions {
 
     fun getDateJustHour(mDate: String): String {
 
-        var dateFormat1 = getSimpleDateFormatTimeZone(HelperConstant.DATE_FORMAT)
-        var outputDateFormat =
+        val dateFormat1 = getSimpleDateFormatTimeZone(HelperConstant.DATE_FORMAT)
+        val outputDateFormat =
             getSimpleDateFormatTimeZone(HelperConstant.HOUR_TIME_FORMAT, isDeviceTimeZone = true)
         var outputDateString = ""
         try {
@@ -202,8 +202,8 @@ object TimeFunctions {
 
     fun getDateBirthDayFormat(mDate: String): String {
 
-        var dateFormat1 = getSimpleDateFormatTimeZone(HelperConstant.BIRTHDAY_DATE_FORMAT)
-        var outputDateFormat =
+        val dateFormat1 = getSimpleDateFormatTimeZone(HelperConstant.BIRTHDAY_DATE_FORMAT)
+        val outputDateFormat =
             getSimpleDateFormatTimeZone(HelperConstant.HOUR_TIME_FORMAT, isDeviceTimeZone = true)
         var outputDateString = ""
         try {
@@ -216,7 +216,7 @@ object TimeFunctions {
     }
 
     fun isSameDayLocalCalender(createdDateString: String): Boolean {
-        var dateFormat1 = getSimpleDateFormatTimeZone("yyyy-MM-dd", isDeviceTimeZone = true)
+        val dateFormat1 = getSimpleDateFormatTimeZone("yyyy-MM-dd", isDeviceTimeZone = true)
         var createdDate = Date()
         try {
             createdDate = dateFormat1.parse(createdDateString)
@@ -234,21 +234,21 @@ object TimeFunctions {
     }
 
     fun calculateTimeForUnlockTime(unlockTime: String): String {
-        var unlockTimeDate = getDateFromString(unlockTime)
+        val unlockTimeDate = getDateFromString(unlockTime)
 
-        var unlockTimeMilis = unlockTimeDate?.time ?: return ""
+        val unlockTimeMilis = unlockTimeDate?.time ?: return ""
 
-        var currentTimeMilisUTC0 = Calendar.getInstance(TimeZone.getTimeZone("UTC")).timeInMillis
+        val currentTimeMilisUTC0 = Calendar.getInstance(TimeZone.getTimeZone("UTC")).timeInMillis
 
-        var limitTimeMilis = unlockTimeMilis - currentTimeMilisUTC0
+        val limitTimeMilis = unlockTimeMilis - currentTimeMilisUTC0
 
-        var hourMinString = getDateFromLongJustHourSecond(limitTimeMilis)
+        val hourMinString = getDateFromLongJustHourSecond(limitTimeMilis)
         return hourMinString
     }
 
     fun calculateTimeForUnlockTimeIntArray(unlockTime: String): List<Int> {
 
-        var dateFormat = getSimpleDateFormatTimeZone(HelperConstant.DATE_FORMAT)
+        val dateFormat = getSimpleDateFormatTimeZone(HelperConstant.DATE_FORMAT)
         val date = try {
             dateFormat.parse(unlockTime)
         } catch (e: Exception) {
@@ -261,21 +261,21 @@ object TimeFunctions {
             return emptyList()
         }
 
-        var unlockTimeDate = date
+        val unlockTimeDate = date
 
-        var unlockTimeMilis = unlockTimeDate.time ?: return listOf()
+        val unlockTimeMilis = unlockTimeDate.time ?: return listOf()
 
-        var currentTimeMilisUTC0 = Calendar.getInstance().timeInMillis
+        val currentTimeMilisUTC0 = Calendar.getInstance().timeInMillis
 
-        var limitTimeMilis = unlockTimeMilis - currentTimeMilisUTC0
+        val limitTimeMilis = unlockTimeMilis - currentTimeMilisUTC0
 
-        var arrayy = getTimeIntArray(limitTimeMilis)
+        val arrayy = getTimeIntArray(limitTimeMilis)
         return arrayy
         // var hourMinString = getDateFromLongJustHourSecond(limitTimeMilis)
 
-        var hourMinDate = Date(limitTimeMilis)
+        val hourMinDate = Date(limitTimeMilis)
 
-        var hourMinSecArray = buildList {
+        val hourMinSecArray = buildList {
             this.add(hourMinDate.hours)
             this.add(hourMinDate.minutes)
             this.add(hourMinDate.seconds)
@@ -299,7 +299,7 @@ object TimeFunctions {
         pattern: String,
         isDeviceTimeZone: Boolean = false,
     ): SimpleDateFormat {
-        var sdf = SimpleDateFormat(pattern, Locale.ROOT)
+        val sdf = SimpleDateFormat(pattern, Locale.ROOT)
         if (isDeviceTimeZone) {
             val mCalendar: Calendar = GregorianCalendar()
             val mTimeZone = mCalendar.timeZone
@@ -331,23 +331,23 @@ object TimeFunctions {
         if (selection == 0L) {
             return ""
         }
-        var date = Date(selection)
-        var calendar = Calendar.getInstance()
+        val date = Date(selection)
+        val calendar = Calendar.getInstance()
         calendar.time = date
 
-        var dayString = if (calendar.get(Calendar.DAY_OF_MONTH) > 9) {
+        val dayString = if (calendar.get(Calendar.DAY_OF_MONTH) > 9) {
             (calendar.get(Calendar.DAY_OF_MONTH)).toString()
         } else {
             "0" + calendar.get(Calendar.DAY_OF_MONTH)
         }
-        var monthString = if (calendar.get(Calendar.MONTH) + 1 > 9) {
+        val monthString = if (calendar.get(Calendar.MONTH) + 1 > 9) {
             (calendar.get(Calendar.MONTH) + 1).toString()
         } else {
             "0" + (calendar.get(Calendar.MONTH) + 1)
         }
-        var yearString = calendar.get(Calendar.YEAR)
+        val yearString = calendar.get(Calendar.YEAR)
 
-        var birthDayString = buildString {
+        val birthDayString = buildString {
             this.append(dayString)
                 .append(HelperConstant.DATE_FORMAT_SEPERATOR)
                 .append(monthString)
@@ -388,11 +388,11 @@ object TimeFunctions {
     }
 
     fun calculateToSecondToMinStringForm(seconds: Long): String {
-        var min = seconds / 60
-        var leftSecond = seconds - (min * 60)
+        val min = seconds / 60
+        val leftSecond = seconds - (min * 60)
 
-        var timeString = "" + min + ":"
-        var leftSecondString = if (leftSecond < 10) {
+        val timeString = "" + min + ":"
+        val leftSecondString = if (leftSecond < 10) {
             "0" + leftSecond
         } else {
             leftSecond.toString()

@@ -18,9 +18,6 @@ class AllScreenNavigatorVM(
 ) : BaseViewModel(appDispatchers) {
     val uiState = MutableStateFlow(AllScreenNavigatorUiState())
 
-    init {
-    }
-
     override fun onEvent(event: Any) {
         if (event is AllScreenNavigatorEvent) {
             when (event) {

@@ -75,9 +75,6 @@ class FirebaseMessagingRepositoryImpl(
     override fun idlee() {
     }
 
-    init {
-    }
-
     override fun initLocalMessageSendOperation(scope: CoroutineScope) {
         GlobalScope.launch {
             activityProviderUseCase.activityOnResumeMutableStateFlow.collectLatest {
@@ -294,7 +291,7 @@ class FirebaseMessagingRepositoryImpl(
                 firebaseCloudOperationRepository.sendNotificationWithPayloadWithDateChange(
                     FirebaseCloudNotificationBody(
                         notificationToken =
-                        "erJkj6FMQ9-ScqOLRHoEFo:APA91bEiyZccxlUIiuXxs6X9KPGGtqSUKyBFFn_tFwYwJcuCulqdtIkCaUbOwg19Ls_0pvwb25hNiVYODxmzY_hXtHg2--m28tkpEdB2fP4XYizst0mtfBA",
+                            "erJkj6FMQ9-ScqOLRHoEFo:APA91bEiyZccxlUIiuXxs6X9KPGGtqSUKyBFFn_tFwYwJcuCulqdtIkCaUbOwg19Ls_0pvwb25hNiVYODxmzY_hXtHg2--m28tkpEdB2fP4XYizst0mtfBA",
                         payloadData = localMessage.copy(createdAt = 0L, status = SENT).serialize(),
                         notificationType = FirebaseNotificationTypeEnum.Message.toString()
                     )

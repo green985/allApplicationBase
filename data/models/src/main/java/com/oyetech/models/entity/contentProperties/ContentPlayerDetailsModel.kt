@@ -50,7 +50,7 @@ data class ContentPlayerDetailsModel(
             contentName: String,
             selectedAccent: String,
         ): ContentPlayerDetailsModel? {
-            var audioFileDetailResponseData =
+            val audioFileDetailResponseData =
                 bibleAudioPropertyResponseData.audioFileDetailList.find {
                     it.accent == selectedAccent
                 }

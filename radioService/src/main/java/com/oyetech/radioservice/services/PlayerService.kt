@@ -30,9 +30,9 @@ class PlayerService : PlayerServiceHelper() {
 
         Timber.d("service onStartCommand calledd.")
         if (intent != null) {
-            var action = intent.action
+            val action = intent.action
             if (action != null) {
-                var returnCode = handleOnStartCommandIntent(intent)
+                val returnCode = handleOnStartCommandIntent(intent)
                 if (returnCode != ServiceConst.SERVICE_RETURN_NOT_IMPORTANT) {
                     return returnCode
                 }
@@ -95,7 +95,7 @@ class PlayerService : PlayerServiceHelper() {
                 return@launch
             }
 
-            var subsCount =
+            val subsCount =
                 radioOperationUseCase.radioViewStateNewMutableStateFlow.subscriptionCount.value
             Timber.d("subssss == " + subsCount)
 

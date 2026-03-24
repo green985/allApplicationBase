@@ -38,7 +38,9 @@ class AdmobInterstitialAdCreator(private var activity: Activity) : BaseAdHelper(
 
         activity.runOnUiThread {
             InterstitialAd.load(
-                activity, testInterstitialAdId, adRequest,
+                activity,
+                testInterstitialAdId,
+                adRequest,
                 object : InterstitialAdLoadCallback() {
                     override fun onAdLoaded(@NonNull interstitialAd: InterstitialAd) {
                         // The mInterstitialAd reference will be null until
@@ -102,7 +104,6 @@ class AdmobInterstitialAdCreator(private var activity: Activity) : BaseAdHelper(
             mInterstitialAd!!.show(activity)
             return true
         } else {
-
             if (isErrorAdLoad) {
                 prepareAdHelper()
             }

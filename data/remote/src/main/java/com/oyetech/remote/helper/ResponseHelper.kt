@@ -19,11 +19,11 @@ Created by Erdi Özbek
 @Suppress("TooGenericExceptionCaught")
 suspend fun <T> Response<T>.interceptNormalResponse(): Flow<T> {
     try {
-        var resultt = this
-        var flow = flow<T> {
-            var isSuccess = resultt.isSuccessful
+        val resultt = this
+        val flow = flow<T> {
+            val isSuccess = resultt.isSuccessful
             if (isSuccess) {
-                var result = resultt.body()
+                val result = resultt.body()
                 if (result == null) {
                     throw IOException(throwError(null))
                 }
@@ -51,10 +51,10 @@ suspend fun <T> Response<T>.interceptNormalResponse(): Flow<T> {
 @Suppress("TooGenericExceptionCaught")
 fun <T> Response<GenericResponse<T>>.interceptGenericResponseWithoutFlowWithoutNull(): T {
     try {
-        var resultt = this
-        var isSuccess = resultt.isSuccessful
+        val resultt = this
+        val isSuccess = resultt.isSuccessful
         if (isSuccess) {
-            var result = resultt.body()
+            val result = resultt.body()
             if (result == null) {
                 throw IOException(throwError(null))
             }
@@ -86,7 +86,7 @@ fun <T> interceptGenericResponseTrueForm(apiCall: suspend () -> Response<Generic
     return flow {
         emit(apiCall.invoke())
     }.flatMapMerge {
-        var ttt = it.interceptGenericResponseWithoutFlowWithoutNull()
+        val ttt = it.interceptGenericResponseWithoutFlowWithoutNull()
         flowOf(ttt)
     }
 }
@@ -96,7 +96,7 @@ fun <T> interceptTrueForm(apiCall: suspend () -> Response<T>): Flow<T> {
     return flow {
         emit(apiCall.invoke())
     }.flatMapMerge {
-        var ttt = it.interceptNormalResponse()
+        val ttt = it.interceptNormalResponse()
         ttt
     }
 }

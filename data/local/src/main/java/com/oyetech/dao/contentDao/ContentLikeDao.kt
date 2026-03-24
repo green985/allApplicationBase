@@ -40,7 +40,7 @@ interface ContentLikeDao : BaseDao<LikeOperationModel> {
 
     @Transaction
     fun clearLastListTable() {
-        var list = getContentLikeList()
+        val list = getContentLikeList()
         if (list.isNullOrEmpty()) {
             return
         }

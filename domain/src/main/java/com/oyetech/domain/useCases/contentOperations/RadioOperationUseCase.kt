@@ -45,13 +45,13 @@ class RadioOperationUseCase(
     }
 
     private fun getRadioOperationServiceCollector(): FlowCollector<RadioViewStateNew> {
-        var collector = object : FlowCollector<RadioViewStateNew> {
+        val collector = object : FlowCollector<RadioViewStateNew> {
             override suspend fun emit(value: RadioViewStateNew) {
                 if (!currentCoroutineContext().isActive) {
                     Timber.d("RadioOperationUseCase jobs cannecled")
                     return
                 }
-                var status = value.status
+                val status = value.status
                 when (status) {
                     Idle -> {
                     }
@@ -138,7 +138,7 @@ class RadioOperationUseCase(
     }
 
     fun setRadioViewStateData(state: PlayState, errorText: String = "") {
-        var radioDataModel = RadioViewStateNew(state, lastStation, errorText)
+        val radioDataModel = RadioViewStateNew(state, lastStation, errorText)
 
         radioViewStateNewMutableStateFlow.value = radioDataModel
     }
@@ -149,14 +149,14 @@ class RadioOperationUseCase(
         } else {
             lastStation?.radioTitle = title
         }
-        var state = getPlayerState()
+        val state = getPlayerState()
 
         radioViewStateNewMutableStateFlow.value =
             RadioViewStateNew(status = state, data = lastStation)
     }
 
     fun setRadioVsiewStateData(state: PlayState, errorText: String = "") {
-        var radioDataModel = RadioViewStateNew(state, lastStation, errorText)
+        val radioDataModel = RadioViewStateNew(state, lastStation, errorText)
 
         radioViewStateNewMutableStateFlow.value = radioDataModel
     }
@@ -175,14 +175,14 @@ class RadioOperationUseCase(
 
     fun nextStationRadioChannel() {
         GlobalScope.launch(appDispatchers.io) {
-            var radioDataModel = radioDataOperationUseCase.getNextRadioStation()
+            val radioDataModel = radioDataOperationUseCase.getNextRadioStation()
             startPlayer(radioDataModel)
         }
     }
 
     fun previousRadioChannel() {
         GlobalScope.launch(appDispatchers.io) {
-            var radioDataModel = radioDataOperationUseCase.getPreviousRadioStation()
+            val radioDataModel = radioDataOperationUseCase.getPreviousRadioStation()
             startPlayer(radioDataModel)
         }
     }

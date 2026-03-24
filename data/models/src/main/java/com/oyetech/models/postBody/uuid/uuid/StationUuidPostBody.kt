@@ -13,7 +13,7 @@ data class StationUuidPostBody(
 )
 
 fun StationUuidPostBody.generateStationUuidClassWithFavList(list: List<RadioStationFavModel>): StationUuidPostBody {
-    var stringBuilder = StringBuilder()
+    val stringBuilder = StringBuilder()
     list.forEach {
         stringBuilder.append(it.stationUuid)
         stringBuilder.append(",")
@@ -26,7 +26,7 @@ fun StationUuidPostBody.generateStationUuidClassWithFavList(list: List<RadioStat
 }
 
 fun StationUuidPostBody.generateStationUuidClass(list: List<String>): StationUuidPostBody {
-    var stringBuilder = StringBuilder()
+    val stringBuilder = StringBuilder()
     list.forEach {
         stringBuilder.append(it)
         stringBuilder.append(",")

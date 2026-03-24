@@ -70,8 +70,7 @@ class AdsHelperRepositoryImp : AdsHelperBase(), AdsHelperRepository {
     }
 
     fun initAdHelperClasses(activity: Activity, clearedFlag: Boolean = false) {
-        var ssss = measureTimeMillis {
-
+        val ssss = measureTimeMillis {
             Timber.d("initAdHelperClasses")
 
             if (::admobBannerCreator.isInitialized) {

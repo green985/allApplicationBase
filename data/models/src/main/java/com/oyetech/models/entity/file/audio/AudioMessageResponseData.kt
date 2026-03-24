@@ -63,7 +63,7 @@ data class AudioMessageResponseSocketData(
 ) : Parcelable
 
 fun AudioMessageResponseSubData.mapToNormalize(): AudioMessageResponseData {
-    var audioMessageResponseData = AudioMessageResponseData(
+    val audioMessageResponseData = AudioMessageResponseData(
         audioId = this.audioId,
         audioUrl = this.audioUrl,
         totalDuration = this.totalDuration,
@@ -73,7 +73,7 @@ fun AudioMessageResponseSubData.mapToNormalize(): AudioMessageResponseData {
 }
 
 fun AudioMessageResponseData.serializeContent(): String {
-    var audioMessageResponseData = AudioMessageResponseSubData(
+    val audioMessageResponseData = AudioMessageResponseSubData(
         audioId = this.audioId,
         audioUrl = this.audioUrl,
         totalDuration = this.totalDuration,

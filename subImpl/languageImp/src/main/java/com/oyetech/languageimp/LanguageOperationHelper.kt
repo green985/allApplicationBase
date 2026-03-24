@@ -68,9 +68,9 @@ class LanguageOperationHelper(
     private fun getLanguagePackage() {
         Timber.d("getLanguagePackage girdi")
         //
-        var languageCode = sharedOperationUseCase.getBaseLanguageCode()
+        val languageCode = sharedOperationUseCase.getBaseLanguageCode()
         Timber.d("language code = === " + languageCode)
-        var languageCodeRequestBody = LanguageCodeRequestBody(languageCode = languageCode)
+        val languageCodeRequestBody = LanguageCodeRequestBody(languageCode = languageCode)
 
         GlobalScope.launch {
             try {
@@ -158,18 +158,18 @@ class LanguageOperationHelper(
     }
 
     private fun controlLanguageModelExpired(): Boolean {
-        var isLanguageDataSaved =
+        val isLanguageDataSaved =
             sharedOperationUseCase.controlIsKeyNotNull(SharedPrefKey.FirebaseTextResourcesDataResponse)
-        var isLanguageTimeSaved =
+        val isLanguageTimeSaved =
             sharedOperationUseCase.controlIsKeyNotNull(SharedPrefKey.TextResourcesDataResponseTimeMilis)
         if (!isLanguageDataSaved && !isLanguageTimeSaved) {
             Timber.d("not saved model found, get new one")
             return true
         }
 
-        var languageSavedTime = sharedOperationUseCase.getLanguageTimeValue()
+        val languageSavedTime = sharedOperationUseCase.getLanguageTimeValue()
 
-        var isTimeExpired = TimeFunctions.isTimeExpiredFromParamHourWithMilis(
+        val isTimeExpired = TimeFunctions.isTimeExpiredFromParamHourWithMilis(
             languageSavedTime,
             HelperConstant.LANGUAGE_EXPIRED_TIME
         )
