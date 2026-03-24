@@ -8,7 +8,6 @@ import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.composebase.sharedScreens.navigation.ScreenKey
 import com.oyetech.cripto.stringKeys.WebSiteUrls
-import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.tools.contextHelper.UrlHelper
 import com.oyetech.tools.coroutineHelper.AppDispatchers
@@ -26,7 +25,6 @@ class FacSettingsVm(
     appDispatchers: AppDispatchers,
     private val authOperationVM: AuthOperationVM,
     private val navigationUseCase: com.oyetech.domain.useCases.NavigationUseCase,
-    private val firebaseUserRepository: FirebaseUserRepository,
 ) : BaseViewModel(appDispatchers) {
 
     val toolbarTitle = MutableStateFlow(LanguageKey.settings)
@@ -97,7 +95,7 @@ class FacSettingsVm(
                 }
 
                 FacSettingsUiEvent.NavigateToProfile -> {
-                    val uid = firebaseUserRepository.getUserId()
+                    val uid = authOperationVM.getUserId()
                     if (uid.isNotBlank()) {
                         navigationUseCase.navigateTo("${QuestionAppProjectRoutes.UserProfile.route}?${ScreenKey.receiverUserId}=$uid")
                     }

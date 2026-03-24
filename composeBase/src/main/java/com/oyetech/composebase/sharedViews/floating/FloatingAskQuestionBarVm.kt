@@ -45,7 +45,7 @@ class FloatingAskQuestionBarVm(
             firebaseUserRepository.userProfileDataStateFlow.asResult().collectLatest { result ->
                 result.fold(
                     onSuccess = { userData ->
-                        val isVisible = userData.isProfileComplete()
+                        val isVisible = userData.isProfileCompletedForAuth()
                         uiState.value = uiState.value.copy(isVisible = isVisible)
                         Timber.d("FloatingAskQuestionBar visibility: $isVisible")
                     },

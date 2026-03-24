@@ -5,7 +5,7 @@ import com.oyetech.composebase.base.baseGenericList.updateSingleItem
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
-import com.oyetech.domain.repository.firebase.FirebaseUserRepository
+import com.oyetech.domain.repository.loginOperation.AuthOperationRepository
 import com.oyetech.domain.repository.question.QuestionSupabaseRepository
 import com.oyetech.domain.useCases.AnswerUseCase
 import com.oyetech.domain.useCases.NavigationUseCase
@@ -37,7 +37,7 @@ class QuestionEventHandlerUseCase(
 ) : KoinComponent {
 
     private val navigationUseCase: NavigationUseCase by inject()
-    private val userRepository: FirebaseUserRepository by inject()
+    private val userRepository: AuthOperationRepository by inject()
     private val answerUseCase: AnswerUseCase by inject()
     private val appDispatchers: AppDispatchers by inject()
 

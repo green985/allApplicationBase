@@ -1,19 +1,23 @@
 package com.oyetech.domain.repository.loginOperation
 
-import com.oyetech.models.firebaseModels.userModel.UserDataProperty
+import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import kotlinx.coroutines.flow.MutableStateFlow
 
 interface AuthOperationRepository {
-    val userDataStateFlow: MutableStateFlow<UserDataProperty?>
+    val userDataStateFlow: MutableStateFlow<UserProfileProperty?>
 
-    suspend fun loginWithGoogleAndSyncUser(): Result<UserDataProperty>
+    suspend fun loginWithGoogleAndSyncUser(): Result<UserProfileProperty>
 
     // ViewModel passes only user-facing fields; token/userId are resolved internally by the repository
     suspend fun updateUserProfile(
         username: String,
         age: String,
         gender: String,
-    ): Result<UserDataProperty>
+    ): Result<UserProfileProperty>
 
     suspend fun deleteAccount(): Result<Unit>
+
+    suspend fun getToken(): String
+
+    suspend fun getUserId(): String
 }

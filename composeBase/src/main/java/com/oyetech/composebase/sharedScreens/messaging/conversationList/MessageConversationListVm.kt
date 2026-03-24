@@ -66,7 +66,7 @@ class MessageConversationListVm(
         viewModelScope.launch(getDispatcherIo()) {
             firebaseUserRepository.userProfileDataStateFlow.asResult().collectLatest { result ->
                 result.fold({
-                    if (!it.isProfileComplete()) {
+                    if (!it.isProfileCompletedForAuth()) {
                         Timber.e("User ID is null or empty")
                         listViewState.updateErrorInitial(errorMessage = LanguageKey.messageListErrorUserNotFound)
                     } else {

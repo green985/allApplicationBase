@@ -1,15 +1,11 @@
 package com.oyetech.remote.questionRemote
 
 import com.oyetech.domain.repository.SharedOperationRepository
-import com.oyetech.domain.repository.firebase.FirebaseUserRepository
-import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import okhttp3.Interceptor
 import okhttp3.Response
 import timber.log.Timber
 
 class AuthInterceptor(
-    private val firebaseUserRepository: FirebaseUserRepository,
-    private val googleLoginRepository: GoogleLoginRepository,
     private val sharedOperationRepository: SharedOperationRepository,
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {

@@ -71,6 +71,7 @@ interface MessagesRepository {
     suspend fun getConversationListWithSearchQueryWithoutFlow(
         searchQuery: String,
     ): List<MessageConversationDataResponse>
+
     fun clearConversationUnreadCount(conversationId: Long)
     suspend fun getConversationUnreadList(): Flow<List<UnreadMessagesData>>
 
@@ -78,6 +79,7 @@ interface MessagesRepository {
     suspend fun getReceivedMessageFromConversation(
         params: MessagesBeforeAfterRequestBody,
     ): Flow<MessageDetailDataResponse>
+
     fun getReceivedMessageCount(): Int
 
     suspend fun isMessagingLimitExceeded(): Flow<Boolean>

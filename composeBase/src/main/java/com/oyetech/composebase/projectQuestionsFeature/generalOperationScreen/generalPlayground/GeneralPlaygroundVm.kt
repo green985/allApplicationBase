@@ -2,7 +2,6 @@ package com.oyetech.composebase.projectQuestionsFeature.generalOperationScreen.g
 
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
-import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import timber.log.Timber
@@ -16,7 +15,6 @@ Created by Erdi Özbek
 class GeneralPlaygroundVm(
     appDispatchers: AppDispatchers,
     private val navigationUseCase: NavigationUseCase,
-    private val googleLoginRepository: GoogleLoginRepository,
     private val firebaseCommentOperationRepository: FirebaseCommentOperationRepository,
 ) : BaseViewModel(appDispatchers) {
 

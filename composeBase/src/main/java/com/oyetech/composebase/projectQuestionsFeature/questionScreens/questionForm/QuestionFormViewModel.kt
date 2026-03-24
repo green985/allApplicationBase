@@ -4,14 +4,13 @@ import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.base.updateState
+import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionEventHandlerUseCase
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.questionAnswerOverlayFlow
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.toOperationBody
 import com.oyetech.domain.repository.firebase.FirebaseNotificationTokenOperationRepository
-import com.oyetech.domain.repository.firebase.FirebaseUserRepository
-import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.domain.repository.question.QuestionSupabaseRepository
 import com.oyetech.domain.useCases.AnswerUseCase
 import com.oyetech.domain.useCases.NavigationUseCase
@@ -41,8 +40,7 @@ class QuestionFormViewModel(
     appDispatchers: AppDispatchers,
     private val navigationUseCase: NavigationUseCase,
     private val answerUseCase: AnswerUseCase,
-    private val firebaseUserRepository: FirebaseUserRepository,
-    private val googleLoginRepository: GoogleLoginRepository,
+    private val authOperationVM: AuthOperationVM,
     private val questionSupabaseRepository: QuestionSupabaseRepository,
     private val firebaseNotificationTokenOperationRepository: FirebaseNotificationTokenOperationRepository,
 ) : BaseViewModel(appDispatchers) {
@@ -128,7 +126,7 @@ class QuestionFormViewModel(
     fun onEvent(event: QuestionFormEvent) {
         when (event) {
             is QuestionFormEvent.OnFormLoad -> {
-                val userId = firebaseUserRepository.getUserId()
+                val userId = authOperationVM.getUserId()
                 getFormDetail(event.formId, userId)
             }
 
@@ -172,7 +170,7 @@ class QuestionFormViewModel(
                 )
             }
 
-            val userId = firebaseUserRepository.getUserId()
+            val userId = authOperationVM.getUserId()
             val questionsResponse = currentState.questions.map { it.toOperationBody() }
 
             questionSupabaseRepository.submitCatalog(
@@ -289,14 +287,14 @@ class QuestionFormViewModel(
     private fun generateFormResult() {
         viewModelScope.launch(getDispatcherIo()) {
             val currentState = _uiState.value
-            val userId = firebaseUserRepository.getUserId()
+            val userId = authOperationVM.getUserId()
             val notificationToken =
                 firebaseNotificationTokenOperationRepository.firebaseNotificationTokenStateFlow.value?.notificationToken
             val prompt =
                 "Verdiğiniz yanıtları analiz edip size özel bir değerlendirme hazırlıyorum. Bu süreç birkaç saniye sürebilir."
 
             _uiState.update { it.copy(isGeneratingResult = true) }
-            val token = googleLoginRepository.googleUserStateFlow.value.token
+            val token = authOperationVM.getToken()
             questionSupabaseRepository.generateFormResult(
                 formId = currentState.formId,
                 userId = userId,

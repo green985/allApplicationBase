@@ -26,7 +26,7 @@ data class UserProfileProperty(
     val age: String = "",
     val biography: String = "",
 ) {
-    fun isProfileComplete(): Boolean {
+    fun isProfileCompletedForAuth(): Boolean {
         return username.isNotBlank() &&
                 userId.isNotBlank() &&
                 gender.isNotBlank()

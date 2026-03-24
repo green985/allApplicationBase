@@ -2,10 +2,10 @@ package com.oyetech.composebase.projectQuestionsFeature.generalOperationScreen
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
+import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
 import com.oyetech.composebase.sharedScreens.messaging.MessageOperationVM
 import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserListOperationRepository
-import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.useCases.AnswerUseCase
 import com.oyetech.domain.useCases.helpers.AppReviewOperationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
@@ -29,7 +29,7 @@ class GeneralOperationVM(
     private val sharedHelperRepository: SharedOperationRepository,
     private val firebaseUserListOperationRepository: FirebaseUserListOperationRepository,
     private val messageOperationVM: MessageOperationVM,
-    private val userRepository: FirebaseUserRepository,
+    private val authOperationVM: AuthOperationVM,
     private val answerUseCase: AnswerUseCase,
 ) : BaseViewModel(appDispatchers) {
 
@@ -78,8 +78,8 @@ class GeneralOperationVM(
     private fun getUserAnswers() {
         var x: Job? = null
         x = viewModelScope.launch(getDispatcherIo()) {
-            userRepository.userProfileDataStateFlow.collectLatest {
-                if (it.userId.isNotBlank()) {
+            authOperationVM.authOperationState.collectLatest {
+                if (it.isLogin) {
                     answerUseCase.getAnswersByUser(it.userId)
                         .asResult()
                         .collectLatest {

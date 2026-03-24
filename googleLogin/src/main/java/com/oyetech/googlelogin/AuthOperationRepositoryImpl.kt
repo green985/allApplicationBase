@@ -20,7 +20,6 @@ import com.oyetech.models.firebaseModels.googleAuth.GetUserWithTokenBody
 import com.oyetech.models.firebaseModels.googleAuth.GoogleUserResponseData
 import com.oyetech.models.firebaseModels.googleAuth.isUserHasUID
 import com.oyetech.models.firebaseModels.googleAuth.toGoogleUserPostData
-import com.oyetech.models.firebaseModels.userModel.UserDataProperty
 import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -33,12 +32,12 @@ class AuthOperationRepositoryImpl(
     private val sharedOperationRepository: SharedOperationRepository,
 ) : AuthOperationRepository {
 
-    override val userDataStateFlow = MutableStateFlow<UserDataProperty?>(
+    override val userDataStateFlow = MutableStateFlow<UserProfileProperty?>(
         sharedOperationRepository.getGoogleUserData()
     )
 
     @Suppress("TooGenericExceptionCaught")
-    override suspend fun loginWithGoogleAndSyncUser(): Result<UserDataProperty> {
+    override suspend fun loginWithGoogleAndSyncUser(): Result<UserProfileProperty> {
         return try {
             val googleUser = signInWithGoogle()
 
@@ -135,7 +134,7 @@ class AuthOperationRepositoryImpl(
         username: String,
         age: String,
         gender: String,
-    ): Result<UserDataProperty> {
+    ): Result<UserProfileProperty> {
         return try {
             val currentUser = userDataStateFlow.value
                 ?: return Result.failure(Exception("User session not found"))
@@ -172,7 +171,16 @@ class AuthOperationRepositoryImpl(
         }
     }
 
-    private suspend fun loginOrRegisterUser(googleUser: GoogleUserResponseData): UserDataProperty {
+
+    override suspend fun getToken(): String {
+        return userDataStateFlow.value?.token ?: ""
+    }
+
+    override suspend fun getUserId(): String {
+        return userDataStateFlow.value?.userId ?: ""
+    }
+
+    private suspend fun loginOrRegisterUser(googleUser: GoogleUserResponseData): UserProfileProperty {
         return runCatching {
             questionSupabaseRepository
                 .getUserWithToken(GetUserWithTokenBody(token = googleUser.token))

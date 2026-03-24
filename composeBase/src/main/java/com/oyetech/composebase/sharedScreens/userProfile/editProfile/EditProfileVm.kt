@@ -3,9 +3,9 @@ package com.oyetech.composebase.sharedScreens.userProfile.editProfile
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
+import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
 import com.oyetech.composebase.sharedScreens.userProfile.EditProfileEvent
 import com.oyetech.domain.repository.firebase.FirebaseUserPropertyRepository
-import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.tools.coroutineHelper.AppDispatchers
@@ -16,7 +16,7 @@ import timber.log.Timber
 class EditProfileVm(
     appDispatchers: AppDispatchers,
     private val firebaseUserPropertyRepository: FirebaseUserPropertyRepository,
-    private val firebaseUserRepository: FirebaseUserRepository,
+    private val authOperationVM: AuthOperationVM,
     private val navigationUseCase: NavigationUseCase,
 ) : BaseViewModel(appDispatchers) {
     val uiState = MutableStateFlow(EditProfileUiState())
@@ -27,7 +27,7 @@ class EditProfileVm(
 
     private fun loadCurrentBiography() {
         viewModelScope.launch(getDispatcherIo()) {
-            val currentUser = firebaseUserRepository.userProfileDataStateFlow.value
+            val currentUser = authOperationVM.authOperationState.value
             uiState.updateState {
                 copy(biographyText = currentUser.biography)
             }
@@ -58,7 +58,7 @@ class EditProfileVm(
         viewModelScope.launch(getDispatcherIo()) {
             uiState.updateState { copy(isLoading = true, errorMessage = "") }
 
-            val userId = firebaseUserRepository.getUserId()
+            val userId = authOperationVM.getUserId()
             val biography = uiState.value.biographyText
 
             firebaseUserPropertyRepository.updateBiography(userId, biography)

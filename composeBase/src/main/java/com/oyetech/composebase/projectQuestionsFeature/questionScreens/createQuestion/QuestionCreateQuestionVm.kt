@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
+import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
 import com.oyetech.composebase.helpers.general.GeneralSettings
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent.CancelClicked
@@ -40,7 +41,7 @@ class QuestionCreateQuestionVm(
     private val questionSupabaseRepository: QuestionSupabaseRepository,
     private val snackbarDelegate: SnackbarDelegate,
     private val questionUseCase: com.oyetech.domain.useCases.QuestionUseCase,
-    private val firebaseUserRepository: com.oyetech.domain.repository.firebase.FirebaseUserRepository,
+    private val authOperationVM: AuthOperationVM,
 ) : BaseViewModel(appDispatchers) {
 
     val uiState = MutableStateFlow(QuestionCreateQuestionScreenUiState())
@@ -196,7 +197,7 @@ class QuestionCreateQuestionVm(
         val currentQuestion = questionUiState.value
         if (currentQuestion.titleText.isBlank()) return
 
-        val userId = firebaseUserRepository.getUserId()
+        val userId = authOperationVM.getUserId()
         if (userId.isBlank()) {
             uiState.updateState {
                 copy(

@@ -12,11 +12,9 @@ import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent.OnS
 import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent.UsernameChanged
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.domain.repository.loginOperation.AuthOperationRepository
-import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.errors.ErrorMessage
-import com.oyetech.models.firebaseModels.userModel.isProfileCompletedForAuth
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,17 +26,18 @@ class AuthOperationVM(
     appDispatchers: AppDispatchers,
     private val authOperationRepository: AuthOperationRepository,
     val navigationUseCase: NavigationUseCase,
-    private val googleLoginRepository: GoogleLoginRepository,
     private val snackbarDelegate: SnackbarDelegate,
 ) : BaseViewModel(appDispatchers) {
 
-    val authOperationState = MutableStateFlow(AuthOperationUiState())
+    private val _authOperationState = MutableStateFlow(AuthOperationUiState())
+    val authOperationState = _authOperationState
+
     val uiEvent = MutableSharedFlow<AuthOperationUiEvent>()
 
     init {
         viewModelScope.launch(getDispatcherIo()) {
-            authOperationState.collectLatest {
-                Timber.d("AuthOperationState updated: $it")
+            _authOperationState.collectLatest {
+                Timber.d("_authOperationState updated: $it")
             }
         }
         // Restore login state from persisted user data on app start
@@ -53,16 +52,16 @@ class AuthOperationVM(
         if (event is AuthOperationEvent) {
             when (event) {
                 LoginClicked -> handleLoginClicked()
-                is UsernameChanged -> authOperationState.updateState {
+                is UsernameChanged -> _authOperationState.updateState {
                     copy(username = event.username, isUsernameEmpty = event.username.isBlank())
                 }
 
-                is AgeChanged -> authOperationState.updateState { copy(age = event.age) }
-                is GenderChanged -> authOperationState.updateState { copy(gender = event.gender) }
+                is AgeChanged -> _authOperationState.updateState { copy(age = event.age) }
+                is GenderChanged -> _authOperationState.updateState { copy(gender = event.gender) }
                 OnSubmitProfile -> handleSubmitProfile()
                 OnCancelProfile -> handleCancelProfile()
                 AuthOperationEvent.DeleteAccountClick -> handleDeleteAccount()
-                AuthOperationEvent.ErrorDismiss -> authOperationState.updateState {
+                AuthOperationEvent.ErrorDismiss -> _authOperationState.updateState {
                     copy(isError = false, errorMessage = "")
                 }
             }
@@ -70,7 +69,7 @@ class AuthOperationVM(
     }
 
     private fun handleLoginClicked() {
-        authOperationState.updateState {
+        _authOperationState.updateState {
             copy(isLoading = true, isError = false, errorMessage = "")
         }
 
@@ -78,7 +77,7 @@ class AuthOperationVM(
             authOperationRepository.loginWithGoogleAndSyncUser().fold(
                 onSuccess = { userData ->
                     mapUserDataToState(userData)
-                    authOperationState.updateState { copy(isLoading = false) }
+                    _authOperationState.updateState { copy(isLoading = false) }
                     if (userData.isProfileCompletedForAuth()) {
                         uiEvent.emit(AuthOperationUiEvent.OnLoginSuccess)
                         navigationUseCase.navigateTo("back")
@@ -88,7 +87,7 @@ class AuthOperationVM(
                     }
                 },
                 onFailure = { error ->
-                    authOperationState.updateState {
+                    _authOperationState.updateState {
                         copy(
                             isLoading = false,
                             isError = true,
@@ -103,7 +102,7 @@ class AuthOperationVM(
     private fun handleSubmitProfile() {
         if (isErrorInProfileForm()) return
 
-        authOperationState.updateState {
+        _authOperationState.updateState {
             copy(
                 isLoading = true,
                 isError = false,
@@ -112,7 +111,7 @@ class AuthOperationVM(
         }
 
         viewModelScope.launch(getDispatcherIo()) {
-            val state = authOperationState.value
+            val state = _authOperationState.value
             authOperationRepository.updateUserProfile(
                 username = state.username,
                 age = state.age,
@@ -120,13 +119,13 @@ class AuthOperationVM(
             ).fold(
                 onSuccess = { userData ->
                     mapUserDataToState(userData)
-                    authOperationState.updateState { copy(isLoading = false) }
+                    _authOperationState.updateState { copy(isLoading = false) }
                     uiEvent.emit(AuthOperationUiEvent.OnLoginSuccess)
                     navigationUseCase.navigateTo("back")
                 },
                 onFailure = { error ->
                     Timber.e("updateUserProfile error: ${error.message}")
-                    authOperationState.updateState {
+                    _authOperationState.updateState {
                         copy(
                             isLoading = false,
                             isError = true,
@@ -140,14 +139,13 @@ class AuthOperationVM(
 
     private fun handleCancelProfile() {
         viewModelScope.launch(getDispatcherIo()) {
-            googleLoginRepository.removeUser(googleLoginRepository.getUserUid())
             uiEvent.emit(AuthOperationUiEvent.OnProfileCancelled)
             navigationUseCase.navigateTo("back")
         }
     }
 
     private fun handleDeleteAccount() {
-        authOperationState.updateState {
+        _authOperationState.updateState {
             copy(
                 isLoading = true,
                 isError = false,
@@ -157,13 +155,13 @@ class AuthOperationVM(
         viewModelScope.launch(getDispatcherIo()) {
             authOperationRepository.deleteAccount().fold(
                 onSuccess = {
-                    authOperationState.value = AuthOperationUiState()
+                    _authOperationState.value = AuthOperationUiState()
                     snackbarDelegate.triggerSnackbarState(LanguageKey.deleteAccountSuccess)
                     uiEvent.emit(AuthOperationUiEvent.OnProfileCancelled)
                     navigationUseCase.navigateTo("back")
                 },
                 onFailure = { error ->
-                    authOperationState.updateState {
+                    _authOperationState.updateState {
                         copy(
                             isLoading = false,
                             isError = true,
@@ -175,12 +173,16 @@ class AuthOperationVM(
         }
     }
 
+    fun getUserId(): String {
+        return authOperationRepository.userDataStateFlow.value?.userId ?: ""
+    }
+
     @Suppress("ReturnCount")
     private fun isErrorInProfileForm(): Boolean {
-        val state = authOperationState.value
+        val state = _authOperationState.value
 
         if (state.username.isBlank()) {
-            authOperationState.updateState {
+            _authOperationState.updateState {
                 copy(
                     isError = true,
                     isUsernameEmpty = true,
@@ -191,7 +193,7 @@ class AuthOperationVM(
         }
 
         if (state.age.isBlank()) {
-            authOperationState.updateState {
+            _authOperationState.updateState {
                 copy(isError = true, errorMessage = LanguageKey.ageCannotBeNull)
             }
             return true
@@ -200,25 +202,29 @@ class AuthOperationVM(
         try {
             val ageVal = state.age.toInt()
             if (ageVal < 18 || ageVal > 100) {
-                authOperationState.updateState {
+                _authOperationState.updateState {
                     copy(isError = true, errorMessage = LanguageKey.invalidAgeError)
                 }
                 return true
             }
         } catch (e: Exception) {
-            authOperationState.updateState {
+            _authOperationState.updateState {
                 copy(isError = true, errorMessage = LanguageKey.ageCannotBeNull)
             }
             return true
         }
 
         if (state.gender.isBlank()) {
-            authOperationState.updateState {
+            _authOperationState.updateState {
                 copy(isError = true, errorMessage = LanguageKey.genderCannotBeEmpty)
             }
             return true
         }
 
         return false
+    }
+
+    fun getToken(): String {
+        return authOperationRepository.userDataStateFlow.value?.token ?: ""
     }
 }
