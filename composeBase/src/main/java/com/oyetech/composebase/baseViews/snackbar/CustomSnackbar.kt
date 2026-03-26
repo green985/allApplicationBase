@@ -20,7 +20,8 @@ fun DefaultSnackbar(
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit = { snackbarHostState.currentSnackbarData?.dismiss() },
-) {
+
+    ) {
     SnackbarHost(
         hostState = snackbarHostState,
         snackbar = { data ->

@@ -20,7 +20,15 @@ fun SnacbarScreenSetup(snackbarHostState: SnackbarHostState) {
 
     val stateee by snackbarDelegate.snacbarUiState.collectAsStateWithLifecycle()
 
-    DefaultSnackbar(snackbarHostState)
+    DefaultSnackbar(
+        snackbarHostState, onDismiss = if (stateee.onAction != null) {
+            {
+                stateee.onAction?.invoke()
+                snackbarHostState.currentSnackbarData?.dismiss()
+            }
+        } else {
+            { snackbarHostState.currentSnackbarData?.dismiss() }
+        })
 
     LaunchedEffect(stateee.uuid) {
         if (stateee.message.isNotEmpty()) {
