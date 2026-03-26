@@ -7,7 +7,6 @@ import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import com.oyetech.models.questionProject.questionOperation.DeleteAccountResponse
 import com.oyetech.models.questionProject.questionOperation.DeleteAnswerRequest
 import com.oyetech.models.questionProject.questionOperation.GenerateFormResultRequest
-import com.oyetech.models.questionProject.questionOperation.GenerateFormResultResponse
 import com.oyetech.models.questionProject.questionOperation.GetCatalogListRequest
 import com.oyetech.models.questionProject.questionOperation.GetCatalogListResponse
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
@@ -104,7 +103,7 @@ interface QuestionSupabaseApi {
     @POST("v1/generateFormResult")
     suspend fun generateFormResult(
         @Body request: GenerateFormResultRequest,
-    ): Response<GenericResponse<GenerateFormResultResponse>>
+    ): Response<GenericResponse<SubmitCatalogResponse>>
 
     @POST("v1/getCatalogList")
     suspend fun getCatalogList(

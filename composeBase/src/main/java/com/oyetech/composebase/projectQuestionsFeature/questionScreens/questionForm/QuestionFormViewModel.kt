@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.base.updateState
+import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionEventHandlerUseCase
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.questionAnswerOverlayFlow
@@ -14,10 +15,12 @@ import com.oyetech.domain.repository.firebase.FirebaseNotificationTokenOperation
 import com.oyetech.domain.repository.question.QuestionSupabaseRepository
 import com.oyetech.domain.useCases.AnswerUseCase
 import com.oyetech.domain.useCases.NavigationUseCase
+import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.questionProject.questionOperation.parsedChatGptResult
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -42,6 +45,7 @@ class QuestionFormViewModel(
     private val navigationUseCase: NavigationUseCase,
     private val answerUseCase: AnswerUseCase,
     private val authOperationVM: AuthOperationVM,
+    private val snackbarDelegate: SnackbarDelegate,
     private val questionSupabaseRepository: QuestionSupabaseRepository,
     private val firebaseNotificationTokenOperationRepository: FirebaseNotificationTokenOperationRepository,
 ) : BaseViewModel(appDispatchers) {
@@ -103,10 +107,10 @@ class QuestionFormViewModel(
                             isLoading = false,
                             formId = response.formId,
                             title = response.title,
+                            generatedResultText = response.parsedChatGptResult()?.resultText ?: "",
                             description = response.description,
                             questions = questionItems,
-                            submitResultText = response.parsedChatGptResult()?.resultText ?: "",
-                            canSubmit = false
+                            canSubmit = questionItems.all { it.isAnsweredByUser },
                         )
                     }
                 }
@@ -175,7 +179,6 @@ class QuestionFormViewModel(
                     onSuccess = { resp ->
                         _uiState.update { state ->
                             state.copy(
-//                                submitResultText = resp.chatGptResult.resultText,
                                 isLoading = false,
                                 isSubmitted = true,
                                 isLocked = true,
@@ -183,9 +186,12 @@ class QuestionFormViewModel(
                             )
                         }
                         _uiEvent.emit(QuestionFormUiEvent.OnSubmitSuccess)
-                        _uiEvent.emit(QuestionFormUiEvent.OnFormLocked)
-
+                        snackbarDelegate.triggerSnackbarState(
+                            message = LanguageKey.formSubmittedMessage,
+                            actionLabel = LanguageKey.viewText,
+                        )
                         generateFormResult()
+                        navigationUseCase.navigateTo("back")
                     },
                     onFailure = { error ->
                         Timber.e(error, "Error submitting form")
@@ -278,7 +284,7 @@ class QuestionFormViewModel(
     }
 
     private fun generateFormResult() {
-        viewModelScope.launch(getDispatcherIo()) {
+        GlobalScope.launch(getDispatcherIo()) {
             val currentState = _uiState.value
             val userId = authOperationVM.getUserId()
             val notificationToken =

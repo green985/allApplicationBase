@@ -121,4 +121,5 @@ object LanguageKey {
 
     var formResultReadyMessage set(value) {} get() = LocalLanguageHelper.getStringWithKey("formResultReadyMessage")
     var viewText set(value) {} get() = LocalLanguageHelper.getStringWithKey("view")
+    var formSubmittedMessage set(value) {} get() = LocalLanguageHelper.getStringWithKey("Form submitted successfully!")
 }

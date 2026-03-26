@@ -180,7 +180,6 @@ private fun QuestionFormContent(
                 description = uiState.description,
                 isLocked = uiState.isLocked,
                 submittedAt = uiState.submittedAt,
-                resultText = uiState.submitResultText,
                 isGeneratingResult = uiState.isGeneratingResult,
                 generatedResultText = uiState.generatedResultText
             )
@@ -239,7 +238,6 @@ private fun QuestionFormContent(
 @Composable
 private fun FormTitleSection(
     title: String,
-    resultText: String,
     description: String,
     isLocked: Boolean,
     submittedAt: Long?,
