@@ -1,6 +1,7 @@
 package com.oyetech.composebase.baseViews.snackbar
 
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,10 +24,13 @@ fun SnacbarScreenSetup(snackbarHostState: SnackbarHostState) {
 
     LaunchedEffect(stateee.uuid) {
         if (stateee.message.isNotEmpty()) {
-            snackbarHostState.showSnackbar(
+            val result = snackbarHostState.showSnackbar(
                 message = stateee.message,
                 actionLabel = stateee.actionLabel,
             )
+            if (result == SnackbarResult.ActionPerformed) {
+                stateee.onAction?.invoke()
+            }
         }
     }
 }

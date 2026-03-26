@@ -118,4 +118,7 @@ object LanguageKey {
     var loginToViewProfile set(value) {} get() = LocalLanguageHelper.getStringWithKey("loginToViewProfile")
     var profileNotFound set(value) {} get() = LocalLanguageHelper.getStringWithKey("profileNotFound")
     var messageUser set(value) {} get() = LocalLanguageHelper.getStringWithKey("messageUser")
+
+    var formResultReadyMessage set(value) {} get() = LocalLanguageHelper.getStringWithKey("formResultReadyMessage")
+    var viewText set(value) {} get() = LocalLanguageHelper.getStringWithKey("view")
 }

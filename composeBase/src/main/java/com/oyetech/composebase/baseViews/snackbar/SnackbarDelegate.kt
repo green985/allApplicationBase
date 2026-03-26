@@ -15,10 +15,12 @@ class SnackbarDelegate {
     fun triggerSnackbarState(
         message: String,
         actionLabel: String? = null,
+        onAction: (() -> Unit)? = null,
     ) {
         snacbarUiState.value = SnackbarUiState(
             message = message,
             actionLabel = actionLabel,
+            onAction = onAction,
         )
     }
 }

@@ -1,5 +1,6 @@
 package com.oyetech.notificationmodule
 
+import com.oyetech.models.notificationModels.FormNotificationData
 import com.oyetech.notificationmodule.NotificationConst.NOTIFICATION_DATA_FORM_ID
 import com.oyetech.notificationmodule.NotificationConst.NOTIFICATION_DATA_USER_ID
 import com.oyetech.notificationmodule.NotificationConst.NOTIFICATION_TYPE_FORM_RESULT_READY
@@ -13,11 +14,6 @@ import timber.log.Timber
 Created by Erdi Özbek
 -26.03.2026-
  **/
-
-data class FormNotificationData(
-    val formId: String,
-    val userId: String,
-)
 
 class NotificationHandlerHelper {
 
@@ -46,4 +42,3 @@ class NotificationHandlerHelper {
         _formNotificationFlow.tryEmit(FormNotificationData(formId = formId, userId = userId))
     }
 }
-

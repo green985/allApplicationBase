@@ -2,12 +2,18 @@ package com.oyetech.composebase.projectQuestionsFeature.generalOperationScreen
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
+import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
+import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.composebase.sharedScreens.messaging.MessageOperationVM
+import com.oyetech.composebase.sharedScreens.navigation.ScreenKey
+import com.oyetech.domain.repository.NotificationHandlerRepository
 import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserListOperationRepository
 import com.oyetech.domain.useCases.AnswerUseCase
+import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.domain.useCases.helpers.AppReviewOperationUseCase
+import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.Job
@@ -31,6 +37,9 @@ class GeneralOperationVM(
     private val messageOperationVM: MessageOperationVM,
     private val authOperationVM: AuthOperationVM,
     private val answerUseCase: AnswerUseCase,
+    private val notificationHandlerRepository: NotificationHandlerRepository,
+    private val snackbarDelegate: SnackbarDelegate,
+    private val navigationUseCase: NavigationUseCase,
 ) : BaseViewModel(appDispatchers) {
 
     fun getReviewCanShowState() = appReviewOperationUseCase.getReviewCanShowState()
@@ -72,7 +81,25 @@ class GeneralOperationVM(
             appReviewOperationUseCase.controlReviewCanShow()
         }
         getUserAnswers()
-//        signToUserFeedList()
+        observeFormNotifications()
+    }
+
+    private fun observeFormNotifications() {
+        viewModelScope.launch(getDispatcherIo()) {
+            notificationHandlerRepository.formNotificationFlow.collectLatest { data ->
+                Timber.d("GeneralOperationVM: form notification received -> formId=${data.formId}")
+                snackbarDelegate.triggerSnackbarState(
+                    message = LanguageKey.formResultReadyMessage,
+                    actionLabel = LanguageKey.viewText,
+                    onAction = {
+                        navigationUseCase.navigateTo(
+                            QuestionAppProjectRoutes.QuestionFormScreen.route +
+                                    "?${ScreenKey.formId}=${data.formId}"
+                        )
+                    }
+                )
+            }
+        }
     }
 
     private fun getUserAnswers() {
