@@ -13,13 +13,13 @@ data class ChatGptResult(
     val model: String,
     val promptTokens: Int,
     val completionTokens: Int,
-    val notificationSent: Boolean,
+    val notificationSent: Boolean = false,
 )
 
 data class SubmitCatalogResponse(
     val formId: String,
     val userId: String,
-    val chatGptResult: ChatGptResult,
+    val chatGptResult: ChatGptResult? = null,
 )
 
 data class GenerateFormResultRequest(

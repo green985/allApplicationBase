@@ -14,6 +14,7 @@ import com.oyetech.domain.repository.firebase.FirebaseNotificationTokenOperation
 import com.oyetech.domain.repository.question.QuestionSupabaseRepository
 import com.oyetech.domain.useCases.AnswerUseCase
 import com.oyetech.domain.useCases.NavigationUseCase
+import com.oyetech.models.questionProject.questionOperation.parsedChatGptResult
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.collections.immutable.toImmutableList
@@ -74,29 +75,21 @@ class QuestionFormViewModel(
     fun observeQuestionListChanges(questions: List<QuestionViewUiState>) {
         val isAllAnswered = questions.all { it.isAnsweredByUser }
         _uiState.update { currentState ->
-            currentState.copy(
-                canSubmit = isAllAnswered && !currentState.isLocked
-            )
+            currentState.copy(canSubmit = isAllAnswered && !currentState.isLocked)
         }
-
         val answeredCount = questions.count { it.isAnsweredByUser }
         _uiState.update { currentState ->
-            currentState.copy(
-                answeredCount = answeredCount,
-            )
+            currentState.copy(answeredCount = answeredCount)
         }
         val totalCount = questions.count()
         _uiState.update { currentState ->
-            currentState.copy(
-                totalCount = totalCount,
-            )
+            currentState.copy(totalCount = totalCount)
         }
     }
 
     fun getFormDetail(formId: String, userId: String) {
         viewModelScope.launch(getDispatcherIo()) {
             _uiState.update { it.copy(isLoading = true, isError = false) }
-
             questionSupabaseRepository.getCatalogDetail(formId, userId)
                 .collectLatest { response ->
                     val questionItems = response.questions.map { question ->
@@ -112,7 +105,7 @@ class QuestionFormViewModel(
                             title = response.title,
                             description = response.description,
                             questions = questionItems,
-                            submitResultText = response.chatGptResult.resultText,
+                            submitResultText = response.parsedChatGptResult()?.resultText ?: "",
                             canSubmit = false
                         )
                     }
@@ -182,7 +175,7 @@ class QuestionFormViewModel(
                     onSuccess = { resp ->
                         _uiState.update { state ->
                             state.copy(
-                                submitResultText = resp.chatGptResult.resultText,
+//                                submitResultText = resp.chatGptResult.resultText,
                                 isLoading = false,
                                 isSubmitted = true,
                                 isLocked = true,
