@@ -25,11 +25,15 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     val messagesAllOperationRepository: MessagesAllOperationRepository by KoinJavaComponent.inject(
         MessagesAllOperationRepository::class.java
     )
+    val notificationHandlerHelper: NotificationHandlerHelper by KoinJavaComponent.inject(
+        NotificationHandlerHelper::class.java
+    )
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         if (remoteMessage.data.isNotEmpty()) {
             Timber.d("Message data payload: ${remoteMessage.data}")
-            handleNotification(remoteMessage.data.get("payloadData"))
+
+            notificationHandlerHelper.handle(remoteMessage.data)
         }
     }
 

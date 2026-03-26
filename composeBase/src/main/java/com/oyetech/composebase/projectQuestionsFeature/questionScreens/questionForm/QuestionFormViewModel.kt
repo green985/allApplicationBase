@@ -112,7 +112,7 @@ class QuestionFormViewModel(
                             title = response.title,
                             description = response.description,
                             questions = questionItems,
-                            submitResultText = response.questionFormResultText,
+                            submitResultText = response.chatGptResult.resultText,
                             canSubmit = false
                         )
                     }
@@ -182,7 +182,7 @@ class QuestionFormViewModel(
                     onSuccess = { resp ->
                         _uiState.update { state ->
                             state.copy(
-                                submitResultText = resp.resultText,
+                                submitResultText = resp.chatGptResult.resultText,
                                 isLoading = false,
                                 isSubmitted = true,
                                 isLocked = true,

@@ -6,8 +6,20 @@ data class SubmitCatalogRequest(
     val questions: List<QuestionOperationResponseBody>,
 )
 
-data class SubmitCatalogResponse(
+data class ChatGptResult(
     val resultText: String,
+    val note: String,
+    val generatedAt: String,
+    val model: String,
+    val promptTokens: Int,
+    val completionTokens: Int,
+    val notificationSent: Boolean,
+)
+
+data class SubmitCatalogResponse(
+    val formId: String,
+    val userId: String,
+    val chatGptResult: ChatGptResult,
 )
 
 data class GenerateFormResultRequest(

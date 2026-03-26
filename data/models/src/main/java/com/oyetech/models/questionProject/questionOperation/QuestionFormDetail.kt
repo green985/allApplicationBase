@@ -12,6 +12,6 @@ data class QuestionFormDetailResponse(
     val createdAt: String,
     val updatedAt: String,
     val createdBy: String,
-    val questionFormResultText: String,
+    val chatGptResult: ChatGptResult,
     val questions: List<QuestionOperationResponseBody>,
 )
