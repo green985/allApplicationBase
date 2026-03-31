@@ -3,7 +3,6 @@ package com.oyetech.remote.questionRemote
 import com.oyetech.domain.repository.SharedOperationRepository
 import okhttp3.Interceptor
 import okhttp3.Response
-import timber.log.Timber
 
 class AuthInterceptor(
     private val sharedOperationRepository: SharedOperationRepository,
@@ -17,7 +16,6 @@ class AuthInterceptor(
         val token = googleToken.ifBlank {
             tokenAnon
         }
-        Timber.d("AuthInterceptor Token: $token")
         val newRequest = chain.request().newBuilder()
             .addHeader("Authorization", "Bearer $token")
             .build()

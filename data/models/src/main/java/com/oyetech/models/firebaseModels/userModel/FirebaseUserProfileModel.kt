@@ -13,8 +13,8 @@ Created by Erdi Özbek
 data class UserProfileProperty(
     val isInit: Boolean = false,
     val isAnonymous: Boolean = false,
-    val notificationToken: String = "",
     val token: String = "",
+    val notificationToken: String = "",
     val accessToken: String = "",
 
     val lastSignInTimestamp: String = "",
