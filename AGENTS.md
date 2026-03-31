@@ -57,6 +57,40 @@ userData.isProfileCompletedForAuth()   // checks username, age, gender
 userData.username.isNotBlank() && userData.age.isNotBlank() && userData.gender.isNotBlank()
 ```
 
+## Color And Typography — REQUIRED PATTERN
+
+### Color rules
+
+- Single source of truth: `composeBase/.../theme/AppColors.kt`
+- Define all light/dark values in `lightPalette` and `darkPalette` (`AppColorPalette`)
+- Use `AppColors.*` for semantic UI colors (especially text/content color decisions)
+- Do **not** use `Color(...)` literals in screen code
+- Let Material components use defaults from `MaterialTheme.colorScheme` (mapped from palette)
+
+```kotlin
+// ✅ Correct
+Text(text = title, color = AppColors.textPrimary)
+
+// ❌ Wrong
+Text(text = title, color = Color(0xFF1A1917))
+```
+
+### Typography rules
+
+- Single source of truth: `composeBase/.../theme/AppTextStyles.kt`
+- Use `AppTextStyles` (`titleLarge`, `titleMedium`, `titleSmall`, `body`, `bodySecondary`,
+  `label`, `button`)
+- Do **not** define inline `TextStyle(...)` in screens unless there is a strict exception
+- Keep hierarchy consistent: title -> body -> secondary/label
+
+```kotlin
+// ✅ Correct
+Text(text = description, style = AppTextStyles.bodySecondary, color = AppColors.textSecondary)
+
+// ❌ Wrong
+Text(text = description, style = TextStyle(fontSize = 13.sp, lineHeight = 20.sp))
+```
+
 ## Navigation
 
 `NavigationUseCase` (Koin singleton) is the cross-VM navigation bridge — inject it and call

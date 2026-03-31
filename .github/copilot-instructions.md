@@ -14,6 +14,55 @@ userData.username.isNotBlank() && userData.age.isNotBlank() && userData.gender.i
 
 ---
 
+## Color And Typography Rules
+
+### 1. Single source of truth for colors: `AppColorPalette`
+
+All theme colors must be defined in `composeBase/.../theme/AppColors.kt` inside `lightPalette` and
+`darkPalette`. Do not define extra `Color(...)` values in screens, components, or ViewModels.
+
+```kotlin
+// ✅ Correct
+color = AppColors.primary
+
+// ❌ Wrong
+color = Color(0xFFECA73B)
+```
+
+### 2. Material components should use theme defaults
+
+Prefer Material3 default colors from `MaterialTheme.colorScheme` (already derived from
+`AppColorPalette`) for `Button`, `Card`, `TopAppBar`, `LinearProgressIndicator`, etc. Only override
+component colors when there is a strict design requirement.
+
+### 3. Text colors use semantic tokens
+
+For text color assignments, use semantic tokens from `AppColors` (`textPrimary`, `textSecondary`,
+`primary`, `error`) instead of hardcoded colors.
+
+### 4. Typography uses `AppTextStyles`
+
+Avoid inline `TextStyle(...)` in screen code. Use centralized styles from
+`composeBase/.../theme/AppTextStyles.kt`.
+
+```kotlin
+// ✅ Correct
+Text(text = title, style = AppTextStyles.titleLarge, color = AppColors.textPrimary)
+
+// ❌ Wrong
+Text(text = title, style = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.Bold))
+```
+
+### 5. No direct color or font literals in UI layers
+
+In Compose screens and shared views:
+
+- do not use `Color(...)` literals
+- do not use arbitrary inline `fontSize`, `lineHeight`, or `fontWeight`
+- use `AppColors` and `AppTextStyles` only
+
+---
+
 ## Error Handling Rules
 
 ### 1. Repository suspend functions must return `Result<T>` — never throw
