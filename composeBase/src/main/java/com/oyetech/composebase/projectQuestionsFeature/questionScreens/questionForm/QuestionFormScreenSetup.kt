@@ -5,22 +5,24 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -34,12 +36,14 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -48,6 +52,8 @@ import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListWithParamsContent
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
+import com.oyetech.composebase.projectQuestionsFeature.theme.appColors
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import kotlinx.coroutines.flow.collectLatest
@@ -120,40 +126,49 @@ fun QuestionFormScreen(
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     onEvent: (QuestionFormEvent) -> Unit = {},
 ) {
+    val appColors = MaterialTheme.appColors
+
     Scaffold(
+        containerColor = appColors.background,
         topBar = {
             TopAppBar(
-                title = { Text("Question Form") },
+                title = {
+                    Text(
+                        text = "Question Form",
+                        style = AppTextStyles.titleSmall,
+                        color = appColors.textPrimary,
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = { onEvent(QuestionFormEvent.OnBackPressed) }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = "Back",
+                            tint = appColors.textPrimary,
+                        )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = appColors.background,
+                ),
             )
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
         when {
-            uiState.isLoading -> {
-                LoadingScreenFullSize()
-            }
+            uiState.isLoading -> LoadingScreenFullSize()
+            uiState.isError -> ErrorScreenFullSize(
+                errorText = uiState.errorText,
+                onRetry = { onEvent(QuestionFormEvent.OnErrorDismiss) },
+            )
 
-            uiState.isError -> {
-                ErrorScreenFullSize(
-                    errorText = uiState.errorText,
-                    onRetry = { onEvent(QuestionFormEvent.OnErrorDismiss) }
-                )
-            }
-
-            else -> {
-                QuestionFormContent(
-                    uiState = uiState,
-                    listUiState = listUiState,
-                    onQuestionEvent = onQuestionEvent,
-                    onEvent = onEvent,
-                    modifier = Modifier.padding(paddingValues)
-                )
-            }
+            else -> QuestionFormContent(
+                uiState = uiState,
+                listUiState = listUiState,
+                onQuestionEvent = onQuestionEvent,
+                onEvent = onEvent,
+                modifier = Modifier.padding(paddingValues),
+            )
         }
     }
 }
@@ -170,10 +185,12 @@ private fun QuestionFormContent(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.appColors.background),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(bottom = 32.dp),
     ) {
-        // Title Section
         item {
             FormTitleSection(
                 title = uiState.title,
@@ -181,27 +198,25 @@ private fun QuestionFormContent(
                 isLocked = uiState.isLocked,
                 submittedAt = uiState.submittedAt,
                 isGeneratingResult = uiState.isGeneratingResult,
-                generatedResultText = uiState.generatedResultText
+                generatedResultText = uiState.generatedResultText,
             )
         }
 
-        // Progress Indicator
         if (!uiState.isLocked) {
             item {
                 ProgressSection(
                     answeredCount = uiState.answeredCount,
-                    totalCount = uiState.totalCount
+                    totalCount = uiState.totalCount,
                 )
             }
         }
 
-        // Questions Catalog
         item {
             Text(
                 text = "Questions",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                style = AppTextStyles.titleSmall,
+                color = MaterialTheme.appColors.textSecondary,
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp),
             )
         }
 
@@ -212,22 +227,16 @@ private fun QuestionFormContent(
                     .height(300.dp),
                 contentPadding = PaddingValues(horizontal = 0.dp),
                 listViewState = listUiState,
-                onQuestionEvent = onQuestionEvent
+                onQuestionEvent = onQuestionEvent,
             )
         }
 
-        // Submit/Edit Buttons
         item {
             FormActionButtons(
                 canSubmit = uiState.canSubmit,
                 isLocked = uiState.isLocked,
                 onSubmit = { onEvent(QuestionFormEvent.OnSubmitForm) },
             )
-        }
-
-        // Bottom spacing
-        item {
-            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
@@ -245,101 +254,116 @@ private fun FormTitleSection(
     generatedResultText: String = "",
     modifier: Modifier = Modifier,
 ) {
+    val appColors = MaterialTheme.appColors
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(horizontal = 20.dp)
+            .padding(top = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Card(
-            modifier = modifier
-                .fillMaxWidth(),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            modifier = modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = appColors.surface),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold
-                )
-
                 if (isLocked && submittedAt != null) {
-                    Spacer(modifier = Modifier.height(8.dp))
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
                     ) {
-                        Icon(
-                            Icons.Default.Check,
-                            contentDescription = "Submitted",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(20.dp)
-                        )
+                        Box(
+                            modifier = Modifier
+                                .size(20.dp)
+                                .clip(RoundedCornerShape(50))
+                                .background(appColors.primary),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Icon(
+                                Icons.Default.Check,
+                                contentDescription = "Submitted",
+                                tint = appColors.onPrimary,
+                                modifier = Modifier.size(12.dp),
+                            )
+                        }
                         Text(
                             text = "Submitted",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold
+                            style = AppTextStyles.label,
+                            color = appColors.primary,
+                            fontWeight = FontWeight.SemiBold,
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = description,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    text = title,
+                    style = AppTextStyles.titleLarge,
+                    color = appColors.textPrimary,
                 )
+
+                if (description.isNotBlank()) {
+                    Text(
+                        text = description,
+                        style = AppTextStyles.body,
+                        color = appColors.textSecondary,
+                    )
+                }
             }
         }
 
         if (isGeneratingResult || generatedResultText.isNotBlank()) {
-            Spacer(modifier = Modifier.height(8.dp))
             Card(
-                modifier = modifier
-                    .fillMaxWidth(),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                modifier = modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = appColors.surfaceVariant),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     Text(
                         text = "AI Değerlendirme",
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        style = AppTextStyles.titleSmall,
+                        color = appColors.primary,
                     )
-                    Spacer(modifier = Modifier.height(12.dp))
 
                     if (isGeneratingResult) {
                         Box(
                             modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center
+                            contentAlignment = Alignment.Center,
                         ) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                                verticalArrangement = Arrangement.spacedBy(10.dp),
                             ) {
                                 CircularProgressIndicator(
-                                    modifier = Modifier.size(40.dp)
+                                    modifier = Modifier.size(32.dp),
+                                    color = appColors.primary,
+                                    strokeWidth = 2.dp,
                                 )
                                 Text(
                                     text = "Yanıtlarınız analiz ediliyor...",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    style = AppTextStyles.bodySecondary,
+                                    color = appColors.textSecondary,
                                 )
                             }
                         }
                     } else {
                         Text(
                             text = generatedResultText,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            style = AppTextStyles.body,
+                            color = appColors.textPrimary,
                         )
                     }
                 }
@@ -357,40 +381,42 @@ private fun ProgressSection(
     totalCount: Int,
     modifier: Modifier = Modifier,
 ) {
-    Card(
+    val appColors = MaterialTheme.appColors
+    val progress = if (totalCount > 0) answeredCount.toFloat() / totalCount else 0f
+
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
+            .padding(horizontal = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Progress",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "$answeredCount / $totalCount",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            LinearProgressIndicator(
-                progress = if (totalCount > 0) answeredCount.toFloat() / totalCount else 0f,
-                modifier = Modifier.fillMaxWidth()
+            Text(
+                text = "Progress",
+                style = AppTextStyles.label,
+                color = appColors.textSecondary,
+            )
+            Text(
+                text = "$answeredCount / $totalCount",
+                style = AppTextStyles.label,
+                color = if (progress >= 1f) appColors.primary else appColors.textSecondary,
+                fontWeight = FontWeight.SemiBold,
             )
         }
+
+        LinearProgressIndicator(
+            progress = { progress },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(3.dp)
+                .clip(RoundedCornerShape(50)),
+            color = appColors.primary,
+            trackColor = appColors.border,
+        )
     }
 }
 
@@ -404,23 +430,33 @@ private fun FormActionButtons(
     onSubmit: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
+    val appColors = MaterialTheme.appColors
+
+    AnimatedVisibility(
+        visible = !isLocked,
+        enter = fadeIn() + expandVertically(),
+        exit = fadeOut() + shrinkVertically(),
         modifier = modifier
             .fillMaxWidth()
-            .padding(0.dp),
+            .padding(horizontal = 20.dp),
     ) {
-        AnimatedVisibility(
-            visible = !isLocked,
-            enter = fadeIn() + expandVertically(),
-            exit = fadeOut() + shrinkVertically()
+        Button(
+            onClick = onSubmit,
+            enabled = canSubmit,
+            shape = RoundedCornerShape(14.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = appColors.primary,
+                contentColor = appColors.onPrimary,
+                disabledContainerColor = appColors.disabled,
+                disabledContentColor = appColors.onPrimary.copy(alpha = 0.5f),
+            ),
+            contentPadding = PaddingValues(vertical = 16.dp),
+            modifier = Modifier.fillMaxWidth(),
         ) {
-            Button(
-                onClick = onSubmit,
-                enabled = canSubmit,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Submit Form")
-            }
+            Text(
+                text = "Submit Form",
+                style = AppTextStyles.button,
+            )
         }
     }
 }

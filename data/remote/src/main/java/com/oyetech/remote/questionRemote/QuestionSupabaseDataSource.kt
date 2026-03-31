@@ -6,7 +6,6 @@ import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import com.oyetech.models.questionProject.questionOperation.DeleteAccountResponse
 import com.oyetech.models.questionProject.questionOperation.DeleteAnswerRequest
 import com.oyetech.models.questionProject.questionOperation.GenerateFormResultRequest
-import com.oyetech.models.questionProject.questionOperation.GenerateFormResultResponse
 import com.oyetech.models.questionProject.questionOperation.GetCatalogListRequest
 import com.oyetech.models.questionProject.questionOperation.GetCatalogListResponse
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
@@ -127,7 +126,7 @@ class QuestionSupabaseDataSource(private val questionSupabaseApi: QuestionSupaba
         prompt: String,
         notificationToken: String?,
         token: String?,
-    ): Flow<GenerateFormResultResponse> {
+    ): Flow<SubmitCatalogResponse> {
         return interceptGenericResponseTrueForm {
             val request = GenerateFormResultRequest(
                 formId = formId,

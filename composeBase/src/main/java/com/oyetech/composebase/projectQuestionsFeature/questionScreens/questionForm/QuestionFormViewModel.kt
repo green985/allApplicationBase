@@ -306,7 +306,7 @@ class QuestionFormViewModel(
                         _uiState.update { state ->
                             state.copy(
                                 isGeneratingResult = false,
-                                generatedResultText = resp.resultText ?: ""
+                                generatedResultText = resp.chatGptResult?.resultText ?: ""
                             )
                         }
                     },
