@@ -9,11 +9,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import com.oyetech.models.questionProject.questionOperation.QuestionTagCatalog
 
 @Composable
@@ -31,7 +31,7 @@ fun QuestionTagsAreaContainer(
         if (isCreateQuestion) {
             Text(
                 text = "Tags",
-                style = MaterialTheme.typography.labelLarge,
+                style = AppTextStyles.label,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
             )
         }

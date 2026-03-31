@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -28,6 +27,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.R
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
 import com.oyetech.composebase.helpers.dragableViews.DragAnchors.End
 import com.oyetech.composebase.helpers.dragableViews.DragAnchors.Half
 import com.oyetech.composebase.helpers.dragableViews.DragAnchors.OneQuarter
@@ -217,7 +217,7 @@ fun DraggableContent(
         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .background(color = MaterialTheme.colorScheme.error)
+            .background(color = AppColors.error)
     ) {
         Image(
             painter = painterResource(id = R.drawable.ic_android_black_24dp),

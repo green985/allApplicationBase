@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailUiState
 import com.oyetech.models.firebaseModels.messagingModels.MessageStatus
 
@@ -44,8 +44,7 @@ fun MessageDetailItemView(
                 bottomEnd = 16.dp
             ),
             colors = CardDefaults.cardColors(
-                containerColor = if (isCurrentUser) MaterialTheme.colorScheme.primary
-                else MaterialTheme.colorScheme.surfaceVariant
+                containerColor = if (isCurrentUser) AppColors.primary else AppColors.surfaceVariant,
             ),
             modifier = Modifier
                 .widthIn(min = 60.dp, max = 280.dp)
@@ -57,7 +56,7 @@ fun MessageDetailItemView(
                 Text(
                     text = uiState.content,
                     fontSize = 16.sp,
-                    color = if (isCurrentUser) Color.White else Color.Black
+                    color = if (isCurrentUser) AppColors.textOnPrimary else AppColors.textPrimary,
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -69,7 +68,8 @@ fun MessageDetailItemView(
                     Text(
                         text = uiState.createdAtString,
                         fontSize = 12.sp,
-                        color = if (isCurrentUser) Color.White.copy(alpha = 0.7f) else Color.Gray
+                        color = if (isCurrentUser) AppColors.textOnPrimary.copy(alpha = 0.7f)
+                        else AppColors.textSecondary,
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     MessageStatusIcon(uiState.status)
@@ -95,8 +95,8 @@ private fun MessageStatusIcon(status: MessageStatus) {
         fontSize = 12.sp,
         fontWeight = FontWeight.Bold,
         color = when (status) {
-            MessageStatus.READ -> Color.Blue
-            else -> Color.Gray
+            MessageStatus.READ -> AppColors.primary
+            else -> AppColors.textSecondary
         }
     )
 }

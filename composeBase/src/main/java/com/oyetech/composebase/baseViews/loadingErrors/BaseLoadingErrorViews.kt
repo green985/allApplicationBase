@@ -20,7 +20,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -31,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.helpers.ProjectUtil
 import com.oyetech.composebase.helpers.errorHelper.toErrorMessage
 import com.oyetech.composebase.helpers.viewProperties.DialogHelper
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 
 /**
 Created by Erdi Özbek
@@ -43,14 +44,14 @@ fun LoadingScreenFullSize(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background.copy(alpha = ProjectUtil.loadingBackgroudAlpha))
+            .background(AppColors.background.copy(alpha = ProjectUtil.loadingBackgroudAlpha))
             .clickable(
                 enabled = false,
                 onClick = {}
             ), // Kullanıcı aksiyonlarını bloklamak için
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator(color = MaterialTheme.colorScheme.onBackground)
+        CircularProgressIndicator(color = AppColors.textPrimary)
     }
 }
 
@@ -63,14 +64,14 @@ fun PagingMoreError(errorMessage: String = "Loading Error", onRetry: () -> Unit 
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
-            .background(color = MaterialTheme.colorScheme.secondary),
+            .background(color = AppColors.surfaceVariant),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            style = MaterialTheme.typography.titleMedium,
+            style = AppTextStyles.titleMedium,
             text = errorMessage.toErrorMessage(),
-            color = MaterialTheme.colorScheme.onErrorContainer
+            color = AppColors.error,
         )
         Spacer(modifier = Modifier.height(8.dp))
         IconButton(onClick = onRetry) {
@@ -78,7 +79,7 @@ fun PagingMoreError(errorMessage: String = "Loading Error", onRetry: () -> Unit 
                 modifier = Modifier.size(40.dp),
                 imageVector = Icons.Default.Refresh,
                 contentDescription = "Retry",
-                tint = MaterialTheme.colorScheme.onErrorContainer
+                tint = AppColors.error,
             )
         }
     }
@@ -92,7 +93,7 @@ fun PagingMoreLoading() {
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
-            .background(MaterialTheme.colorScheme.background.copy(alpha = ProjectUtil.loadingBackgroudAlpha))
+            .background(AppColors.background.copy(alpha = ProjectUtil.loadingBackgroudAlpha))
             .verticalScroll(rememberScrollState())
             .clickable(
                 enabled = false,
@@ -100,7 +101,7 @@ fun PagingMoreLoading() {
             ), // Kullanıcı aksiyonlarını bloklamak için
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
+        CircularProgressIndicator(color = AppColors.textPrimary)
     }
 }
 
@@ -115,10 +116,10 @@ fun LoadingDialogFullScreen() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background.copy(alpha = ProjectUtil.loadingBackgroudAlpha)),
+                .background(AppColors.background.copy(alpha = ProjectUtil.loadingBackgroudAlpha)),
             contentAlignment = Alignment.Center,
         ) {
-            CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
+            CircularProgressIndicator(color = AppColors.textPrimary)
         }
     }
 }
@@ -138,7 +139,7 @@ fun ErrorDialogFullScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background.copy(alpha = ProjectUtil.backgroudAlpha)),
+                .background(AppColors.background.copy(alpha = ProjectUtil.backgroudAlpha)),
             contentAlignment = Alignment.Center
         ) {
             Column(
@@ -149,8 +150,8 @@ fun ErrorDialogFullScreen(
                     Text(
                         textAlign = TextAlign.Center,
                         text = errorMessage.toErrorMessage(),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.error
+                        style = AppTextStyles.titleLarge,
+                        color = AppColors.error,
                     )
                 }
                 if (onDismiss != null) {
@@ -186,7 +187,7 @@ fun ErrorScreenFullSize(
         modifier = modifier
             .fillMaxSize()
             .background(
-                MaterialTheme.colorScheme.background.copy(
+                AppColors.background.copy(
                     alpha = if (withoutAlpha) 1f else ProjectUtil.backgroudAlpha
                 )
             ),
@@ -195,8 +196,8 @@ fun ErrorScreenFullSize(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = errorText.toErrorMessage(),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.error
+                style = AppTextStyles.titleLarge,
+                color = AppColors.error,
             )
             if (onDismiss != null) {
                 Spacer(modifier = Modifier.height(64.dp))

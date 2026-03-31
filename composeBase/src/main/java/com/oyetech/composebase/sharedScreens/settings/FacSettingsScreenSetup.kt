@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -23,6 +22,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.helpers.general.GeneralSettings
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.questionForm.questionFormList.QuestionFormListScreenSetup
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import com.oyetech.composebase.sharedViews.settings.SimpleSettingsInfoViewSetup
 import com.oyetech.languageModule.keyset.LanguageKey
 import org.koin.androidx.compose.koinViewModel
@@ -81,7 +82,7 @@ fun FacSettingsScreen(
                     .fillMaxWidth()
                     .padding(12.dp),
                 text = toolbarTitle,
-                style = MaterialTheme.typography.titleLarge
+                style = AppTextStyles.titleLarge,
             )
         })
     }) {
@@ -136,15 +137,15 @@ fun FacSettingsScreen(
                 ) {
                     Text(
                         text = LanguageKey.usernameInfoText,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
+                        style = AppTextStyles.body,
+                        color = AppColors.primary,
                         fontSize = 20.sp
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = uiState.username,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
+                        style = AppTextStyles.body,
+                        color = AppColors.primary,
                         fontSize = 20.sp
                     )
                     Spacer(modifier = Modifier.height(8.dp))

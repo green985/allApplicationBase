@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import com.oyetech.composebase.projectQuestionsFeature.theme.QuestionProjectViewAttrs
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.questionProject.questionOperation.QuestionOptionCatalog
@@ -64,7 +65,7 @@ private fun YesNoQuestionContent(
         Column(
             modifier = modifier
                 .padding(QuestionProjectViewAttrs.spacingSm)
-                .background(MaterialTheme.colorScheme.background)
+                .background(AppColors.background)
         ) {
             Row(
                 modifier = Modifier
@@ -73,7 +74,7 @@ private fun YesNoQuestionContent(
             ) {
                 Text(
                     modifier = Modifier.testTag("titleText"),
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = AppTextStyles.body,
                     text = uiState.titleText.ifBlank { LanguageKey.untitledQuestionText }
                 )
             }
@@ -137,7 +138,7 @@ fun CreateQuestionYesNoView(
         Column(
             modifier = modifier
                 .padding(QuestionProjectViewAttrs.spacingSm)
-                .background(MaterialTheme.colorScheme.background)
+                .background(AppColors.background)
         ) {
             SpacerSmall()
             // Only titleText is editable

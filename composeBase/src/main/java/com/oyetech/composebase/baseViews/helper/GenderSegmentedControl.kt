@@ -5,12 +5,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.oyetech.composebase.helpers.ProjectUtil
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
@@ -27,8 +27,8 @@ fun GenderSegmentedControl(selectedGender: String, onGenderSelected: (String) ->
             Button(
                 onClick = { onGenderSelected(gender) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (selectedGender == gender) MaterialTheme.colorScheme.primary
-                    else MaterialTheme.colorScheme.secondaryContainer
+                    containerColor = if (selectedGender == gender) AppColors.primary
+                    else AppColors.surfaceVariant
                 )
             ) {
                 Text(text = gender.replaceFirstChar { it.uppercase() })

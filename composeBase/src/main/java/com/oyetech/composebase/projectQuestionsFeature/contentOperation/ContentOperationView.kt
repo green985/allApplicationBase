@@ -8,7 +8,6 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingDialogFullScreen
 import com.oyetech.composebase.projectQuestionsFeature.contentOperation.ContentOperationEvent.LikeContent
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
 
 /**
 Created by Erdi Özbek
@@ -51,7 +51,7 @@ fun ContentOperationView(
                     },
                     contentDescription = null,
                     tint = if (contentOperationUiState.isInitialed) {
-                        MaterialTheme.colorScheme.primary
+                        AppColors.primary
                     } else {
                         LocalContentColor.current
                     }

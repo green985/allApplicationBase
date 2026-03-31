@@ -61,6 +61,26 @@ In Compose screens and shared views:
 - do not use arbitrary inline `fontSize`, `lineHeight`, or `fontWeight`
 - use `AppColors` and `AppTextStyles` only
 
+### 6. Spacing and shape tokens are mandatory
+
+Use centralized tokens from `composeBase/.../theme/AppDimensions.kt`:
+
+- spacing: `AppSpacing.*` (`xs`, `sm`, `md`, `lg`, `xl`, etc.)
+- radius values: `AppCornerRadius.*`
+- ready shapes: `AppShapes.*` (`roundedSmall`, `roundedMedium`, `roundedLarge`, `roundedPill`)
+
+```kotlin
+// ✅ Correct
+Modifier.padding(AppSpacing.lg)
+Card(shape = AppShapes.roundedLarge) { ... }
+
+// ❌ Wrong
+Modifier.padding(16.dp)
+Card(shape = RoundedCornerShape(16.dp)) { ... }
+```
+
+When a custom shape is unavoidable, compose it from `AppCornerRadius.*` values instead of raw `dp`.
+
 ---
 
 ## Error Handling Rules

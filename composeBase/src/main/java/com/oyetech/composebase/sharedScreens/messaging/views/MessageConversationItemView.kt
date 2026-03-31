@@ -11,13 +11,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import com.oyetech.composebase.sharedScreens.messaging.MessageConversationUiState
 import com.oyetech.composebase.sharedScreens.messaging.getDummyMessageDetailUiState
 
@@ -52,15 +53,15 @@ fun MessageConversationItemView(
             Column(verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center) {
                 Text(
                     text = uiState.username,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary
+                    style = AppTextStyles.titleMedium,
+                    color = AppColors.primary,
                 )
                 Spacer(modifier = Modifier.size(8.dp))
                 if (uiState.lastMessageUiState?.content?.isNotBlank() == true) {
                     Text(
                         text = "".plus(uiState.lastMessageUiState.content),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.secondary
+                        style = AppTextStyles.body,
+                        color = AppColors.textSecondary,
                     )
                 }
             }
@@ -71,8 +72,8 @@ fun MessageConversationItemView(
                 .align(Alignment.BottomEnd)
                 .padding(8.dp),
             text = uiState.lastMessageCreatedAtString,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.secondary
+            style = AppTextStyles.bodySecondary,
+            color = AppColors.textSecondary,
         )
 
         HorizontalDivider(

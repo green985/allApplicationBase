@@ -3,7 +3,6 @@ package com.oyetech.composebase.baseViews.helper
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -11,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 
 /**
 Created by Erdi Özbek
@@ -37,7 +37,7 @@ fun <T> GenericPopupMenu(
                 DropdownMenuItem(
                     text = {
                         Text(
-                            style = MaterialTheme.typography.bodyMedium,
+                            style = AppTextStyles.body,
                             text = itemLabel(item)
                         )
                     },

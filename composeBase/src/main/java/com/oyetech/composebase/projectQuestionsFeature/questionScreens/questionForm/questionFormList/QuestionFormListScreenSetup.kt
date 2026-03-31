@@ -20,7 +20,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,6 +30,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import kotlinx.collections.immutable.ImmutableList
 import org.koin.androidx.compose.koinViewModel
 
@@ -81,8 +82,8 @@ fun QuestionFormListScreen(
                 ) {
                     Text(
                         text = "Katalog bulunamadı",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = AppTextStyles.body,
+                        color = AppColors.textSecondary,
                         modifier = Modifier.clickable(
                             enabled = true,
                             onClick = { onRefresh("") }
@@ -123,11 +124,11 @@ private fun CatalogItemCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (catalog.isCompleted) {
-                MaterialTheme.colorScheme.primaryContainer
+                AppColors.primaryMuted
             } else {
-                MaterialTheme.colorScheme.surface
+                AppColors.surface
             }
-        )
+        ),
     ) {
         Column(
             modifier = Modifier
@@ -140,7 +141,7 @@ private fun CatalogItemCard(
             ) {
                 Text(
                     text = catalog.title,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = AppTextStyles.titleMedium,
                     fontWeight = FontWeight.Bold,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis
@@ -150,8 +151,8 @@ private fun CatalogItemCard(
 
                 Text(
                     text = catalog.formId,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = AppTextStyles.bodySecondary,
+                    color = AppColors.textSecondary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -161,8 +162,8 @@ private fun CatalogItemCard(
                     } else {
                         "   bos"
                     },
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = AppTextStyles.bodySecondary,
+                    color = AppColors.textSecondary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -171,7 +172,7 @@ private fun CatalogItemCard(
             if (catalog.isCompleted) {
                 Card(
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primary
+                        containerColor = AppColors.primary,
                     )
                 ) {
                     Column(
@@ -184,14 +185,14 @@ private fun CatalogItemCard(
                         Icon(
                             Icons.Default.Check,
                             contentDescription = "Tamamlandı",
-                            tint = MaterialTheme.colorScheme.onPrimary,
+                            tint = AppColors.onPrimary,
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = "Tamamlandı",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onPrimary,
+                            style = AppTextStyles.label,
+                            color = AppColors.onPrimary,
                             fontWeight = FontWeight.Bold
                         )
                     }

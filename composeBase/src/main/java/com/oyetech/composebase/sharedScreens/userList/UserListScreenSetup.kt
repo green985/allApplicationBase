@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -22,6 +21,7 @@ import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import com.oyetech.composebase.sharedScreens.userList.item.UserListItemUiState
 import com.oyetech.composebase.sharedScreens.userList.item.UserListItemView
 import com.oyetech.languageModule.keyset.LanguageKey
@@ -71,7 +71,7 @@ fun UserListScreen(
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         text = LanguageKey.userFeedListTitle,
-                        style = MaterialTheme.typography.headlineSmall
+                        style = AppTextStyles.titleLarge,
                     )
                 }
             )

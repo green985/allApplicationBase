@@ -91,6 +91,27 @@ Text(text = description, style = AppTextStyles.bodySecondary, color = AppColors.
 Text(text = description, style = TextStyle(fontSize = 13.sp, lineHeight = 20.sp))
 ```
 
+### Spacing and shape rules
+
+- Single source of truth: `composeBase/.../theme/AppDimensions.kt`
+- Use `AppSpacing.*` for paddings, gaps, and sizes (`xs`, `sm`, `md`, `lg`, `xl`, ...)
+- Use `AppShapes.*` for component shapes (`roundedSmall`, `roundedMedium`, `roundedLarge`, `roundedPill`)
+- If you must build a custom `RoundedCornerShape`, use `AppCornerRadius.*` tokens
+- Do **not** use raw `dp` literals for spacing/radius in screen code unless there is a strict exception
+
+```kotlin
+// ✅ Correct
+Modifier.padding(AppSpacing.lg)
+Card(shape = AppShapes.roundedLarge) { ... }
+
+// ✅ Acceptable custom shape with tokens
+RoundedCornerShape(AppCornerRadius.small)
+
+// ❌ Wrong
+Modifier.padding(16.dp)
+RoundedCornerShape(16.dp)
+```
+
 ## Navigation
 
 `NavigationUseCase` (Koin singleton) is the cross-VM navigation bridge — inject it and call

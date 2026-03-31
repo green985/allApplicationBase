@@ -24,7 +24,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -48,6 +47,8 @@ import com.oyetech.composebase.baseViews.dotIndicator.DotsIndicatorSmallAnim
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListWithParamsScreenSetup
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import com.oyetech.composebase.sharedScreens.userProfile.views.ProfileBiographyInputArea
 import com.oyetech.composebase.sharedViews.app.ApplicationLogoPlaceholder
 import com.oyetech.languageModule.keyset.LanguageKey
@@ -102,7 +103,7 @@ fun User2ProfileScreen(
                 Text(
                     text = if (uiState.isNotLogin) LanguageKey.userProfile else uiState.username,
                     modifier = Modifier.padding(start = 16.dp),
-                    style = MaterialTheme.typography.headlineSmall
+                    style = AppTextStyles.titleLarge,
                 )
             },
             actions = {
@@ -164,7 +165,7 @@ private fun NotLoginFromTabContent(
 ) {
     Box(
         modifier = modifier
-            .background(MaterialTheme.colorScheme.error.copy(alpha = 0.2f)),
+            .background(AppColors.error.copy(alpha = 0.2f)),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -173,8 +174,8 @@ private fun NotLoginFromTabContent(
         ) {
             Text(
                 text = "Please login to view your profile",
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.error,
+                style = AppTextStyles.titleLarge,
+                color = AppColors.error,
                 modifier = Modifier.padding(16.dp)
             )
         }
@@ -193,7 +194,7 @@ private fun LoginRequiredContent(
     ) {
         Text(
             text = LanguageKey.loginToViewProfile,
-            style = MaterialTheme.typography.headlineSmall,
+            style = AppTextStyles.titleLarge,
             modifier = Modifier.padding(16.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -330,7 +331,7 @@ private fun UserImageListView(
         if (imageList.isEmpty()) {
             Box(
                 modifier = boxModifier
-                    .background(MaterialTheme.colorScheme.onError)
+                    .background(AppColors.surfaceVariant)
             )
         } else {
             Column(
@@ -347,7 +348,7 @@ private fun UserImageListView(
                             Modifier
                                 .fillMaxSize()
                                 .background(
-                                    MaterialTheme.colorScheme.onError
+                                    AppColors.surfaceVariant
                                 )
                         )
                     } else {
@@ -365,7 +366,7 @@ private fun UserImageListView(
                                             .fillMaxSize(),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        CircularProgressIndicator(color = MaterialTheme.colorScheme.onBackground)
+                                        CircularProgressIndicator(color = AppColors.textPrimary)
                                     }
                                 }
                                 // painter also comes from GlideSubcompositionScope

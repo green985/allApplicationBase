@@ -10,10 +10,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -28,6 +26,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppShapes
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import org.koin.compose.koinInject
 import kotlin.random.Random
 
@@ -58,13 +59,13 @@ fun LoginOperationQuickScreen(
             ) {
                 Text(
                     text = "Auto Create User",
-                    style = MaterialTheme.typography.titleMedium
+                    style = AppTextStyles.titleMedium,
                 )
                 Text(
                     text = "✕",
                     modifier = Modifier.clickable { isVisible = false; onDismiss() },
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.Red
+                    style = AppTextStyles.titleMedium,
+                    color = AppColors.error,
                 )
             }
 
@@ -81,7 +82,7 @@ fun LoginOperationQuickScreen(
                         )
                     }
                 },
-                shape = RoundedCornerShape(12.dp),
+                shape = AppShapes.roundedMedium,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Otomatik Kullanıcı Oluştur")

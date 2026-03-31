@@ -1,11 +1,11 @@
 package com.oyetech.composebase.sharedViews.dialogs
 
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 
 @Composable
 fun DeleteAccountInfoDialog(
@@ -17,13 +17,13 @@ fun DeleteAccountInfoDialog(
         title = {
             Text(
                 text = LanguageKey.deleteAccountButtonText,
-                style = MaterialTheme.typography.titleLarge
+                style = AppTextStyles.titleLarge,
             )
         },
         text = {
             Text(
                 text = LanguageKey.deleteDialogInfo,
-                style = MaterialTheme.typography.bodyMedium
+                style = AppTextStyles.body,
             )
         },
         confirmButton = {

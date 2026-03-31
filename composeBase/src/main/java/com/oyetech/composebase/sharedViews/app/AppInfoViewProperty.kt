@@ -5,7 +5,6 @@ import android.os.Build
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -13,6 +12,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.dp
 import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 
 @Composable
 fun AppInfoViewProperty() {
@@ -20,8 +21,8 @@ fun AppInfoViewProperty() {
         Column {
             Text(
                 text = LanguageKey.appName,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
+                style = AppTextStyles.titleMedium,
+                color = AppColors.primary,
             )
         }
     }
@@ -47,15 +48,15 @@ fun AppInfoViewProperty() {
     Column {
         Text(
             text = LanguageKey.appName,
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.primary
+            style = AppTextStyles.titleMedium,
+            color = AppColors.primary,
         )
         if (versionName.isNotBlank()) {
             Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = "v$versionName",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onBackground
+                style = AppTextStyles.bodySecondary,
+                color = AppColors.textPrimary,
             )
         }
     }

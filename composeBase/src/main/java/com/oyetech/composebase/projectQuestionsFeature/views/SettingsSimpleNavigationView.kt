@@ -9,12 +9,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons.AutoMirrored.Filled
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import com.oyetech.composebase.projectQuestionsFeature.theme.QuestionProjectViewAttrs
 
 /**
@@ -33,20 +34,20 @@ fun SettingsSimpleNavigationView(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surface)
+            .background(AppColors.surface)
             .padding(QuestionProjectViewAttrs.paddingTitleRow)
     ) {
 
         Text(
             modifier = Modifier.align(Alignment.CenterVertically),
             text = settingsTitleName,
-            style = MaterialTheme.typography.titleLarge,
+            style = AppTextStyles.titleLarge,
         )
         Spacer(modifier = Modifier.weight(1f))
 
         Icon(
             imageVector = Filled.KeyboardArrowRight,
-            tint = MaterialTheme.colorScheme.onSurface,
+            tint = AppColors.textPrimary,
             contentDescription = "Settings",
             modifier = Modifier.clickable { onClick.invoke() }
         )

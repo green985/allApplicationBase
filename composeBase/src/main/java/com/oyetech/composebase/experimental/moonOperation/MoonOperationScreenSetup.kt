@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.base.BaseScaffold
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.abs
 
@@ -79,14 +79,14 @@ fun MoonOperationScreen(
                 } else {
                     Text(
                         text = uiState.moonName,
-                        style = MaterialTheme.typography.headlineSmall
+                        style = AppTextStyles.titleLarge,
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
                         text = "Faz: ${uiState.phaseName}",
-                        style = MaterialTheme.typography.titleMedium
+                        style = AppTextStyles.titleMedium,
                     )
 
                     uiState.illuminationPercent?.let {

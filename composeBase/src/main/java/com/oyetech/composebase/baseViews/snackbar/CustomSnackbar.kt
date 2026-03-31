@@ -3,7 +3,6 @@ package com.oyetech.composebase.baseViews.snackbar
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -13,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import timber.log.Timber
 
 @Composable
@@ -31,7 +32,7 @@ fun DefaultSnackbar(
                     Timber.d("Snackbar message: ${data.visuals.message}")
                     Text(
                         text = data.visuals.message,
-                        style = MaterialTheme.typography.bodyMedium
+                        style = AppTextStyles.body
                     )
                 },
                 action = {
@@ -39,8 +40,8 @@ fun DefaultSnackbar(
                         TextButton(onClick = onDismiss) {
                             Text(
                                 text = actionLabel,
-                                color = MaterialTheme.colorScheme.primary,
-                                style = MaterialTheme.typography.bodyMedium
+                                color = AppColors.primary,
+                                style = AppTextStyles.body
                             )
                         }
                     }

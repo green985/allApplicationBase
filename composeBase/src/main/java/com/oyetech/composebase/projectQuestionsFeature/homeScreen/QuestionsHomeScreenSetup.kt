@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -16,6 +15,7 @@ import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationSmallButtonSetup
 import com.oyetech.composebase.projectQuestionsFeature.ScreenKey.toolbarTitle
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
 import org.koin.java.KoinJavaComponent
@@ -35,7 +35,7 @@ fun QuestionsHomeScreenSetup(
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = toolbarTitle,
-                    style = MaterialTheme.typography.titleLarge
+                    style = AppTextStyles.titleLarge,
                 )
             })
         },

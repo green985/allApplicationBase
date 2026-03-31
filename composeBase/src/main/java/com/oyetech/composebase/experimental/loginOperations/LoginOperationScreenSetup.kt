@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -21,6 +20,7 @@ import com.oyetech.composebase.baseViews.loadingErrors.LoadingDialogFullScreen
 import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent
 import com.oyetech.composebase.experimental.authOperation.AuthOperationUiState
 import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import org.koin.compose.koinInject
 import timber.log.Timber
 
@@ -62,7 +62,7 @@ fun LoginOperationSmallButtonSetup() {
             ) {
                 Text(
                     text = "Login",
-                    style = MaterialTheme.typography.labelSmall
+                    style = AppTextStyles.label,
                 )
             }
         }
@@ -77,7 +77,7 @@ fun LoginOperationSmallButtonSetup() {
                 ) {
                     Text(
                         text = if (authUiState.isLoading) "Loading..." else "Login",
-                        style = MaterialTheme.typography.labelSmall
+                        style = AppTextStyles.label,
                     )
                 }
             }

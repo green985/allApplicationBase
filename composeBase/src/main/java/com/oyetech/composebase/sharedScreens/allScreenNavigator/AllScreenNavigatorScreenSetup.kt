@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.helpers.viewProperties.gridItems
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import kotlinx.collections.immutable.toImmutableList
 import org.koin.androidx.compose.koinViewModel
 
@@ -64,7 +64,7 @@ fun AllScreenNavigatorScreenSetup(
                 }) {
                     Text(
                         text = "Question Application Start",
-                        style = MaterialTheme.typography.titleLarge
+                        style = AppTextStyles.titleLarge,
                     )
                 }
             }
@@ -80,8 +80,7 @@ fun AllScreenNavigatorScreenSetup(
 //                    viewModel.onEvent(AllScreenNavigatorEvent.OnNavigateToQuoteStart)
 //                }) {
 //                    Text(
-//                        text = "Quote Application Start",
-//                        style = MaterialTheme.typography.titleLarge
+//                        text = "Quote Application Start"
 //                    )
 //                }
 //            }

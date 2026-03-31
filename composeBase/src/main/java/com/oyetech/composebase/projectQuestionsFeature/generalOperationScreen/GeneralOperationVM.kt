@@ -63,18 +63,8 @@ class GeneralOperationVM(
 
     fun observeRealtimeMessages() {}
 
-    private fun signToUserFeedList() {
-        // todo bug can be happen here when request is sent
-        viewModelScope.launch(getDispatcherIo()) {
-            firebaseUserListOperationRepository.addUserToUserList().asResult()
-                .collectLatest {
-                    Timber.d("User added to user list")
-                }
-        }
-    }
-
     init {
-        messageOperationVM.initFun()
+//        messageOperationVM.initFun()
         sharedHelperRepository.increaseAppOpenCount()
         viewModelScope.launch(getDispatcherIo()) {
             delay(1000)

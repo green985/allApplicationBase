@@ -12,7 +12,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -22,6 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import com.oyetech.composebase.projectQuestionsFeature.theme.QuestionProjectViewAttrs
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.questionProject.questionOperation.QueOption
@@ -43,7 +44,7 @@ fun QuestionViewScaffoldLayout(
         Column(
             modifier = modifier
                 .padding(QuestionProjectViewAttrs.spacingSm)
-                .background(MaterialTheme.colorScheme.background)
+                .background(AppColors.background)
         ) {
             QuestionHeaderContainer(uiState = uiState, onEvent = onEvent)
             QuestionTagsAreaContainer(
@@ -110,7 +111,7 @@ fun QuestionTitleDescriptionContainer(
     ) {
         Text(
             modifier = Modifier.testTag("titleText"),
-            style = MaterialTheme.typography.bodyLarge,
+            style = AppTextStyles.body,
             text = uiState.titleText.ifBlank { LanguageKey.untitledQuestionText }
         )
     }
@@ -345,8 +346,8 @@ private fun QuestionStatusContainer(
     ) {
         Text(
             text = "Status: ${uiState.moderationStatus.name}",
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            style = AppTextStyles.label,
+            color = AppColors.textSecondary,
         )
     }
 }

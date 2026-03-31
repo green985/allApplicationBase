@@ -18,7 +18,6 @@ import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -33,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.base.baseGenericList.GenericListState
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailUiEvent.OnConversationCreated
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailUiEvent.OnMessageIdle
 import com.oyetech.composebase.sharedScreens.messaging.MessageDetailUiEvent.OnNewMessage
@@ -142,7 +142,7 @@ private fun MessageDetailToolbar(messageDetailUiState: MessageDetailScreenUiStat
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = messageDetailUiState.toolbarTitleText,
-                style = MaterialTheme.typography.headlineSmall
+                style = AppTextStyles.titleLarge,
             )
         }
     )

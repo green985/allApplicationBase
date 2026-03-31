@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,9 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import com.oyetech.composebase.projectQuestionsFeature.theme.QuestionProjectViewAttrs
 import com.oyetech.models.questionProject.questionOperation.QuestionCategories
 import com.oyetech.models.questionProject.questionOperation.QuestionOptionCatalog
@@ -82,7 +82,7 @@ fun TwoChoicesSelectorView(
                     }
                 }
 
-                else -> if (isSelected) MaterialTheme.colorScheme.primary else QuestionAnswerColors.Outline
+                else -> if (isSelected) AppColors.primary else QuestionAnswerColors.Outline
             }
 
             val shape = when (index) {
@@ -130,8 +130,7 @@ fun TwoChoicesSelectorView(
                     } else {
                         color
                     },
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
+                    style = AppTextStyles.titleLarge,
                 )
             }
         }

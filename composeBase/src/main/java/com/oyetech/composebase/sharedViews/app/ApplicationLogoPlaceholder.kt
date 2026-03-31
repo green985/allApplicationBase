@@ -8,10 +8,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Android
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -21,6 +19,8 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppShapes
 import com.oyetech.languageModule.keyset.LanguageKey
 
 @Composable
@@ -48,8 +48,8 @@ fun ApplicationLogoPlaceholder() {
         Box(
             modifier = Modifier
                 .size(75.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant),
+                .clip(AppShapes.roundedMedium)
+                .background(AppColors.surfaceVariant),
             contentAlignment = Alignment.Center
         ) {
             if (appIconDrawable != null) {
@@ -62,7 +62,7 @@ fun ApplicationLogoPlaceholder() {
                 androidx.compose.material3.Icon(
                     imageVector = Icons.Default.Android,
                     contentDescription = LanguageKey.appName,
-                    tint = MaterialTheme.colorScheme.onSurface
+                    tint = AppColors.textPrimary,
                 )
             }
         }

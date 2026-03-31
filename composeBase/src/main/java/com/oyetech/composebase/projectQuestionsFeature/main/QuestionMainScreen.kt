@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -13,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppBottomNavigationView
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectBottomNavigationDestinations
 import com.oyetech.composebase.projectQuestionsFeature.navigation.questionAppNavigation
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
 import com.oyetech.composebase.projectQuestionsFeature.theme.RadioAppTheme
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator.navHostScreenSetup
@@ -48,11 +48,12 @@ fun QuestionMainScreen(
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .background(MaterialTheme.colorScheme.background)
+                    .background(AppColors.background)
             ) {
                 NavHost(
                     navController = navController,
-                    startDestination = QuestionAppProjectBottomNavigationDestinations.questionApplicationBottomTabNavList.first().path,
+                    startDestination =
+                    QuestionAppProjectBottomNavigationDestinations.questionApplicationBottomTabNavList.first().path,
                 ) {
                     navHostScreenSetup(navController, navigationUseCase)
                     questionAppNavigation(navController)

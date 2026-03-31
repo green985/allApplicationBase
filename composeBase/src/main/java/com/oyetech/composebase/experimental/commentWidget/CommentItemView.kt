@@ -15,7 +15,6 @@ import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,15 +24,17 @@ import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.baseViews.helper.GenericPopupMenu
 import com.oyetech.composebase.experimental.commentWidget.CommentOptionsEvent.DeleteComment
 import com.oyetech.composebase.experimental.commentWidget.CommentOptionsEvent.ReportComment
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import com.oyetech.languageModule.keyset.LanguageKey
 
 @Composable
 fun CommentItemView(uiState: CommentItemUiState, onEvent: (CommentScreenEvent) -> (Unit)) {
 
     val cardContainerColor = if (uiState.isMine) {
-        MaterialTheme.colorScheme.secondaryContainer
+        AppColors.primaryMuted
     } else {
-        MaterialTheme.colorScheme.surfaceVariant
+        AppColors.surfaceVariant
     }
 
     Row(
@@ -59,7 +60,7 @@ fun CommentItemView(uiState: CommentItemUiState, onEvent: (CommentScreenEvent) -
                     Text(
                         modifier = Modifier.weight(1f),
                         text = uiState.commentContent,
-                        style = MaterialTheme.typography.bodyMedium
+                        style = AppTextStyles.body,
                     )
                     GenericPopupMenu(
                         menuItems = listOf(LanguageKey.delete),
@@ -100,7 +101,7 @@ fun CommentItemView(uiState: CommentItemUiState, onEvent: (CommentScreenEvent) -
                             },
                             imageVector = Icons.Rounded.MoreVert,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = AppColors.primary,
                         )
                     }
                 }
@@ -111,20 +112,20 @@ fun CommentItemView(uiState: CommentItemUiState, onEvent: (CommentScreenEvent) -
                         Icon( // todo will be changed
                             imageVector = Icons.Default.Person,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = AppColors.primary,
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = uiState.username,
-                            color = MaterialTheme.colorScheme.primary,
-                            style = MaterialTheme.typography.titleSmall
+                            color = AppColors.primary,
+                            style = AppTextStyles.titleSmall,
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
                         text = uiState.createdAtString,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.secondary
+                        style = AppTextStyles.bodySecondary,
+                        color = AppColors.textSecondary,
                     )
                 }
             }

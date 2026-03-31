@@ -13,7 +13,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -30,6 +29,8 @@ import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.helpers.general.GeneralSettings
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.CreateQuestionYesNoView
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionTagsAreaContainer
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
@@ -89,7 +90,7 @@ private fun QuestionCreateToolbar(title: String) {
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = title,
-            style = MaterialTheme.typography.headlineSmall
+            style = AppTextStyles.titleLarge,
         )
     })
 }
@@ -194,7 +195,7 @@ private fun AdminAutoApproveCheckbox(
         )
         Text(
             text = "Auto-approve (Admin)",
-            style = MaterialTheme.typography.bodyMedium,
+            style = AppTextStyles.body,
             modifier = Modifier.padding(start = 8.dp)
         )
     }
@@ -214,7 +215,7 @@ private fun CategoryChip(
                 if (selected) {
                     Modifier.border(
                         width = 2.dp,
-                        color = MaterialTheme.colorScheme.primary,
+                        color = AppColors.primary,
                         shape = RoundedCornerShape(12.dp)
                     )
                 } else {
@@ -222,7 +223,7 @@ private fun CategoryChip(
                 }
             )
     ) {
-        Text(text = text, style = MaterialTheme.typography.bodyMedium)
+        Text(text = text, style = AppTextStyles.body)
     }
 }
 

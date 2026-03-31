@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -26,6 +25,8 @@ import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent
 import com.oyetech.composebase.experimental.authOperation.AuthOperationUiState
 import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
 import com.oyetech.composebase.helpers.viewProperties.DialogHelper
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import org.koin.compose.koinInject
 import timber.log.Timber
 
@@ -54,7 +55,7 @@ fun CompleteProfileScreen(
                         Text(
                             modifier = Modifier.padding(12.dp),
                             text = "Complete Register",
-                            style = MaterialTheme.typography.titleLarge
+                            style = AppTextStyles.titleLarge,
                         )
                     }
                 )
@@ -75,7 +76,7 @@ fun CompleteProfileScreen(
                 Spacer(modifier = Modifier.height(32.dp))
                 Text(
                     "Complete your profile",
-                    style = MaterialTheme.typography.displayLarge
+                    style = AppTextStyles.titleLarge,
                 )
                 Spacer(modifier = Modifier.height(32.dp))
 
@@ -91,8 +92,8 @@ fun CompleteProfileScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "Username cannot be empty.",
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.labelMedium
+                        color = AppColors.error,
+                        style = AppTextStyles.label,
                     )
                 }
 
