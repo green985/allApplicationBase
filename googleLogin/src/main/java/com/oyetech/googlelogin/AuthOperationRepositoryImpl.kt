@@ -33,7 +33,7 @@ class AuthOperationRepositoryImpl(
 ) : AuthOperationRepository {
 
     override val userDataStateFlow = MutableStateFlow<UserProfileProperty?>(
-        sharedOperationRepository.getGoogleUserData()
+        UserProfileProperty(isInit = true)
     )
 
     @Suppress("TooGenericExceptionCaught")
@@ -52,6 +52,40 @@ class AuthOperationRepositoryImpl(
             sharedOperationRepository.saveGoogleUserData(userData)
             userDataStateFlow.value = userData
             Result.success(userData)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    @Suppress("TooGenericExceptionCaught")
+    override suspend fun syncUserFromSavedSession(): Result<UserProfileProperty> {
+        return try {
+            val savedUser = sharedOperationRepository.getGoogleUserData()
+                ?: return Result.failure(Exception("401 User session not found"))
+
+            if (savedUser.token.isBlank()) {
+                return Result.failure(Exception("401 User token is empty"))
+            }
+
+            val latestUser = questionSupabaseRepository
+                .getUserWithToken(GetUserWithTokenBody(token = savedUser.token))
+                .first()
+
+            sharedOperationRepository.saveGoogleUserData(latestUser)
+            userDataStateFlow.value = latestUser
+            Result.success(latestUser)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    @Suppress("TooGenericExceptionCaught")
+    override suspend fun logoutAndClearSession(): Result<Unit> {
+        Timber.d("Logging out and clearing session")
+        return try {
+            sharedOperationRepository.removeGoogleUserData()
+            userDataStateFlow.value = null
+            Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
         }

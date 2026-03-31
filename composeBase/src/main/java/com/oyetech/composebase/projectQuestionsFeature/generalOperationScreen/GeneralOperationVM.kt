@@ -10,6 +10,7 @@ import com.oyetech.composebase.sharedScreens.navigation.ScreenKey
 import com.oyetech.domain.repository.NotificationHandlerRepository
 import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserListOperationRepository
+import com.oyetech.domain.repository.loginOperation.AuthOperationRepository
 import com.oyetech.domain.useCases.AnswerUseCase
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.domain.useCases.helpers.AppReviewOperationUseCase
@@ -34,6 +35,7 @@ class GeneralOperationVM(
     private val appReviewOperationUseCase: AppReviewOperationUseCase,
     private val sharedHelperRepository: SharedOperationRepository,
     private val firebaseUserListOperationRepository: FirebaseUserListOperationRepository,
+    private val authOperationRepository: AuthOperationRepository,
     private val messageOperationVM: MessageOperationVM,
     private val authOperationVM: AuthOperationVM,
     private val answerUseCase: AnswerUseCase,
@@ -66,12 +68,35 @@ class GeneralOperationVM(
     init {
 //        messageOperationVM.initFun()
         sharedHelperRepository.increaseAppOpenCount()
+        autoLogin()
         viewModelScope.launch(getDispatcherIo()) {
             delay(1000)
             appReviewOperationUseCase.controlReviewCanShow()
         }
         getUserAnswers()
         observeFormNotifications()
+    }
+
+    private fun autoLogin() {
+        viewModelScope.launch(getDispatcherIo()) {
+            val savedUser = sharedHelperRepository.getGoogleUserData()
+            if (savedUser == null || savedUser.token.isBlank()) {
+                authOperationRepository.logoutAndClearSession()
+                return@launch
+            }
+
+            authOperationRepository.syncUserFromSavedSession().fold(
+                onSuccess = { syncedUser ->
+                    Timber.d("GeneralOperationVM autoLogin success: userId=${syncedUser.userId}")
+                },
+                onFailure = { error ->
+                    Timber.d("GeneralOperationVM autoLogin error: ${error.message}")
+                    if (error.message?.contains("401", ignoreCase = true) == true) {
+                        authOperationRepository.logoutAndClearSession()
+                    }
+                }
+            )
+        }
     }
 
     private fun observeFormNotifications() {

@@ -72,6 +72,15 @@ fun <T> Response<GenericResponse<T>>.interceptGenericResponseWithoutFlowWithoutN
 
             // finally result are not null and success
             return response
+        } else {
+            val code = resultt.code()
+            val errorMessage = if (code == 401) {
+                "401 Unauthorized - Token may be expired or invalid"
+            } else {
+                "HTTP error code: $code"
+            }
+
+            throw IOException(throwError(errorMessage))
         }
     } catch (e: Exception) {
         Timber.d("exception = " + e)

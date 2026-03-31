@@ -5,9 +5,15 @@ import com.oyetech.models.firebaseModels.userModel.UserProfileProperty
 import timber.log.Timber
 
 fun AuthOperationVM.mapUserDataToState(userData: UserProfileProperty?) {
-    if (userData == null) return
+    if (userData == null) {
+        authOperationState.value = AuthOperationUiState()
+        return
+    }
 
     Timber.d("AuthOperationVM mapUserDataToState: $userData")
+    if (userData.isInit) {
+        return
+    }
 
     authOperationState.updateState {
         copy(

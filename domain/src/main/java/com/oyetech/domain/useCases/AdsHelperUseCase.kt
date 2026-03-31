@@ -1,9 +1,12 @@
+@file:OptIn(DelicateCoroutinesApi::class)
+
 package com.oyetech.domain.useCases
 
 import android.app.Activity
 import android.view.View
 import com.oyetech.domain.helper.ActivityProviderUseCase
 import com.oyetech.domain.repository.AdsHelperRepository
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharedFlow

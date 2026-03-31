@@ -8,6 +8,10 @@ interface AuthOperationRepository {
 
     suspend fun loginWithGoogleAndSyncUser(): Result<UserProfileProperty>
 
+    suspend fun syncUserFromSavedSession(): Result<UserProfileProperty>
+
+    suspend fun logoutAndClearSession(): Result<Unit>
+
     // ViewModel passes only user-facing fields; token/userId are resolved internally by the repository
     suspend fun updateUserProfile(
         username: String,

@@ -11,6 +11,7 @@ Created by Erdi Özbek
 
 @Keep
 data class UserProfileProperty(
+    val isInit: Boolean = false,
     val isAnonymous: Boolean = false,
     val notificationToken: String = "",
     val token: String = "",
