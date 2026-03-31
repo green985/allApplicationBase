@@ -5,6 +5,91 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 
+// ---------------------------------------------------------------------------
+// Brand-driven schemes — every M3 slot mapped so components need zero manual
+// color override. Primary = #ECA73B (warm amber).
+// ---------------------------------------------------------------------------
+
+val appLightColorScheme = lightColorScheme(
+    primary = Color(0xFFECA73B),
+    onPrimary = Color(0xFFFFFFFF),
+    primaryContainer = Color(0xFFFFF0D0),
+    onPrimaryContainer = Color(0xFF3D2200),
+    secondary = Color(0xFF6E5B3A),
+    onSecondary = Color(0xFFFFFFFF),
+    secondaryContainer = Color(0xFFF9E3B8),
+    onSecondaryContainer = Color(0xFF271900),
+    tertiary = Color(0xFF5A6340),
+    onTertiary = Color(0xFFFFFFFF),
+    tertiaryContainer = Color(0xFFDEE8BC),
+    onTertiaryContainer = Color(0xFF181E04),
+    error = Color(0xFFBA1A1A),
+    onError = Color(0xFFFFFFFF),
+    errorContainer = Color(0xFFFFDAD6),
+    onErrorContainer = Color(0xFF93000A),
+    background = Color(0xFFFFFFFF),
+    onBackground = Color(0xFF1A1917),
+    surface = Color(0xFFFAFAF8),
+    onSurface = Color(0xFF1A1917),
+    surfaceVariant = Color(0xFFF2EDE5),
+    onSurfaceVariant = Color(0xFF6B6560),
+    outline = Color(0xFF9E9890),
+    outlineVariant = Color(0xFFE0DAD2),
+    scrim = Color(0xFF000000),
+    inverseSurface = Color(0xFF2F2E2C),
+    inverseOnSurface = Color(0xFFF2EDE5),
+    inversePrimary = Color(0xFFFFB951),
+    surfaceDim = Color(0xFFDDD8D3),
+    surfaceBright = Color(0xFFFAFAF8),
+    surfaceContainerLowest = Color(0xFFFFFFFF),
+    surfaceContainerLow = Color(0xFFF7F3EE),
+    surfaceContainer = Color(0xFFF2EDE5),
+    surfaceContainerHigh = Color(0xFFECE7DF),
+    surfaceContainerHighest = Color(0xFFE6E1D9),
+)
+
+val appDarkColorScheme = darkColorScheme(
+    primary = Color(0xFFECA73B),
+    onPrimary = Color(0xFF3D2200),
+    primaryContainer = Color(0xFF6B4E1A),
+    onPrimaryContainer = Color(0xFFFFF0D0),
+    secondary = Color(0xFFDCC69E),
+    onSecondary = Color(0xFF3D2D0C),
+    secondaryContainer = Color(0xFF554420),
+    onSecondaryContainer = Color(0xFFF9E3B8),
+    tertiary = Color(0xFFC3CCA0),
+    onTertiary = Color(0xFF2C3416),
+    tertiaryContainer = Color(0xFF434C2B),
+    onTertiaryContainer = Color(0xFFDEE8BC),
+    error = Color(0xFFFFB4AB),
+    onError = Color(0xFF690005),
+    errorContainer = Color(0xFF93000A),
+    onErrorContainer = Color(0xFFFFDAD6),
+    background = Color(0xFF1A1917),
+    onBackground = Color(0xFFF0EBE4),
+    surface = Color(0xFF222120),
+    onSurface = Color(0xFFF0EBE4),
+    surfaceVariant = Color(0xFF3A3835),
+    onSurfaceVariant = Color(0xFFA89F98),
+    outline = Color(0xFF6B6560),
+    outlineVariant = Color(0xFF3A3835),
+    scrim = Color(0xFF000000),
+    inverseSurface = Color(0xFFF0EBE4),
+    inverseOnSurface = Color(0xFF2C2A28),
+    inversePrimary = Color(0xFF825500),
+    surfaceDim = Color(0xFF1A1917),
+    surfaceBright = Color(0xFF3A3835),
+    surfaceContainerLowest = Color(0xFF141312),
+    surfaceContainerLow = Color(0xFF1E1D1B),
+    surfaceContainer = Color(0xFF222120),
+    surfaceContainerHigh = Color(0xFF2C2A28),
+    surfaceContainerHighest = Color(0xFF363432),
+)
+
+// ---------------------------------------------------------------------------
+// Legacy generated schemes kept for reference — not used by RadioAppTheme
+// ---------------------------------------------------------------------------
+
 internal val lightScheme = lightColorScheme(
     primary = primaryLight,
     onPrimary = onPrimaryLight,

@@ -13,7 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 fun RadioAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val colorScheme = when {
@@ -21,9 +21,8 @@ fun RadioAppTheme(
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
-        darkTheme -> mediumContrastDarkColorScheme
-        else -> mediumContrastLightColorScheme
+        darkTheme -> appDarkColorScheme
+        else -> appLightColorScheme
     }
 
     val appColors = if (darkTheme) AppColorsDark else AppColorsLight

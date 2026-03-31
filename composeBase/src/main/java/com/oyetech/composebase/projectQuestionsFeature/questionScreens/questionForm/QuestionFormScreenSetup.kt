@@ -22,9 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -125,10 +123,7 @@ fun QuestionFormScreen(
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     onEvent: (QuestionFormEvent) -> Unit = {},
 ) {
-    val appColors = MaterialTheme.appColors
-
     BaseScaffold(
-        containerColor = appColors.background,
         topBar = {
             TopAppBar(
                 title = {
@@ -179,9 +174,7 @@ private fun QuestionFormContent(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.appColors.background),
+        modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = PaddingValues(bottom = 32.dp),
     ) {
@@ -209,7 +202,6 @@ private fun QuestionFormContent(
             Text(
                 text = "Questions",
                 style = AppTextStyles.titleSmall,
-                color = MaterialTheme.appColors.textSecondary,
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp),
             )
         }
@@ -260,8 +252,6 @@ private fun FormTitleSection(
         Card(
             modifier = modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = appColors.surface),
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         ) {
             Column(
                 modifier = Modifier
@@ -278,13 +268,13 @@ private fun FormTitleSection(
                             modifier = Modifier
                                 .size(20.dp)
                                 .clip(RoundedCornerShape(50))
-                                .background(appColors.primary),
+                                .background(MaterialTheme.colorScheme.primary),
                             contentAlignment = Alignment.Center,
                         ) {
                             Icon(
                                 Icons.Default.Check,
                                 contentDescription = "Submitted",
-                                tint = appColors.onPrimary,
+                                tint = MaterialTheme.colorScheme.onPrimary,
                                 modifier = Modifier.size(12.dp),
                             )
                         }
@@ -317,8 +307,6 @@ private fun FormTitleSection(
             Card(
                 modifier = modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = appColors.surfaceVariant),
-                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
             ) {
                 Column(
                     modifier = Modifier
@@ -343,7 +331,6 @@ private fun FormTitleSection(
                             ) {
                                 CircularProgressIndicator(
                                     modifier = Modifier.size(32.dp),
-                                    color = appColors.primary,
                                     strokeWidth = 2.dp,
                                 )
                                 Text(
@@ -408,8 +395,6 @@ private fun ProgressSection(
                 .fillMaxWidth()
                 .height(3.dp)
                 .clip(RoundedCornerShape(50)),
-            color = appColors.primary,
-            trackColor = appColors.border,
         )
     }
 }
@@ -424,8 +409,6 @@ private fun FormActionButtons(
     onSubmit: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val appColors = MaterialTheme.appColors
-
     AnimatedVisibility(
         visible = !isLocked,
         enter = fadeIn() + expandVertically(),
@@ -438,12 +421,6 @@ private fun FormActionButtons(
             onClick = onSubmit,
             enabled = canSubmit,
             shape = RoundedCornerShape(14.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = appColors.primary,
-                contentColor = appColors.onPrimary,
-                disabledContainerColor = appColors.disabled,
-                disabledContentColor = appColors.onPrimary.copy(alpha = 0.5f),
-            ),
             contentPadding = PaddingValues(vertical = 16.dp),
             modifier = Modifier.fillMaxWidth(),
         ) {
