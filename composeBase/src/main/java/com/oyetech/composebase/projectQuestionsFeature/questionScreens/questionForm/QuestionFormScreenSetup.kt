@@ -28,7 +28,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -49,8 +48,8 @@ import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListWithParamsContent
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
 import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
-import com.oyetech.composebase.projectQuestionsFeature.theme.appColors
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import kotlinx.coroutines.flow.collectLatest
@@ -129,7 +128,7 @@ fun QuestionFormScreen(
                 title = {
                     Text(
                         text = "Question Form",
-                        style = AppTextStyles.titleSmall,
+                        style = AppTextStyles.titleMedium,
                     )
                 },
                 navigationIcon = {
@@ -152,11 +151,11 @@ fun QuestionFormScreen(
             )
 
             else -> QuestionFormContent(
+                modifier = Modifier.padding(paddingValues),
                 uiState = uiState,
                 listUiState = listUiState,
                 onQuestionEvent = onQuestionEvent,
                 onEvent = onEvent,
-                modifier = Modifier.padding(paddingValues),
             )
         }
     }
@@ -167,11 +166,11 @@ fun QuestionFormScreen(
  */
 @Composable
 private fun QuestionFormContent(
+    modifier: Modifier = Modifier,
     uiState: QuestionFormScreenUiState,
     listUiState: GenericListState<QuestionViewUiState>,
     onQuestionEvent: (QuestionViewEvent) -> Unit = {},
     onEvent: (QuestionFormEvent) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -231,6 +230,7 @@ private fun QuestionFormContent(
  * Form title and description section
  */
 @Composable
+@Suppress("LongMethod", "LongParameterList")
 private fun FormTitleSection(
     title: String,
     description: String,
@@ -240,8 +240,6 @@ private fun FormTitleSection(
     generatedResultText: String = "",
     modifier: Modifier = Modifier,
 ) {
-    val appColors = MaterialTheme.appColors
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -268,20 +266,20 @@ private fun FormTitleSection(
                             modifier = Modifier
                                 .size(20.dp)
                                 .clip(RoundedCornerShape(50))
-                                .background(MaterialTheme.colorScheme.primary),
+                                .background(AppColors.primary),
                             contentAlignment = Alignment.Center,
                         ) {
                             Icon(
                                 Icons.Default.Check,
                                 contentDescription = "Submitted",
-                                tint = MaterialTheme.colorScheme.onPrimary,
+                                tint = AppColors.onPrimary,
                                 modifier = Modifier.size(12.dp),
                             )
                         }
                         Text(
                             text = "Submitted",
                             style = AppTextStyles.label,
-                            color = appColors.primary,
+                            color = AppColors.primary,
                             fontWeight = FontWeight.SemiBold,
                         )
                     }
@@ -290,14 +288,14 @@ private fun FormTitleSection(
                 Text(
                     text = title,
                     style = AppTextStyles.titleLarge,
-                    color = appColors.textPrimary,
+                    color = AppColors.textPrimary,
                 )
 
                 if (description.isNotBlank()) {
                     Text(
                         text = description,
                         style = AppTextStyles.body,
-                        color = appColors.textSecondary,
+                        color = AppColors.textSecondary,
                     )
                 }
             }
@@ -317,7 +315,7 @@ private fun FormTitleSection(
                     Text(
                         text = "AI Değerlendirme",
                         style = AppTextStyles.titleSmall,
-                        color = appColors.primary,
+                        color = AppColors.primary,
                     )
 
                     if (isGeneratingResult) {
@@ -336,7 +334,7 @@ private fun FormTitleSection(
                                 Text(
                                     text = "Yanıtlarınız analiz ediliyor...",
                                     style = AppTextStyles.bodySecondary,
-                                    color = appColors.textSecondary,
+                                    color = AppColors.textSecondary,
                                 )
                             }
                         }
@@ -344,7 +342,7 @@ private fun FormTitleSection(
                         Text(
                             text = generatedResultText,
                             style = AppTextStyles.body,
-                            color = appColors.textPrimary,
+                            color = AppColors.textPrimary,
                         )
                     }
                 }
@@ -362,7 +360,6 @@ private fun ProgressSection(
     totalCount: Int,
     modifier: Modifier = Modifier,
 ) {
-    val appColors = MaterialTheme.appColors
     val progress = if (totalCount > 0) answeredCount.toFloat() / totalCount else 0f
 
     Column(
@@ -379,12 +376,12 @@ private fun ProgressSection(
             Text(
                 text = "Progress",
                 style = AppTextStyles.label,
-                color = appColors.textSecondary,
+                color = AppColors.textSecondary,
             )
             Text(
                 text = "$answeredCount / $totalCount",
                 style = AppTextStyles.label,
-                color = if (progress >= 1f) appColors.primary else appColors.textSecondary,
+                color = if (progress >= 1f) AppColors.primary else AppColors.textSecondary,
                 fontWeight = FontWeight.SemiBold,
             )
         }

@@ -25,9 +25,9 @@ fun RadioAppTheme(
         else -> appLightColorScheme
     }
 
-    val appColors = if (darkTheme) AppColorsDark else AppColorsLight
+    val appColorPalette = if (darkTheme) darkPalette else lightPalette
 
-    CompositionLocalProvider(LocalAppColors provides appColors) {
+    CompositionLocalProvider(LocalAppColors provides appColorPalette) {
         MaterialTheme(
             colorScheme = colorScheme,
             typography = AppTypography,
