@@ -31,12 +31,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -48,6 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
@@ -128,7 +127,7 @@ fun QuestionFormScreen(
 ) {
     val appColors = MaterialTheme.appColors
 
-    Scaffold(
+    BaseScaffold(
         containerColor = appColors.background,
         topBar = {
             TopAppBar(
@@ -136,7 +135,6 @@ fun QuestionFormScreen(
                     Text(
                         text = "Question Form",
                         style = AppTextStyles.titleSmall,
-                        color = appColors.textPrimary,
                     )
                 },
                 navigationIcon = {
@@ -144,13 +142,9 @@ fun QuestionFormScreen(
                         Icon(
                             Icons.Default.ArrowBack,
                             contentDescription = "Back",
-                            tint = appColors.textPrimary,
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = appColors.background,
-                ),
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
