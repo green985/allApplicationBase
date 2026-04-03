@@ -7,6 +7,7 @@ import com.oyetech.models.questionProject.questionOperation.ModerationStatus
 import com.oyetech.models.questionProject.questionOperation.QueFilter
 import com.oyetech.models.questionProject.questionOperation.QueTag
 import com.oyetech.models.questionProject.questionOperation.QuestionListAdminFilterType
+import com.oyetech.models.questionProject.questionOperation.QuestionListType
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.models.questionProject.questionOperation.toQuestionList
 import kotlinx.coroutines.flow.Flow
@@ -18,7 +19,7 @@ class GetQuestionsPagedByCreatedAtUseCase(
 
     private var currentModerationStatus: ModerationStatus? = null
     private var currentTag: QueTag? = null
-    private var currentQuestionListType: String? = null
+    private var currentQuestionListType: QuestionListType? = null
     private var currentUserId: String? = null
 
     private val handler =
@@ -53,7 +54,7 @@ class GetQuestionsPagedByCreatedAtUseCase(
     fun updateFilters(
         moderationStatus: ModerationStatus?,
         tag: QueTag?,
-        questionListType: String? = null,
+        questionListType: QuestionListType? = null,
         userId: String? = null,
     ) {
         currentModerationStatus = moderationStatus
@@ -67,7 +68,7 @@ class GetQuestionsPagedByCreatedAtUseCase(
         isInitial: Boolean,
         moderationStatus: ModerationStatus? = currentModerationStatus,
         tag: QueTag? = currentTag,
-        questionListType: String? = currentQuestionListType,
+        questionListType: QuestionListType? = currentQuestionListType,
         userId: String? = currentUserId,
     ): Flow<List<QuestionOperationResponseBody>> {
         val filtersChanged =

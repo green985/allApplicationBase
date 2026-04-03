@@ -25,6 +25,7 @@ import com.oyetech.composebase.projectQuestionsFeature.views.questions.BaseQuest
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import com.oyetech.models.questionProject.questionOperation.QuestionListAdminFilterType
+import com.oyetech.models.questionProject.questionOperation.QuestionListType
 import kotlinx.collections.immutable.toImmutableList
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
@@ -37,7 +38,7 @@ fun QuestionListWithParamsScreenSetup(
     adminFilterTypeStr: String? = null,
     isAdminMode: Boolean = false,
     innerPadding: PaddingValues = PaddingValues(0.dp),
-    questionListType: String? = null,
+    questionListType: QuestionListType? = null,
     userId: String? = null,
 ) {
     val key =

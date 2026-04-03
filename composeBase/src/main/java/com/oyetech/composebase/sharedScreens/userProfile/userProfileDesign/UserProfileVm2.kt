@@ -10,6 +10,7 @@ import com.oyetech.domain.repository.firebase.FirebaseUserPropertyRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.models.questionProject.questionOperation.QuestionListType
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.collections.immutable.ImmutableList
@@ -97,7 +98,7 @@ class UserProfileVm2(
                     _uiState.updateState {
                         copy(
                             isLoading = false,
-                            username = user.username ?: "",
+                            username = user.username,
                             isNotLogin = false,
                             biographyText = user.biography,
                             userId = userId,

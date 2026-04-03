@@ -52,6 +52,7 @@ import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import com.oyetech.composebase.sharedScreens.userProfile.views.ProfileBiographyInputArea
 import com.oyetech.composebase.sharedViews.app.ApplicationLogoPlaceholder
 import com.oyetech.languageModule.keyset.LanguageKey
+import com.oyetech.models.questionProject.questionOperation.QuestionListType
 import com.oyetech.tools.contextHelper.getApplicationLogo
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
@@ -277,7 +278,7 @@ private fun ProfileContent(
                 val listType = uiState.questionListTypes[page].type
                 if (pagerState.settledPage == page) {
                     QuestionListWithParamsScreenSetup(
-                        questionListType = listType.name,
+                        questionListType = listType,
                         userId = uiState.userId
                     )
                 } else {

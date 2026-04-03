@@ -6,7 +6,7 @@ import androidx.annotation.Keep
 data class QueFilter(
     val adminFilterType: QuestionListAdminFilterType = QuestionListAdminFilterType.APPROVED_ADMIN,
     val selectedTagFilter: QueTag? = null,
-    val questionListType: String? = null,
+    val questionListType: QuestionListType? = null,
     val userId: String? = null,
 ) {
     fun hasActiveFilter(): Boolean {
@@ -17,3 +17,9 @@ data class QueFilter(
         val DEFAULT = QueFilter()
     }
 }
+
+enum class QuestionListType {
+    USERS_QUESTIONS,
+    USERS_ANSWERS
+}
+

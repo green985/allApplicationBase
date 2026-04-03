@@ -14,6 +14,7 @@ import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QueFilter
 import com.oyetech.models.questionProject.questionOperation.QueTag
 import com.oyetech.models.questionProject.questionOperation.QuestionListAdminFilterType
+import com.oyetech.models.questionProject.questionOperation.QuestionListType
 import com.oyetech.models.questionProject.questionOperation.QuestionOperationResponseBody
 import com.oyetech.models.questionProject.questionOperation.QuestionType
 import com.oyetech.models.questionProject.questionOperation.toModerationStatusOrNull
@@ -99,22 +100,14 @@ class QuestionListVm(
     fun getQuestionDataFlow(isInitial: Boolean): Flow<List<QuestionViewUiState>> {
         return queFilter.filterNotNull().flatMapLatest { filter ->
             Timber.d(
+                "%snull",
                 "Filter changed - " +
-                        "Admin: ${filter.adminFilterType.name}, Tag: ${filter.selectedTagFilter?.name}" +
-                        "UserId: ${filter.userId}, QuestionListType: ${filter.questionListType}"
+                        "Admin: ${filter.adminFilterType.name}, " +
+                        "Tag: ${filter.selectedTagFilter?.name}"
             )
             uiState.value = uiState.value.copy(currentFilter = filter)
             when (filter.questionListType) {
-                "USERS_QUESTIONS" -> {
-                    if (filter.userId.isNullOrBlank()) {
-                        kotlinx.coroutines.flow.flowOf(emptyList())
-                    } else {
-                        getUserQuestionsPagedByCreatedAtUseCase.updateUser(filter.userId)
-                        getUserQuestionsPagedByCreatedAtUseCase(isInitial)
-                    }
-                }
-
-                "USERS_ANSWERS" -> {
+                QuestionListType.USERS_QUESTIONS, QuestionListType.USERS_ANSWERS -> {
                     if (filter.userId.isNullOrBlank()) {
                         kotlinx.coroutines.flow.flowOf(emptyList())
                     } else {
@@ -190,7 +183,7 @@ class QuestionListVm(
         queFilter.value = null
     }
 
-    fun setUserFilter(questionListType: String, userId: String) {
+    fun setUserFilter(questionListType: QuestionListType, userId: String) {
         val filter = queFilter.value
         if (filter == null) {
             queFilter.value = QueFilter(

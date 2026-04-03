@@ -1,5 +1,6 @@
 package com.oyetech.composebase.sharedScreens.userProfile.userProfileDesign
 
+import com.oyetech.models.questionProject.questionOperation.QuestionListType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -21,13 +22,6 @@ data class UserProfileUiState2(
     val isFromTab: Boolean = false,
 )
 
-/**
- * Question list type enumeration
- */
-enum class QuestionListType {
-    USERS_ANSWERS,
-    USERS_QUESTIONS
-}
 
 /**
  * Question list type item for UI display
