@@ -43,7 +43,7 @@ class QuestionFormListViewModel(
         viewModelScope.launch(getDispatcherIo()) {
             _uiState.updateState { copy(isLoading = true) }
             questionSupabaseRepository.getCatalogList("")
-                .combine(answerUseCase.answersState) { catalogResponse, answersList ->
+                .combine(answerUseCase.answersState) { catalogResponse, _ ->
                     catalogResponse
                 }
                 .asResult()
@@ -78,7 +78,7 @@ class QuestionFormListViewModel(
             answerUseCase.answersState.collectLatest { answersList ->
                 // Process the answersList as needed
                 val formQuestionList = uiState.value.catalogList
-                val newList = formQuestionList?.mapIndexed { index, state ->
+                val newList = formQuestionList.mapIndexed { _, state ->
                     val answeredCount = answersList.count { answer ->
                         answer.formId == state.formId
                     }
@@ -86,8 +86,8 @@ class QuestionFormListViewModel(
                         answeredQuestionCount = answeredCount
                     )
                 }
-                Timber.d("Updated catalog list with answered counts: ${newList?.size}")
-                if (!newList.isNullOrEmpty()) {
+                Timber.d("Updated catalog list with answered counts: ${newList.size}")
+                if (newList.isNotEmpty()) {
                     _uiState.updateState {
                         copy(
                             catalogList = newList.toImmutableList()

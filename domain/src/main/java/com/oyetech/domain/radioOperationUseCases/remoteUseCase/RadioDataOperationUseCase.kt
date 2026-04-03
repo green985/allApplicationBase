@@ -19,7 +19,7 @@ Created by Erdi Özbek
 class RadioDataOperationUseCase(
     private var radioDataOperationRepository: RadioDataOperationRepository,
 
-    ) {
+) {
 
     var lastRadioDataa = radioDataOperationRepository.lastRadioData
 
