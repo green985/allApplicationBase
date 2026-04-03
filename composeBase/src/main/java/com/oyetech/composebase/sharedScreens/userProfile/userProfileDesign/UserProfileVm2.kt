@@ -124,7 +124,6 @@ class UserProfileVm2(
     private suspend fun loadCurrentUserProfile() {
         _uiState.updateState { copy(isLoading = true) }
 
-
         authOperationVM.authOperationState.collectLatest {
             Timber.d("Auth operation state changed: $it")
             val isLoggedIn = it.isLogin
@@ -139,8 +138,8 @@ class UserProfileVm2(
                     )
                 }
             } else {
-                val username = it.username ?: ""
-                val biography = it.biography ?: ""
+                val username = it.username
+                val biography = it.biography
                 val isOwnProfile = true // Since this is the current user's profile
                 _uiState.updateState {
                     copy(
