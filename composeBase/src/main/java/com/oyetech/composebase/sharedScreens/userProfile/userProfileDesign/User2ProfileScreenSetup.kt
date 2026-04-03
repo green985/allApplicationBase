@@ -319,7 +319,7 @@ private fun QuestionListTypeSelector(
 @Composable
 private fun UserImageListView(
     modifier: Modifier = Modifier,
-    imageList: PersistentList<FirebaseUserImageModel> = persistentListOf(),
+    imageList: PersistentList<String> = persistentListOf(),
     onImageClick: (() -> Unit),
 ) {
     val pagerState = rememberPagerState { imageList.size }
@@ -352,7 +352,8 @@ private fun UserImageListView(
                                 )
                         )
                     } else {
-                        val imageUrl = imageList.get(pageIndex).imageUrl
+                        val imageUrl = "imageList.get(pageIndex).imageUrl"
+//                        val imageUrl = imageList.get(pageIndex).imageUrl
                         GlideSubcomposition(imageUrl, Modifier.fillMaxSize()) {
                             // state comes from GlideSubcompositionScope
                             when (state) {

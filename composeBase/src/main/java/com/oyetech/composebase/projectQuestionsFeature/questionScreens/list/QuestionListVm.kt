@@ -9,7 +9,6 @@ import com.oyetech.composebase.projectQuestionsFeature.questionScreens.usecases.
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.toUiState
-import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
 import com.oyetech.domain.useCases.AnswerUseCase
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QueFilter
@@ -35,7 +34,6 @@ import timber.log.Timber
 @Suppress("TooManyFunctions", "LongParameterList")
 class QuestionListVm(
     appDispatchers: AppDispatchers,
-    private val repository: FirebaseQuestionOperationRepository,
     private val answerUseCase: AnswerUseCase,
     private val getQuestionsPagedByCreatedAtUseCase: GetQuestionsPagedByCreatedAtUseCase,
     private val getUserQuestionsPagedByCreatedAtUseCase: GetUserQuestionsPagedByCreatedAtUseCase,
@@ -102,7 +100,8 @@ class QuestionListVm(
         return queFilter.filterNotNull().flatMapLatest { filter ->
             Timber.d(
                 "Filter changed - " +
-                        "Admin: ${filter.adminFilterType.name}, Tag: ${filter.selectedTagFilter?.name}"
+                        "Admin: ${filter.adminFilterType.name}, Tag: ${filter.selectedTagFilter?.name}" +
+                        "UserId: ${filter.userId}, QuestionListType: ${filter.questionListType}"
             )
             uiState.value = uiState.value.copy(currentFilter = filter)
             when (filter.questionListType) {
@@ -119,7 +118,13 @@ class QuestionListVm(
                     if (filter.userId.isNullOrBlank()) {
                         kotlinx.coroutines.flow.flowOf(emptyList())
                     } else {
-                        repository.getUserAnsweredQuestions(filter.userId.orEmpty())
+                        getQuestionsPagedByCreatedAtUseCase.invoke(
+                            isInitial = isInitial,
+                            moderationStatus = filter.adminFilterType.toModerationStatusOrNull(),
+                            tag = filter.selectedTagFilter,
+                            questionListType = filter.questionListType,
+                            userId = filter.userId,
+                        )
                     }
                 }
 

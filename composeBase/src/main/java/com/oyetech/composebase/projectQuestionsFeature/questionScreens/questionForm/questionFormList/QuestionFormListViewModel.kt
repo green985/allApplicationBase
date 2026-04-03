@@ -14,6 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -42,6 +43,9 @@ class QuestionFormListViewModel(
         viewModelScope.launch(getDispatcherIo()) {
             _uiState.updateState { copy(isLoading = true) }
             questionSupabaseRepository.getCatalogList("")
+                .combine(answerUseCase.answersState) { catalogResponse, answersList ->
+                    catalogResponse
+                }
                 .asResult()
                 .collectLatest { response ->
                     response.fold(

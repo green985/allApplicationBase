@@ -95,6 +95,7 @@ fun QuestionViewUiState.toOperationBody(): QuestionOperationResponseBody {
 // Backend model -> UI
 fun QuestionOperationResponseBody.toUiState(
     base: QuestionViewUiState = QuestionViewUiState(isLoading = false),
+    formId: String? = null,
 ): QuestionViewUiState {
     // If backend provided options, use them; otherwise derive defaults from taxonomy or fallback to YES/NO
     val derivedOptions: List<QueOption> = this.options.ifEmpty {
@@ -129,7 +130,7 @@ fun QuestionOperationResponseBody.toUiState(
         isError = false,
         errorText = "",
         questionId = this.questionId,
-        formId = this.formId ?: "form1",
+        formId = formId ?: "",
         titleText = this.questionTitle,
         questionType = this.questionType,
         options = derivedOptions.toImmutableList(),

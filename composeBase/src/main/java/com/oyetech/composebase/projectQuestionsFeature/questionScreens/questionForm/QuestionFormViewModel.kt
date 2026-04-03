@@ -97,7 +97,7 @@ class QuestionFormViewModel(
             questionSupabaseRepository.getCatalogDetail(formId, userId)
                 .collectLatest { response ->
                     val questionItems = response.questions.map { question ->
-                        question.questionToUiState()
+                        question.questionToUiState(formId = formId)
                     }.toImmutableList()
                     listUiState2.updateState {
                         copy(items = questionItems)

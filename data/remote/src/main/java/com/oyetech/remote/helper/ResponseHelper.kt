@@ -74,10 +74,11 @@ fun <T> Response<GenericResponse<T>>.interceptGenericResponseWithoutFlowWithoutN
             return response
         } else {
             val code = resultt.code()
+            val result = resultt.body()
             val errorMessage = if (code == 401) {
                 "401 Unauthorized - Token may be expired or invalid"
             } else {
-                "HTTP error code: $code"
+                result?.resultMessage ?: "HTTP error code: $code"
             }
 
             throw IOException(throwError(errorMessage))

@@ -2,7 +2,6 @@ package com.oyetech.composebase.projectQuestionsFeature.questionScreens.usecases
 
 import com.oyetech.composebase.helpers.general.GeneralSettings
 import com.oyetech.composebase.helpers.listOperations.CreatedAtBasedPagingHandler
-import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
 import com.oyetech.domain.useCases.QuestionUseCase
 import com.oyetech.models.questionProject.questionOperation.ModerationStatus
 import com.oyetech.models.questionProject.questionOperation.QueFilter
@@ -14,12 +13,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 
 class GetQuestionsPagedByCreatedAtUseCase(
-    private val repository: FirebaseQuestionOperationRepository,
     private val questionUseCase: QuestionUseCase,
 ) {
 
     private var currentModerationStatus: ModerationStatus? = null
     private var currentTag: QueTag? = null
+    private var currentQuestionListType: String? = null
+    private var currentUserId: String? = null
 
     private val handler =
         object :
@@ -32,6 +32,8 @@ class GetQuestionsPagedByCreatedAtUseCase(
                     QueFilter(
                         adminFilterType = QuestionListAdminFilterType.APPROVED_ADMIN,
                         selectedTagFilter = currentTag,
+                        questionListType = currentQuestionListType,
+                        userId = currentUserId,
                     )
                 ).first().toQuestionList()
 
@@ -51,9 +53,13 @@ class GetQuestionsPagedByCreatedAtUseCase(
     fun updateFilters(
         moderationStatus: ModerationStatus?,
         tag: QueTag?,
+        questionListType: String? = null,
+        userId: String? = null,
     ) {
         currentModerationStatus = moderationStatus
         currentTag = tag
+        currentQuestionListType = questionListType
+        currentUserId = userId
         handler.resetAll()
     }
 
@@ -61,9 +67,21 @@ class GetQuestionsPagedByCreatedAtUseCase(
         isInitial: Boolean,
         moderationStatus: ModerationStatus? = currentModerationStatus,
         tag: QueTag? = currentTag,
+        questionListType: String? = currentQuestionListType,
+        userId: String? = currentUserId,
     ): Flow<List<QuestionOperationResponseBody>> {
+        val filtersChanged =
+            currentModerationStatus != moderationStatus ||
+                currentTag != tag ||
+                currentQuestionListType != questionListType ||
+                currentUserId != userId
         currentModerationStatus = moderationStatus
         currentTag = tag
+        currentQuestionListType = questionListType
+        currentUserId = userId
+        if (filtersChanged) {
+            handler.resetAll()
+        }
         return handler.getDataFlow(isInitial = isInitial)
     }
 }

@@ -15,6 +15,7 @@ import com.oyetech.models.questionProject.questionOperation.QuestionListAdminFil
 import com.oyetech.models.questionProject.questionOperation.QuestionStatusUpdateRequest
 import com.oyetech.models.questionProject.questionOperation.QuestionType
 import com.oyetech.tools.coroutineHelper.AppDispatchers
+import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -149,7 +150,7 @@ class QuestionEventHandlerUseCase(
                 textValue = null,
                 userId = uid,
             )
-            answerUseCase.submitAnswer(answer)
+            answerUseCase.submitAnswer(answer).asResult()
                 .collectLatest { /* updated in repo state */ }
         }
         Timber.d("Option selected: ${event.optionId} for question: ${event.questionId}")

@@ -40,14 +40,17 @@ fun QuestionListWithParamsScreenSetup(
     questionListType: String? = null,
     userId: String? = null,
 ) {
+    val key =
+        "QuestionListWithParamsScreenSetup_$questionTagId-$adminFilterTypeStr-$questionListType-$userId"
     val vm =
         koinViewModel<QuestionListVm>(
-            key = "QuestionListWithParamsScreenSetup_$questionTagId-$adminFilterTypeStr-$questionListType-$userId"
+            key = key
         )
     val uiState by vm.uiState.collectAsStateWithLifecycle()
     val listViewState by vm.listViewState.collectAsStateWithLifecycle()
 
     LaunchedEffect(questionTagId, adminFilterTypeStr, questionListType, userId) {
+        Timber.d("QuestionListWithParamsScreenSetup: LaunchedEffect triggered with params: questionTagId=$questionTagId, adminFilterTypeStr=$adminFilterTypeStr, questionListType=$questionListType, userId=$userId")
         if (questionTagId != null) {
             val tag = com.oyetech.models.questionProject.questionOperation.QuestionTagCatalog
                 .createQuestionTagList.find { it.id == questionTagId }

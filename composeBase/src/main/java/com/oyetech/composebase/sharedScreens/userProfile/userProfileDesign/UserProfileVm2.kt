@@ -3,6 +3,7 @@ package com.oyetech.composebase.sharedScreens.userProfile.userProfileDesign
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
+import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.composebase.sharedScreens.navigation.ScreenKey
 import com.oyetech.domain.repository.firebase.FirebaseUserPropertyRepository
@@ -12,7 +13,6 @@ import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,6 +32,7 @@ import timber.log.Timber
 class UserProfileVm2(
     appDispatchers: AppDispatchers,
     private val firebaseUserRepository: FirebaseUserRepository,
+    private val authOperationVM: AuthOperationVM,
     private val firebaseUserPropertyRepository: FirebaseUserPropertyRepository,
     private val navigationUseCase: NavigationUseCase,
     private val receiverId: String = "",
@@ -91,7 +92,7 @@ class UserProfileVm2(
         firebaseUserRepository.getUserProfileWithUserId(userId).asResult().collect { result ->
             result.fold(
                 onSuccess = { user ->
-                    val currentUserId = firebaseUserRepository.getUserId()
+                    val currentUserId = authOperationVM.getUserId()
                     val isOwnProfile = currentUserId == userId
                     _uiState.updateState {
                         copy(
@@ -122,40 +123,36 @@ class UserProfileVm2(
     private suspend fun loadCurrentUserProfile() {
         _uiState.updateState { copy(isLoading = true) }
 
-        firebaseUserRepository.userProfileDataStateFlow.asResult().collectLatest { result ->
-            result.fold(
-                onSuccess = { user ->
-                    if (user != null) {
-                        val currentUserId = firebaseUserRepository.getUserId()
-                        _uiState.updateState {
-                            copy(
-                                isLoading = false,
-                                username = user.username ?: "",
-                                isNotLogin = false,
-                                biographyText = user.biography,
-                                userId = currentUserId,
-                                isOwnProfile = true
-                            )
-                        }
-                    } else {
-                        _uiState.updateState {
-                            copy(
-                                isLoading = false,
-                                isNotLogin = true
-                            )
-                        }
-                    }
-                },
-                onFailure = { error ->
-                    Timber.e("Error loading current user: $error")
-                    _uiState.updateState {
-                        copy(
-                            isLoading = false,
-                            isNotLogin = true
-                        )
-                    }
+
+        authOperationVM.authOperationState.collectLatest {
+            Timber.d("Auth operation state changed: $it")
+            val isLoggedIn = it.isLogin
+            val currentUserId = it.userId
+
+            if (currentUserId.isBlank()) {
+                _uiState.updateState {
+                    copy(
+                        isLoading = false,
+                        isNotLogin = true,
+                        userId = ""
+                    )
                 }
-            )
+            } else {
+                val username = it.username ?: ""
+                val biography = it.biography ?: ""
+                val isOwnProfile = true // Since this is the current user's profile
+                _uiState.updateState {
+                    copy(
+                        isLoading = false,
+                        isError = false,
+                        userId = currentUserId,
+                        isNotLogin = !isLoggedIn,
+                        username = username,
+                        biographyText = biography,
+                        isOwnProfile = isOwnProfile,
+                    )
+                }
+            }
         }
     }
 
@@ -176,9 +173,9 @@ class UserProfileVm2(
                 navigateToMessage(event.receiverUserId)
             }
 
-            is UserProfileUiEvent2.OnImageClick -> {
-                // Handle image click if needed
-            }
+//            is UserProfileUiEvent2.OnImageClick -> {
+//                 Handle image click if needed
+//            }
 
             is UserProfileUiEvent2.OnBiographyTextChange -> {
                 _uiState.updateState {
@@ -211,50 +208,4 @@ class UserProfileVm2(
             navigationUseCase.navigateTo(QuestionAppProjectRoutes.EditProfile.route)
         }
     }
-}
-
-/**
- * UI State for User2ProfileScreenSetup
- */
-data class UserProfileUiState2(
-    val isLoading: Boolean = false,
-    val isError: Boolean = false,
-    val errorMessage: String = "",
-    val isNotLogin: Boolean = false,
-    val username: String = "",
-    val biographyText: String = "",
-    val userImageList: ImmutableList<FirebaseUserImageModel> = persistentListOf(),
-    val questionListTypes: ImmutableList<QuestionListTypeItem> = persistentListOf(),
-    val currentQuestionListType: QuestionListType = QuestionListType.USERS_ANSWERS,
-    val userId: String = "",
-    val isOwnProfile: Boolean = false,
-    val isFromTab: Boolean = false,
-)
-
-/**
- * Question list type enumeration
- */
-enum class QuestionListType {
-    USERS_ANSWERS,
-    USERS_QUESTIONS
-}
-
-/**
- * Question list type item for UI display
- */
-data class QuestionListTypeItem(
-    val type: QuestionListType,
-    val title: String,
-)
-
-/**
- * UI Events for User2ProfileScreenSetup
- */
-sealed class UserProfileUiEvent2 {
-    data class OnQuestionListTypeChanged(val type: QuestionListType) : UserProfileUiEvent2()
-    data object OnLoginButtonClicked : UserProfileUiEvent2()
-    data class OnMessageUserClick(val receiverUserId: String) : UserProfileUiEvent2()
-    data class OnImageClick(val imageModel: FirebaseUserImageModel) : UserProfileUiEvent2()
-    data class OnBiographyTextChange(val newText: String) : UserProfileUiEvent2()
-    data object OnEditProfileClick : UserProfileUiEvent2()
 }
