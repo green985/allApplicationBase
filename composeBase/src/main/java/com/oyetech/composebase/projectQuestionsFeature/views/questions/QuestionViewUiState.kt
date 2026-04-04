@@ -25,7 +25,7 @@ Created by Erdi Özbek
  **/
 
 data class QuestionViewUiState(
-    val isLoading: Boolean = true,
+    val isLoading: Boolean = false,
     val isError: Boolean = false,
     val errorText: String = "",
     val questionId: String = "",
