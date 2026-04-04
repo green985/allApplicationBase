@@ -4,12 +4,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
@@ -41,23 +43,45 @@ fun QuestionViewScaffoldLayout(
     modifier: Modifier = Modifier,
 ) {
     OutlinedCard(modifier = Modifier.padding(QuestionProjectViewAttrs.spacingXs)) {
-        Column(
-            modifier = modifier
-                .padding(QuestionProjectViewAttrs.spacingSm)
-                .background(AppColors.background)
-        ) {
-            QuestionHeaderContainer(uiState = uiState, onEvent = onEvent)
-            QuestionTagsAreaContainer(
-                uiState = uiState,
-                onEvent = onEvent
-            )
-            QuestionTitleDescriptionContainer(uiState = uiState, onEvent = onEvent)
-            QuestionAnswerAreaContainer(uiState = uiState, onEvent = onEvent)
-            QuestionOptionsAreaContainer(uiState = uiState, onEvent = onEvent)
+        Box {
+            Column(
+                modifier = modifier
+                    .padding(QuestionProjectViewAttrs.spacingSm)
+                    .background(AppColors.background)
+            ) {
+                QuestionHeaderContainer(uiState = uiState, onEvent = onEvent)
+                QuestionTagsAreaContainer(
+                    uiState = uiState,
+                    onEvent = onEvent
+                )
+                QuestionTitleDescriptionContainer(uiState = uiState, onEvent = onEvent)
+                QuestionAnswerAreaContainer(uiState = uiState, onEvent = onEvent)
+                QuestionOptionsAreaContainer(uiState = uiState, onEvent = onEvent)
 
-            QuestionUserInfoContainer(uiState = uiState, onEvent = onEvent)
-            QuestionShareActionsContainer(uiState = uiState, onEvent = onEvent)
-            QuestionAdminActionsContainer(uiState = uiState, onEvent = onEvent)
+                if (uiState.isError && uiState.errorText.isNotBlank()) {
+                    Text(
+                        modifier = Modifier.padding(top = QuestionProjectViewAttrs.spacingSm),
+                        text = uiState.errorText,
+                        style = AppTextStyles.bodySecondary,
+                        color = AppColors.error
+                    )
+                }
+
+                QuestionUserInfoContainer(uiState = uiState, onEvent = onEvent)
+                QuestionShareActionsContainer(uiState = uiState, onEvent = onEvent)
+                QuestionAdminActionsContainer(uiState = uiState, onEvent = onEvent)
+            }
+
+            if (uiState.isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(AppColors.surface.copy(alpha = 0.65f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = AppColors.primary)
+                }
+            }
         }
     }
 }
@@ -76,7 +100,10 @@ fun QuestionOptionsAreaContainer(
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { onEvent(QuestionViewEvent.OnDeleteAnswerClicked(uiState.questionId)) }) {
+            IconButton(
+                enabled = !uiState.isLoading,
+                onClick = { onEvent(QuestionViewEvent.OnDeleteAnswerClicked(uiState.questionId)) }
+            ) {
                 Icon(imageVector = Icons.Filled.Delete, contentDescription = "Delete Answer")
             }
         }

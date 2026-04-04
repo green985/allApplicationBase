@@ -5,7 +5,6 @@ import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.helpers.listOperations.ListOperationDelegate
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.usecases.GetQuestionsPagedByCreatedAtUseCase
-import com.oyetech.composebase.projectQuestionsFeature.questionScreens.usecases.GetUserQuestionsPagedByCreatedAtUseCase
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.toUiState
@@ -37,7 +36,6 @@ class QuestionListVm(
     appDispatchers: AppDispatchers,
     private val answerUseCase: AnswerUseCase,
     private val getQuestionsPagedByCreatedAtUseCase: GetQuestionsPagedByCreatedAtUseCase,
-    private val getUserQuestionsPagedByCreatedAtUseCase: GetUserQuestionsPagedByCreatedAtUseCase,
 ) : BaseViewModel(appDispatchers) {
 
     val uiState = MutableStateFlow(QuestionListUiState())
@@ -81,7 +79,7 @@ class QuestionListVm(
 
     fun questionItemsFlow(
         listOperationDelegate: ListOperationDelegate<QuestionViewUiState>,
-    ): kotlinx.coroutines.flow.Flow<List<QuestionViewUiState>> {
+    ): Flow<List<QuestionViewUiState>> {
         return listOperationDelegate.listUiState
             .map { it.items }
             .distinctUntilChanged()
@@ -100,7 +98,6 @@ class QuestionListVm(
     fun getQuestionDataFlow(isInitial: Boolean): Flow<List<QuestionViewUiState>> {
         return queFilter.filterNotNull().flatMapLatest { filter ->
             Timber.d(
-                "%snull",
                 "Filter changed - " +
                         "Admin: ${filter.adminFilterType.name}, " +
                         "Tag: ${filter.selectedTagFilter?.name}"

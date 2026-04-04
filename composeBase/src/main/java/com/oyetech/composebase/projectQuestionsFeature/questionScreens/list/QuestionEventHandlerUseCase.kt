@@ -9,6 +9,7 @@ import com.oyetech.domain.repository.loginOperation.AuthOperationRepository
 import com.oyetech.domain.repository.question.QuestionSupabaseRepository
 import com.oyetech.domain.useCases.AnswerUseCase
 import com.oyetech.domain.useCases.NavigationUseCase
+import com.oyetech.models.errors.ErrorMessage
 import com.oyetech.models.questionProject.questionOperation.ModerationStatus
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
 import com.oyetech.models.questionProject.questionOperation.QuestionListAdminFilterType
@@ -41,7 +42,6 @@ class QuestionEventHandlerUseCase(
     private val userRepository: AuthOperationRepository by inject()
     private val answerUseCase: AnswerUseCase by inject()
     private val appDispatchers: AppDispatchers by inject()
-
     private val questionSupabaseRepository: QuestionSupabaseRepository by inject()
 
     fun handleQuestionEvent(
@@ -54,7 +54,7 @@ class QuestionEventHandlerUseCase(
             }
 
             is QuestionViewEvent.OnDeleteAnswerClicked -> {
-                handleDeleteAnswer(event)
+                handleDeleteAnswer(event, listUiState)
             }
 
             is QuestionViewEvent.OnAcceptClicked -> {
@@ -131,38 +131,118 @@ class QuestionEventHandlerUseCase(
                 Timber.d("User ID is blank, cannot submit answer")
                 return@launch
             }
+
             val alreadyAnswered = answerUseCase.answersState.value.any {
                 it.userId == uid && it.questionId == event.questionId
             }
             if (alreadyAnswered) return@launch
 
+            updateQuestionOperationState(
+                questionId = event.questionId,
+                listUiState = listUiState,
+                isLoading = true,
+                isError = false,
+                errorText = ""
+            )
+
             val questionUiState = listUiState.value.items.find {
                 it.questionId == event.questionId
             }
-            val formId = questionUiState?.formId
 
             val answer = QueAnswer(
                 questionId = event.questionId,
-                formId = formId,
+                formId = questionUiState?.formId,
                 type = QuestionType.SINGLE_CHOICE,
                 selectedOptionIds = listOf(event.optionId),
                 numericValue = null,
                 textValue = null,
                 userId = uid,
             )
-            answerUseCase.submitAnswer(answer).asResult()
-                .collectLatest { /* updated in repo state */ }
+
+            answerUseCase.submitAnswer(answer).asResult().collectLatest { result ->
+                result.fold(
+                    onSuccess = {
+                        updateQuestionOperationState(
+                            questionId = event.questionId,
+                            listUiState = listUiState,
+                            isLoading = false,
+                            isError = false,
+                            errorText = ""
+                        )
+                    },
+                    onFailure = { error ->
+                        updateQuestionOperationState(
+                            questionId = event.questionId,
+                            listUiState = listUiState,
+                            isLoading = false,
+                            isError = true,
+                            errorText = ErrorMessage.fetchErrorMessage(error.message)
+                        )
+                    }
+                )
+            }
         }
         Timber.d("Option selected: ${event.optionId} for question: ${event.questionId}")
     }
 
-    private fun handleDeleteAnswer(event: QuestionViewEvent.OnDeleteAnswerClicked) {
+    private fun handleDeleteAnswer(
+        event: QuestionViewEvent.OnDeleteAnswerClicked,
+        listUiState: MutableStateFlow<GenericListState<QuestionViewUiState>>,
+    ) {
         scope.launch(appDispatchers.io) {
             val uid = userRepository.getUserId()
             if (uid.isBlank()) return@launch
-            answerUseCase.deleteAnswer(uid, event.questionId)
-                .collectLatest { /* updated in repo state */ }
+
+            updateQuestionOperationState(
+                questionId = event.questionId,
+                listUiState = listUiState,
+                isLoading = true,
+                isError = false,
+                errorText = ""
+            )
+
+            answerUseCase.deleteAnswer(uid, event.questionId).asResult().collectLatest { result ->
+                result.fold(
+                    onSuccess = {
+                        updateQuestionOperationState(
+                            questionId = event.questionId,
+                            listUiState = listUiState,
+                            isLoading = false,
+                            isError = false,
+                            errorText = ""
+                        )
+                    },
+                    onFailure = { error ->
+                        updateQuestionOperationState(
+                            questionId = event.questionId,
+                            listUiState = listUiState,
+                            isLoading = false,
+                            isError = true,
+                            errorText = ErrorMessage.fetchErrorMessage(error.message)
+                        )
+                    }
+                )
+            }
         }
+    }
+
+    private fun updateQuestionOperationState(
+        questionId: String,
+        listUiState: MutableStateFlow<GenericListState<QuestionViewUiState>>,
+        isLoading: Boolean,
+        isError: Boolean,
+        errorText: String,
+    ) {
+        listUiState.updateSingleItem(
+            predicate = { it.questionId == questionId },
+            transform = {
+                it.copy(
+                    isLoading = isLoading,
+                    isError = isError,
+                    errorText = errorText
+                )
+            }
+        )
     }
 
     private fun updateAdminOperationClicked(
@@ -198,7 +278,7 @@ fun Flow<List<QuestionViewUiState>>.questionAnswerOverlayFlow(
         if (questions.isEmpty()) return@combine questions
 
         questions.map { q ->
-            val ans = q.questionId?.let { answersIdx[it] }
+            val ans = answersIdx[q.questionId]
             val selected = ans?.selectedOptionIds?.firstOrNull()
             val newIsAnswered = selected != null
 
@@ -207,7 +287,9 @@ fun Flow<List<QuestionViewUiState>>.questionAnswerOverlayFlow(
                     isAnsweredByUser = newIsAnswered,
                     selectedAnswer = selected
                 )
-            } else q
+            } else {
+                q
+            }
         }
     }
 }

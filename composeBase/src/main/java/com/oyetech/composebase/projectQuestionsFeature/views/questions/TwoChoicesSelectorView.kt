@@ -112,7 +112,7 @@ fun TwoChoicesSelectorView(
                             color.copy(alpha = QuestionProjectViewAttrs.selectedBgAlpha)
                         } else Color.Transparent
                     )
-                    .clickable {
+                    .clickable(enabled = !uiState.isAnsweredByUser && !uiState.isLoading) {
                         onEvent(
                             QuestionViewEvent.OnOptionSelected(
                                 uiState.questionId,
