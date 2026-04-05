@@ -71,9 +71,33 @@ class QuestionListVm(
                 .collectLatest { questions ->
                     Timber.d("Combining question items flow with transformed questions: ${questions.size}")
                     if (questions.isNotEmpty()) {
-                        listOperationDelegate.updateList(questions)
+                        listOperationDelegate.updateList(
+                            mergeWithCurrentOperationState(questions)
+                        )
                     }
                 }
+        }
+    }
+
+    /**
+     * Answer overlay and admin-flag flows must NOT overwrite per-item operation states
+     * (isLoading, isError, errorText, adminOperationClicked) mutated concurrently by
+     * [QuestionEventHandlerUseCase]. Without this merge, a stale snapshot from the combine
+     * operator can race against an in-flight status update and leave isLoading stuck at true.
+     */
+    private fun mergeWithCurrentOperationState(
+        incoming: List<QuestionViewUiState>,
+    ): List<QuestionViewUiState> {
+        val currentById = listOperationDelegate.listUiState.value.items
+            .associateBy { it.questionId }
+        return incoming.map { item ->
+            val current = currentById[item.questionId] ?: return@map item
+            item.copy(
+                isLoading = current.isLoading,
+                isError = current.isError,
+                errorText = current.errorText,
+                adminOperationClicked = current.adminOperationClicked,
+            )
         }
     }
 
