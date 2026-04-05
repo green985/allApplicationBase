@@ -17,6 +17,7 @@ import com.oyetech.models.questionProject.questionOperation.QuestionStatusUpdate
 import com.oyetech.models.questionProject.questionOperation.QuestionType
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,77 +49,177 @@ class QuestionEventHandlerUseCase(
         event: QuestionViewEvent,
         listUiState: MutableStateFlow<GenericListState<QuestionViewUiState>>,
     ) {
-        when (event) {
-            is QuestionViewEvent.OnOptionSelected -> {
-                handleOptionSelected(event, listUiState)
+        val moderationUpdate = event.toModerationStatusUpdateOrNull()
+
+        when {
+            event is QuestionViewEvent.OnOptionSelected -> handleOptionSelected(event, listUiState)
+            event is QuestionViewEvent.OnDeleteAnswerClicked -> handleDeleteAnswer(
+                event,
+                listUiState
+            )
+
+            event is QuestionViewEvent.OnEditClicked -> navigateToEditQuestion(event.questionId)
+            event is QuestionViewEvent.SetAdminMode -> setAdminMode(event.isAdminView)
+            event is QuestionViewEvent.SetAdminFilterType -> setAdminFilterType(event.adminFilterType)
+            event is QuestionViewEvent.OnErrorDismiss -> clearAllItemErrors(listUiState)
+            moderationUpdate != null -> {
+                handleAdminStatusUpdate(
+                    questionId = moderationUpdate.questionId,
+                    moderationStatus = moderationUpdate.status,
+                    listUiState = listUiState
+                )
             }
 
-            is QuestionViewEvent.OnDeleteAnswerClicked -> {
-                handleDeleteAnswer(event, listUiState)
-            }
+            else -> handlePassiveQuestionEvent(event)
+        }
+    }
 
+    private data class ModerationStatusUpdate(
+        val questionId: String,
+        val status: ModerationStatus,
+    )
+
+    private fun QuestionViewEvent.toModerationStatusUpdateOrNull(): ModerationStatusUpdate? {
+        return when (this) {
             is QuestionViewEvent.OnAcceptClicked -> {
-                updateAdminOperationClicked(event.questionId, listUiState)
-                scope.launch(appDispatchers.io) {
-                    questionSupabaseRepository.updateQuestionStatus(
-                        QuestionStatusUpdateRequest(
-                            event.questionId,
-                            ModerationStatus.APPROVED
-                        )
-                    ).collectLatest { /* no-op */ }
-                }
+                ModerationStatusUpdate(
+                    questionId = this.questionId,
+                    status = ModerationStatus.APPROVED
+                )
             }
 
             is QuestionViewEvent.OnDeclineClicked -> {
-                updateAdminOperationClicked(event.questionId, listUiState)
-                scope.launch(appDispatchers.io) {
-                    questionSupabaseRepository.updateQuestionStatus(
-                        QuestionStatusUpdateRequest(
-                            event.questionId,
-                            ModerationStatus.DECLINED
-                        )
-                    ).collectLatest { /* no-op */ }
-                }
-            }
-
-            is QuestionViewEvent.OnEditClicked -> {
-                val route =
-                    "${QuestionAppProjectRoutes.QuestionCreateQuestionPage.route}?questionId=${event.questionId}"
-                navigationUseCase.navigateTo(route)
+                ModerationStatusUpdate(
+                    questionId = this.questionId,
+                    status = ModerationStatus.DECLINED
+                )
             }
 
             is QuestionViewEvent.OnPendingClicked -> {
-                updateAdminOperationClicked(event.questionId, listUiState)
-                scope.launch(appDispatchers.io) {
-                    questionSupabaseRepository.updateQuestionStatus(
-                        QuestionStatusUpdateRequest(
-                            event.questionId,
-                            ModerationStatus.PENDING
-                        )
-                    ).collectLatest { /* no-op */ }
+                ModerationStatusUpdate(
+                    questionId = this.questionId,
+                    status = ModerationStatus.PENDING
+                )
+            }
+
+            else -> null
+        }
+    }
+
+    private fun navigateToEditQuestion(questionId: String) {
+        val route =
+            "${QuestionAppProjectRoutes.QuestionCreateQuestionPage.route}?questionId=$questionId"
+        navigationUseCase.navigateTo(route)
+    }
+
+    private fun handlePassiveQuestionEvent(event: QuestionViewEvent) {
+        when (event) {
+            is QuestionViewEvent.OnTagSelected -> {
+                val route = if (adminViewState.value) {
+                    QuestionListNavigationHelper.buildQuestionListWithFiltersRoute(
+                        tag = event.tag,
+                        adminFilterType = adminFilterType.value
+                    )
+                } else {
+                    QuestionListNavigationHelper.buildQuestionListWithTagRoute(event.tag)
                 }
+                navigationUseCase.navigateTo(route)
             }
 
-            is QuestionViewEvent.SetAdminMode -> {
-                setAdminMode(event.isAdminView)
+            is QuestionViewEvent.OnTagRemoved -> {
+                Timber.d(
+                    "OnTagRemoved is create-question specific; " +
+                            "ignored in list context: ${event.tag.id}"
+                )
             }
 
-            is QuestionViewEvent.SetAdminFilterType -> {
-                setAdminFilterType(event.adminFilterType)
+            is QuestionViewEvent.OnTagSelectedForCreateQuestion -> {
+                Timber.d(
+                    "OnTagSelectedForCreateQuestion is create-question specific; " +
+                            "ignored in list context: ${event.tag.id}"
+                )
             }
 
-            QuestionViewEvent.CancelClicked -> TODO()
-            QuestionViewEvent.OnErrorDismiss -> TODO()
-            is QuestionViewEvent.OnTagRemoved -> TODO()
-            is QuestionViewEvent.OnTagSelected -> TODO()
-            is QuestionViewEvent.OnTagSelectedForCreateQuestion -> TODO()
-            QuestionViewEvent.SubmitClicked -> TODO()
+            QuestionViewEvent.CancelClicked -> {
+                Timber.d("CancelClicked is not handled in question list context")
+            }
+
+            QuestionViewEvent.SubmitClicked -> {
+                Timber.d("SubmitClicked is not handled in question list context")
+            }
+
             is QuestionViewEvent.TitleChanged -> {
                 Timber.d("Title changed: ${event.value}")
             }
 
-            is QuestionViewEvent.FormIdChanged -> TODO()
+            is QuestionViewEvent.FormIdChanged -> {
+                Timber.d("FormId changed in list context: ${event.value}")
+            }
+
+            else -> Unit
         }
+    }
+
+    private fun handleAdminStatusUpdate(
+        questionId: String,
+        moderationStatus: ModerationStatus,
+        listUiState: MutableStateFlow<GenericListState<QuestionViewUiState>>,
+    ) {
+        updateItem(questionId, listUiState) {
+            it.copy(
+                adminOperationClicked = true,
+                isLoading = true,
+                isError = false,
+                errorText = ""
+            )
+        }
+
+        scope.launch(appDispatchers.io) {
+            questionSupabaseRepository
+                .updateQuestionStatus(
+                    QuestionStatusUpdateRequest(
+                        questionId,
+                        moderationStatus
+                    )
+                )
+                .asResult()
+                .collectLatest { result ->
+                    result.fold(
+                        onSuccess = {
+                            updateItem(questionId, listUiState) {
+                                it.copy(
+                                    adminOperationClicked = true,
+                                    isLoading = false,
+                                    isError = false,
+                                    errorText = "",
+                                    moderationStatus = moderationStatus
+                                )
+                            }
+                        },
+                        onFailure = { error ->
+                            updateItem(questionId, listUiState) {
+                                it.copy(
+                                    adminOperationClicked = false,
+                                    isLoading = false,
+                                    isError = true,
+                                    errorText = ErrorMessage.fetchErrorMessage(error.message)
+                                )
+                            }
+                        }
+                    )
+                }
+        }
+    }
+
+    private fun updateItem(
+        questionId: String,
+        listUiState: MutableStateFlow<GenericListState<QuestionViewUiState>>,
+        transform: (QuestionViewUiState) -> QuestionViewUiState,
+    ) {
+        listUiState.updateSingleItem(
+            predicate = { it.questionId == questionId },
+            transform = transform
+        )
     }
 
     private fun handleOptionSelected(
@@ -233,26 +334,27 @@ class QuestionEventHandlerUseCase(
         isError: Boolean,
         errorText: String,
     ) {
-        listUiState.updateSingleItem(
-            predicate = { it.questionId == questionId },
-            transform = {
-                it.copy(
-                    isLoading = isLoading,
-                    isError = isError,
-                    errorText = errorText
-                )
-            }
-        )
+        updateItem(questionId, listUiState) {
+            it.copy(
+                isLoading = isLoading,
+                isError = isError,
+                errorText = errorText
+            )
+        }
     }
 
-    private fun updateAdminOperationClicked(
-        questionId: String,
+    private fun clearAllItemErrors(
         listUiState: MutableStateFlow<GenericListState<QuestionViewUiState>>,
     ) {
-        listUiState.updateSingleItem(
-            predicate = { it.questionId == questionId },
-            transform = { it.copy(adminOperationClicked = true) }
-        )
+        val updatedItems = listUiState.value.items.map { item ->
+            if (item.isError || item.errorText.isNotBlank()) {
+                item.copy(isError = false, errorText = "")
+            } else {
+                item
+            }
+        }
+
+        listUiState.value = listUiState.value.copy(items = updatedItems.toImmutableList())
     }
 
     private fun setAdminMode(isAdminView: Boolean) {

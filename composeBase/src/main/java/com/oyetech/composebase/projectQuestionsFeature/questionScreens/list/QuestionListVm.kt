@@ -51,7 +51,7 @@ class QuestionListVm(
         keySelector = { it.questionId }
     )
 
-    val listViewState: StateFlow<GenericListState<QuestionViewUiState>> =
+    val listViewState: MutableStateFlow<GenericListState<QuestionViewUiState>> =
         listOperationDelegate.listUiState
 
     private val questionEventHandlerUseCase = QuestionEventHandlerUseCase(
@@ -99,8 +99,8 @@ class QuestionListVm(
         return queFilter.filterNotNull().flatMapLatest { filter ->
             Timber.d(
                 "Filter changed - " +
-                        "Admin: ${filter.adminFilterType.name}, " +
-                        "Tag: ${filter.selectedTagFilter?.name}"
+                    "Admin: ${filter.adminFilterType.name}, " +
+                    "Tag: ${filter.selectedTagFilter?.name}"
             )
             uiState.value = uiState.value.copy(currentFilter = filter)
             when (filter.questionListType) {
@@ -193,6 +193,15 @@ class QuestionListVm(
     }
 
     fun onQuestionEvent(event: QuestionViewEvent) {
-        questionEventHandlerUseCase.handleQuestionEvent(event, listOperationDelegate.listUiState)
+        if (event is QuestionViewEvent.OnItemClick) {
+            val item = listViewState.value.items.find {
+                it.questionId == event.questionId
+            }
+            Timber.d(
+                "QuestionListVm: onQuestionEvent " +
+                    "- OnItemClick received for questionId: $item"
+            )
+        }
+        questionEventHandlerUseCase.handleQuestionEvent(event, listViewState)
     }
 }

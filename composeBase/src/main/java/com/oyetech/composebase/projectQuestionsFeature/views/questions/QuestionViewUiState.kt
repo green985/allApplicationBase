@@ -52,6 +52,7 @@ data class QuestionViewUiState(
 
 sealed class QuestionViewEvent : BaseEvent() {
 
+    data class OnItemClick(val questionId: String) : QuestionViewEvent()
     data class TitleChanged(val value: String) : QuestionViewEvent()
     data class FormIdChanged(val value: String) : QuestionViewEvent()
     object SubmitClicked : QuestionViewEvent()

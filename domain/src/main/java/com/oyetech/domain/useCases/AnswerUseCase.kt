@@ -2,6 +2,7 @@ package com.oyetech.domain.useCases
 
 import com.oyetech.domain.repository.question.QuestionSupabaseRepository
 import com.oyetech.models.questionProject.questionOperation.QueAnswer
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.onEach
 class AnswerUseCase(
     private val questionSupabaseRepository: QuestionSupabaseRepository,
 ) {
+    val timeMillis = 2000L
     private val _answersState = MutableStateFlow<List<QueAnswer>>(emptyList())
     val answersState: StateFlow<List<QueAnswer>> = _answersState
 
@@ -26,6 +28,7 @@ class AnswerUseCase(
 
     fun submitAnswer(answer: QueAnswer): Flow<QueAnswer> {
         return questionSupabaseRepository.addAnswer(answer).map { submittedAnswer ->
+            delay(timeMillis)
             val current = _answersState.value.toMutableList().apply {
                 removeAll { it.questionId == submittedAnswer.questionId && it.userId == submittedAnswer.userId }
                 add(submittedAnswer)
@@ -40,6 +43,7 @@ class AnswerUseCase(
             val current = _answersState.value.toMutableList().apply {
                 removeAll { it.questionId == questionId && it.userId == userId }
             }
+            delay(timeMillis)
             _answersState.value = current
         }
     }

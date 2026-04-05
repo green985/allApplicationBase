@@ -1,6 +1,7 @@
 package com.oyetech.composebase.projectQuestionsFeature.views.questions
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,7 +43,16 @@ fun QuestionViewScaffoldLayout(
     uiState: QuestionViewUiState,
     onEvent: (QuestionViewEvent) -> Unit,
 ) {
-    OutlinedCard(modifier = Modifier.padding(QuestionProjectViewAttrs.spacingXs)) {
+    OutlinedCard(
+        modifier = Modifier
+            .padding(QuestionProjectViewAttrs.spacingXs)
+            .clickable(
+                enabled = true,
+                onClick = {
+                    onEvent(QuestionViewEvent.OnItemClick(uiState.questionId))
+                }
+            )
+    ) {
         Box {
             Column(
                 modifier = modifier
@@ -280,7 +290,6 @@ fun QuestionAdminActionsContainer(
         }
 
         QuestionListAdminFilterType.PENDING_ADMIN -> {
-
             Row(
                 modifier = modifier
                     .fillMaxWidth()
@@ -328,14 +337,12 @@ fun QuestionAdminActionsContainer(
         }
 
         QuestionListAdminFilterType.DECLINED_ADMIN -> {
-
             // Show status + Send to Pending button
             Column(
                 modifier = modifier
                     .fillMaxWidth()
                     .padding(vertical = QuestionProjectViewAttrs.spacingSm)
             ) {
-
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End,
