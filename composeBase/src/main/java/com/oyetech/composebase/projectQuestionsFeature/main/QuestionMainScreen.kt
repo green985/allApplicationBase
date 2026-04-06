@@ -20,6 +20,7 @@ import com.oyetech.composebase.projectQuestionsFeature.theme.RadioAppTheme
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator.navHostScreenSetup
 import com.oyetech.domain.useCases.NavigationUseCase
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 /**
 Created by Erdi Özbek
@@ -40,7 +41,12 @@ fun QuestionMainScreen(
 
         navigationUseCase.setNavigator(
             navigateTo = { route -> coroutineScope.launch { backStack.add(route as NavKey) } },
-            goBack = { coroutineScope.launch { backStack.removeLastOrNull() } }
+            goBack = {
+                coroutineScope.launch {
+                    Timber.d("size of backstack before pop: ${backStack.size}")
+                    backStack.removeLastOrNull()
+                }
+            }
         )
 
         Column(

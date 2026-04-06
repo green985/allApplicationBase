@@ -80,7 +80,6 @@ class AuthOperationVM(
                     _authOperationState.updateState { copy(isLoading = false) }
                     if (userData.isProfileCompletedForAuth()) {
                         uiEvent.emit(AuthOperationUiEvent.OnLoginSuccess)
-                        navigationUseCase.goBack()
                     } else {
                         uiEvent.emit(AuthOperationUiEvent.OnProfileIncomplete)
                         navigationUseCase.navigateTo(AppRoute.CompleteProfileScreen)
