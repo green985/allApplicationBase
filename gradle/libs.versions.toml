@@ -19,6 +19,8 @@ material = "1.10.5"
 foundation = "1.10.5"
 runtime = "1.10.5"
 navigation = "2.9.7"
+# Navigation 3 — verify latest at https://developer.android.com/jetpack/androidx/releases/navigation3
+navigation3 = "1.0.1"
 paging = "3.4.2"
 glide-compose = "1.0.0-beta01"
 kotlinx-collections-immutable = "0.4.0"
@@ -123,6 +125,8 @@ navigation-compose = { module = "androidx.navigation:navigation-compose", versio
 navigation-runtime-ktx = { module = "androidx.navigation:navigation-runtime-ktx", version.ref = "navigation" }
 navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigation" }
 navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigation" }
+navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation3" }
+navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
 paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
 
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin-bom" }

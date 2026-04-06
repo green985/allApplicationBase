@@ -5,8 +5,7 @@ import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent
 import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
-import com.oyetech.composebase.sharedScreens.navigation.ScreenKey
+import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.cripto.stringKeys.WebSiteUrls
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.tools.contextHelper.UrlHelper
@@ -97,13 +96,13 @@ class FacSettingsVm(
                 FacSettingsUiEvent.NavigateToProfile -> {
                     val uid = authOperationVM.getUserId()
                     if (uid.isNotBlank()) {
-                        navigationUseCase.navigateTo("${QuestionAppProjectRoutes.UserProfile.route}?${ScreenKey.receiverUserId}=$uid")
+                        navigationUseCase.navigateTo(AppRoute.UserProfile(receiverUserId = uid))
                     }
                 }
 
                 FacSettingsUiEvent.AdminApproveQuestionsClicked -> {
                     // Debug-only navigation to Admin Approve screen under Question project
-                    navigationUseCase.navigateTo(QuestionAppProjectRoutes.AdminApproveQuestion.route)
+                    navigationUseCase.navigateTo(AppRoute.AdminApproveQuestion)
                 }
             }
         }

@@ -82,7 +82,7 @@ class EditProfileVm(
 
     private fun navigateBack() {
         viewModelScope.launch {
-            navigationUseCase.navigateTo("back")
+            navigationUseCase.goBack()
         }
     }
 }

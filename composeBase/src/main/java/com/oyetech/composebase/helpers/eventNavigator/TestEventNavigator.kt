@@ -4,7 +4,7 @@ import androidx.lifecycle.LifecycleCoroutineScope
 import com.oyetech.composebase.base.BaseEvent
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationEvent
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
+import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigatorEvent
 import com.oyetech.composebase.sharedScreens.settings.FacSettingsUiEvent
 import com.oyetech.composebase.sharedScreens.userList.UserListEvent
@@ -87,6 +87,6 @@ object EventNavigatorList {
     // Navigate directly to Create Question screen in Question app
     val createQuestionOperation = buildList<BaseEvent> {
         add(AllScreenNavigatorEvent.OnNavigateToQuestionStart)
-        add(AllScreenNavigatorEvent.NavigateListItemClicked(QuestionAppProjectRoutes.QuestionCreateQuestionPage.route))
+        add(AllScreenNavigatorEvent.NavigateListItemClicked(AppRoute.QuestionCreateQuestionPage()))
     }
 }

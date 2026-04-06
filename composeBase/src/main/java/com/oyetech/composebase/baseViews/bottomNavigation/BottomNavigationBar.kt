@@ -8,15 +8,11 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavDestination
-import androidx.navigation.NavGraph
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationUiEvent.NavigateToSelectedItemWithTest
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
@@ -26,13 +22,11 @@ fun BottomNavigationBar(
     modifier: Modifier = Modifier,
     vm: BottomNavigationVm = koinViewModel(),
     isClickable: Boolean = true,
-    navController: NavHostController = rememberNavController(),
+    backStack: NavBackStack<NavKey>,
     navItems: List<BottomNavigationItem> = emptyList(),
 ) {
-    // Derive the selected tab directly from the nav back-stack so that pressing
-    // the system Back button automatically reflects the correct tab.
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
+    // Derive the selected tab from the top of the Nav3 back stack.
+    val currentDestination = backStack.lastOrNull()
 
     // Handle external navigation events emitted by the global TestEventNavigator bus.
     LaunchedEffect(Unit) {
@@ -40,48 +34,43 @@ fun BottomNavigationBar(
             when (event) {
                 is NavigateToSelectedItemWithTest -> {
                     val item = navItems.getOrNull(event.index) ?: return@collectLatest
-                    navigateToBottomBarRoute(navController, item.path)
+                    navigateToBottomTab(backStack, item.route)
                 }
             }
         }
     }
 
     NavigationBar(modifier = modifier, windowInsets = WindowInsets.navigationBars) {
-        navItems.forEachIndexed { index, item ->
-
-            val title = item.titleText.ifBlank {
-                stringResource(item.title)
-            }
+        navItems.forEachIndexed { _, item ->
+            val title = item.titleText.ifBlank { stringResource(item.title) }
 
             NavigationBarItem(
                 alwaysShowLabel = true,
                 icon = { Icon(painterResource(item.icon), contentDescription = title) },
                 label = { Text(title) },
-                // Selected state is always in sync with the real navigation destination.
-                selected = currentRoute == item.path,
+                // Selected when the top of the back stack is the same destination class.
+                selected = currentDestination?.let { it::class == item.route::class } ?: false,
                 enabled = isClickable,
-                onClick = {
-                    navigateToBottomBarRoute(navController, item.path)
-                }
+                onClick = { navigateToBottomTab(backStack, item.route) }
             )
         }
     }
 }
 
-fun navigateToBottomBarRoute(navController: NavHostController, route: String) {
-    if (route != navController.currentDestination?.route) {
-        navController.navigate(route) {
-            launchSingleTop = true
-            restoreState = true
-            // Pop up to the start destination and save state so pressing Back
-            // from any tab always returns to the start destination cleanly.
-            popUpTo(findStartDestination(navController.graph)) {
-                saveState = true
-            }
-        }
-    }
-}
+/**
+ * Pops the back stack to the first existing occurrence of [route]'s class, or
+ * pushes a fresh instance when the tab hasn't been visited yet.
+ */
+fun navigateToBottomTab(backStack: NavBackStack<NavKey>, route: Any) {
+    if (backStack.lastOrNull()?.let { it::class == route::class } == true) return
 
-private fun findStartDestination(graph: NavDestination): Int {
-    return if (graph is NavGraph) graph.startDestinationId else graph.id
+    val existingIndex = backStack.indexOfFirst { it::class == route::class }
+    if (existingIndex >= 0) {
+        // Pop entries above the existing tab root (restores its back stack).
+        while (backStack.size > existingIndex + 1) {
+            backStack.removeLastOrNull()
+        }
+    } else {
+        backStack.add(route as NavKey)
+    }
 }

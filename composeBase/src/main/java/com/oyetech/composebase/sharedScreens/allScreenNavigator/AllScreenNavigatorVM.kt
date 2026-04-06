@@ -1,6 +1,7 @@
 package com.oyetech.composebase.sharedScreens.allScreenNavigator
 
 import com.oyetech.composebase.base.BaseViewModel
+import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigatorEvent.NavigateListItemClicked
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
@@ -22,12 +23,10 @@ class AllScreenNavigatorVM(
         if (event is AllScreenNavigatorEvent) {
             when (event) {
                 is AllScreenNavigatorEvent.OnNavigateToQuestionStart -> {
-                    // Handle idle event if needed
-                    navigationUseCase.navigateTo(AllScreenNavigator.questionAppStart)
+                    navigationUseCase.navigateTo(AppRoute.QuestionAppStart)
                 }
 
                 is NavigateListItemClicked -> {
-                    // Handle item click event
                     navigationUseCase.navigateTo(event.navigationRoute)
                 }
             }

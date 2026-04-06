@@ -11,7 +11,7 @@ import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.ErrorDismiss
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationEvent.LoginClicked
 import com.oyetech.composebase.helpers.general.GeneralSettings
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
+import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseNotificationTokenOperationRepository
 import com.oyetech.domain.repository.loginOperation.GoogleLoginRepository
@@ -130,7 +130,7 @@ class LoginOperationVM(
                             )
                         }
                         uiEvent.emit(LoginOperationUiEvent.OnLoginSuccess)
-                        navigationUseCase.navigateTo("back")
+                        navigationUseCase.goBack()
                     }
 
                     AuthOperationUiEvent.OnProfileIncomplete -> {
@@ -140,13 +140,13 @@ class LoginOperationVM(
                                 isRegistrationCompleteNeeded = true
                             )
                         }
-                        navigationUseCase.navigateTo(QuestionAppProjectRoutes.CompleteProfileScreen.route)
+                        navigationUseCase.navigateTo(AppRoute.CompleteProfileScreen)
                     }
 
                     AuthOperationUiEvent.OnProfileCancelled -> {
                         viewModelScope.launch(getDispatcherIo()) {
                             googleLoginRepository.removeUser(googleLoginRepository.getUserUid())
-                            navigationUseCase.navigateTo("back")
+                            navigationUseCase.goBack()
                             uiEvent.emit(LoginOperationUiEvent.OnCancelUserCreation)
                         }
                     }
@@ -223,7 +223,7 @@ class LoginOperationVM(
             snackbarDelegate.triggerSnackbarState(LanguageKey.deleteAccountSuccess)
             loginOperationState.value = LoginOperationUiState()
             uiEvent.emit(LoginOperationUiEvent.OnCancelUserCreation)
-            navigationUseCase.navigateTo("back")
+            navigationUseCase.goBack()
         }
     }
 }

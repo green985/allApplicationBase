@@ -2,10 +2,7 @@ package com.oyetech.composebase.projectQuestionsFeature.navigation
 
 import com.oyetech.composebase.R
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationItem
-import com.oyetech.composebase.navigator.Route
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.QuestionAppHomepage
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.QuestionAppSettings
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes.QuestionPager
+import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.languageModule.keyset.LanguageKey
 
 /**
@@ -14,24 +11,24 @@ Created by Warp Agent
 -For QuestionApp-
  **/
 
+/**
+ * Canonical typed-route references for the Question app.
+ * All screens use [AppRoute] subclasses — no string routes.
+ */
 object QuestionAppProjectRoutes {
-
-    val QuestionCreateQuestionPage = Route("questionCreateQuestionPage")
-    val QuestionAppHomepage = Route("questionAppHomepage")
-    val QuestionAppSettings = Route("question/QuestionAppSettings")
-    val AdminApproveQuestion = Route("question/AdminApproveQuestion")
-    val QuestionListWithParams = Route("question/QuestionListWithParams")
-    val QuestionPager = Route("question/QuestionPager")
-    val UserProfile = Route("question/UserProfile")
-    val CompleteProfileScreen = Route("question/CompleteProfileScreen")
-    val EditProfile = Route("question/EditProfile")
-    val QuestionFormScreen = Route("question/QuestionFormScreen")
-
-    val UserList = Route("question/UserList")
-
-    val MessageDetail = Route("question/MessageDetail")
-
-    val MessageConversationList = Route("question/MessageConversationList")
+    val QuestionCreateQuestionPage = AppRoute.QuestionCreateQuestionPage()
+    val QuestionAppHomepage = AppRoute.QuestionAppHomepage
+    val QuestionAppSettings = AppRoute.QuestionAppSettings
+    val AdminApproveQuestion = AppRoute.AdminApproveQuestion
+    val QuestionListWithParams = AppRoute.QuestionListWithParams()
+    val QuestionPager = AppRoute.QuestionPager
+    val UserProfile = AppRoute.UserProfile()
+    val CompleteProfileScreen = AppRoute.CompleteProfileScreen
+    val EditProfile = AppRoute.EditProfile
+    val QuestionFormScreen = AppRoute.QuestionFormScreen()
+    val UserList = AppRoute.UserList
+    val MessageDetail = AppRoute.MessageDetail()
+    val MessageConversationList = AppRoute.MessageConversationList
 }
 
 object QuestionAppProjectBottomNavigationDestinations {
@@ -47,35 +44,35 @@ object QuestionAppProjectBottomNavigationDestinations {
 sealed class QuestionAppNavItem {
     object TabQuestionAppHomepage :
         BottomNavigationItem(
-            path = QuestionAppHomepage.route,
+            route = AppRoute.QuestionAppHomepage,
             titleText = LanguageKey.home,
             icon = R.drawable.ic_tab_all_radio
         )
 
     object TabQuestionList :
         BottomNavigationItem(
-            path = QuestionPager.route,
+            route = AppRoute.QuestionPager,
             titleText = LanguageKey.home,
             icon = R.drawable.ic_tab_all_radio
         )
 
     object QuestionAppSettingsTab :
         BottomNavigationItem(
-            path = QuestionAppSettings.route,
+            route = AppRoute.QuestionAppSettings,
             title = R.string.nav_item_settings,
             icon = R.drawable.ic_settings
         )
 
     object QuestionAppMessageTab :
         BottomNavigationItem(
-            path = QuestionAppSettings.route,
+            route = AppRoute.MessageConversationList,
             title = R.string.nav_item_settings,
             icon = R.drawable.ic_settings
         )
 
     object UserProfileTab :
         BottomNavigationItem(
-            path = QuestionAppProjectRoutes.UserProfile.route,
+            route = AppRoute.UserProfile(),
             title = R.string.nav_item_settings,
             icon = R.drawable.ic_settings
         )

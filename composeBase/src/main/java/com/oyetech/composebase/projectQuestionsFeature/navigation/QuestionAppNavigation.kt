@@ -1,120 +1,75 @@
 package com.oyetech.composebase.projectQuestionsFeature.navigation
 
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
+import com.oyetech.composebase.experimental.loginOperations.CompleteProfileScreenSetup
+import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.composebase.projectQuestionsFeature.adminApprove.AdminApproveQuestionScreenSetup
 import com.oyetech.composebase.projectQuestionsFeature.homeScreen.QuestionsHomeScreenSetup
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.createQuestion.QuestionCreateScreenSetup
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListWithParamsScreenSetup
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionPagerScreenSetup
-import com.oyetech.composebase.sharedScreens.navigation.ScreenKey
+import com.oyetech.composebase.projectQuestionsFeature.questionScreens.questionForm.QuestionFormScreenSetup
 import com.oyetech.composebase.sharedScreens.settings.FacSettingsScreenSetup
 import com.oyetech.composebase.sharedScreens.userList.UserListScreenSetup
 import com.oyetech.composebase.sharedScreens.userProfile.editProfile.EditUserProfileScreenSetup
 import com.oyetech.composebase.sharedScreens.userProfile.userProfileDesign.User2ProfileScreenSetup
 
 @Suppress("LongMethod")
-fun NavGraphBuilder.questionAppNavigation(navController: NavController) {
-    composable(QuestionAppProjectRoutes.QuestionAppHomepage.route) {
+fun EntryProviderScope<NavKey>.questionAppNavigation() {
+
+    entry<AppRoute.QuestionAppHomepage> {
         QuestionsHomeScreenSetup()
     }
 
-    composable(QuestionAppProjectRoutes.QuestionAppSettings.route) {
+    entry<AppRoute.QuestionAppSettings> {
         FacSettingsScreenSetup()
     }
 
-    composable(QuestionAppProjectRoutes.MessageConversationList.route) {
-//        MessageConversationListScreenSetup()
+    entry<AppRoute.MessageConversationList> {
+        // MessageConversationListScreenSetup()
     }
 
-    composable(QuestionAppProjectRoutes.UserList.route) {
+    entry<AppRoute.UserList> {
         UserListScreenSetup()
     }
 
-    composable(
-        route = "${QuestionAppProjectRoutes.QuestionCreateQuestionPage.route}?" +
-                "${ScreenKey.questionId}={questionId}",
-        arguments = listOf(
-            navArgument(ScreenKey.questionId) {
-                defaultValue = ""
-                nullable = true
-            }
-        )
-    ) { entry ->
-        val questionId = entry.arguments?.getString(ScreenKey.questionId) ?: ""
-        QuestionCreateScreenSetup(questionId = questionId)
+    entry<AppRoute.QuestionCreateQuestionPage> {
+        QuestionCreateScreenSetup(questionId = it.questionId)
     }
 
-    composable(QuestionAppProjectRoutes.AdminApproveQuestion.route) {
+    entry<AppRoute.AdminApproveQuestion> {
         AdminApproveQuestionScreenSetup()
     }
 
-    composable(QuestionAppProjectRoutes.QuestionPager.route) {
+    entry<AppRoute.QuestionPager> {
         QuestionPagerScreenSetup()
     }
-    composable(QuestionAppProjectRoutes.EditProfile.route) {
+
+    entry<AppRoute.EditProfile> {
         EditUserProfileScreenSetup()
     }
 
-    composable(
-        route = "${QuestionAppProjectRoutes.QuestionListWithParams.route}?" +
-                "${ScreenKey.questionTag}={questionTag}" +
-                "&${ScreenKey.adminFilterType}={adminFilterType}",
-        arguments = listOf(
-            navArgument(ScreenKey.questionTag) {
-                defaultValue = ""
-                nullable = true
-            },
-            navArgument(ScreenKey.adminFilterType) {
-                defaultValue = ""
-                nullable = true
-            }
-        )
-    ) { entry ->
-        val questionTag = entry.arguments?.getString(ScreenKey.questionTag)
-        val adminFilterType = entry.arguments?.getString(ScreenKey.adminFilterType)
+    entry<AppRoute.QuestionListWithParams> {
         QuestionListWithParamsScreenSetup(
-            questionTagId = questionTag,
-            adminFilterTypeStr = adminFilterType
+            questionTagId = it.questionTag,
+            adminFilterTypeStr = it.adminFilterType
         )
     }
 
-    // Question Form Screen
-    composable(
-        route = "${QuestionAppProjectRoutes.QuestionFormScreen.route}?" +
-                "${ScreenKey.formId}={formId}",
-        arguments = listOf(
-            navArgument(ScreenKey.formId) {
-                defaultValue = ""
-                nullable = true
-            }
-        )
-    ) { entry ->
-        val formId = entry.arguments?.getString(ScreenKey.formId) ?: ""
-        com.oyetech.composebase.projectQuestionsFeature.questionScreens.questionForm.QuestionFormScreenSetup(
-            formId = formId
-        )
+    entry<AppRoute.QuestionFormScreen> {
+        QuestionFormScreenSetup(formId = it.formId)
     }
 
-    // Complete Profile
-    composable(QuestionAppProjectRoutes.CompleteProfileScreen.route) {
-        com.oyetech.composebase.experimental.loginOperations.CompleteProfileScreenSetup()
+    entry<AppRoute.CompleteProfileScreen> {
+        CompleteProfileScreenSetup()
     }
 
-    // Newly added UserProfile route under Question app
-    composable(
-        route = "${QuestionAppProjectRoutes.UserProfile.route}?" +
-                "&${ScreenKey.receiverUserId}={receiverUserId}",
-        arguments = listOf(
-            navArgument(ScreenKey.receiverUserId) {
-                defaultValue = ""
-                nullable = false
-            }
-        )
-    ) { entry ->
-        val receiverUserId = entry.arguments?.getString(ScreenKey.receiverUserId) ?: ""
-        User2ProfileScreenSetup(receiverUserId = receiverUserId)
+    entry<AppRoute.UserProfile> {
+        User2ProfileScreenSetup(receiverUserId = it.receiverUserId)
+    }
+
+    entry<AppRoute.MessageDetail> {
+        // MessageDetailScreenSetup(receiverUserId = it.receiverUserId)
     }
 }

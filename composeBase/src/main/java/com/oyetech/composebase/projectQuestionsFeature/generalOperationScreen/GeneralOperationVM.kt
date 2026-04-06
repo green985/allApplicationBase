@@ -4,12 +4,9 @@ import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
-import com.oyetech.composebase.sharedScreens.messaging.MessageOperationVM
-import com.oyetech.composebase.sharedScreens.navigation.ScreenKey
+import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.domain.repository.NotificationHandlerRepository
 import com.oyetech.domain.repository.SharedOperationRepository
-import com.oyetech.domain.repository.firebase.FirebaseUserListOperationRepository
 import com.oyetech.domain.repository.loginOperation.AuthOperationRepository
 import com.oyetech.domain.useCases.AnswerUseCase
 import com.oyetech.domain.useCases.NavigationUseCase
@@ -34,9 +31,7 @@ class GeneralOperationVM(
     appDispatchers: AppDispatchers,
     private val appReviewOperationUseCase: AppReviewOperationUseCase,
     private val sharedHelperRepository: SharedOperationRepository,
-    private val firebaseUserListOperationRepository: FirebaseUserListOperationRepository,
     private val authOperationRepository: AuthOperationRepository,
-    private val messageOperationVM: MessageOperationVM,
     private val authOperationVM: AuthOperationVM,
     private val answerUseCase: AnswerUseCase,
     private val notificationHandlerRepository: NotificationHandlerRepository,
@@ -108,8 +103,7 @@ class GeneralOperationVM(
                     actionLabel = LanguageKey.viewText,
                     onAction = {
                         navigationUseCase.navigateTo(
-                            QuestionAppProjectRoutes.QuestionFormScreen.route +
-                                    "?${ScreenKey.formId}=${data.formId}"
+                            AppRoute.QuestionFormScreen(formId = data.formId)
                         )
                     }
                 )

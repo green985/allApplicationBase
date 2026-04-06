@@ -99,7 +99,7 @@ class QuestionCreateQuestionVm(
     override fun onEvent(event: Any) {
         if (event is QuestionViewEvent) {
             when (event) {
-                CancelClicked -> navigationUseCase.navigateTo("back")
+                CancelClicked -> navigationUseCase.goBack()
                 QuestionViewEvent.OnErrorDismiss -> {
                     uiState.updateState { copy(errorText = "") }
                 }
@@ -258,7 +258,7 @@ class QuestionCreateQuestionVm(
                                 questionUseCase.emitQuestionUpdated(editingQuestionId)
                             }
 
-                            navigationUseCase.navigateTo("back")
+                            navigationUseCase.goBack()
                             if (!GeneralSettings.isDebug()) {
                                 snackbarDelegate.triggerSnackbarState(message = message)
                             }

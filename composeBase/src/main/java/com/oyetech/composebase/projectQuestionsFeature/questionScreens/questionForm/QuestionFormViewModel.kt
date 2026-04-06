@@ -191,7 +191,7 @@ class QuestionFormViewModel(
                             actionLabel = LanguageKey.viewText,
                         )
                         generateFormResult()
-                        navigationUseCase.navigateTo("back")
+                        navigationUseCase.goBack()
                     },
                     onFailure = { error ->
                         Timber.e(error, "Error submitting form")
@@ -236,7 +236,7 @@ class QuestionFormViewModel(
     }
 
     private fun handleBackPressed() {
-        navigationUseCase.navigateTo("back")
+        navigationUseCase.goBack()
     }
 
     private fun handleQuestionExpanded(questionId: String, isExpanded: Boolean) {

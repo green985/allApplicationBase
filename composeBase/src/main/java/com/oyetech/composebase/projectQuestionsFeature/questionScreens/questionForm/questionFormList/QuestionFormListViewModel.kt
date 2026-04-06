@@ -3,7 +3,7 @@ package com.oyetech.composebase.projectQuestionsFeature.questionScreens.question
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
+import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.domain.repository.question.QuestionSupabaseRepository
 import com.oyetech.domain.useCases.AnswerUseCase
 import com.oyetech.domain.useCases.NavigationUseCase
@@ -100,8 +100,6 @@ class QuestionFormListViewModel(
     }
 
     private fun handleCatalogItemClick(formId: String) {
-        val route =
-            "${QuestionAppProjectRoutes.QuestionFormScreen.route}?formId=$formId"
-        navigationUseCase.navigateTo(route)
+        navigationUseCase.navigateTo(AppRoute.QuestionFormScreen(formId = formId))
     }
 }

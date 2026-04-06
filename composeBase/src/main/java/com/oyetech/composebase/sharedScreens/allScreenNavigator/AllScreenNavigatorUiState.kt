@@ -1,6 +1,7 @@
 package com.oyetech.composebase.sharedScreens.allScreenNavigator
 
 import com.oyetech.composebase.base.BaseEvent
+import com.oyetech.composebase.navigator.AppRoute
 
 /**
 Created by Erdi Özbek
@@ -11,7 +12,7 @@ Created by Erdi Özbek
 data class AllScreenNavigatorUiState(val isLoading: Boolean = false)
 
 sealed class AllScreenNavigatorEvent : BaseEvent() {
-    data class NavigateListItemClicked(val navigationRoute: String) : AllScreenNavigatorEvent()
+    data class NavigateListItemClicked(val navigationRoute: AppRoute) : AllScreenNavigatorEvent()
 
     object OnNavigateToQuestionStart : AllScreenNavigatorEvent()
 }

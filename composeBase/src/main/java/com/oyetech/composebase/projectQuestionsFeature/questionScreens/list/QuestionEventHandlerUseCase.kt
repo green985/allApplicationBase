@@ -2,7 +2,7 @@ package com.oyetech.composebase.projectQuestionsFeature.questionScreens.list
 
 import com.oyetech.composebase.base.baseGenericList.GenericListState
 import com.oyetech.composebase.base.baseGenericList.updateSingleItem
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
+import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import com.oyetech.domain.repository.loginOperation.AuthOperationRepository
@@ -107,9 +107,7 @@ class QuestionEventHandlerUseCase(
     }
 
     private fun navigateToEditQuestion(questionId: String) {
-        val route =
-            "${QuestionAppProjectRoutes.QuestionCreateQuestionPage.route}?questionId=$questionId"
-        navigationUseCase.navigateTo(route)
+        navigationUseCase.navigateTo(AppRoute.QuestionCreateQuestionPage(questionId = questionId))
     }
 
     private fun handlePassiveQuestionEvent(event: QuestionViewEvent) {

@@ -8,7 +8,7 @@ import com.oyetech.composebase.base.baseGenericList.setList
 import com.oyetech.composebase.base.baseGenericList.updateErrorInitial
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.experimental.moonOperation.MoonOperationVm
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
+import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.composebase.sharedScreens.messaging.MessageConversationUiState
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListEvent.OnConversationClick
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListEvent.OnConversationClickWithPosition
@@ -16,7 +16,6 @@ import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageC
 import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListEvent.Retry
 import com.oyetech.composebase.sharedScreens.messaging.mapFromLocalToUiState
 import com.oyetech.composebase.sharedScreens.messaging.mapToUiState
-import com.oyetech.composebase.sharedScreens.navigation.ScreenKey
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.messaging.MessagesAllOperationRepository
@@ -29,6 +28,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import kotlin.collections.find
+import kotlin.collections.getOrNull
+import kotlin.collections.map
 
 /**
 Created by Erdi Özbek
@@ -159,9 +161,9 @@ class MessageConversationListVm(
                             ?: ""
 
                     navigationUseCase.navigateTo(
-                        QuestionAppProjectRoutes.MessageDetail.withArgs(
-                            ScreenKey.conversationId to event.conversationId,
-                            ScreenKey.receiverUserId to event.userId,
+                        AppRoute.MessageDetail(
+                            conversationId = event.conversationId,
+                            receiverUserId = event.userId,
                         )
                     )
                 }
@@ -197,9 +199,9 @@ class MessageConversationListVm(
                 ?: ""
 
         navigationUseCase.navigateTo(
-            QuestionAppProjectRoutes.MessageDetail.withArgs(
-                ScreenKey.conversationId to conversationId,
-                ScreenKey.receiverUserId to userId,
+            AppRoute.MessageDetail(
+                conversationId = conversationId,
+                receiverUserId = userId,
             )
         )
     }

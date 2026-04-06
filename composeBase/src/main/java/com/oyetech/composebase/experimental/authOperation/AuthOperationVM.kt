@@ -10,7 +10,7 @@ import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent.Log
 import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent.OnCancelProfile
 import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent.OnSubmitProfile
 import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent.UsernameChanged
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
+import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.domain.repository.loginOperation.AuthOperationRepository
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
@@ -80,10 +80,10 @@ class AuthOperationVM(
                     _authOperationState.updateState { copy(isLoading = false) }
                     if (userData.isProfileCompletedForAuth()) {
                         uiEvent.emit(AuthOperationUiEvent.OnLoginSuccess)
-                        navigationUseCase.navigateTo("back")
+                        navigationUseCase.goBack()
                     } else {
                         uiEvent.emit(AuthOperationUiEvent.OnProfileIncomplete)
-                        navigationUseCase.navigateTo(QuestionAppProjectRoutes.CompleteProfileScreen.route)
+                        navigationUseCase.navigateTo(AppRoute.CompleteProfileScreen)
                     }
                 },
                 onFailure = { error ->
@@ -121,7 +121,7 @@ class AuthOperationVM(
                     mapUserDataToState(userData)
                     _authOperationState.updateState { copy(isLoading = false) }
                     uiEvent.emit(AuthOperationUiEvent.OnLoginSuccess)
-                    navigationUseCase.navigateTo("back")
+                    navigationUseCase.goBack()
                 },
                 onFailure = { error ->
                     Timber.e("updateUserProfile error: ${error.message}")
@@ -140,7 +140,7 @@ class AuthOperationVM(
     private fun handleCancelProfile() {
         viewModelScope.launch(getDispatcherIo()) {
             uiEvent.emit(AuthOperationUiEvent.OnProfileCancelled)
-            navigationUseCase.navigateTo("back")
+            navigationUseCase.goBack()
         }
     }
 
@@ -158,7 +158,7 @@ class AuthOperationVM(
                     _authOperationState.value = AuthOperationUiState()
                     snackbarDelegate.triggerSnackbarState(LanguageKey.deleteAccountSuccess)
                     uiEvent.emit(AuthOperationUiEvent.OnProfileCancelled)
-                    navigationUseCase.navigateTo("back")
+                    navigationUseCase.goBack()
                 },
                 onFailure = { error ->
                     _authOperationState.updateState {

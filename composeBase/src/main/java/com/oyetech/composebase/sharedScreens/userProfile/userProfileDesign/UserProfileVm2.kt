@@ -4,8 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
-import com.oyetech.composebase.sharedScreens.navigation.ScreenKey
+import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.domain.repository.firebase.FirebaseUserPropertyRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.useCases.NavigationUseCase
@@ -191,21 +190,19 @@ class UserProfileVm2(
 
     private fun navigateToLogin() {
         viewModelScope.launch {
-            navigationUseCase.navigateTo(QuestionAppProjectRoutes.CompleteProfileScreen.route)
+            navigationUseCase.navigateTo(AppRoute.CompleteProfileScreen)
         }
     }
 
     private fun navigateToMessage(receiverUserId: String) {
         viewModelScope.launch {
-            val route =
-                "${QuestionAppProjectRoutes.MessageDetail.route}?${ScreenKey.receiverUserId}=$receiverUserId"
-            navigationUseCase.navigateTo(route)
+            navigationUseCase.navigateTo(AppRoute.MessageDetail(receiverUserId = receiverUserId))
         }
     }
 
     private fun navigateToEditProfile() {
         viewModelScope.launch {
-            navigationUseCase.navigateTo(QuestionAppProjectRoutes.EditProfile.route)
+            navigationUseCase.navigateTo(AppRoute.EditProfile)
         }
     }
 }

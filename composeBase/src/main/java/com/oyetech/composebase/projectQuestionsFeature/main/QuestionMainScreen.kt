@@ -7,14 +7,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.ui.NavDisplay
+import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppBottomNavigationView
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectBottomNavigationDestinations
 import com.oyetech.composebase.projectQuestionsFeature.navigation.questionAppNavigation
 import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
 import com.oyetech.composebase.projectQuestionsFeature.theme.RadioAppTheme
-import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator.navHostScreenSetup
 import com.oyetech.domain.useCases.NavigationUseCase
 import kotlinx.coroutines.launch
@@ -30,17 +32,17 @@ fun QuestionMainScreen(
     navigationUseCase: NavigationUseCase,
 ) {
     RadioAppTheme {
-        val navController = rememberNavController()
+        val startDestination =
+            QuestionAppProjectBottomNavigationDestinations.questionApplicationBottomTabNavList
+                .first().route
+        val backStack = rememberNavBackStack(startDestination)
         val coroutineScope = rememberCoroutineScope()
-        navigationUseCase.setNavigator { action ->
-            coroutineScope.launch {
-                if (action == "back") {
-                    navController.navigateUp()
-                } else {
-                    navController.navigate(action)
-                }
-            }
-        }
+
+        navigationUseCase.setNavigator(
+            navigateTo = { route -> coroutineScope.launch { backStack.add(route as NavKey) } },
+            goBack = { coroutineScope.launch { backStack.removeLastOrNull() } }
+        )
+
         Column(
             verticalArrangement = Arrangement.Bottom,
             modifier = Modifier.fillMaxSize()
@@ -50,41 +52,34 @@ fun QuestionMainScreen(
                     .weight(1f)
                     .background(AppColors.background)
             ) {
-                NavHost(
-                    navController = navController,
-                    startDestination =
-                    QuestionAppProjectBottomNavigationDestinations.questionApplicationBottomTabNavList.first().path,
-                ) {
-                    navHostScreenSetup(navController, navigationUseCase)
-                    questionAppNavigation(navController)
-                }
+                NavDisplay(
+                    backStack = backStack,
+                    entryProvider = entryProvider {
+                        navHostScreenSetup(navigationUseCase)
+                        questionAppNavigation()
+                    }
+                )
             }
-            QuestionAppBottomNavigationView(navController = navController)
+            QuestionAppBottomNavigationView(backStack = backStack)
         }
     }
 }
 
 @Composable
 fun QuestionAppDebugRoot(navigationUseCase: NavigationUseCase) {
-    val navController = rememberNavController()
+    val backStack = rememberNavBackStack(AppRoute.AppFullApp)
     val coroutineScope = rememberCoroutineScope()
-    // Hook NavigationUseCase to Compose navController in debug as well
-    navigationUseCase.setNavigator { action ->
-        // Use composition-scoped coroutine
-        coroutineScope.launch {
-            if (action == "back") {
-                navController.navigateUp()
-            } else {
-                navController.navigate(action)
-            }
+
+    navigationUseCase.setNavigator(
+        navigateTo = { route -> coroutineScope.launch { backStack.add(route as NavKey) } },
+        goBack = { coroutineScope.launch { backStack.removeLastOrNull() } }
+    )
+
+    NavDisplay(
+        backStack = backStack,
+        entryProvider = entryProvider {
+            navHostScreenSetup(navigationUseCase)
+            questionAppNavigation()
         }
-    }
-    NavHost(
-        navController = navController,
-        startDestination = AllScreenNavigator.startApp,
-    ) {
-        navHostScreenSetup(navController, navigationUseCase)
-        // Expose Question app routes alongside shared ones in debug
-        questionAppNavigation(navController)
-    }
+    )
 }

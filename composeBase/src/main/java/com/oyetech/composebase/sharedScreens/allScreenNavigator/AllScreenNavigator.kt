@@ -1,10 +1,9 @@
 package com.oyetech.composebase.sharedScreens.allScreenNavigator
 
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.composable
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
+import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.composebase.projectQuestionsFeature.main.QuestionMainScreen
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
 import com.oyetech.domain.useCases.NavigationUseCase
 
 /**
@@ -15,24 +14,21 @@ Created by Erdi Özbek
 
 object AllScreenNavigator {
 
-    const val startApp = "appFullApp"
-    const val questionAppStart = "questionAppStart"
+    /** Routes displayed in the debug launcher grid. */
+    val generalListOfScreen: List<AppRoute> = listOf(
+        AppRoute.QuestionCreateQuestionPage(),
+        AppRoute.QuestionPager,
+        AppRoute.AdminApproveQuestion,
+    )
 
-    val generalListOfScreen = emptyList<String>().toMutableList<String>().apply {
-        add(QuestionAppProjectRoutes.QuestionCreateQuestionPage.route)
-        add(QuestionAppProjectRoutes.QuestionPager.route)
-        add(QuestionAppProjectRoutes.AdminApproveQuestion.route)
-    }
-
-    fun NavGraphBuilder.navHostScreenSetup(
-        navHostController: NavHostController,
+    fun EntryProviderScope<NavKey>.navHostScreenSetup(
         navigationUseCase: NavigationUseCase,
     ) {
-        composable(startApp) {
+        entry<AppRoute.AppFullApp> {
             AllScreenNavigatorScreenSetup()
         }
 
-        composable(questionAppStart) {
+        entry<AppRoute.QuestionAppStart> {
             QuestionMainScreen(navigationUseCase)
         }
     }

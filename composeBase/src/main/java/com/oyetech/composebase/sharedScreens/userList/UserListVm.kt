@@ -7,8 +7,7 @@ import com.oyetech.composebase.base.baseGenericList.makeEmptyListState
 import com.oyetech.composebase.base.baseGenericList.setList
 import com.oyetech.composebase.base.baseGenericList.updateErrorInitial
 import com.oyetech.composebase.base.updateState
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
-import com.oyetech.composebase.sharedScreens.navigation.ScreenKey
+import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.composebase.sharedScreens.userList.UserListEvent.OnUserClick
 import com.oyetech.composebase.sharedScreens.userList.UserListEvent.RegisterToUserList
 import com.oyetech.composebase.sharedScreens.userList.UserListEvent.RemoveUserFromList
@@ -107,9 +106,7 @@ class UserListVm(
                 is OnUserClick -> {
                     val itemDetail = listViewState.value.items[event.index]
                     navigationUseCase.navigateTo(
-                        QuestionAppProjectRoutes.MessageDetail.withArgs(
-                            ScreenKey.receiverUserId to itemDetail.userId,
-                        )
+                        AppRoute.MessageDetail(receiverUserId = itemDetail.userId)
                     )
                 }
             }

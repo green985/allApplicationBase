@@ -41,13 +41,12 @@ dependencies {
     implementation(libs.compose.runtime)
     implementation(libs.compose.foundation)
     implementation(libs.paging.compose)
-    implementation(libs.navigation.compose)
-    implementation(libs.navigation.runtime.ktx)
+    implementation(libs.navigation3.runtime)
+    implementation(libs.navigation3.ui)
     implementation(libs.androidx.material.icons.extended)
 
     implementation(libs.koin.core)
     implementation(libs.koin.androidx.compose)
-    implementation(libs.koin.androidx.compose.navigation)
 
     implementation(libs.glide.compose)
     implementation(libs.kotlinx.collections.immutable)

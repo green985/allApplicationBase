@@ -93,7 +93,7 @@ fun AllScreenNavigatorScreenSetup(
                     Button(modifier = Modifier.padding(2.dp), onClick = {
                         viewModel.onEvent(AllScreenNavigatorEvent.NavigateListItemClicked(model))
                     }) {
-                        Text(text = model)
+                        Text(text = model::class.simpleName ?: model.toString())
                     }
                 })
             }

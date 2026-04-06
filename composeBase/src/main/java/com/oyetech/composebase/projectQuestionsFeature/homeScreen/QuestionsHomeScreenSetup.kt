@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationSmallButtonSetup
 import com.oyetech.composebase.projectQuestionsFeature.ScreenKey.toolbarTitle
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
+import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
@@ -48,15 +48,14 @@ fun QuestionsHomeScreenSetup(
             ) {
                 Text(text = LanguageKey.home)
                 Button(onClick = {
-                    // Use NavigationUseCase pattern as requested
-                    navigationUseCase.navigateTo(QuestionAppProjectRoutes.QuestionCreateQuestionPage.route)
+                    navigationUseCase.navigateTo(AppRoute.QuestionCreateQuestionPage())
                 }) {
                     Text(text = "Create Question")
                 }
 
                 // YENİ EKLENEN BUTON
                 Button(onClick = {
-                    navigationUseCase.navigateTo(QuestionAppProjectRoutes.QuestionFormScreen.route)
+                    navigationUseCase.navigateTo(AppRoute.QuestionFormScreen())
                 }) {
                     Text(text = "Question Form")
                 }

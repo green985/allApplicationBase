@@ -2,7 +2,7 @@ package com.oyetech.composebase.sharedViews.floating
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
-import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectRoutes
+import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
@@ -59,6 +59,6 @@ class FloatingAskQuestionBarVm(
     }
 
     private fun navigateToCreateQuestion() {
-        navigationUseCase.navigateTo(QuestionAppProjectRoutes.QuestionCreateQuestionPage.route)
+        navigationUseCase.navigateTo(AppRoute.QuestionCreateQuestionPage())
     }
 }

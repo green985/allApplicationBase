@@ -9,7 +9,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.navigation.NavHostController
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationBar
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationDelegate
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationVm
@@ -20,7 +21,7 @@ import org.koin.compose.koinInject
 @Composable
 fun QuestionAppBottomNavigationView(
     modifier: Modifier = Modifier,
-    navController: NavHostController,
+    backStack: NavBackStack<NavKey>,
 ) {
     val bottomNavigationDelegate = koinInject<BottomNavigationDelegate>()
     val bottomNavigationVisibility by bottomNavigationDelegate.bottomNavigationVisibilityState.collectAsState()
@@ -37,12 +38,13 @@ fun QuestionAppBottomNavigationView(
             .fillMaxWidth()
             .alpha(alpha)
     ) {
-        if (!isKeyboardOpen)
+        if (!isKeyboardOpen) {
             BottomNavigationBar(
                 isClickable = bottomNavigationVisibility,
                 vm = bottomNavigationVm,
-                navController = navController,
+                backStack = backStack,
                 navItems = QuestionAppProjectBottomNavigationDestinations.questionApplicationBottomTabNavList
             )
+        }
     }
 }
