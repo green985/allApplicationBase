@@ -103,30 +103,6 @@ fun NavGraphBuilder.questionAppNavigation(navController: NavController) {
         com.oyetech.composebase.experimental.loginOperations.CompleteProfileScreenSetup()
     }
 
-    // Message detail
-    composable(
-        route = "${QuestionAppProjectRoutes.MessageDetail.route}?" +
-                "${ScreenKey.conversationId}={conversationId}" +
-                "&${ScreenKey.receiverUserId}={receiverUserId}",
-        arguments = listOf(
-            navArgument(ScreenKey.conversationId) {
-                defaultValue = ""
-                nullable = true
-            },
-            navArgument(ScreenKey.receiverUserId) {
-                defaultValue = ""
-                nullable = false
-            }
-        )
-    ) { entry ->
-        val conversationId = entry.arguments?.getString(ScreenKey.conversationId) ?: ""
-        val receiverUserId = entry.arguments?.getString(ScreenKey.receiverUserId) ?: ""
-        com.oyetech.composebase.sharedScreens.messaging.MessageDetailScreenSetup(
-            conversationId = conversationId,
-            receiverUserId = receiverUserId
-        )
-    }
-
     // Newly added UserProfile route under Question app
     composable(
         route = "${QuestionAppProjectRoutes.UserProfile.route}?" +

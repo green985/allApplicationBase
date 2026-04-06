@@ -14,6 +14,7 @@ import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationBar
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationDelegate
 import com.oyetech.composebase.baseViews.bottomNavigation.BottomNavigationVm
 import com.oyetech.composebase.helpers.viewProperties.keyboardAsState
+import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
 @Composable
@@ -29,7 +30,7 @@ fun QuestionAppBottomNavigationView(
     )
 
     val isKeyboardOpen by keyboardAsState()
-    val bottomNavigationVm = koinInject<BottomNavigationVm>()
+    val bottomNavigationVm = koinViewModel<BottomNavigationVm>()
 
     Row(
         modifier = Modifier
