@@ -112,11 +112,112 @@ Modifier.padding(16.dp)
 RoundedCornerShape(16.dp)
 ```
 
-## Navigation
+## Navigation — Navigation 3 (androidx.navigation3)
 
-`NavigationUseCase` (Koin singleton) is the cross-VM navigation bridge — inject it and call
-`navigateTo(route)`. Routes are `Route("path")` data objects declared in `*Routes.kt` files (e.g.,
-`QuestionAppProjectRoutes`). Use `Route.withArgs()` for query parameters.
+This project uses **Jetpack Navigation 3** (`androidx.navigation3`). Do **not** use Navigation 2
+APIs (`NavController`, `NavHost`, `NavHostFragment`, string routes, `navigate(route: String)`).
+
+### Core concepts
+
+| Concept | Nav 3 implementation |
+|---|---|
+| Route type | `AppRoute` — `sealed interface` implementing `NavKey` (`:composeBase/navigator/Route.kt`) |
+| Route declaration | `@Serializable data object` / `@Serializable data class` nested in `AppRoute` |
+| Backstack | `NavBackStack<NavKey>` — a `MutableList` you own; created with `rememberNavBackStack(start)` |
+| Screen renderer | `NavDisplay(backStack = ..., entryProvider = entryProvider { ... })` |
+| Screen registration | `entry<AppRoute.X> { ... }` inside an `EntryProviderScope<NavKey>` extension function |
+| Navigation bridge | `NavigationUseCase` (Koin singleton) — wraps `backStack.add()` / `backStack.removeLastOrNull()` |
+| Bottom tabs | `navigateToBottomTab(backStack, route)` helper pops to existing tab or pushes a new one |
+
+### Route declaration (AppRoute)
+
+All destinations live in `composeBase/.../navigator/Route.kt` as entries of the `AppRoute` sealed
+interface. Parameter-less destinations are `data object`; parameterised destinations are
+`data class`:
+
+```kotlin
+// ✅ Correct — typed, serializable, implements NavKey via AppRoute
+@Keep @Serializable data object QuestionAppHomepage : AppRoute
+@Keep @Serializable data class UserProfile(val receiverUserId: String = "") : AppRoute
+
+// ❌ Wrong — string routes are Navigation 2, not used here
+navigateTo("user_profile/{userId}")
+Route("user_profile").withArgs("userId" to id)
+```
+
+### NavigationUseCase — VM-side navigation
+
+`NavigationUseCase` is a Koin `single`. Inject it in ViewModels and call:
+
+```kotlin
+// ✅ Navigate forward
+navigationUseCase.navigateTo(AppRoute.UserProfile(receiverUserId = id))
+
+// ✅ Pop back
+navigationUseCase.goBack()
+```
+
+`setNavigator(navigateTo, goBack)` is wired **once** in the root Composable (`QuestionMainScreen`)
+where the `NavBackStack` lives:
+
+```kotlin
+// ✅ Root composable — wires NavigationUseCase to the real backstack
+val backStack = rememberNavBackStack(startDestination)
+val scope = rememberCoroutineScope()
+
+navigationUseCase.setNavigator(
+    navigateTo = { route -> scope.launch { backStack.add(route as NavKey) } },
+    goBack = { scope.launch { backStack.removeLastOrNull() } }
+)
+```
+
+### NavDisplay and entry registration
+
+Register screens with typed `entry<T>` blocks grouped into extension functions on
+`EntryProviderScope<NavKey>`:
+
+```kotlin
+// ✅ Feature navigation file
+fun EntryProviderScope<NavKey>.questionAppNavigation() {
+    entry<AppRoute.QuestionAppHomepage> { QuestionsHomeScreenSetup() }
+    entry<AppRoute.UserProfile> { User2ProfileScreenSetup(receiverUserId = it.receiverUserId) }
+}
+
+// ✅ NavDisplay wiring in root composable
+NavDisplay(
+    backStack = backStack,
+    entryProvider = entryProvider {
+        navHostScreenSetup(navigationUseCase)
+        questionAppNavigation()
+    }
+)
+```
+
+### Backstack safety rules — REQUIRED
+
+- **Always seed** `rememberNavBackStack` with at least one start destination.
+  `NavDisplay` **crashes** if the backstack is empty.
+- **Never pop the last entry** — guard with `backStack.size > 1` before any pop operation.
+- **Bottom-tab navigation** — use `navigateToBottomTab(backStack, route)`:
+  - destination already in stack → pop entries above it (restores sub-stack)
+  - destination is new → push it
+
+```kotlin
+// ✅ Safe pop guard
+goBack = {
+    scope.launch {
+        if (backStack.size > 1) backStack.removeLastOrNull()
+    }
+}
+
+// ❌ Wrong — removeLastOrNull() on a single-entry stack empties it → NavDisplay crash
+goBack = { scope.launch { backStack.removeLastOrNull() } }
+```
+
+### Object alias references (QuestionAppProjectRoutes)
+
+`QuestionAppProjectRoutes` provides convenience aliases for the most common routes. Prefer
+`AppRoute.*` directly in new code.
 
 ## Error Handling — REQUIRED PATTERN
 

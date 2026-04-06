@@ -1,4 +1,4 @@
-package com.oyetech.composebase.sharedScreens.dialogs
+package com.oyetech.composebase.projectQuestionsFeature.questionScreens.dialogs
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

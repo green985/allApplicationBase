@@ -44,7 +44,7 @@ fun QuestionMainScreen(
             goBack = {
                 coroutineScope.launch {
                     Timber.d("size of backstack before pop: ${backStack.size}")
-                    backStack.removeLastOrNull()
+                    if (backStack.size > 1) backStack.removeLastOrNull()
                 }
             }
         )
@@ -78,7 +78,7 @@ fun QuestionAppDebugRoot(navigationUseCase: NavigationUseCase) {
 
     navigationUseCase.setNavigator(
         navigateTo = { route -> coroutineScope.launch { backStack.add(route as NavKey) } },
-        goBack = { coroutineScope.launch { backStack.removeLastOrNull() } }
+        goBack = { coroutineScope.launch { if (backStack.size > 1) backStack.removeLastOrNull() } }
     )
 
     NavDisplay(

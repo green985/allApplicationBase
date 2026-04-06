@@ -1,3 +1,91 @@
+## Navigation Rules (Navigation 3 — androidx.navigation3)
+
+This project uses **Jetpack Navigation 3**. Never use Navigation 2 APIs.
+
+### 1. Routes are typed `AppRoute` entries — no string routes
+
+All destinations are declared in `composeBase/.../navigator/Route.kt` as `@Serializable`
+`data object` or `data class` implementing `AppRoute` (which extends `NavKey`).
+
+```kotlin
+// ✅ Correct — typed route
+navigationUseCase.navigateTo(AppRoute.UserProfile(receiverUserId = id))
+navigationUseCase.navigateTo(AppRoute.QuestionAppHomepage)
+
+// ❌ Wrong — string routes do not exist in this project
+navigate("user_profile/$id")
+Route("user_profile").withArgs(...)
+```
+
+### 2. New destinations must be added to `AppRoute`
+
+Add every new screen as a new entry inside the `AppRoute` sealed interface:
+
+```kotlin
+// ✅ No-arg destination
+@Keep @Serializable data object MyNewScreen : AppRoute
+
+// ✅ Parameterised destination
+@Keep @Serializable data class MyDetail(val itemId: String = "") : AppRoute
+```
+
+Then register the screen in the appropriate `EntryProviderScope<NavKey>` extension function
+(e.g. `questionAppNavigation()`):
+
+```kotlin
+entry<AppRoute.MyNewScreen> { MyNewScreenSetup() }
+entry<AppRoute.MyDetail> { MyDetailSetup(itemId = it.itemId) }
+```
+
+### 3. ViewModels navigate via `NavigationUseCase` — never touch the backstack directly
+
+```kotlin
+// ✅ Correct — VM navigates through the use case
+class MyViewModel(
+    private val navigationUseCase: NavigationUseCase,
+    ...
+) : BaseViewModel(appDispatchers) {
+
+    private fun handleItemClick(id: String) {
+        navigationUseCase.navigateTo(AppRoute.MyDetail(itemId = id))
+    }
+
+    private fun handleBack() {
+        navigationUseCase.goBack()
+    }
+}
+
+// ❌ Wrong — VMs must not hold a reference to NavBackStack
+backStack.add(AppRoute.MyDetail(id))
+```
+
+### 4. Backstack must never be empty — `NavDisplay` crashes on an empty backstack
+
+- Seed `rememberNavBackStack` with the start destination.
+- Guard every pop with a size check:
+
+```kotlin
+// ✅ Safe
+goBack = { scope.launch { if (backStack.size > 1) backStack.removeLastOrNull() } }
+
+// ❌ Unsafe — if backStack has 1 entry this empties it → crash
+goBack = { scope.launch { backStack.removeLastOrNull() } }
+```
+
+### 5. Bottom-tab switching uses `navigateToBottomTab(backStack, route)`
+
+Never push a bottom-tab destination via `backStack.add()` directly — use the helper:
+
+```kotlin
+// ✅ Correct
+navigateToBottomTab(backStack, AppRoute.QuestionAppHomepage)
+
+// ❌ Wrong — duplicates the tab entry without restoring its sub-stack
+backStack.add(AppRoute.QuestionAppHomepage)
+```
+
+---
+
 ## Profile Completion Check
 
 Use a data class extension for profile completion checks (e.g.,
