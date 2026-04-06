@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,8 +21,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppCornerRadius
 import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import com.oyetech.composebase.projectQuestionsFeature.theme.QuestionProjectViewAttrs
 import com.oyetech.models.questionProject.questionOperation.QuestionCategories
@@ -44,7 +43,7 @@ fun TwoChoicesSelectorView(
         modifier = Modifier
             .fillMaxWidth(QuestionProjectViewAttrs.selectorWidthFraction)
             .clip(RoundedCornerShape(QuestionProjectViewAttrs.cornerRadiusSmall))
-            .background(Color.White),
+            .background(AppColors.surface),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -52,34 +51,17 @@ fun TwoChoicesSelectorView(
             val isSelected = option.id == selectedId
             val color = when (uiState.category) {
                 QuestionCategories.TWO_CHOICE -> when (option) {
-                    QuestionOptionCatalog.TwoChoice.YES -> {
-                        QuestionAnswerColors.Yes
-                    }
-
-                    QuestionOptionCatalog.TwoChoice.NO -> {
-                        QuestionAnswerColors.No
-                    }
-
-                    QuestionOptionCatalog.TwoChoice.DOWN -> {
-                        QuestionAnswerColors.Down
-                    }
-
-                    QuestionOptionCatalog.TwoChoice.UP -> {
-                        QuestionAnswerColors.Up
-                    }
-
-                    QuestionOptionCatalog.TwoChoice.GOOD -> {
-                        QuestionAnswerColors.Good
-                    }
-
+                    QuestionOptionCatalog.TwoChoice.YES -> QuestionAnswerColors.Yes
+                    QuestionOptionCatalog.TwoChoice.NO -> QuestionAnswerColors.No
+                    QuestionOptionCatalog.TwoChoice.DOWN -> QuestionAnswerColors.Down
+                    QuestionOptionCatalog.TwoChoice.UP -> QuestionAnswerColors.Up
+                    QuestionOptionCatalog.TwoChoice.GOOD -> QuestionAnswerColors.Good
                     QuestionOptionCatalog.TwoChoice.BAD -> {
                         Timber.d("YesNoSelector: NO selected")
                         QuestionAnswerColors.Bad
                     }
 
-                    else -> {
-                        QuestionAnswerColors.Outline
-                    }
+                    else -> QuestionAnswerColors.Outline
                 }
 
                 else -> if (isSelected) AppColors.primary else QuestionAnswerColors.Outline
@@ -96,7 +78,7 @@ fun TwoChoicesSelectorView(
                     bottomEnd = QuestionProjectViewAttrs.cornerRadiusSmall
                 )
 
-                else -> RoundedCornerShape(0.dp)
+                else -> RoundedCornerShape(AppCornerRadius.none)
             }
 
             Box(
@@ -108,28 +90,18 @@ fun TwoChoicesSelectorView(
                         shape = shape
                     )
                     .background(
-                        if (isSelected) {
-                            color.copy(alpha = QuestionProjectViewAttrs.selectedBgAlpha)
-                        } else Color.Transparent
+                        if (isSelected) color.copy(alpha = QuestionProjectViewAttrs.selectedBgAlpha)
+                        else Color.Transparent
                     )
                     .clickable(enabled = !uiState.isAnsweredByUser && !uiState.isLoading) {
-                        onEvent(
-                            QuestionViewEvent.OnOptionSelected(
-                                uiState.questionId,
-                                option.id
-                            )
-                        )
+                        onEvent(QuestionViewEvent.OnOptionSelected(uiState.questionId, option.id))
                     },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     modifier = Modifier.padding(QuestionProjectViewAttrs.spacingMd),
                     text = option.text.ifEmpty { option.id }.uppercase(),
-                    color = if (uiState.isAnsweredByUser) {
-                        QuestionAnswerColors.Disabled
-                    } else {
-                        color
-                    },
+                    color = if (uiState.isAnsweredByUser) QuestionAnswerColors.Disabled else color,
                     style = AppTextStyles.titleLarge,
                 )
             }
@@ -143,10 +115,10 @@ fun YesNoSelectorPreview() {
     var selected by remember { mutableStateOf<String?>(null) }
     Box(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .background(
                 Brush.horizontalGradient(
-                    colors = listOf(Color(0xFFFF7043), Color(0xFFE91E63))
+                    colors = listOf(AppColors.primary, AppColors.secondary)
                 )
             ),
         contentAlignment = Alignment.Center

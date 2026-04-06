@@ -12,7 +12,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppSpacing
 import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import com.oyetech.models.questionProject.questionOperation.QuestionTagCatalog
 
@@ -26,21 +26,21 @@ fun QuestionTagsAreaContainer(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
+            .padding(vertical = AppSpacing.sm)
     ) {
         if (isCreateQuestion) {
             Text(
                 text = "Tags",
                 style = AppTextStyles.label,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                modifier = Modifier.padding(horizontal = AppSpacing.lg, vertical = AppSpacing.xs)
             )
         }
 
         Row(
             modifier = Modifier
                 .horizontalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(horizontal = AppSpacing.lg),
+            horizontalArrangement = Arrangement.spacedBy(AppSpacing.sm)
         ) {
             if (isCreateQuestion) {
 

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -23,13 +22,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.helpers.general.GeneralSettings
 import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppShapes
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppSpacing
 import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.CreateQuestionYesNoView
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionTagsAreaContainer
@@ -158,7 +158,7 @@ private fun QuestionCreateScreen(
                 )
 
                 if (GeneralSettings.isAdmin()) {
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(AppSpacing.sm))
                     AdminAutoApproveCheckbox(
                         isChecked = uiState.isAutoApprove,
                         onCheckedChange = { checked ->
@@ -186,7 +186,7 @@ private fun AdminAutoApproveCheckbox(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = AppSpacing.lg, vertical = AppSpacing.sm),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(
@@ -196,7 +196,7 @@ private fun AdminAutoApproveCheckbox(
         Text(
             text = "Auto-approve (Admin)",
             style = AppTextStyles.body,
-            modifier = Modifier.padding(start = 8.dp)
+            modifier = Modifier.padding(start = AppSpacing.sm)
         )
     }
 }
@@ -210,13 +210,13 @@ private fun CategoryChip(
     TextButton(
         onClick = onClick,
         modifier = Modifier
-            .padding(horizontal = 6.dp, vertical = 4.dp)
+            .padding(horizontal = AppSpacing.sm, vertical = AppSpacing.xs)
             .then(
                 if (selected) {
                     Modifier.border(
-                        width = 2.dp,
+                        width = AppSpacing.xxs,
                         color = AppColors.primary,
-                        shape = RoundedCornerShape(12.dp)
+                        shape = AppShapes.roundedMedium
                     )
                 } else {
                     Modifier
@@ -236,7 +236,7 @@ fun CategoriesView(
     Row(
         modifier = Modifier
             .horizontalScroll(scroll)
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = AppSpacing.sm)
     ) {
         listOf(
             QuestionCategories.TWO_CHOICE,
@@ -263,7 +263,7 @@ fun SubcategoriesView(
     Row(
         modifier = Modifier
             .horizontalScroll(scroll)
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = AppSpacing.sm)
     ) {
         when (categoryKey) {
             QuestionCategoryKeys.TWO_CHOICE -> {

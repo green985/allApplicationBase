@@ -25,12 +25,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppSpacing
 import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import kotlinx.collections.immutable.ImmutableList
 import org.koin.androidx.compose.koinViewModel
@@ -95,8 +95,8 @@ fun QuestionFormListScreen(
             else -> {
                 LazyRow(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    contentPadding = PaddingValues(horizontal = AppSpacing.lg),
+                    horizontalArrangement = Arrangement.spacedBy(AppSpacing.md)
                 ) {
                     items(catalogList) { catalog ->
                         CatalogItemCard(
@@ -121,7 +121,7 @@ private fun CatalogItemCard(
             .width(100.dp)
             .height(100.dp)
             .clickable { onClick() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = AppSpacing.xs),
         colors = CardDefaults.cardColors(
             containerColor = if (catalog.isCompleted) {
                 AppColors.primaryMuted
@@ -133,7 +133,7 @@ private fun CatalogItemCard(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(4.dp),
+                .padding(AppSpacing.xs),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
@@ -142,12 +142,11 @@ private fun CatalogItemCard(
                 Text(
                     text = catalog.title,
                     style = AppTextStyles.titleMedium,
-                    fontWeight = FontWeight.Bold,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(AppSpacing.sm))
 
                 Text(
                     text = catalog.formId,
@@ -178,7 +177,7 @@ private fun CatalogItemCard(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(8.dp),
+                            .padding(AppSpacing.sm),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
@@ -186,14 +185,13 @@ private fun CatalogItemCard(
                             Icons.Default.Check,
                             contentDescription = "Tamamlandı",
                             tint = AppColors.onPrimary,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(AppSpacing.lg)
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(AppSpacing.xs))
                         Text(
                             text = "Tamamlandı",
                             style = AppTextStyles.label,
                             color = AppColors.onPrimary,
-                            fontWeight = FontWeight.Bold
                         )
                     }
                 }

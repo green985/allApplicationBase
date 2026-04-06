@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
@@ -39,7 +38,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -49,6 +47,8 @@ import com.oyetech.composebase.baseViews.loadingErrors.ErrorScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionListWithParamsContent
 import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppShapes
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppSpacing
 import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
@@ -174,8 +174,8 @@ private fun QuestionFormContent(
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        contentPadding = PaddingValues(bottom = 32.dp),
+        verticalArrangement = Arrangement.spacedBy(AppSpacing.md),
+        contentPadding = PaddingValues(bottom = AppSpacing.xxxl),
     ) {
         item {
             FormTitleSection(
@@ -201,7 +201,7 @@ private fun QuestionFormContent(
             Text(
                 text = "Questions",
                 style = AppTextStyles.titleSmall,
-                modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp),
+                modifier = Modifier.padding(horizontal = AppSpacing.xl, vertical = AppSpacing.xs),
             )
         }
 
@@ -243,29 +243,29 @@ private fun FormTitleSection(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp)
-            .padding(top = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+            .padding(horizontal = AppSpacing.xl)
+            .padding(top = AppSpacing.sm),
+        verticalArrangement = Arrangement.spacedBy(AppSpacing.md),
     ) {
         Card(
             modifier = modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
+            shape = AppShapes.roundedLarge,
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
+                    .padding(AppSpacing.xl),
+                verticalArrangement = Arrangement.spacedBy(AppSpacing.md),
             ) {
                 if (isLocked && submittedAt != null) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        horizontalArrangement = Arrangement.spacedBy(AppSpacing.sm),
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(20.dp)
-                                .clip(RoundedCornerShape(50))
+                                .size(AppSpacing.xl)
+                                .clip(AppShapes.roundedPill)
                                 .background(AppColors.primary),
                             contentAlignment = Alignment.Center,
                         ) {
@@ -273,14 +273,13 @@ private fun FormTitleSection(
                                 Icons.Default.Check,
                                 contentDescription = "Submitted",
                                 tint = AppColors.onPrimary,
-                                modifier = Modifier.size(12.dp),
+                                modifier = Modifier.size(AppSpacing.md),
                             )
                         }
                         Text(
                             text = "Submitted",
                             style = AppTextStyles.label,
                             color = AppColors.primary,
-                            fontWeight = FontWeight.SemiBold,
                         )
                     }
                 }
@@ -304,13 +303,13 @@ private fun FormTitleSection(
         if (isGeneratingResult || generatedResultText.isNotBlank()) {
             Card(
                 modifier = modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                shape = AppShapes.roundedLarge,
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                        .padding(AppSpacing.xl),
+                    verticalArrangement = Arrangement.spacedBy(AppSpacing.md),
                 ) {
                     Text(
                         text = "AI Değerlendirme",
@@ -325,11 +324,11 @@ private fun FormTitleSection(
                         ) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(10.dp),
+                                verticalArrangement = Arrangement.spacedBy(AppSpacing.md),
                             ) {
                                 CircularProgressIndicator(
-                                    modifier = Modifier.size(32.dp),
-                                    strokeWidth = 2.dp,
+                                    modifier = Modifier.size(AppSpacing.xxxl),
+                                    strokeWidth = AppSpacing.xxs,
                                 )
                                 Text(
                                     text = "Yanıtlarınız analiz ediliyor...",
@@ -365,8 +364,8 @@ private fun ProgressSection(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+            .padding(horizontal = AppSpacing.xl),
+        verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -382,7 +381,6 @@ private fun ProgressSection(
                 text = "$answeredCount / $totalCount",
                 style = AppTextStyles.label,
                 color = if (progress >= 1f) AppColors.primary else AppColors.textSecondary,
-                fontWeight = FontWeight.SemiBold,
             )
         }
 
@@ -391,7 +389,7 @@ private fun ProgressSection(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(3.dp)
-                .clip(RoundedCornerShape(50)),
+                .clip(AppShapes.roundedPill),
         )
     }
 }
@@ -412,13 +410,13 @@ private fun FormActionButtons(
         exit = fadeOut() + shrinkVertically(),
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp),
+            .padding(horizontal = AppSpacing.xl),
     ) {
         Button(
             onClick = onSubmit,
             enabled = canSubmit,
-            shape = RoundedCornerShape(14.dp),
-            contentPadding = PaddingValues(vertical = 16.dp),
+            shape = AppShapes.roundedLarge,
+            contentPadding = PaddingValues(vertical = AppSpacing.lg),
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(

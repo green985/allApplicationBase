@@ -1,7 +1,6 @@
 package com.oyetech.composebase.projectQuestionsFeature.contentOperation
 
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -31,7 +30,7 @@ fun ContentOperationView(
     contentOperationEvent: (ContentOperationEvent) -> Unit,
 ) {
     OutlinedCard(modifier = modifier) {
-        Row(Modifier.padding(0.dp)) {
+        Row(Modifier) {
             IconButton(
                 enabled = contentOperationUiState.isInitialed,
                 onClick = {

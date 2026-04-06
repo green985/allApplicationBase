@@ -15,9 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.oyetech.composebase.projectQuestionsFeature.theme.AppShapes
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppSpacing
 import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import com.oyetech.languageModule.keyset.LanguageKey
 
@@ -49,19 +49,19 @@ fun InfoDialogOperation(
                 shape = AppShapes.roundedLarge,
                 tonalElevation = AlertDialogDefaults.TonalElevation
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.padding(AppSpacing.lg)) {
                     Text(
                         text = (titleText),
                         style = AppTextStyles.titleLarge,
-                        modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)
+                        modifier = Modifier.padding(top = AppSpacing.sm, bottom = AppSpacing.lg)
                     )
                     Text(
                         text = (descriptionText),
                         style = AppTextStyles.body,
-                        modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)
+                        modifier = Modifier.padding(top = AppSpacing.sm, bottom = AppSpacing.lg)
                     )
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(AppSpacing.xxl))
                     TextButton(
                         onClick = onDismiss,
                         modifier = Modifier.align(Alignment.End)

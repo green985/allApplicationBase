@@ -23,8 +23,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppSpacing
 import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import com.oyetech.composebase.projectQuestionsFeature.theme.QuestionProjectViewAttrs
 import com.oyetech.languageModule.keyset.LanguageKey
@@ -106,7 +106,7 @@ fun QuestionOptionsAreaContainer(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 6.dp),
+                .padding(top = AppSpacing.sm),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {

@@ -21,6 +21,7 @@ import com.oyetech.composebase.baseViews.loadingErrors.LoadingScreenFullSize
 import com.oyetech.composebase.baseViews.loadingErrors.PagingMoreError
 import com.oyetech.composebase.baseViews.loadingErrors.PagingMoreLoading
 import com.oyetech.composebase.helpers.viewProperties.InfiniteListHandler
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppSpacing
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.BaseQuestionView
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
@@ -117,7 +118,7 @@ fun QuestionListWithParamsContent(
                 )
             } else {
                 LazyColumn(
-                    modifier = Modifier.padding(4.dp),
+                    modifier = Modifier.padding(AppSpacing.xs),
                     state = lazyListState,
                 ) {
                     itemsIndexed(
