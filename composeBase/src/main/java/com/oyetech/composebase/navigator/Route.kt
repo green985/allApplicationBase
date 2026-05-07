@@ -17,6 +17,7 @@ sealed interface AppRoute : NavKey {
     @Keep
     @Serializable
     data object AppFullApp : AppRoute
+
     @Keep
     @Serializable
     data object QuestionAppStart : AppRoute
@@ -26,24 +27,31 @@ sealed interface AppRoute : NavKey {
     @Keep
     @Serializable
     data object QuestionAppHomepage : AppRoute
+
     @Keep
     @Serializable
     data object QuestionAppSettings : AppRoute
+
     @Keep
     @Serializable
     data object AdminApproveQuestion : AppRoute
+
     @Keep
     @Serializable
     data object QuestionPager : AppRoute
+
     @Keep
     @Serializable
     data object CompleteProfileScreen : AppRoute
+
     @Keep
     @Serializable
     data object EditProfile : AppRoute
+
     @Keep
     @Serializable
     data object UserList : AppRoute
+
     @Keep
     @Serializable
     data object MessageConversationList : AppRoute

@@ -3,7 +3,7 @@ package com.oyetech.composebase.sharedScreens.allScreenNavigator
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import com.oyetech.composebase.navigator.AppRoute
-import com.oyetech.composebase.projectQuestionsFeature.main.QuestionMainScreen
+import com.oyetech.composebase.projectQuestionsFeature.main.QuestionAppNestedRoot
 import com.oyetech.domain.useCases.NavigationUseCase
 
 /**
@@ -29,7 +29,7 @@ object AllScreenNavigator {
         }
 
         entry<AppRoute.QuestionAppStart> {
-            QuestionMainScreen(navigationUseCase)
+            QuestionAppNestedRoot(navigationUseCase)
         }
     }
 }

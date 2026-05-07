@@ -43,7 +43,6 @@ fun BottomNavigationBar(
     NavigationBar(modifier = modifier, windowInsets = WindowInsets.navigationBars) {
         navItems.forEachIndexed { _, item ->
             val title = item.titleText.ifBlank { stringResource(item.title) }
-
             NavigationBarItem(
                 alwaysShowLabel = true,
                 icon = { Icon(painterResource(item.icon), contentDescription = title) },

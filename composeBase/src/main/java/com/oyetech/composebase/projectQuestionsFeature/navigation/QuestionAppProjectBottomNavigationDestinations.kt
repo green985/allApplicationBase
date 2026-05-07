@@ -15,29 +15,12 @@ Created by Warp Agent
  * Canonical typed-route references for the Question app.
  * All screens use [AppRoute] subclasses — no string routes.
  */
-object QuestionAppProjectRoutes {
-    val QuestionCreateQuestionPage = AppRoute.QuestionCreateQuestionPage()
-    val QuestionAppHomepage = AppRoute.QuestionAppHomepage
-    val QuestionAppSettings = AppRoute.QuestionAppSettings
-    val AdminApproveQuestion = AppRoute.AdminApproveQuestion
-    val QuestionListWithParams = AppRoute.QuestionListWithParams()
-    val QuestionPager = AppRoute.QuestionPager
-    val UserProfile = AppRoute.UserProfile()
-    val CompleteProfileScreen = AppRoute.CompleteProfileScreen
-    val EditProfile = AppRoute.EditProfile
-    val QuestionFormScreen = AppRoute.QuestionFormScreen()
-    val UserList = AppRoute.UserList
-    val MessageDetail = AppRoute.MessageDetail()
-    val MessageConversationList = AppRoute.MessageConversationList
-}
-
 object QuestionAppProjectBottomNavigationDestinations {
     val questionApplicationBottomTabNavList = listOf(
         QuestionAppNavItem.TabQuestionAppHomepage,
         QuestionAppNavItem.TabQuestionList,
         QuestionAppNavItem.QuestionAppSettingsTab,
         QuestionAppNavItem.UserProfileTab,
-        QuestionAppNavItem.QuestionAppMessageTab,
     )
 }
 
@@ -63,17 +46,10 @@ sealed class QuestionAppNavItem {
             icon = R.drawable.ic_settings
         )
 
-    object QuestionAppMessageTab :
-        BottomNavigationItem(
-            route = AppRoute.MessageConversationList,
-            title = R.string.nav_item_settings,
-            icon = R.drawable.ic_settings
-        )
-
     object UserProfileTab :
         BottomNavigationItem(
             route = AppRoute.UserProfile(),
-            title = R.string.nav_item_settings,
-            icon = R.drawable.ic_settings
+            titleText = LanguageKey.userProfile,
+            icon = R.drawable.ic_tab_profile
         )
 }
