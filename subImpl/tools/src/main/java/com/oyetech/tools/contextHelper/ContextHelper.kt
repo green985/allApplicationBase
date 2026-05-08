@@ -22,7 +22,6 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
-import com.oyetech.models.utils.const.ActivityNameConst
 import com.oyetech.models.utils.const.HelperConstant
 import com.oyetech.tools.ext.doInTryCatch
 
@@ -97,12 +96,6 @@ fun Context.removeAllNotification() {
     }
 }
 
-fun Context.getMainActivityStartIntent(): Intent {
-    val intent = Intent()
-    intent.setClassName(this.packageName, ActivityNameConst.mainActivityName)
-
-    return intent
-}
 
 fun Context.getAppName(): String {
     val context = this

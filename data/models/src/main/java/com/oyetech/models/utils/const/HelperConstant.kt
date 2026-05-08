@@ -100,10 +100,6 @@ object HelperConstant {
 
     const val APP_SUBS_DIALOG_SHOW_THRESHOLD = 4
 
-    const val APPLICATION_APP_ID = "com.oyetech.holybible"
-
     var LOCAL_NOTIFICATION_ALARM_ID = 512355
     var LOCAL_NOTIFICATION_NOTIFY_CHANNEL = "Local Notifications"
-
-    var hereRequestUrl = "https://discover.search.hereapi.com/v1/discover"
 }

@@ -13,7 +13,6 @@ import com.oyetech.notificationmodule.di.FirebaseNotificationModule
 import com.oyetech.remote.di.RandomOperationModuleDI
 import com.oyetech.remote.di.QuestionSupabaseRemote
 import com.oyetech.remote.di.dataSourceModule
-import com.oyetech.remote.firebaseCloudRemote.FirebaseCloudRemoteModule
 import com.oyetech.repository.di.QuestionRepositoryModule
 import com.oyetech.repository.di.RepositoryModule
 import com.oyetech.reviewer.di.GoogleAppReviewerModule
@@ -42,7 +41,6 @@ object AppComponent {
         ComposeMainModule.composeMainModule1,
 
         RandomOperationModuleDI.createRemoteModuleForRandomOperation("https://at1.api.radio-browser.info/json/"),
-        FirebaseCloudRemoteModule.createRemoteModule(),
         RepositoryModule.module,
         ExoPlayerModuleDi.exoPlayerModule,
         GlideModuleDi.glideModule,

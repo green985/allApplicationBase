@@ -10,5 +10,5 @@ Created by Erdi Özbek
 
 @Keep
 enum class ContentMediaTypeEnum {
-    IDLE, BIBLE, RADIO, PODCAST
+    IDLE, RADIO, PODCAST
 }

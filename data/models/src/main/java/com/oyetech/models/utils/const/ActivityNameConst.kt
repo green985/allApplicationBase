@@ -7,6 +7,5 @@ Created by Erdi Özbek
  **/
 
 object ActivityNameConst {
-    var mainActivityName = "com.oyetech.holybible.MainActivity"
     var appBrowserActivityName = "com.oyetech.appbrowser.AppBrowserActivity"
 }

@@ -4,8 +4,6 @@ import android.os.Parcelable
 import androidx.annotation.Keep
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
-import com.oyetech.models.entity.bibleModels.BibleAudioPropertyResponseData
-import com.oyetech.models.entity.contentProperties.ContentMediaTypeEnum.BIBLE
 import com.oyetech.models.entity.contentProperties.ContentMediaTypeEnum.RADIO
 import kotlinx.parcelize.Parcelize
 
@@ -26,27 +24,20 @@ data class OldContentPlayerDetailsModel(
     var contentIcon: String = "",
     var _contentType: ContentMediaTypeEnum = ContentMediaTypeEnum.IDLE,
 
-    var bibleAudioPropertyResponseData: BibleAudioPropertyResponseData? = null,
 ) : Parcelable,
     BaseObservable() {
 
     var contentName: String
         @Bindable get() = _contentName
-        set(value) {
-            _contentName = value
-        }
+        set(value) { _contentName = value }
 
     var contentTitle: String
         @Bindable get() = _contentTitle
-        set(value) {
-            _contentTitle = value
-        }
+        set(value) { _contentTitle = value }
 
     var contentType: ContentMediaTypeEnum
         @Bindable get() = _contentType
-        set(value) {
-            _contentType = value
-        }
+        set(value) { _contentType = value }
 
     companion object {
 
@@ -61,28 +52,6 @@ data class OldContentPlayerDetailsModel(
                 _contentName = contentName,
                 _contentTitle = contentTitle,
                 _contentType = RADIO
-            )
-        }
-
-        fun makeContentPlayerDetailWithBibleAudioData(
-            bibleAudioPropertyResponseData: BibleAudioPropertyResponseData,
-            contentName: String,
-            selectedAccent: String,
-        ): OldContentPlayerDetailsModel? {
-            val audioFileDetailResponseData =
-                bibleAudioPropertyResponseData.audioFileDetailList.find {
-                    it.accent == selectedAccent
-                }
-
-            if (audioFileDetailResponseData == null) {
-                return null
-            }
-
-            return OldContentPlayerDetailsModel(
-                streamUrl = audioFileDetailResponseData.fileUrl,
-                _contentName = contentName,
-                _contentType = BIBLE,
-                bibleAudioPropertyResponseData = bibleAudioPropertyResponseData
             )
         }
     }
