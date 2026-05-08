@@ -26,4 +26,6 @@ enum class FirebaseNotificationTypeEnum {
     Message, // firebaseMessagingLocalData
 //    CALL,
 //    OTHER
+//    CALL,
+//    OTHER
 }

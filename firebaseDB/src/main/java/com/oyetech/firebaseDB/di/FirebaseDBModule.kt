@@ -3,7 +3,6 @@ package com.oyetech.firebaseDB.di
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.oyetech.domain.repository.firebase.FirebaseCommentOperationRepository
-import com.oyetech.domain.repository.firebase.FirebaseContentLikeOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseLanguageOperationRepository
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
 import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
@@ -17,7 +16,6 @@ import com.oyetech.domain.repository.helpers.FirebaseContactWithMeOperationRepos
 import com.oyetech.firebaseDB.files.FirebaseStorageRepositoryImpl
 import com.oyetech.firebaseDB.firebaseDB.FirebaseContactWithMeOperationRepositoryImp
 import com.oyetech.firebaseDB.firebaseDB.comment.FirebaseCommentOperationRepositoryImp
-import com.oyetech.firebaseDB.firebaseDB.contentOperation.FirebaseContentLikeOperationRepositoryImpl
 import com.oyetech.firebaseDB.firebaseDB.helper.FirebaseOnlineHelper
 import com.oyetech.firebaseDB.firebaseDB.language.FirebaseLanguageOperationRepositoryImp
 import com.oyetech.firebaseDB.firebaseDB.messaging.FirebaseMessagingRepositoryImpl
@@ -103,15 +101,11 @@ object FirebaseDBModule {
         }
 
         single { FirebaseOnlineHelper() }
-        single<FirebaseContentLikeOperationRepository> {
-            FirebaseContentLikeOperationRepositoryImpl(
-                get(), get()
-            )
-        }
 
         single<FirebaseUserListOperationRepository> {
             FirebaseUserListOperationRepositoryImpl(
-                get(), get()
+                get(),
+                get()
             )
         }
 

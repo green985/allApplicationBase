@@ -1,11 +1,9 @@
 package com.oyetech.repository.di
 
-import com.oyetech.domain.repository.contentOperation.ContentOperationLocalRepository
 import com.oyetech.domain.repository.firebase.FirebaseCloudOperationRepository
 import com.oyetech.domain.repository.messaging.MessagesSendingOperationRepository
 import com.oyetech.domain.repository.messaging.local.MessagesAllLocalDataSourceRepository
 import com.oyetech.domain.repository.randomOperation.RandomOperationRepository
-import com.oyetech.repository.contentOperation.ContentOperationLocalRepositoryImp
 import com.oyetech.repository.firebaseCloud.FirebaseCloudOperationRepositoryImp
 import com.oyetech.repository.firebaseMessaging.MessagesAllLocalDataSourceImp
 import com.oyetech.repository.firebaseMessaging.MessagesSendingOperationRepositoryImp
@@ -22,7 +20,6 @@ object RepositoryModule {
     val module = module {
         single<MessagesSendingOperationRepository> { MessagesSendingOperationRepositoryImp(get()) }
         single<MessagesAllLocalDataSourceRepository> { MessagesAllLocalDataSourceImp(get(), get()) }
-        single<ContentOperationLocalRepository> { ContentOperationLocalRepositoryImp(get()) }
 
         single<FirebaseCloudOperationRepository> { FirebaseCloudOperationRepositoryImp(get()) }
         single<RandomOperationRepository> { RandomOperationRepositoryImpl(get()) }
