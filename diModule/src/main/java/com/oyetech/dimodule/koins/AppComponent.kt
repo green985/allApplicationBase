@@ -3,7 +3,6 @@ package com.oyetech.dimodule.koins
 import com.oyetech.adshelper.di.AdsHelperModule
 import com.oyetech.composebase.di.ComposeMainModule
 import com.oyetech.composebase.projectQuestionsFeature.QuestionProjectModule
-import com.oyetech.domain.di.RadioDomainModule
 import com.oyetech.exoplayermodule.di.ExoPlayerModuleDi
 import com.oyetech.firebaseDB.di.FirebaseDBModule
 import com.oyetech.firebaserealtime.di.FirebaseRealtimeModule
@@ -11,15 +10,11 @@ import com.oyetech.glidemodule.GlideModuleDi
 import com.oyetech.googlelogin.di.GoogleSignInModule
 import com.oyetech.languageimp.LanguageImplModule
 import com.oyetech.notificationmodule.di.FirebaseNotificationModule
-import com.oyetech.radiooperationmodule.di.RadioOperationModuleDi
-import com.oyetech.radioservice.di.RadioServiceModule
-import com.oyetech.remote.di.QuestionSupabaseRemote
-import com.oyetech.remote.di.RadioModuleDI
 import com.oyetech.remote.di.RandomOperationModuleDI
+import com.oyetech.remote.di.QuestionSupabaseRemote
 import com.oyetech.remote.di.dataSourceModule
 import com.oyetech.remote.firebaseCloudRemote.FirebaseCloudRemoteModule
 import com.oyetech.repository.di.QuestionRepositoryModule
-import com.oyetech.repository.di.RadioRepositoryDI
 import com.oyetech.repository.di.RepositoryModule
 import com.oyetech.reviewer.di.GoogleAppReviewerModule
 import com.oyetech.tools.di.CommonsModule
@@ -46,16 +41,10 @@ object AppComponent {
         AdsHelperModule.adsHelperModulee,
         ComposeMainModule.composeMainModule1,
 
-        RadioDomainModule.module,
-//        RadioModuleDI.createRemoteModule(BaseUrlConfigHelper.BASE_DOMAIN_RADIO),
-        RadioModuleDI.createRemoteModule("https://at1.api.radio-browser.info/json/"),
         RandomOperationModuleDI.createRemoteModuleForRandomOperation("https://at1.api.radio-browser.info/json/"),
         FirebaseCloudRemoteModule.createRemoteModule(),
-        RadioRepositoryDI.repositoryModule,
         RepositoryModule.module,
-        RadioOperationModuleDi.radioModule,
         ExoPlayerModuleDi.exoPlayerModule,
-        RadioServiceModule.serviceModule,
         GlideModuleDi.glideModule,
         GoogleAppReviewerModule.googlePlayReviewerModule,
         FirebaseDBModule.firebaseDBModulee,

@@ -44,13 +44,13 @@ class ExoPlayerRepositoryImp(
     }
 
     override fun resumePlayer() {
-        Timber.d("player State === " + exoPlayer.playbackState)
+        Timber.d("player State === ${exoPlayer.playbackState}")
 
         if (exoPlayer.playbackState != Player.STATE_IDLE) {
             exoPlayer.play()
         } else {
-            currentRadioModel = radioOperationUseCase.lastStation ?: return
-            startPlayer(currentRadioModel)
+            // TODO: Refactor — re-connect to last station via new state management
+            Timber.d("resumePlayer: player idle, no last station reference available")
         }
     }
 

@@ -13,16 +13,13 @@ import com.oyetech.domain.repository.contentOperation.ExoPlayerOperationReposito
 import com.oyetech.exoplayermodule.analytics.ExoplayerAnalyticsListener
 import com.oyetech.exoplayermodule.utils.urlIndicatesHlsStream
 import com.oyetech.models.radioProject.entity.radioEntity.station.RadioStationResponseData
-import com.oyetech.models.radioProject.radioModels.PlayState
-import com.oyetech.models.radioProject.radioModels.PlayState.Paused
-import com.oyetech.models.radioProject.radioModels.PlayState.PrePlaying
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
 import timber.log.Timber
 
 /**
-Created by Erdi Özbek
+Created by Erdi zbek
 -15.11.2022-
 -17:16-
  **/
@@ -54,14 +51,12 @@ abstract class ExoPlayerBaseHelper(
     }
 
     private fun prepareExoPlayerProperty() {
-        val isAlarm = false
-
         exoPlayer.addAnalyticsListener(exoplayerAnalyticsListener)
         exoPlayer.addListener(this)
 
         exoPlayer.setAudioAttributes(
             Builder().setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
-                .setUsage(if (isAlarm) C.USAGE_ALARM else C.USAGE_MEDIA).build(),
+                .setUsage(C.USAGE_MEDIA).build(),
             false
         )
     }
@@ -74,7 +69,7 @@ abstract class ExoPlayerBaseHelper(
         }
 
         val mediaItem = MediaItem.fromUri(streamUrl)
-        var audioSource: MediaSource
+        val audioSource: MediaSource
 
         if (isHls) {
             audioSource = hlsMediaSource
@@ -98,7 +93,6 @@ abstract class ExoPlayerBaseHelper(
     }
 
     fun playExoPlayerWithRadioModel(isHlsProblem: Boolean = false, isAlarm: Boolean = false) {
-        changeRadioState(PrePlaying)
         CoroutineScope(dispatchers.main).launch {
             exoPlayer.stop()
 
@@ -113,12 +107,8 @@ abstract class ExoPlayerBaseHelper(
     override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
         super.onMediaMetadataChanged(mediaMetadata)
         val radioTitle = mediaMetadata.title.toString()
-        Timber.d("media dataaa === " + radioTitle)
-
-        if (radioTitle.isNotBlank() && radioTitle != "null") {
-            changeRadioTitle(radioTitle)
-        }
-        Timber.d("media dataaa === " + mediaMetadata)
+        Timber.d("media dataaa === $radioTitle")
+        Timber.d("media dataaa === $mediaMetadata")
     }
 
     override fun onPlayerStateChanged(isLoading: Boolean, playbackState: Int) {
@@ -126,64 +116,28 @@ abstract class ExoPlayerBaseHelper(
 
         isPlayingFlag =
             playbackState == Player.STATE_READY || playbackState == Player.STATE_BUFFERING
-
-        when (playbackState) {
-            Player.STATE_READY -> {
-                changeRadioState(PlayState.Playing)
-            }
-
-            Player.STATE_BUFFERING -> {
-                changeRadioState(PrePlaying)
-            }
-        }
-        /*
-        when (playbackState) {
-            Player.STATE_IDLE -> {
-                radioViewState.value = RadioViewState.stop(RadioStationResponseData)
-            }
-            Player.STATE_BUFFERING -> {
-                radioViewState.value = RadioViewState.loading(RadioStationResponseData)
-            }
-            Player.STATE_ENDED -> {
-                //Player destroy
-                radioViewState.value = RadioViewState.stop(RadioStationResponseData)
-            }
-            Player.STATE_READY -> {
-                // radio start in here
-                if (exoPlayer.playWhenReady) {
-                    radioViewState.value = RadioViewState.playing(RadioStationResponseData)
-                } else {
-                    radioViewState.value = RadioViewState.stop(RadioStationResponseData)
-                }
-            }
-        }
-
-         */
     }
 
-    fun changeRadioState(state: PlayState) {
-        radioOperationUseCase.setRadioViewStateData(state)
+    // TODO: Refactor — wire these to a new state manager after RadioOperationUseCase removal
+    fun changeRadioState(state: Any) {
+        Timber.d("changeRadioState: $state (no-op until refactored)")
     }
 
     fun changeRadioTitle(radioTitle: String?) {
-        radioOperationUseCase.setRadioTitleData(radioTitle)
+        Timber.d("changeRadioTitle: $radioTitle (no-op until refactored)")
     }
 
     fun changeRadioErrorState(errorString: String) {
-        radioOperationUseCase.changeRadioErrorState(errorString)
+        Timber.d("changeRadioErrorState: $errorString (no-op until refactored)")
     }
 
     override fun onPlayerError(error: PlaybackException) {
         val errorCode = error.errorCode
-        Timber.d("errororororr == " + errorCode)
+        Timber.d("errororororr == $errorCode")
         if (errorCode == 0) {
-            // is Error cause for mediaSource
-            // Try to play again. Type.TYPE_SOURCE = 0
             playExoPlayerWithRadioModel(isHlsProblem = true)
         } else {
             stop()
-            changeRadioState(Paused)
-            changeRadioErrorState("error")
             Timber.d("RadioError%s", error.message)
         }
     }

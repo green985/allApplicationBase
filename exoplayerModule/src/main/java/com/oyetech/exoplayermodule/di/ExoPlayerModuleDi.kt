@@ -14,6 +14,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.util.Util
 import com.oyetech.domain.repository.contentOperation.ExoPlayerOperationRepository
+import com.oyetech.domain.useCases.contentOperations.ExoPlayerOperationUseCase
 import com.oyetech.exoplayermodule.analytics.ExoplayerAnalyticsListener
 import com.oyetech.exoplayermodule.helper.ExoPlayerRepositoryImp
 import org.koin.dsl.module
@@ -43,6 +44,7 @@ object ExoPlayerModuleDi {
         // singleOf(::ExoPlayerRepositoryImp)
 
         single<ExoPlayerOperationRepository> { ExoPlayerRepositoryImp(get(), get()) }
+        single { ExoPlayerOperationUseCase(get()) }
     }
 }
 

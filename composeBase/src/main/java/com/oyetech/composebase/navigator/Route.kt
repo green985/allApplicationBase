@@ -52,9 +52,6 @@ sealed interface AppRoute : NavKey {
     @Serializable
     data object UserList : AppRoute
 
-    @Keep
-    @Serializable
-    data object MessageConversationList : AppRoute
 
     // ── Parameterised destinations ────────────────────────────────────────────
 
@@ -76,11 +73,4 @@ sealed interface AppRoute : NavKey {
     @Keep
     @Serializable
     data class QuestionFormScreen(val formId: String = "") : AppRoute
-
-    @Keep
-    @Serializable
-    data class MessageDetail(
-        val receiverUserId: String = "",
-        val conversationId: String = "",
-    ) : AppRoute
 }

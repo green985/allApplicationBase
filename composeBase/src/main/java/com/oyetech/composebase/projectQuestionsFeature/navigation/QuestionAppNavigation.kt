@@ -26,9 +26,6 @@ fun EntryProviderScope<NavKey>.questionAppNavigation() {
         FacSettingsScreenSetup()
     }
 
-    entry<AppRoute.MessageConversationList> {
-        // MessageConversationListScreenSetup()
-    }
 
     entry<AppRoute.UserList> {
         UserListScreenSetup()
@@ -67,9 +64,5 @@ fun EntryProviderScope<NavKey>.questionAppNavigation() {
 
     entry<AppRoute.UserProfile> {
         User2ProfileScreenSetup(receiverUserId = it.receiverUserId)
-    }
-
-    entry<AppRoute.MessageDetail> {
-        // MessageDetailScreenSetup(receiverUserId = it.receiverUserId)
     }
 }

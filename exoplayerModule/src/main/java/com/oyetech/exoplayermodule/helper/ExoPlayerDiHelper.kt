@@ -3,8 +3,7 @@ package com.oyetech.exoplayermodule.helper
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSource
-import com.oyetech.domain.useCases.contentOperations.RadioOperationUseCase
-import com.oyetech.exoplayermodule.errorHandling.CustomLoadErrorHandlingPolicy
+import com.google.android.exoplayer2.upstream.DefaultLoadErrorHandlingPolicy
 import org.koin.java.KoinJavaComponent
 
 /**
@@ -19,10 +18,6 @@ abstract class ExoPlayerDiHelper {
         DefaultDataSource.Factory::class.java
     )
 
-    val radioOperationUseCase: RadioOperationUseCase by KoinJavaComponent.inject(
-        RadioOperationUseCase::class.java
-    )
-
     val hlsMediaSource: HlsMediaSource.Factory by KoinJavaComponent.inject(
         HlsMediaSource.Factory::class.java
     )
@@ -31,7 +26,8 @@ abstract class ExoPlayerDiHelper {
         ProgressiveMediaSource.Factory::class.java
     )
 
-    fun getCustomErrorHandlingPolicyy(): CustomLoadErrorHandlingPolicy {
-        return CustomLoadErrorHandlingPolicy(radioOperationUseCase)
+    fun getCustomErrorHandlingPolicyy(): DefaultLoadErrorHandlingPolicy {
+        // TODO: Refactor — RadioOperationUseCase removed; implement proper error policy
+        return DefaultLoadErrorHandlingPolicy()
     }
 }

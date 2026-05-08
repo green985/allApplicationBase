@@ -169,7 +169,7 @@ class UserProfileVm2(
             }
 
             is UserProfileUiEvent2.OnMessageUserClick -> {
-                navigateToMessage(event.receiverUserId)
+                // messaging removed
             }
 
 //            is UserProfileUiEvent2.OnImageClick -> {
@@ -194,11 +194,6 @@ class UserProfileVm2(
         }
     }
 
-    private fun navigateToMessage(receiverUserId: String) {
-        viewModelScope.launch {
-            navigationUseCase.navigateTo(AppRoute.MessageDetail(receiverUserId = receiverUserId))
-        }
-    }
 
     private fun navigateToEditProfile() {
         viewModelScope.launch {

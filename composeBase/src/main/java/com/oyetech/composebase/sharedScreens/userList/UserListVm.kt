@@ -105,9 +105,7 @@ class UserListVm(
 
                 is OnUserClick -> {
                     val itemDetail = listViewState.value.items[event.index]
-                    navigationUseCase.navigateTo(
-                        AppRoute.MessageDetail(receiverUserId = itemDetail.userId)
-                    )
+                    navigationUseCase.navigateTo(AppRoute.UserProfile(receiverUserId = itemDetail.userId))
                 }
             }
         }

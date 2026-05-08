@@ -16,9 +16,6 @@ import com.oyetech.composebase.projectQuestionsFeature.generalOperationScreen.ge
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.questionForm.QuestionFormViewModel
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.questionForm.questionFormList.QuestionFormListViewModel
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigatorVM
-import com.oyetech.composebase.sharedScreens.messaging.MessageDetailVm
-import com.oyetech.composebase.sharedScreens.messaging.MessageOperationVM
-import com.oyetech.composebase.sharedScreens.messaging.conversationList.MessageConversationListVm
 import com.oyetech.composebase.sharedScreens.userList.UserListVm
 import com.oyetech.composebase.sharedScreens.userProfile.editProfile.EditProfileVm
 import org.koin.core.module.dsl.singleOf
@@ -36,7 +33,6 @@ object ComposeMainModule {
         singleOf(::TestEventNavigator)
         single<IVibrationHelper> { VibrationHelperImpl(get()) }
         factory<AdViewOperationDelegate> { AdViewOperationDelegateImpl() }
-        // pruned radio/quote VMs after package removal
         single<SnackbarDelegate> { SnackbarDelegate() }
         single<BottomNavigationDelegate> { BottomNavigationDelegate() }
 
@@ -46,12 +42,8 @@ object ComposeMainModule {
 
         viewModelOf(::CommentScreenWithContentIdVM)
 
-        // messaging
-        viewModelOf(::MessageDetailVm)
         viewModelOf(::QuestionFormViewModel)
         viewModelOf(::QuestionFormListViewModel)
-        singleOf(::MessageOperationVM)
-        viewModelOf(::MessageConversationListVm)
         viewModelOf(::UserListVm)
         viewModelOf(::AllScreenNavigatorVM)
         viewModelOf(::MoonOperationVm)
