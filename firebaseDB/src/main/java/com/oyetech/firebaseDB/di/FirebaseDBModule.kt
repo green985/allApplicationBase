@@ -81,10 +81,6 @@ object FirebaseDBModule {
             FirebaseMessagingRepositoryImpl(
                 firestore = get(),
                 userRepository = get(),
-                messagesSendingOperationRepository = get(),
-                messagesAllOperationRepository = get(),
-                dispatcher = get(),
-                activityProviderUseCase = get(),
                 firebaseRealtimeHelperRepository = get(),
                 firebaseCloudOperationRepository = get()
             )

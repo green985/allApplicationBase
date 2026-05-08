@@ -30,7 +30,7 @@ object FirebaseRealtimeModule {
         single<FirebaseRealtimeHelperRepository> {
             FirebaseRealtimeHelperRepositoryImpl(
                 get(),
-                get(), get()
+                get()
             )
         }
     }

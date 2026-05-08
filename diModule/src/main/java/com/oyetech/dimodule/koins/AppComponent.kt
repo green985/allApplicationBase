@@ -10,7 +10,6 @@ import com.oyetech.firebaserealtime.di.FirebaseRealtimeModule
 import com.oyetech.glidemodule.GlideModuleDi
 import com.oyetech.googlelogin.di.GoogleSignInModule
 import com.oyetech.languageimp.LanguageImplModule
-import com.oyetech.local.di.RadioLocalModuleDi
 import com.oyetech.notificationmodule.di.FirebaseNotificationModule
 import com.oyetech.radiooperationmodule.di.RadioOperationModuleDi
 import com.oyetech.radioservice.di.RadioServiceModule
@@ -54,7 +53,6 @@ object AppComponent {
         FirebaseCloudRemoteModule.createRemoteModule(),
         RadioRepositoryDI.repositoryModule,
         RepositoryModule.module,
-        RadioLocalModuleDi.localModule,
         RadioOperationModuleDi.radioModule,
         ExoPlayerModuleDi.exoPlayerModule,
         RadioServiceModule.serviceModule,

@@ -1,10 +1,8 @@
 package com.oyetech.domain.radioOperationUseCases.remoteUseCase
 
-import com.oyetech.domain.repository.radioDataRepositories.RadioDataOperationRepository
 import com.oyetech.domain.repository.radioDataRepositories.remoteRepositories.RadioStationListRepository
 import com.oyetech.models.postBody.uuid.uuid.StationUuidPostBody
 import com.oyetech.models.postBody.uuid.uuid.generateStationUuidClass
-import com.oyetech.models.postBody.uuid.uuid.generateStationUuidClassWithFavList
 import com.oyetech.models.radioProject.entity.radioEntity.station.RadioStationResponseData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,7 +19,6 @@ Created by Erdi Özbek
 
 class RadioStationListOperationUseCase(
     var repository: RadioStationListRepository,
-    var databaseRepository: RadioDataOperationRepository,
 ) {
 
     var sortOperationClickHandler = MutableStateFlow(false)
@@ -33,10 +30,6 @@ class RadioStationListOperationUseCase(
     suspend fun triggerSortOperationClickNavigator(listType: String) {
         sortOperationClickNavigator.emit("")
         sortOperationClickNavigator.emit(listType)
-    }
-
-    fun getRadioListHistoryFlow(): Flow<List<RadioStationResponseData>> {
-        return databaseRepository.getRadioHistoryDataFlow()
     }
 
     fun getLastClickStationList(): Flow<List<RadioStationResponseData>> {
@@ -71,19 +64,9 @@ class RadioStationListOperationUseCase(
         return repository.getStationListWithCountryParams(countryString)
     }
 
-    fun getStationListWithFavListUuid(): Flow<List<RadioStationResponseData>> {
-        return flow {
-            val favList = databaseRepository.getRadioFavList()
-            val postBody = StationUuidPostBody().generateStationUuidClassWithFavList(favList)
-
-            emit(repository.getStationListWithUuid(postBody).first())
-        }
-    }
-
     fun getStationListWithUuid(listUUid: List<String>): Flow<List<RadioStationResponseData>> {
         return flow {
             val postBody = StationUuidPostBody().generateStationUuidClass(listUUid)
-
             emit(repository.getStationListWithUuid(postBody).first())
         }
     }

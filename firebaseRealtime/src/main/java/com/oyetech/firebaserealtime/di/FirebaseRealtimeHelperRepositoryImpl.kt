@@ -8,19 +8,14 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ServerValue
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
 import com.oyetech.domain.repository.firebase.realtime.FirebaseRealtimeHelperRepository
-import com.oyetech.domain.repository.messaging.local.MessagesAllLocalDataSourceRepository
 import com.oyetech.models.errors.exceptionHelper.GeneralException
 import com.oyetech.models.firebaseModels.databaseKeys.FirebaseDatabaseKeys
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingResponseData
 import com.oyetech.models.firebaseModels.messagingModels.MessageStatus
-import com.oyetech.models.firebaseModels.messagingModels.toLocalData
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 /**
@@ -32,7 +27,6 @@ Created by Erdi Özbek
 class FirebaseRealtimeHelperRepositoryImpl(
     private val firebaseDatabase: FirebaseDatabase,
     private val firebaseUserRepository: FirebaseUserRepository,
-    private val messagesAllLocalDataSourceRepository: MessagesAllLocalDataSourceRepository,
 ) : FirebaseRealtimeHelperRepository {
 
     override val realtimeMessageSendOperationResultState =
@@ -76,23 +70,16 @@ class FirebaseRealtimeHelperRepositoryImpl(
                     }
                     val myRef = getUserRef()
 
-                    val lastMessage = messagesAllLocalDataSourceRepository.getLastMessage(userId)
-                    val lastMessageTimestamp = lastMessage?.createdAt ?: 0L
-
                     myRef?.child(FirebaseDatabaseKeys.messages)
                         ?.orderByChild("timestamp")
-                        ?.startAt(lastMessageTimestamp.toDouble())
-                        ?.addChildEventListener(object :
-                            ChildEventListener {
+                        ?.startAt(0.0)
+                        ?.addChildEventListener(object : ChildEventListener {
                             override fun onChildAdded(
                                 snapshot: DataSnapshot,
                                 previousChildName: String?,
                             ) {
                                 val message =
                                     snapshot.getValue(FirebaseMessagingResponseData::class.java)
-
-                                saveMessageToLocal(message)
-
                                 Timber.d("onChildAdded: ${message?.messageText}")
                             }
 
@@ -102,7 +89,6 @@ class FirebaseRealtimeHelperRepositoryImpl(
                             ) {
                                 val message =
                                     snapshot.getValue(FirebaseMessagingResponseData::class.java)
-                                saveMessageToLocal(message)
                                 Timber.d("onChildChanged: ${message?.messageText}")
                             }
 
@@ -130,21 +116,6 @@ class FirebaseRealtimeHelperRepositoryImpl(
                 Timber.d("observeUserMessagesRealtimeOperations error: ${e.message}")
                 throw GeneralException(e)
             }
-        }
-    }
-
-    private fun saveMessageToLocal(message: FirebaseMessagingResponseData?) {
-        val localMessageData = message?.toLocalData()
-
-        if (localMessageData?.messageId?.isNotBlank() == true) {
-            GlobalScope.launch(Dispatchers.IO) {
-                messagesAllLocalDataSourceRepository.insertMessage(
-                    localMessageData
-                )
-            }
-        } else {
-            // todo analytics nasil olur aq eventi ekle
-            Timber.d("messageId null do nothing")
         }
     }
 

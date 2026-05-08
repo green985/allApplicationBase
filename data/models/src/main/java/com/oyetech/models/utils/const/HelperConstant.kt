@@ -22,13 +22,6 @@ object HelperConstant {
     const val APP_FIRST_OPEN_COUNT_THRESHOLD: Int = 6
     const val RECEIVED_MESSAGE_COUNT_THRESHOLD: Int = 10
     const val ONE_DAY_IN_MILLIS = 24 * 60 * 60 * 1000
-    const val HistoryDatabaseVersion: Int = 6
-    const val RadioModelVersion: Int = 6
-    const val RadioLastListDatabaseVersion: Int = 6
-    const val RadioAllListVersion: Int = 1
-    const val FirebaseMessagingVersion: Int = 2
-
-    const val ANIM_TIME: Long = 300L
     const val BOTTOM_NAVIGATION_SHOW_ANIM_TIME: Int = 200
     const val AGE_MIN: Int = 18
     const val AGE_MAX: Int = 99

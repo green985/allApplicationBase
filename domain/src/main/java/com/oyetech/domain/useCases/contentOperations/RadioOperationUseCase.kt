@@ -2,7 +2,6 @@
 
 package com.oyetech.domain.useCases.contentOperations
 
-import com.oyetech.domain.radioOperationUseCases.remoteUseCase.RadioDataOperationUseCase
 import com.oyetech.domain.repository.contentOperation.RadioOperationRepository
 import com.oyetech.models.radioProject.entity.radioEntity.station.RadioStationResponseData
 import com.oyetech.models.radioProject.radioModels.PauseReason
@@ -14,13 +13,11 @@ import com.oyetech.models.radioProject.radioModels.PlayState.Playing
 import com.oyetech.models.radioProject.radioModels.PlayState.PrePlaying
 import com.oyetech.models.radioProject.radioModels.RadioViewStateNew
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 /**
@@ -30,11 +27,9 @@ Created by Erdi Özbek
  **/
 
 class RadioOperationUseCase(
-    private var appDispatchers: com.oyetech.tools.coroutineHelper.AppDispatchers,
     private var radioOperationRepository: RadioOperationRepository,
-    private var radioDataOperationUseCase: RadioDataOperationUseCase,
 ) {
-    var lastStation = radioDataOperationUseCase.lastRadioDataa
+    var lastStation: RadioStationResponseData? = null
 
     var radioViewStateNewMutableStateFlow =
         MutableStateFlow(RadioViewStateNew.idle(data = lastStation))
@@ -94,10 +89,7 @@ class RadioOperationUseCase(
         return radioViewStateNewMutableStateFlow.value.status == Playing
     }
 
-    fun startPlayer(
-        radioModel: RadioStationResponseData? = null,
-        radioListFromLiveData: List<RadioStationResponseData>? = null,
-    ) {
+    fun startPlayer(radioModel: RadioStationResponseData? = null) {
         Timber.d(" startPlayer radioModel == $radioModel")
         if (lastStation == radioModel) {
             if (isPlaying()) {
@@ -111,22 +103,6 @@ class RadioOperationUseCase(
 
         setRadioViewStateData(PrePlaying)
         radioOperationRepository.startPlayer(lastStation)
-
-        if (radioModel != null) {
-            prepareRadioDataOperation(radioModel, radioListFromLiveData)
-        }
-    }
-
-    fun prepareRadioDataOperation(
-        radioModel: RadioStationResponseData,
-        radioListFromLiveData: List<RadioStationResponseData>? = null,
-    ) {
-        GlobalScope.launch(appDispatchers.io) {
-            radioDataOperationUseCase.prepareRadioDataOperation(
-                radioModel,
-                radioListFromLiveData
-            )
-        }
     }
 
     fun stopPlayer() {
@@ -176,29 +152,21 @@ class RadioOperationUseCase(
         radioOperationRepository.setVolume(fullVolume)
     }
 
-    fun nextStationRadioChannel() {
-        GlobalScope.launch(appDispatchers.io) {
-            val radioDataModel = radioDataOperationUseCase.getNextRadioStation()
-            startPlayer(radioDataModel)
-        }
-    }
-
-    fun previousRadioChannel() {
-        GlobalScope.launch(appDispatchers.io) {
-            val radioDataModel = radioDataOperationUseCase.getPreviousRadioStation()
-            startPlayer(radioDataModel)
-        }
-    }
-
     fun getPlayerState(): PlayState {
         return radioViewStateNewMutableStateFlow.value.status
     }
 
-    fun changeRadioErrorState(errorString: String) {
-        radioErrorStateMutableStateFlow.value = errorString
+    fun nextStationRadioChannel() {
+        // no-op: local station list navigation removed
+        Timber.d("nextStationRadioChannel: local DB removed, no-op")
     }
 
-    suspend fun findStation(stationUuid: String): RadioStationResponseData? {
-        return radioDataOperationUseCase.getRadioWithStationUuid(stationUuid)
+    fun previousRadioChannel() {
+        // no-op: local station list navigation removed
+        Timber.d("previousRadioChannel: local DB removed, no-op")
+    }
+
+    fun changeRadioErrorState(errorString: String) {
+        radioErrorStateMutableStateFlow.value = errorString
     }
 }

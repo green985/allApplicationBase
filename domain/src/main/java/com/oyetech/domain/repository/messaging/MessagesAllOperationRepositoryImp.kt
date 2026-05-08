@@ -1,48 +1,39 @@
 package com.oyetech.domain.repository.messaging
 
 import com.oyetech.domain.repository.firebase.FirebaseMessagingRepository
-import com.oyetech.domain.repository.messaging.local.MessagesAllLocalDataSourceRepository
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessageConversationData
 import com.oyetech.models.firebaseModels.messagingModels.FirebaseMessagingLocalData
 import com.oyetech.models.firebaseModels.messagingModels.MessageStatus
 import com.oyetech.models.firebaseModels.messagingModels.toLocalDataWithStatus
-import com.oyetech.tools.coroutineHelper.AppDispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 
 class MessagesAllOperationRepositoryImp(
-    private val messagesAllDao: MessagesAllLocalDataSourceRepository,
     private val firebaseMessagingRepository: FirebaseMessagingRepository,
-    private val dispatchers: AppDispatchers,
 ) : MessagesAllOperationRepository {
 
     override var currentConversationId: MutableStateFlow<String> = MutableStateFlow("")
     override var currentUsername: String = ""
 
     override fun getMessageListFlow(conversationId: String): Flow<List<FirebaseMessagingLocalData>> {
-        return messagesAllDao.getMessageListFlow(conversationId)
+        return flowOf(emptyList())
     }
 
     override fun getMessageListWithReceiverId(receiverId: String): Flow<List<FirebaseMessagingLocalData>> {
-        return messagesAllDao.getMessageListWithReceiverId(receiverId)
+        return flowOf(emptyList())
     }
 
     override fun insertMessageWithGlobalScope(message: FirebaseMessagingLocalData) {
-        GlobalScope.launch(dispatchers.io) {
-            messagesAllDao.insertMessage(message)
-        }
+        // no-op: local storage removed
     }
 
     override fun getMessageListWithLastMessageId(
         conversationId: String,
         messageId: String,
     ): List<FirebaseMessagingLocalData> {
-        return messagesAllDao.getMessageListWithLastMessageId(conversationId, messageId)
+        return emptyList()
     }
 
     override fun getMessagesFromRemoteAndInsertToLocal(
@@ -52,14 +43,7 @@ class MessagesAllOperationRepositoryImp(
             return flowOf(emptyList())
         }
         return firebaseMessagingRepository.getMessageListWithConversationId(conversationId)
-            .map {
-                it.map {
-                    it.toLocalDataWithStatus(status = MessageStatus.SENT)
-                }
-            }
-            .onEach {
-                messagesAllDao.insertLastList(it)
-            }
+            .map { it.map { msg -> msg.toLocalDataWithStatus(status = MessageStatus.SENT) } }
     }
 
     override fun getMessageListWithConversationIdWithMessageId(
@@ -70,64 +54,38 @@ class MessagesAllOperationRepositoryImp(
         }
         return firebaseMessagingRepository.getMessageListWithConversationIdWithMessageId(
             conversationId
-        ).map {
-            it.map {
-                it.toLocalDataWithStatus(status = MessageStatus.SENT)
-            }
-        }.onEach {
-            messagesAllDao.insertLastList(it)
-        }
+        ).map { it.map { msg -> msg.toLocalDataWithStatus(status = MessageStatus.SENT) } }
     }
 
     override fun getMessageWithId(messageId: String): FirebaseMessagingLocalData? {
-        return messagesAllDao.getMessageWithId(messageId)
+        return null
     }
 
     override fun deleteLastList(idList: List<String>): Int {
-        return messagesAllDao.deleteLastList(idList)
+        return 0
     }
 
     override fun deleteAllMessages() {
-        messagesAllDao.deleteAllMessages()
+        // no-op: local storage removed
     }
 
     override suspend fun getMessageListWithMessageIdListFromLocal(messageIdList: List<String>): List<FirebaseMessagingLocalData> {
-        return messagesAllDao.getMessageListWithMessageIdList(messageIdList)
+        return emptyList()
     }
 
     override suspend fun insertLastList(list: List<FirebaseMessagingLocalData>) {
-        messagesAllDao.insertLastList(list)
+        // no-op: local storage removed
     }
 
     override suspend fun insertMessage(message: FirebaseMessagingLocalData) {
-        messagesAllDao.insertMessage(message)
+        // no-op: local storage removed
     }
 
     override fun getConversationList(): Flow<List<FirebaseMessageConversationData>> {
-        return firebaseMessagingRepository.getConversationList().onEach {
-            val messageIdList = it.map { it.lastMessageId }
-            val messageList = getMessageListWithMessageIdListFromLocal(messageIdList)
-            it.forEach { conversation ->
-                conversation.lastMessage =
-                    messageList.find { it.messageId == conversation.lastMessageId }
-            }
-            it
-        }
+        return firebaseMessagingRepository.getConversationList()
     }
 
     override fun getConversationListUpdated(): Flow<List<FirebaseMessageConversationData>> {
-        return firebaseMessagingRepository.getConversationListUpdated().onEach {
-            val messageIdList = it.map { it.lastMessageId }
-            val messageList = getMessageListWithMessageIdListFromLocal(messageIdList)
-            it.forEach { conversation ->
-                conversation.lastMessage =
-                    messageList.find { it.messageId == conversation.lastMessageId }
-            }
-            it
-        }
-    }
-
-    private suspend fun getLastMessage(): FirebaseMessagingLocalData? {
-        return messagesAllDao.getLastMessage("")
+        return firebaseMessagingRepository.getConversationListUpdated()
     }
 }
