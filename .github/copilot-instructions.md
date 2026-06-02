@@ -8,6 +8,16 @@ Then read the project architecture and coding conventions in:
 
 # Code Generation Rules
 
+Never create architecture.
+
+Follow architecture from AGENTS.md.
+
+If AGENTS.md already defines a pattern,
+
+reuse that pattern.
+
+Do not invent alternative patterns.
+
 Generate only the code required for the current task.
 
 Do not create files unless explicitly requested.
@@ -15,8 +25,6 @@ Do not create files unless explicitly requested.
 Do not modify unrelated files.
 
 Do not rename existing classes, functions, variables, models or routes unless explicitly requested.
-
-Preserve existing architecture.
 
 Preserve existing naming conventions.
 
@@ -38,6 +46,12 @@ Do not optimize unrelated code.
 
 Do not move code unless required by the task.
 
+Do not expand scope.
+
+Implement only the requested change.
+
+Do not solve problems that were not requested.
+
 ---
 
 ## Existing Code First
@@ -54,6 +68,10 @@ Before creating:
 search for an existing implementation and reuse it.
 
 Prefer extension of existing code over duplication.
+
+If an existing implementation already solves the problem,
+
+modify it instead of creating a new implementation.
 
 ---
 

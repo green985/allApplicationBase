@@ -20,10 +20,12 @@ Use:
 - Repository
 - NavigationUseCase
 
-Add a UseCase only when:
+Add a UseCase only when at least one of the following is true:
 
 - business logic exists
+
 - multiple repository calls exist
+
 - logic is shared by multiple screens
 
 Do not create:
@@ -106,6 +108,8 @@ kotlin Flow<T>
 
 Repository must never normalize errors.
 
+Do not create a repository interface or implementation if one already exists.
+
 Never call:
 
 kotlin ErrorMessage.fetchErrorMessage()
@@ -143,7 +147,7 @@ Use:
 kotlin AppRoute NavigationUseCase entry<AppRoute.X>
 
 Never use:
-
+Never create new routes when an existing AppRoute satisfies the requirement.
 kotlin String routes Navigation 2 backStack access inside ViewModel
 
 ---
@@ -197,3 +201,4 @@ Do not create abstractions for future use.
 Do not optimize for hypothetical requirements.
 
 Implement only what is required by the current task.
+Modify existing code before creating new code.
