@@ -6,277 +6,136 @@ Before responding to **any** request, read and strictly apply all rules in:
 Then read the project architecture and coding conventions in:
 `copilot_files/AGENTS.md`
 
-Then read the feature-level architecture analysis and reference implementation patterns in:
-`copilot_files/ARCHITECTURE_ANALYSIS.md`
+# Code Generation Rules
+
+Generate only the code required for the current task.
+
+Do not create files unless explicitly requested.
+
+Do not modify unrelated files.
+
+Do not rename existing classes, functions, variables, models or routes unless explicitly requested.
+
+Preserve existing architecture.
+
+Preserve existing naming conventions.
+
+Preserve existing project structure.
 
 ---
 
-## Navigation Rules (Navigation 3 — androidx.navigation3)
+## Minimal Changes Rule
 
-This project uses **Jetpack Navigation 3**. Never use Navigation 2 APIs.
+Make the smallest valid change.
 
-### 1. Routes are typed `AppRoute` entries — no string routes
+Prefer editing existing code over creating new code.
 
-All destinations are declared in `composeBase/.../navigator/Route.kt` as `@Serializable`
-`data object` or `data class` implementing `AppRoute` (which extends `NavKey`).
+Do not refactor unrelated code.
 
-```kotlin
-// ✅ Correct — typed route
-navigationUseCase.navigateTo(AppRoute.UserProfile(receiverUserId = id))
-navigationUseCase.navigateTo(AppRoute.QuestionAppHomepage)
+Do not clean up unrelated code.
 
-// ❌ Wrong — string routes do not exist in this project
-navigate("user_profile/$id")
-Route("user_profile").withArgs(...)
-```
+Do not optimize unrelated code.
 
-### 2. New destinations must be added to `AppRoute`
-
-Add every new screen as a new entry inside the `AppRoute` sealed interface:
-
-```kotlin
-// ✅ No-arg destination
-@Keep @Serializable data object MyNewScreen : AppRoute
-
-// ✅ Parameterised destination
-@Keep @Serializable data class MyDetail(val itemId: String = "") : AppRoute
-```
-
-Then register the screen in the appropriate `EntryProviderScope<NavKey>` extension function
-(e.g. `questionAppNavigation()`):
-
-```kotlin
-entry<AppRoute.MyNewScreen> { MyNewScreenSetup() }
-entry<AppRoute.MyDetail> { MyDetailSetup(itemId = it.itemId) }
-```
-
-### 3. ViewModels navigate via `NavigationUseCase` — never touch the backstack directly
-
-```kotlin
-// ✅ Correct — VM navigates through the use case
-class MyViewModel(
-    private val navigationUseCase: NavigationUseCase,
-    ...
-) : BaseViewModel(appDispatchers) {
-
-    private fun handleItemClick(id: String) {
-        navigationUseCase.navigateTo(AppRoute.MyDetail(itemId = id))
-    }
-
-    private fun handleBack() {
-        navigationUseCase.goBack()
-    }
-}
-
-// ❌ Wrong — VMs must not hold a reference to NavBackStack
-backStack.add(AppRoute.MyDetail(id))
-```
-
-### 4. Backstack must never be empty — `NavDisplay` crashes on an empty backstack
-
-- Seed `rememberNavBackStack` with the start destination.
-- Guard every pop with a size check:
-
-```kotlin
-// ✅ Safe
-goBack = { scope.launch { if (backStack.size > 1) backStack.removeLastOrNull() } }
-
-// ❌ Unsafe — if backStack has 1 entry this empties it → crash
-goBack = { scope.launch { backStack.removeLastOrNull() } }
-```
-
-### 5. Bottom-tab switching uses `navigateToBottomTab(backStack, route)`
-
-Never push a bottom-tab destination via `backStack.add()` directly — use the helper:
-
-```kotlin
-// ✅ Correct
-navigateToBottomTab(backStack, AppRoute.QuestionAppHomepage)
-
-// ❌ Wrong — duplicates the tab entry without restoring its sub-stack
-backStack.add(AppRoute.QuestionAppHomepage)
-```
+Do not move code unless required by the task.
 
 ---
 
-## Profile Completion Check
+## Existing Code First
 
-Use a data class extension for profile completion checks (e.g.,
-`UserDataProperty.isProfileCompletedForAuth()`); do not implement this check inline in ViewModels.
+Before creating:
 
-```kotlin
-// ✅ Correct
-import com.oyetech.models.firebaseModels.userModel.isProfileCompletedForAuth
-userData.isProfileCompletedForAuth()   // checks username, age, gender
+- a new class
+- a new interface
+- a new model
+- a new composable
+- a new use case
+- a new repository
 
-// ❌ Wrong — do not inline this logic in a ViewModel or mapper
-userData.username.isNotBlank() && userData.age.isNotBlank() && userData.gender.isNotBlank()
-```
+search for an existing implementation and reuse it.
 
----
-
-## Color And Typography Rules
-
-### 1. Single source of truth for colors: `AppColorPalette`
-
-All theme colors must be defined in `composeBase/.../theme/AppColors.kt` inside `lightPalette` and
-`darkPalette`. Do not define extra `Color(...)` values in screens, components, or ViewModels.
-
-```kotlin
-// ✅ Correct
-color = AppColors.primary
-
-// ❌ Wrong
-color = Color(0xFFECA73B)
-```
-
-### 2. Material components should use theme defaults
-
-Prefer Material3 default colors from `MaterialTheme.colorScheme` (already derived from
-`AppColorPalette`) for `Button`, `Card`, `TopAppBar`, `LinearProgressIndicator`, etc. Only override
-component colors when there is a strict design requirement.
-
-### 3. Text colors use semantic tokens
-
-For text color assignments, use semantic tokens from `AppColors` (`textPrimary`, `textSecondary`,
-`primary`, `error`) instead of hardcoded colors.
-
-### 4. Typography uses `AppTextStyles`
-
-Avoid inline `TextStyle(...)` in screen code. Use centralized styles from
-`composeBase/.../theme/AppTextStyles.kt`.
-
-```kotlin
-// ✅ Correct
-Text(text = title, style = AppTextStyles.titleLarge, color = AppColors.textPrimary)
-
-// ❌ Wrong
-Text(text = title, style = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.Bold))
-```
-
-### 5. No direct color or font literals in UI layers
-
-In Compose screens and shared views:
-
-- do not use `Color(...)` literals
-- do not use arbitrary inline `fontSize`, `lineHeight`, or `fontWeight`
-- use `AppColors` and `AppTextStyles` only
-
-### 6. Spacing and shape tokens are mandatory
-
-Use centralized tokens from `composeBase/.../theme/AppDimensions.kt`:
-
-- spacing: `AppSpacing.*` (`xs`, `sm`, `md`, `lg`, `xl`, etc.)
-- radius values: `AppCornerRadius.*`
-- ready shapes: `AppShapes.*` (`roundedSmall`, `roundedMedium`, `roundedLarge`, `roundedPill`)
-
-```kotlin
-// ✅ Correct
-Modifier.padding(AppSpacing.lg)
-Card(shape = AppShapes.roundedLarge) { ... }
-
-// ❌ Wrong
-Modifier.padding(16.dp)
-Card(shape = RoundedCornerShape(16.dp)) { ... }
-```
-
-When a custom shape is unavoidable, compose it from `AppCornerRadius.*` values instead of raw `dp`.
+Prefer extension of existing code over duplication.
 
 ---
 
-## Error Handling Rules
+## Consistency Rule
 
-### 1. Repository suspend functions must return `Result<T>` — never throw
+Match the style of surrounding code.
 
-Wrap the entire body in `try/catch (e: Exception)` and annotate with
-`@Suppress("TooGenericExceptionCaught")`. Preserve the **raw** exception message — do **not** call
-`ErrorMessage.fetchErrorMessage()` in the repository. The ViewModel is the single normalisation
-point. For a try-first-then-fallback chain use `runCatching`:
+Match:
 
-```kotlin
-// ✅ Single operation — keep raw message so developer can read it in logs
-@Suppress("TooGenericExceptionCaught")
-override suspend fun doSomething(): Result<MyData> {
-    return try {
-        Result.success(remoteSource.fetch())
-    } catch (e: Exception) {
-        Result.failure(e)   // raw "[28404] Failed to retrieve an ID token" travels to VM
-    }
-}
+- naming
+- formatting
+- architecture
+- state management
+- event handling
 
-// ✅ Inner helpers that construct exception objects — also keep raw message
-} catch (e: SomeSpecificException) {
-MyResponseData(errorException = Exception(e.message ?: "fallback message"))
-}
+Do not introduce a different style.
 
-// ✅ Fallback chain
-private suspend fun getOrCreate(): MyData {
-return runCatching { repo.get().first() }.getOrElse { repo.create().first() }
-}
-```
+---
 
-### 2. ViewModels consume `Result<T>` with `.fold()` — never `OperationState`
+## Compose Rules
 
-Set `isLoading = true` before launching, then resolve **both** branches inside `.fold()`.
-Always reset loading in both paths. **Always** pass `error.message` through
-`ErrorMessage.fetchErrorMessage()` in `onFailure` — this is the **single normalisation point**
-before any error string reaches the UI:
+Prefer stateless composables.
 
-```kotlin
-// ✅ Correct
-viewModelScope.launch(getDispatcherIo()) {
-    myState.updateState { copy(isLoading = true, isError = false, errorMessage = "") }
-    repository.doSomething().fold(
-        onSuccess = { data ->
-            myState.updateState { copy(isLoading = false, /* map data */) }
-            uiEvent.emit(MyUiEvent.Success)
-        },
-        onFailure = { error ->
-            myState.updateState {
-                copy(
-                    isLoading = false,
-                    isError = true,
-                    errorMessage = ErrorMessage.fetchErrorMessage(error.message)  // "[28404]" → "NO_INTERNET_CONNECTION"
-                )
-            }
-        }
-    )
-}
+Pass state through parameters.
 
-// ❌ Wrong — raw message bypasses normalisation (e.g. leaks "[28404]" to UI)
-errorMessage = error.message ?: "Login failed"
-```
+Pass events through callbacks.
 
-### 3. UiState must carry `isLoading`, `isError`, `errorMessage`
+Do not place business logic inside composables.
 
-```kotlin
-data class XUiState(
-    val isLoading: Boolean = false,
-    val isError: Boolean = false,
-    val errorMessage: String = "",   // use LanguageKey.* constants for user-facing strings
-    // ... domain fields
-)
-```
+Do not place repository calls inside composables.
 
-Always add an `ErrorDismiss` event that clears both flags:
+Do not place navigation logic inside composables.
 
-```kotlin
-is XEvent.ErrorDismiss -> myState.updateState { copy(isError = false, errorMessage = "") }
-```
+---
 
-### 4. Form validation goes in a dedicated private guard function
+## ViewModel Rules
 
-```kotlin
-private fun isFormInvalid(): Boolean {
-    if (state.username.isBlank()) {
-        myState.updateState { copy(isError = true, errorMessage = LanguageKey.usernameIsEmpty) }
-        return true
-    }
-    return false
-}
+Business logic belongs in ViewModels.
 
-private fun handleSubmit() {
-    if (isFormInvalid()) return
-    // proceed
-}
-```
+Repository calls belong in ViewModels.
+
+Navigation belongs in NavigationUseCase.
+
+State updates must use:
+
+kotlin updateState { copy(...) }
+
+Never use:
+
+kotlin state.value =
+
+---
+
+## File Creation Rules
+
+Do not create:
+
+- Mapper
+- Validator
+- Manager
+- Provider
+- Handler
+- Factory
+
+unless explicitly requested.
+
+Do not create new abstraction layers.
+
+Do not create future-proof structures.
+
+Do not create placeholder implementations.
+
+---
+
+## Output Rules
+
+When generating code:
+
+- output complete code
+- output compilable code
+- avoid pseudo code
+- avoid TODO comments
+- avoid placeholder logic
+
+Generate production-ready code only.
