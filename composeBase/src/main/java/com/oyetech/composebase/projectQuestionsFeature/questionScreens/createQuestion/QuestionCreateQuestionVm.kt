@@ -11,8 +11,6 @@ import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionV
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent.SubmitClicked
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent.TitleChanged
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
-import com.oyetech.composebase.projectQuestionsFeature.views.questions.toUiState
-import com.oyetech.domain.repository.firebase.FirebaseQuestionOperationRepository
 import com.oyetech.domain.repository.question.QuestionSupabaseRepository
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
@@ -37,10 +35,8 @@ import timber.log.Timber
 class QuestionCreateQuestionVm(
     appDispatchers: AppDispatchers,
     private val navigationUseCase: NavigationUseCase,
-    private val questionRepository: FirebaseQuestionOperationRepository,
     private val questionSupabaseRepository: QuestionSupabaseRepository,
     private val snackbarDelegate: SnackbarDelegate,
-    private val questionUseCase: com.oyetech.domain.useCases.QuestionUseCase,
     private val authOperationVM: AuthOperationVM,
 ) : BaseViewModel(appDispatchers) {
 
@@ -52,49 +48,6 @@ class QuestionCreateQuestionVm(
     )
 
     val questionUiState = MutableStateFlow(QuestionViewUiState())
-    private var editingQuestionId: String = ""
-
-    fun initWithQuestionId(questionId: String) {
-        if (questionId.isNotBlank()) {
-            editingQuestionId = questionId
-            loadQuestion(questionId)
-        }
-    }
-
-    private fun loadQuestion(questionId: String) {
-        uiState.updateState { copy(isLoading = true, errorText = "") }
-        viewModelScope.launch(getDispatcherIo()) {
-            questionRepository.getQuestionById(questionId)
-                .asResult()
-                .collectLatest { result ->
-                    result.fold(
-                        onSuccess = { question ->
-                            Timber.d("Question loaded: ${question.questionId}")
-                            questionUiState.value = question.toUiState()
-                            uiState.updateState {
-                                copy(
-                                    isLoading = false,
-                                    taxonomy = question.taxonomy,
-                                    toolbarTitleText = "Edit Question"
-                                )
-                            }
-                        },
-                        onFailure = { e ->
-                            Timber.e(e)
-                            uiState.updateState {
-                                copy(
-                                    isLoading = false,
-                                    errorText = e.message ?: LanguageKey.generalErrorText
-                                )
-                            }
-                            snackbarDelegate.triggerSnackbarState(
-                                message = e.message ?: LanguageKey.generalErrorText
-                            )
-                        }
-                    )
-                }
-        }
-    }
 
     override fun onEvent(event: Any) {
         if (event is QuestionViewEvent) {
@@ -118,13 +71,11 @@ class QuestionCreateQuestionVm(
                 }
 
                 is QuestionViewEvent.OnOptionSelected -> {
-                    // todo will be removed, create question doesnt have answer selection
                     Timber.d("Option selected CreateQuestionVM: ${event.optionId} for question ${event.questionId}")
                 }
 
                 is QuestionViewEvent.OnTagSelectedForCreateQuestion -> {
                     val currentTags = questionUiState.value.selectedTags
-
                     if (!currentTags.any { it.id == event.tag.id }) {
                         questionUiState.updateState {
                             copy(selectedTags = (currentTags + event.tag).toImmutableList())
@@ -134,8 +85,6 @@ class QuestionCreateQuestionVm(
 
                 is QuestionViewEvent.OnTagSelected -> {
                     Timber.d("Tag selected in CreateQuestionVM: ${event.tag.id}")
-                    // todo will be impelemts
-                    // navigate for question list with filter tag
                 }
 
                 is QuestionViewEvent.OnTagRemoved -> {
@@ -211,8 +160,6 @@ class QuestionCreateQuestionVm(
         uiState.updateState { copy(isLoading = true, errorText = "") }
         viewModelScope.launch(getDispatcherIo()) {
             val taxonomy = uiState.value.taxonomy
-            val questionIdToUse =
-                editingQuestionId.ifBlank { currentQuestion.questionId }
 
             val moderationStatus = if (uiState.value.isAutoApprove) {
                 ModerationStatus.APPROVED
@@ -223,7 +170,7 @@ class QuestionCreateQuestionVm(
             val body = QuestionTaxonomyFactory.buildQuestion(
                 title = currentQuestion.titleText,
                 taxonomy = taxonomy,
-                questionId = questionIdToUse,
+                questionId = currentQuestion.questionId,
                 createdBy = userId,
             ).copy(
                 questionId = RandomHelper.generateGuid(),
@@ -232,32 +179,14 @@ class QuestionCreateQuestionVm(
                 formId = currentQuestion.formId
             )
 
-            val isEditMode = editingQuestionId.isNotBlank()
-            Timber.d("Submitting question (edit=$isEditMode): $body")
-
-            val operation = if (isEditMode) {
-                questionSupabaseRepository.updateQuestion(body)
-            } else {
-                questionSupabaseRepository.createQuestion(body)
-            }
-
-            operation.asResult()
+            questionSupabaseRepository.createQuestion(body)
+                .asResult()
                 .collectLatest { result ->
                     result.fold(
                         onSuccess = {
-                            val message = if (isEditMode) {
-                                LanguageKey.questionUpdatedSuccessfullyText
-                            } else {
-                                LanguageKey.questionAddedSuccessfullyText
-                            }
+                            val message = LanguageKey.questionAddedSuccessfullyText
                             Timber.d(message)
                             uiState.updateState { copy(isLoading = false, isSubmitted = true) }
-
-                            // Emit event if editing existing question
-                            if (isEditMode) {
-                                questionUseCase.emitQuestionUpdated(editingQuestionId)
-                            }
-
                             navigationUseCase.goBack()
                             if (!GeneralSettings.isDebug()) {
                                 snackbarDelegate.triggerSnackbarState(message = message)

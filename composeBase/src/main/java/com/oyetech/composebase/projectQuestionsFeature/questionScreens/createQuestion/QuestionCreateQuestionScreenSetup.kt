@@ -52,9 +52,6 @@ fun QuestionCreateScreenSetup(
     val uiState by vm.uiState.collectAsStateWithLifecycle()
     val questionUiState by vm.questionUiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(questionId) {
-        vm.initWithQuestionId(questionId)
-    }
 
     QuestionCreateScreen(
         uiState = uiState,
