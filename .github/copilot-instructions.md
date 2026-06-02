@@ -1,3 +1,16 @@
+# Core Behavior Rules
+
+Before responding to **any** request, read and strictly apply all rules in:
+`copilot_files/first_rules.md`
+
+Then read the project architecture and coding conventions in:
+`copilot_files/AGENTS.md`
+
+Then read the feature-level architecture analysis and reference implementation patterns in:
+`copilot_files/ARCHITECTURE_ANALYSIS.md`
+
+---
+
 ## Navigation Rules (Navigation 3 — androidx.navigation3)
 
 This project uses **Jetpack Navigation 3**. Never use Navigation 2 APIs.
