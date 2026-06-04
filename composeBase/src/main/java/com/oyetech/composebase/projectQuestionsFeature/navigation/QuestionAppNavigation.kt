@@ -11,6 +11,7 @@ import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.Ques
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.list.QuestionPagerScreenSetup
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.questionForm.QuestionFormScreenSetup
 import com.oyetech.composebase.sharedScreens.settings.FacSettingsScreenSetup
+import com.oyetech.composebase.sharedScreens.stopwatch.StopwatchDurationScreenSetup
 import com.oyetech.composebase.sharedScreens.userList.UserListScreenSetup
 import com.oyetech.composebase.sharedScreens.userProfile.editProfile.EditUserProfileScreenSetup
 import com.oyetech.composebase.sharedScreens.userProfile.userProfileDesign.User2ProfileScreenSetup
@@ -64,5 +65,12 @@ fun EntryProviderScope<NavKey>.questionAppNavigation() {
 
     entry<AppRoute.UserProfile> {
         User2ProfileScreenSetup(receiverUserId = it.receiverUserId)
+    }
+
+    entry<AppRoute.StopwatchDurationScreen> {
+        StopwatchDurationScreenSetup()
+    }
+
+    entry<AppRoute.StopwatchScreen> {
     }
 }

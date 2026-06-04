@@ -6,6 +6,9 @@ Before responding to **any** request, read and strictly apply all rules in:
 Then read the project architecture and coding conventions in:
 `copilot_files/AGENTS.md`
 
+Then read the project journey rules for:
+`copilot_files/journey_rules.md`
+
 # Code Generation Rules
 
 Never create architecture.

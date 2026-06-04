@@ -1,6 +1,7 @@
 package com.oyetech.composebase.projectQuestionsFeature.homeScreen
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,8 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.oyetech.composebase.base.BaseScaffold
 import com.oyetech.composebase.experimental.loginOperations.LoginOperationSmallButtonSetup
-import com.oyetech.composebase.projectQuestionsFeature.ScreenKey.toolbarTitle
 import com.oyetech.composebase.navigator.AppRoute
+import com.oyetech.composebase.projectQuestionsFeature.ScreenKey.toolbarTitle
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppSpacing
 import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
@@ -53,11 +55,16 @@ fun QuestionsHomeScreenSetup(
                     Text(text = "Create Question")
                 }
 
-                // YENİ EKLENEN BUTON
                 Button(onClick = {
                     navigationUseCase.navigateTo(AppRoute.QuestionFormScreen())
                 }) {
                     Text(text = "Question Form")
+                }
+                Spacer(modifier = Modifier.padding(AppSpacing.lg))
+                Button(onClick = {
+                    navigationUseCase.navigateTo(AppRoute.StopwatchDurationScreen)
+                }) {
+                    Text(text = "Stop duration Screen")
                 }
                 LoginOperationSmallButtonSetup()
             }

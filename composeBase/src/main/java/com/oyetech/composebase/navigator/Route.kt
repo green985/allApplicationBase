@@ -73,4 +73,12 @@ sealed interface AppRoute : NavKey {
     @Keep
     @Serializable
     data class QuestionFormScreen(val formId: String = "") : AppRoute
+
+    @Keep
+    @Serializable
+    data object StopwatchDurationScreen : AppRoute
+
+    @Keep
+    @Serializable
+    data class StopwatchScreen(val minutes: Int = 0) : AppRoute
 }
