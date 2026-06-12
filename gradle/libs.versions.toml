@@ -70,6 +70,11 @@ play-review = "2.0.2"
 core = "1.18.0"
 activityKtx = "1.13.0"
 coreKtx1 = "1.18.0"
+playServicesWearable = "18.0.0"
+composeMaterial3 = "1.5.6"
+composeFoundation = "1.5.6"
+composeUiTooling = "1.5.6"
+wearToolingPreview = "1.0.0"
 
 [libraries]
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
@@ -163,6 +168,13 @@ play-review-ktx = { module = "com.google.android.play:review-ktx", version.ref =
 androidx-core = { group = "androidx.core", name = "core", version.ref = "core" }
 androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx1" }
+play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
+androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-compose-material3 = { group = "androidx.wear.compose", name = "compose-material3", version.ref = "composeMaterial3" }
+androidx-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "composeFoundation" }
+androidx-compose-ui-tooling = { group = "androidx.wear.compose", name = "compose-ui-tooling", version.ref = "composeUiTooling" }
+androidx-wear-tooling-preview = { group = "androidx.wear", name = "wear-tooling-preview", version.ref = "wearToolingPreview" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "agp" }

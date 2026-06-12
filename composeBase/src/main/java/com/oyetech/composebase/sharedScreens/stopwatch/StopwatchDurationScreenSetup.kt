@@ -2,10 +2,12 @@ package com.oyetech.composebase.sharedScreens.stopwatch
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,23 +43,30 @@ fun StopwatchDurationScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(AppSpacing.lg),
-        verticalArrangement = Arrangement.spacedBy(AppSpacing.md),
+            .padding(
+                horizontal = AppSpacing.xxl,
+                vertical = AppSpacing.sm
+            ),
+        verticalArrangement = Arrangement.spacedBy(AppSpacing.xs),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = "Select Duration",
-            style = AppTextStyles.titleLarge,
+            text = "Duration",
+            style = AppTextStyles.titleSmall,
         )
 
         durations.forEach { minutes ->
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { onEvent(StopwatchDurationEvent.OnDurationSelected(minutes)) },
+                contentPadding = PaddingValues(
+                    horizontal = AppSpacing.sm,
+                    vertical = AppSpacing.xs
+                ),
             ) {
                 Text(
-                    text = "$minutes minutes",
-                    style = AppTextStyles.button,
+                    text = "$minutes min",
+                    style = AppTextStyles.bodySecondary,
                 )
             }
         }
@@ -67,9 +76,11 @@ fun StopwatchDurationScreen(
 @Preview(showBackground = true)
 @Composable
 private fun StopwatchDurationScreenPreview() {
-    StopwatchDurationScreen(
-        uiState = StopwatchDurationUiState(),
-        onEvent = {},
-    )
+    MaterialTheme() {
+        StopwatchDurationScreen(
+            uiState = StopwatchDurationUiState(),
+            onEvent = {},
+        )
+    }
 }
 

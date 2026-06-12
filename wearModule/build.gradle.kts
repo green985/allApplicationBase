@@ -1,0 +1,52 @@
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kotlin.parcelize)
+}
+
+android {
+
+    namespace = "com.oyetech"
+
+    compileSdk = libs.versions.compile.sdk.get().toInt()
+
+    buildFeatures {
+        compose = true
+    }
+    lint {
+        disable.add("UnusedMaterial3ScaffoldPaddingParameter")
+    }
+
+}
+
+dependencies {
+
+    implementation(project(":diModule"))
+    implementation(project(":composeBase"))
+
+
+    implementation(platform(libs.compose.bom))
+    implementation(platform(libs.koin.bom))
+    implementation(libs.androidx.activity.ktx)
+
+    implementation(libs.activity.compose)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.graphics)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.material)
+    implementation(libs.compose.runtime)
+    implementation(libs.compose.foundation)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.ui.tooling)
+    implementation(libs.androidx.wear.tooling.preview)
+    implementation(libs.core.splashscreen)
+    implementation(libs.play.services.wearable)
+    androidTestImplementation(platform(libs.compose.bom))
+    debugImplementation(libs.androides.ui.tooling)
+
+
+    implementation(libs.timber)
+}
