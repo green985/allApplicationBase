@@ -10,7 +10,7 @@ android {
     namespace = "com.oyetech"
 
     defaultConfig {
-        applicationId = "com.oyetech.quoteapplication.watch"
+        applicationId = "com.oyetech.quoteapplication"
         minSdk = libs.versions.min.sdk.get().toInt()
         targetSdk = libs.versions.compile.sdk.get().toInt()
 
@@ -32,7 +32,11 @@ android {
 dependencies {
 
     implementation(project(":diModule"))
+    implementation(project(":domain"))
     implementation(project(":composeBase"))
+
+    implementation(libs.navigation3.runtime)
+    implementation(libs.navigation3.ui)
 
 
     implementation(platform(libs.compose.bom))

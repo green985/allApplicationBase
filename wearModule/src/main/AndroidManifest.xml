@@ -6,6 +6,7 @@
     <uses-feature android:name="android.hardware.type.watch" />
 
     <application
+        android:name="com.oyetech.dimodule.BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -25,6 +26,10 @@
         <meta-data
             android:name="com.google.android.wearable.standalone"
             android:value="true" />
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-9979206531034007~9414674835" />
 
         <activity
             android:name=".presentation.WearMainActivity"
