@@ -9,6 +9,15 @@ android {
 
     namespace = "com.oyetech"
 
+    defaultConfig {
+        applicationId = "com.oyetech.quoteapplication.watch"
+        minSdk = libs.versions.min.sdk.get().toInt()
+        targetSdk = libs.versions.compile.sdk.get().toInt()
+
+        versionCode = libs.versions.versionCode.get().toInt()
+        versionName = libs.versions.versionName.get()
+    }
+
     compileSdk = libs.versions.compile.sdk.get().toInt()
 
     buildFeatures {

@@ -152,6 +152,22 @@ kotlin String routes Navigation 2 backStack access inside ViewModel
 
 ---
 
+## Compose Rules
+
+Prefer stateless composables.
+
+Pass state through parameters.
+
+Pass events through callbacks.
+
+Do not place business logic inside composables.
+
+Do not place repository calls inside composables.
+
+Do not place navigation logic inside composables.
+
+---
+
 ## UI
 
 Use only:

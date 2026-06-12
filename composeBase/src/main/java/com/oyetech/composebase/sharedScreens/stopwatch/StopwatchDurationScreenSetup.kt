@@ -38,7 +38,6 @@ fun StopwatchDurationScreen(
     uiState: StopwatchDurationUiState,
     onEvent: (StopwatchDurationEvent) -> Unit,
 ) {
-    val durations = listOf(2, 5, 10, 15, 20)
 
     Column(
         modifier = modifier
@@ -55,7 +54,14 @@ fun StopwatchDurationScreen(
             style = AppTextStyles.titleSmall,
         )
 
-        durations.forEach { minutes ->
+        if (uiState.selectedMinutes > 0) {
+            Text(
+                text = uiState.formattedTime,
+                style = AppTextStyles.titleLarge,
+            )
+        }
+
+        uiState.durations.forEach { minutes ->
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { onEvent(StopwatchDurationEvent.OnDurationSelected(minutes)) },
@@ -76,7 +82,7 @@ fun StopwatchDurationScreen(
 @Preview(showBackground = true)
 @Composable
 private fun StopwatchDurationScreenPreview() {
-    MaterialTheme() {
+    MaterialTheme {
         StopwatchDurationScreen(
             uiState = StopwatchDurationUiState(),
             onEvent = {},

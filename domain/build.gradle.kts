@@ -30,6 +30,7 @@ dependencies {
     implementation(libs.timber)
     api(libs.koin.core)
     implementation(libs.androidx.activity.ktx)
+    implementation(libs.kotlinx.coroutines.core)
 
     detektPlugins(libs.detekt.formatting)
 }

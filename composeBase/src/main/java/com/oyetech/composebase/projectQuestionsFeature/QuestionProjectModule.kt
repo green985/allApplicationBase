@@ -13,6 +13,7 @@ import com.oyetech.composebase.sharedScreens.userProfile.userProfileDesign.UserP
 import com.oyetech.composebase.sharedViews.floating.FloatingAskQuestionBarVm
 import com.oyetech.domain.useCases.AnswerUseCase
 import com.oyetech.domain.useCases.QuestionUseCase
+import com.oyetech.domain.useCases.StopwatchOperationUseCase
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
@@ -23,6 +24,7 @@ object QuestionProjectModule {
 
         singleOf(::QuestionUseCase)
         singleOf(::AnswerUseCase)
+        singleOf(::StopwatchOperationUseCase)
         singleOf(::GetUserQuestionsPagedByCreatedAtUseCase)
         factoryOf(::GetQuestionsPagedByCreatedAtUseCase)
         viewModelOf(::QuestionMainActivityVm)
