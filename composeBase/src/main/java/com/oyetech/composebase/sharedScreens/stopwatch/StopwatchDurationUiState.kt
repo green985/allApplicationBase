@@ -9,6 +9,7 @@ data class StopwatchDurationUiState(
     val remainingMinutes: Int = 0,
     val remainingSeconds: Int = 0,
     val formattedTime: String = "00:00",
+    val isTimerFinished: Boolean = false,
 ) : BaseUIState()
 
 sealed class StopwatchDurationEvent : BaseEvent() {
