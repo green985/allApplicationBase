@@ -1,5 +1,6 @@
 package com.oyetech.composebase.sharedScreens.stopwatch
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -42,6 +43,7 @@ fun StopwatchScreen(
     uiState: StopwatchUiState,
     onEvent: (StopwatchEvent) -> Unit,
 ) {
+    BackHandler(enabled = true) { /* back press disabled on timer screen */ }
     Column(
         modifier = modifier
             .fillMaxSize()

@@ -47,6 +47,7 @@ class StopwatchDurationVm(
         Timber.d("StopwatchDurationVm: onDurationSelected minutes=$minutes")
         uiState.updateState { copy(selectedMinutes = minutes) }
         startTimerService(minutes)
+        navigationUseCase.navigateTo(AppRoute.StopwatchScreen())
     }
 
     @SuppressLint("NewApi")
