@@ -67,12 +67,17 @@ class WearTimerService : Service() {
         countdownJob?.cancel()
         countdownJob = serviceScope.launch {
             flowProvider().collect { tick ->
-                updateNotification(tick.remainingSeconds, tick.isFinished)
+                updateNotification(tick.remainingSeconds, tick.isFinished, tick.isCancelled)
             }
         }
     }
 
-    private fun updateNotification(remainingSeconds: Int, isFinished: Boolean) {
+    private fun updateNotification(remainingSeconds: Int, isFinished: Boolean, isCancelled: Boolean) {
+        if (isCancelled) {
+            Timber.d("WearTimerService: timer cancelled — stopping")
+            stopSelf()
+            return
+        }
         val mins = remainingSeconds / SECONDS_IN_MINUTE
         val secs = remainingSeconds % SECONDS_IN_MINUTE
         val formatted = "${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}"

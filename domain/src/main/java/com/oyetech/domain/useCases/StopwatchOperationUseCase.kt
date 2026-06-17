@@ -13,6 +13,7 @@ import timber.log.Timber
 data class StopwatchTickResult(
     val remainingSeconds: Int = 0,
     val isFinished: Boolean = false,
+    val isCancelled: Boolean = false,
 )
 
 class StopwatchOperationUseCase {
@@ -25,11 +26,19 @@ class StopwatchOperationUseCase {
 
     private var startEpochMs: Long = 0L
     private var totalSeconds: Int = 0
+    private var isCancelRequested: Boolean = false
 
     fun hasActiveSession(): Boolean {
         val active = startEpochMs > 0L && remainingSecondsFromWallClock() > 0
         Timber.d("StopwatchOperationUseCase: hasActiveSession=$active")
         return active
+    }
+
+    fun cancelCountdown() {
+        Timber.d("StopwatchOperationUseCase: cancelCountdown")
+        isCancelRequested = true
+        startEpochMs = 0L
+        totalSeconds = 0
     }
 
     fun startCountdown(minutes: Int): Flow<StopwatchTickResult> {
@@ -52,7 +61,15 @@ class StopwatchOperationUseCase {
     }
 
     private fun buildFlow(fromSeconds: Int): Flow<StopwatchTickResult> = flow {
+        isCancelRequested = false
         for (remaining in fromSeconds downTo 0) {
+            if (isCancelRequested) {
+                Timber.d("StopwatchOperationUseCase: cancel requested — emitting isCancelled tick")
+                val cancelled = StopwatchTickResult(isCancelled = true)
+                _tickState.value = cancelled
+                emit(cancelled)
+                break
+            }
             val result = StopwatchTickResult(
                 remainingSeconds = remaining,
                 isFinished = remaining == 0,

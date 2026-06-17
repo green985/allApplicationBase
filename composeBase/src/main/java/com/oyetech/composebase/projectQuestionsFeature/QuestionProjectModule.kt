@@ -9,6 +9,7 @@ import com.oyetech.composebase.projectQuestionsFeature.questionScreens.usecases.
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.usecases.GetUserQuestionsPagedByCreatedAtUseCase
 import com.oyetech.composebase.sharedScreens.settings.FacSettingsVm
 import com.oyetech.composebase.sharedScreens.stopwatch.StopwatchDurationVm
+import com.oyetech.composebase.sharedScreens.stopwatch.StopwatchVm
 import com.oyetech.composebase.sharedScreens.userProfile.userProfileDesign.UserProfileVm2
 import com.oyetech.composebase.sharedViews.floating.FloatingAskQuestionBarVm
 import com.oyetech.domain.useCases.AnswerUseCase
@@ -37,5 +38,6 @@ object QuestionProjectModule {
         viewModelOf(::FloatingAskQuestionBarVm)
         viewModelOf(::UserProfileVm2)
         viewModelOf(::StopwatchDurationVm)
+        viewModelOf(::StopwatchVm)
     }
 }

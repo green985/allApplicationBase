@@ -7,6 +7,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
+import com.oyetech.composebase.navigator.AppRoute
+import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.domain.useCases.StopwatchOperationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +17,7 @@ import timber.log.Timber
 
 class StopwatchDurationVm(
     appDispatchers: AppDispatchers,
+    private val navigationUseCase: NavigationUseCase,
     private val stopwatchOperationUseCase: StopwatchOperationUseCase,
     private val appContext: Context,
 ) : BaseViewModel(appDispatchers) {
@@ -23,6 +26,10 @@ class StopwatchDurationVm(
 
     init {
         Timber.d("StopwatchDurationVm: init")
+        if (stopwatchOperationUseCase.hasActiveSession()) {
+            Timber.d("StopwatchDurationVm: active session found — navigating to StopwatchScreen")
+            navigationUseCase.navigateTo(AppRoute.StopwatchScreen())
+        }
         observeTickState()
         observeFinished()
     }
