@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.gms.dynamite.DynamiteModule
 import com.oyetech.dimodule.koins.AppComponent
 import com.oyetech.domain.helper.ActivityProviderUseCase
-import com.oyetech.languageimp.LanguageOperationHelper
 import com.oyetech.tools.contextHelper.isDebug
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -19,9 +18,6 @@ class BaseApplication : Application() {
         ActivityProviderUseCase::class.java
     )
 
-    val languageOperationHelper: LanguageOperationHelper by KoinJavaComponent.inject(
-        LanguageOperationHelper::class.java
-    )
 
     override fun attachBaseContext(context: Context?) {
         super.attachBaseContext(context)
@@ -44,7 +40,6 @@ class BaseApplication : Application() {
         }
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         configureDi()
-        languageOperationHelper.initLanguageHelper(true)
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         setAppContext(this)

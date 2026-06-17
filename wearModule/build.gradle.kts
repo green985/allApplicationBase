@@ -34,6 +34,14 @@ dependencies {
     implementation(project(":diModule"))
     implementation(project(":domain"))
     implementation(project(":composeBase"))
+    implementation(project(":subImpl:languageImp"))
+    implementation(project(":subImpl:tools"))
+
+    // Koin
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.android)
+    implementation(libs.koin.core)
+    implementation(libs.koin.androidx.compose)
 
     implementation(libs.navigation3.runtime)
     implementation(libs.navigation3.ui)

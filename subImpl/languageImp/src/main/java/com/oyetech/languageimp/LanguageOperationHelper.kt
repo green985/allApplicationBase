@@ -2,7 +2,6 @@ package com.oyetech.languageimp
 
 import com.oyetech.cripto.stringKeys.SharedPrefKey
 import com.oyetech.domain.repository.SharedOperationRepository
-import com.oyetech.domain.repository.firebase.FirebaseLanguageOperationRepository
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.languageModule.localLanguageHelper.LocalLanguageHelper
 import com.oyetech.languageModule.localLanguageHelper.LocalLanguageHelper.Companion.languageErrorSingleLiveEvent
@@ -34,7 +33,6 @@ Created by Erdi Özbek
 
 class LanguageOperationHelper(
     private val sharedOperationUseCase: SharedOperationRepository,
-    private val firebaseLanguageOperationRepository: FirebaseLanguageOperationRepository,
 ) {
     var isInit = false
 
@@ -85,9 +83,7 @@ class LanguageOperationHelper(
     fun getLanguageFlow(languageCodeRequestBody: LanguageCodeRequestBody): Flow<Unit> {
         return flow {
             emit(
-                firebaseLanguageOperationRepository.getApplicationTextResources(
-                    languageCodeRequestBody
-                ).single()
+                10
             )
         }.retryWhenWithExpDelay { cause, attempt, delay ->
             cause.printStackTrace()
@@ -100,7 +96,7 @@ class LanguageOperationHelper(
             languagePackageDownloadProblemHandle()
         }.map {
             Timber.d("text source collenct")
-            saveLanguageDataToDevice(it)
+//            saveLanguageDataToDevice(it)
             initLanguageData()
         }
     }
