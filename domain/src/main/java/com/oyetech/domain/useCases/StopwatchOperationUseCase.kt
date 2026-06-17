@@ -23,39 +23,53 @@ class StopwatchOperationUseCase {
     private val _onFinished = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     val onFinished = _onFinished.asSharedFlow()
 
-    // Stored for resume calculation
-    var startEpochMs: Long = 0L
-        private set
-    var totalSeconds: Int = 0
-        private set
+    private var startEpochMs: Long = 0L
+    private var totalSeconds: Int = 0
+
+    fun hasActiveSession(): Boolean {
+        val active = startEpochMs > 0L && remainingSecondsFromWallClock() > 0
+        Timber.d("StopwatchOperationUseCase: hasActiveSession=$active")
+        return active
+    }
 
     fun startCountdown(minutes: Int): Flow<StopwatchTickResult> {
         totalSeconds = minutes * 60
         startEpochMs = System.currentTimeMillis()
-        Timber.d("StopwatchOperationUseCase: startCountdown minutes=$minutes totalSeconds=$totalSeconds startEpochMs=$startEpochMs")
-        return flow {
-            for (remaining in totalSeconds downTo 0) {
-                val result = StopwatchTickResult(
-                    remainingSeconds = remaining,
-                    isFinished = remaining == 0,
-                )
-                Timber.d("StopwatchOperationUseCase: emit remainingSeconds=$remaining isFinished=${result.isFinished}")
-                _tickState.value = result
-                emit(result)
-                if (remaining == 0) {
-                    Timber.d("StopwatchOperationUseCase: emitting onFinished")
-                    _onFinished.tryEmit(Unit)
-                }
-                if (remaining > 0) delay(1000L)
-            }
-            Timber.d("StopwatchOperationUseCase: flow completed")
-        }
+        Timber.d("StopwatchOperationUseCase: startCountdown minutes=$minutes totalSeconds=$totalSeconds")
+        return buildFlow(totalSeconds)
     }
 
-    /** Calculates remaining seconds based on wall-clock time. Used by Service on resume. */
-    fun remainingSecondsFromWallClock(): Int {
+    fun resumeCountdown(): Flow<StopwatchTickResult> {
+        val remaining = remainingSecondsFromWallClock()
+        Timber.d("StopwatchOperationUseCase: resumeCountdown remaining=$remaining")
+        return buildFlow(remaining)
+    }
+
+    private fun remainingSecondsFromWallClock(): Int {
         if (startEpochMs == 0L || totalSeconds == 0) return 0
-        val elapsedSeconds = ((System.currentTimeMillis() - startEpochMs) / 1000L).toInt()
-        return maxOf(0, totalSeconds - elapsedSeconds)
+        val elapsed = ((System.currentTimeMillis() - startEpochMs) / 1000L).toInt()
+        return maxOf(0, totalSeconds - elapsed)
+    }
+
+    private fun buildFlow(fromSeconds: Int): Flow<StopwatchTickResult> = flow {
+        for (remaining in fromSeconds downTo 0) {
+            val result = StopwatchTickResult(
+                remainingSeconds = remaining,
+                isFinished = remaining == 0,
+            )
+            Timber.d("StopwatchOperationUseCase: emit remaining=$remaining isFinished=${result.isFinished}")
+            _tickState.value = result
+            emit(result)
+            if (remaining == 0) {
+                Timber.d("StopwatchOperationUseCase: emitting onFinished")
+                _onFinished.tryEmit(Unit)
+            }
+            if (remaining > 0) delay(TICK_MS)
+        }
+        Timber.d("StopwatchOperationUseCase: flow completed")
+    }
+
+    companion object {
+        private const val TICK_MS = 1000L
     }
 }
