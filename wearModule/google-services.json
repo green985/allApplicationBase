@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "652520712669",
+    "firebase_url": "https://quoteapplication-45b67-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "quoteapplication-45b67",
+    "storage_bucket": "quoteapplication-45b67.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:652520712669:android:b913cb7e57c22526c82e34",
+        "android_client_info": {
+          "package_name": "com.oyetech.quoteapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "652520712669-3ekg66faa4d721h3vvifgki5p4jo68u3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.oyetech.quoteapplication",
+            "certificate_hash": "ee2f889a3d13eb05a9d87a3d4f8316fc799adf00"
+          }
+        },
+        {
+          "client_id": "652520712669-lggqdkhcs17ahvh251mhhdqq9n84paq7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.oyetech.quoteapplication",
+            "certificate_hash": "0dfb1672d99b80737eea88414327cab24d158dd7"
+          }
+        },
+        {
+          "client_id": "652520712669-5sudspef6cq60j7drtgr06rm567r0qa2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmfbb76hwcg4aIuuXaXSNB_Xo6BCFbc2Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "652520712669-5sudspef6cq60j7drtgr06rm567r0qa2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

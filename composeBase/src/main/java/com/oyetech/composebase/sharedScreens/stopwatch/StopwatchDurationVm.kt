@@ -3,7 +3,6 @@ package com.oyetech.composebase.sharedScreens.stopwatch
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
-import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.domain.useCases.StopwatchOperationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
@@ -37,12 +36,14 @@ class StopwatchDurationVm(
                     copy(
                         remainingMinutes = mins,
                         remainingSeconds = secs,
-                        formattedTime = "${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}",
+                        formattedTime = "${mins.toString().padStart(2, '0')}:${
+                            secs.toString().padStart(2, '0')
+                        }",
                     )
                 }
             }
         }
-        navigationUseCase.navigateTo(AppRoute.StopwatchScreen(minutes = minutes))
+//        navigationUseCase.navigateTo(AppRoute.StopwatchScreen(minutes = minutes))
     }
 }
 
