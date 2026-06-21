@@ -1,6 +1,7 @@
 package com.oyetech.watchAppFeatures
 
 import android.annotation.SuppressLint
+import android.app.ActivityOptions
 import android.app.AlarmManager
 import android.app.Notification
 import android.app.NotificationChannel
@@ -104,14 +105,46 @@ class WearTimerService : Service() {
         }
     }
 
+    /**
+     * PendingIntent for alarm/finished notifications — carries EXTRA_FROM_ALARM so the
+     * activity knows the timer has finished and navigates to the result screen.
+     */
     private fun buildOpenAppPendingIntent(requestCode: Int): PendingIntent {
         val intent = Intent(this, WearMainActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
             putExtra(WearMainActivity.EXTRA_FROM_ALARM, true)
         }
+        val activityOptions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            @Suppress("DEPRECATION")
+            ActivityOptions.makeBasic()
+                .setPendingIntentBackgroundActivityStartMode(
+                    ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED
+                )
+                .toBundle()
+        } else {
+            null
+        }
         return PendingIntent.getActivity(
             this,
             requestCode,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            activityOptions,
+        )
+    }
+
+    /**
+     * PendingIntent for the running-timer (tick) notification tap.
+     * Does NOT carry EXTRA_FROM_ALARM — opening the app while the timer is running
+     * must not mark the session as finished.
+     */
+    private fun buildTickContentPendingIntent(): PendingIntent {
+        val intent = Intent(this, WearMainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        }
+        return PendingIntent.getActivity(
+            this,
+            REQUEST_CODE_CONTENT,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
@@ -143,7 +176,10 @@ class WearTimerService : Service() {
 
     private fun buildFinishedNotification(): Notification {
         val contentPendingIntent = buildOpenAppPendingIntent(REQUEST_CODE_CONTENT)
-        val fullScreenPendingIntent = buildOpenAppPendingIntent(REQUEST_CODE_FULL_SCREEN)
+        // Use REQUEST_CODE_ALARM so AlarmManager and fullScreenIntent share the same
+        // PendingIntent token — prevents the system from opening two activity windows
+        // simultaneously, which causes "Channel is unrecoverably broken".
+        val fullScreenPendingIntent = buildOpenAppPendingIntent(REQUEST_CODE_ALARM)
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Timer finished")
             .setContentText("Time's up! Tap to view results.")
@@ -158,7 +194,7 @@ class WearTimerService : Service() {
     }
 
     private fun buildTickNotification(text: String): Notification {
-        val pendingIntent = buildOpenAppPendingIntent(REQUEST_CODE_CONTENT)
+        val pendingIntent = buildTickContentPendingIntent()
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Stopwatch")
             .setContentText(text)
@@ -223,7 +259,6 @@ class WearTimerService : Service() {
         private const val NOTIFICATION_ID = 1001
         private const val REQUEST_CODE_ALARM = 1002
         private const val REQUEST_CODE_CONTENT = 1003
-        private const val REQUEST_CODE_FULL_SCREEN = 1004
         private const val CHANNEL_ID = "wear_timer_channel_v2"
         private const val SECONDS_IN_MINUTE = 60
         private const val MAX_DURATION_MS = 25 * 60 * 1000L

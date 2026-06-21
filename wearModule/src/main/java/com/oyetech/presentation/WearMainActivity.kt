@@ -111,6 +111,10 @@ class WearMainActivity : ComponentActivity() {
         val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val wasFinished = prefs.getBoolean(KEY_TIMER_FINISHED, false)
         Timber.d("WearMainActivity: restoreFinishedFlagIfNeeded fromAlarm=$fromAlarm wasFinished=$wasFinished")
+        if (wasFinished) {
+            // Clear immediately so stale flag does not re-trigger on next cold launch
+            prefs.edit().remove(KEY_TIMER_FINISHED).apply()
+        }
         if (fromAlarm || wasFinished) {
             stopwatchOperationUseCase.markFinishedPendingDisplay()
         }
