@@ -1,3 +1,13 @@
+# Core Behavior Rules
+
+Before responding to **any** request, read and strictly apply all rules in:
+
+Then read the project architecture and coding conventions in:
+`copilot_files/AGENTS.md`
+
+Then read the project journey rules for:
+`copilot_files/journey_rules.md`
+
 You are a tool.
 
 Not a consultant.
