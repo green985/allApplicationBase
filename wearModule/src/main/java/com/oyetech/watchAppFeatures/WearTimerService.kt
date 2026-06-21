@@ -86,13 +86,23 @@ class WearTimerService : Service() {
         Timber.d("WearTimerService: tick remaining=$remainingSeconds fmt=$formatted fin=$isFinished")
 
         if (isFinished) {
-            Timber.d("WearTimerService: timer finished")
+            Timber.d("WearTimerService: timer finished — notifying, launching app, stopping")
+            stopwatchOperationUseCase.markFinishedPendingDisplay()
             notificationManager.notify(NOTIFICATION_ID, buildNotification("Time's up!"))
             vibrate()
+            launchApp()
             stopSelf()
         } else {
             notificationManager.notify(NOTIFICATION_ID, buildNotification(formatted))
         }
+    }
+
+    private fun launchApp() {
+        val intent = Intent(this, WearMainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        }
+        Timber.d("WearTimerService: launchApp")
+        startActivity(intent)
     }
 
     private fun acquireWakeLock() {

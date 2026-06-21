@@ -32,11 +32,23 @@ class StopwatchOperationUseCase(
     private var totalSeconds: Int = 0
     private var durationMinutes: Int = 0
     private var isCancelRequested: Boolean = false
+    var isFinishedPendingDisplay: Boolean = false
+        private set
 
     fun hasActiveSession(): Boolean {
         val active = startEpochMs > 0L && remainingSecondsFromWallClock() > 0
         Timber.d("StopwatchOperationUseCase: hasActiveSession=$active")
         return active
+    }
+
+    fun markFinishedPendingDisplay() {
+        Timber.d("StopwatchOperationUseCase: markFinishedPendingDisplay")
+        isFinishedPendingDisplay = true
+    }
+
+    fun clearFinishedPendingDisplay() {
+        Timber.d("StopwatchOperationUseCase: clearFinishedPendingDisplay")
+        isFinishedPendingDisplay = false
     }
 
     fun cancelCountdown() {

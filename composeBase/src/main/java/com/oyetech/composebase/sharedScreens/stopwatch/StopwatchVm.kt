@@ -50,6 +50,7 @@ class StopwatchVm(
 
     private fun onCancel() {
         Timber.d("StopwatchVm: onCancel")
+        stopwatchOperationUseCase.clearFinishedPendingDisplay()
         stopwatchOperationUseCase.cancelCountdown()
         navigationUseCase.goBack()
     }
