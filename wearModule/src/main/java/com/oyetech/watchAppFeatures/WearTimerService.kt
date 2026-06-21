@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
@@ -13,6 +14,7 @@ import android.os.Vibrator
 import androidx.core.app.NotificationCompat
 import com.oyetech.domain.useCases.StopwatchOperationUseCase
 import com.oyetech.domain.useCases.StopwatchTickResult
+import com.oyetech.presentation.WearMainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -119,20 +121,39 @@ class WearTimerService : Service() {
         val channel = NotificationChannel(
             CHANNEL_ID,
             "Timer",
-            NotificationManager.IMPORTANCE_LOW,
+            NotificationManager.IMPORTANCE_HIGH,
         ).apply {
             setShowBadge(false)
+            setSound(null, null)
+            enableVibration(false)
         }
         notificationManager.createNotificationChannel(channel)
     }
 
     private fun buildNotification(text: String): Notification {
+        val openAppIntent = Intent(this, WearMainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            openAppIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Stopwatch")
             .setContentText(text)
             .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
+            .setCategory(NotificationCompat.CATEGORY_STOPWATCH)
+            .setContentIntent(pendingIntent)
+            .extend(
+                NotificationCompat.WearableExtender()
+                    .setHintShowBackgroundOnly(true)
+                    .setContentIntentAvailableOffline(true)
+            )
             .build()
     }
 
@@ -148,7 +169,7 @@ class WearTimerService : Service() {
 
     companion object {
         private const val NOTIFICATION_ID = 1001
-        private const val CHANNEL_ID = "wear_timer_channel"
+        private const val CHANNEL_ID = "wear_timer_channel_v2"
         private const val SECONDS_IN_MINUTE = 60
         private const val MAX_DURATION_MS = 25 * 60 * 1000L // 25 min safety margin
         private val VIBRATION_PATTERN = longArrayOf(0, 300, 200, 300, 200, 500)
