@@ -106,7 +106,7 @@ class WearTimerService : Service() {
 
     private fun buildOpenAppPendingIntent(requestCode: Int): PendingIntent {
         val intent = Intent(this, WearMainActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
             putExtra(WearMainActivity.EXTRA_FROM_ALARM, true)
         }
         return PendingIntent.getActivity(
@@ -143,6 +143,7 @@ class WearTimerService : Service() {
 
     private fun buildFinishedNotification(): Notification {
         val contentPendingIntent = buildOpenAppPendingIntent(REQUEST_CODE_CONTENT)
+        val fullScreenPendingIntent = buildOpenAppPendingIntent(REQUEST_CODE_FULL_SCREEN)
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Timer finished")
             .setContentText("Time's up! Tap to view results.")
@@ -152,6 +153,7 @@ class WearTimerService : Service() {
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setContentIntent(contentPendingIntent)
+            .setFullScreenIntent(fullScreenPendingIntent, true)
             .build()
     }
 
