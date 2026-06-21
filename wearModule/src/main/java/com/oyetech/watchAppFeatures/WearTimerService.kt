@@ -1,6 +1,7 @@
 package com.oyetech.watchAppFeatures
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -87,13 +88,14 @@ class WearTimerService : Service() {
         Timber.d("WearTimerService: tick remaining=$remainingSeconds fmt=$formatted fin=$isFinished")
 
         if (isFinished) {
-            Timber.d("WearTimerService: timer finished — showing fullScreenIntent notification")
+            Timber.d("WearTimerService: timer finished — launching activity via AlarmManager")
             stopwatchOperationUseCase.markFinishedPendingDisplay()
             persistFinishedFlag()
             vibrate()
-            // fullScreenIntent: auto-opens activity on Wear OS.
-            // USE_FULL_SCREEN_INTENT is auto-granted for timer/alarm foreground services.
-            // This is the only BAL-compliant way to open UI on targetSdk 35+ for non-clock apps.
+            // AlarmManager.setAlarmClock() is BAL-exempt on all Android versions including
+            // targetSdk 36. The system fires the PendingIntent as an alarm clock entry,
+            // bypassing background activity launch restrictions entirely.
+            scheduleAlarmClock()
             notificationManager.notify(NOTIFICATION_ID, buildFinishedNotification())
             stopSelf()
         } else {
@@ -114,18 +116,36 @@ class WearTimerService : Service() {
         )
     }
 
+    /**
+     * Schedules an immediate alarm clock via AlarmManager.setAlarmClock().
+     * Alarm clock intents are exempt from Background Activity Launch (BAL) restrictions
+     * on all Android versions, including apps targeting SDK 35+.
+     * The activity will be launched ~1 second after this call.
+     */
+    private fun scheduleAlarmClock() {
+        val alarmManager = getSystemService(AlarmManager::class.java) ?: run {
+            Timber.e("WearTimerService: AlarmManager not available")
+            return
+        }
+        val pendingIntent = buildOpenAppPendingIntent(REQUEST_CODE_ALARM)
+        val alarmClockInfo = AlarmManager.AlarmClockInfo(
+            System.currentTimeMillis() + ALARM_DELAY_MS,
+            pendingIntent,
+        )
+        alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
+        Timber.d("WearTimerService: alarm clock scheduled — activity will open in ${ALARM_DELAY_MS}ms")
+    }
+
     private fun buildFinishedNotification(): Notification {
-        val fullScreenPendingIntent = buildOpenAppPendingIntent(REQUEST_CODE_FULL_SCREEN)
         val contentPendingIntent = buildOpenAppPendingIntent(REQUEST_CODE_CONTENT)
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Timer finished")
-            .setContentText("Time's up!")
+            .setContentText("Time's up! Tap to view results.")
             .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
             .setOngoing(false)
             .setAutoCancel(true)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setFullScreenIntent(fullScreenPendingIntent, true)
             .setContentIntent(contentPendingIntent)
             .build()
     }
@@ -194,11 +214,12 @@ class WearTimerService : Service() {
 
     companion object {
         private const val NOTIFICATION_ID = 1001
-        private const val REQUEST_CODE_FULL_SCREEN = 1002
+        private const val REQUEST_CODE_ALARM = 1002
         private const val REQUEST_CODE_CONTENT = 1003
         private const val CHANNEL_ID = "wear_timer_channel_v2"
         private const val SECONDS_IN_MINUTE = 60
         private const val MAX_DURATION_MS = 25 * 60 * 1000L
+        private const val ALARM_DELAY_MS = 1000L
         private val VIBRATION_PATTERN = longArrayOf(0, 300, 200, 300, 200, 500)
         private val VIBRATION_AMPLITUDES = intArrayOf(0, 255, 0, 255, 0, 255)
     }

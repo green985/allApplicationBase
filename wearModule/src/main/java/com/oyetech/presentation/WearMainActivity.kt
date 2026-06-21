@@ -6,14 +6,11 @@
 package com.oyetech.presentation
 
 import android.Manifest
-import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -53,7 +50,6 @@ class WearMainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         requestNotificationPermissionIfNeeded()
-        requestFullScreenIntentPermissionIfNeeded()
         restoreFinishedFlagIfNeeded(intent)
         setContent {
             val backStack = rememberNavBackStack(AppRoute.StopwatchDurationScreen)
@@ -121,28 +117,6 @@ class WearMainActivity : ComponentActivity() {
         }
     }
 
-    /**
-     * USE_FULL_SCREEN_INTENT is auto-granted for timer/alarm foreground services on Android 14+.
-     * If not granted (non-timer app scenario), redirect to settings.
-     */
-    private fun requestFullScreenIntentPermissionIfNeeded() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            val nm = getSystemService(NotificationManager::class.java)
-            val canUse = nm.canUseFullScreenIntent()
-            Timber.d("WearMainActivity: canUseFullScreenIntent=$canUse")
-            if (!canUse) {
-                Timber.w("WearMainActivity: USE_FULL_SCREEN_INTENT not granted — redirecting to settings")
-                runCatching {
-                    startActivity(
-                        Intent(
-                            Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT,
-                            Uri.parse("package:$packageName")
-                        )
-                    )
-                }.onFailure { Timber.e(it, "WearMainActivity: cannot open full screen intent settings") }
-            }
-        }
-    }
 
     companion object {
         const val PREFS_NAME = "wear_timer_prefs"
