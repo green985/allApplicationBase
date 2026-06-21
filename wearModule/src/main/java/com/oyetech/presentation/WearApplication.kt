@@ -7,6 +7,7 @@ import com.oyetech.dimodule.BaseApplication
 import com.oyetech.dimodule.koins.KoinHelperInits
 import com.oyetech.languageimp.LanguageImplModule
 import com.oyetech.languageimp.LanguageOperationHelper
+import com.oyetech.local.di.LocalDatabaseModule
 import com.oyetech.repository.di.RepositoryModule
 import com.oyetech.tools.contextHelper.isDebug
 import com.oyetech.tools.di.CommonsModule
@@ -38,6 +39,7 @@ class WearApplication : Application() {
         modules(
             KoinHelperInits.HelperModule,
             CommonsModule.module,
+            LocalDatabaseModule.module,
             LanguageImplModule.languageImplModule,
             ComposeMainModule.composeMainModule1,
             RepositoryModule.module,

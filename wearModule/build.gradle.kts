@@ -35,6 +35,7 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":composeBase"))
     implementation(project(":data:repository"))
+    implementation(project(":data:local"))
     implementation(project(":subImpl:languageImp"))
     implementation(project(":subImpl:tools"))
 
