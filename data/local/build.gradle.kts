@@ -17,6 +17,7 @@ dependencies {
 // ROOM
     ksp(libs.room.compiler)
     implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
     // DATA MODULE
     implementation(project(":data:models"))
 

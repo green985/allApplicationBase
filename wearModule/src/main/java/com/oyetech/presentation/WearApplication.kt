@@ -5,9 +5,9 @@ import com.oyetech.composebase.di.ComposeMainModule
 import com.oyetech.composebase.projectQuestionsFeature.QuestionProjectModule
 import com.oyetech.dimodule.BaseApplication
 import com.oyetech.dimodule.koins.KoinHelperInits
-import com.oyetech.dimodule.koins.Modules
 import com.oyetech.languageimp.LanguageImplModule
 import com.oyetech.languageimp.LanguageOperationHelper
+import com.oyetech.repository.di.RepositoryModule
 import com.oyetech.tools.contextHelper.isDebug
 import com.oyetech.tools.di.CommonsModule
 import org.koin.android.ext.koin.androidContext
@@ -36,14 +36,13 @@ class WearApplication : Application() {
     private fun configureDi() = startKoin {
         androidContext(this@WearApplication)
         modules(
-            Modules.MainModule,
             KoinHelperInits.HelperModule,
             CommonsModule.module,
             LanguageImplModule.languageImplModule,
             ComposeMainModule.composeMainModule1,
+            RepositoryModule.module,
             QuestionProjectModule.module,
-
-            )
+        )
     }
 }
 

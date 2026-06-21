@@ -34,6 +34,7 @@ dependencies {
     implementation(project(":diModule"))
     implementation(project(":domain"))
     implementation(project(":composeBase"))
+    implementation(project(":data:repository"))
     implementation(project(":subImpl:languageImp"))
     implementation(project(":subImpl:tools"))
 

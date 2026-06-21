@@ -1,5 +1,7 @@
 package com.oyetech.domain.useCases
 
+import com.oyetech.domain.repository.stopwatch.StopwatchRecordRepository
+import com.oyetech.domain.repository.stopwatch.StopwatchRecordStatus
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -16,7 +18,9 @@ data class StopwatchTickResult(
     val isCancelled: Boolean = false,
 )
 
-class StopwatchOperationUseCase {
+class StopwatchOperationUseCase(
+    private val stopwatchRecordRepository: StopwatchRecordRepository,
+) {
 
     private val _tickState = MutableStateFlow(StopwatchTickResult())
     val tickState: StateFlow<StopwatchTickResult> = _tickState.asStateFlow()
@@ -26,6 +30,7 @@ class StopwatchOperationUseCase {
 
     private var startEpochMs: Long = 0L
     private var totalSeconds: Int = 0
+    private var durationMinutes: Int = 0
     private var isCancelRequested: Boolean = false
 
     fun hasActiveSession(): Boolean {
@@ -37,12 +42,11 @@ class StopwatchOperationUseCase {
     fun cancelCountdown() {
         Timber.d("StopwatchOperationUseCase: cancelCountdown")
         isCancelRequested = true
-        startEpochMs = 0L
-        totalSeconds = 0
     }
 
     fun startCountdown(minutes: Int): Flow<StopwatchTickResult> {
-        totalSeconds = minutes * 60
+        totalSeconds = minutes * SECONDS_IN_MINUTE
+        durationMinutes = minutes
         startEpochMs = System.currentTimeMillis()
         Timber.d("StopwatchOperationUseCase: startCountdown minutes=$minutes totalSeconds=$totalSeconds")
         return buildFlow(totalSeconds)
@@ -56,7 +60,7 @@ class StopwatchOperationUseCase {
 
     private fun remainingSecondsFromWallClock(): Int {
         if (startEpochMs == 0L || totalSeconds == 0) return 0
-        val elapsed = ((System.currentTimeMillis() - startEpochMs) / 1000L).toInt()
+        val elapsed = ((System.currentTimeMillis() - startEpochMs) / MILLIS_IN_SECOND).toInt()
         return maxOf(0, totalSeconds - elapsed)
     }
 
@@ -64,10 +68,12 @@ class StopwatchOperationUseCase {
         isCancelRequested = false
         for (remaining in fromSeconds downTo 0) {
             if (isCancelRequested) {
-                Timber.d("StopwatchOperationUseCase: cancel requested — emitting isCancelled tick")
+                Timber.d("StopwatchOperationUseCase: cancel requested — recording and emitting isCancelled")
                 val cancelled = StopwatchTickResult(isCancelled = true)
                 _tickState.value = cancelled
                 emit(cancelled)
+                recordSession(StopwatchRecordStatus.CANCELLED)
+                resetSession()
                 break
             }
             val result = StopwatchTickResult(
@@ -80,13 +86,36 @@ class StopwatchOperationUseCase {
             if (remaining == 0) {
                 Timber.d("StopwatchOperationUseCase: emitting onFinished")
                 _onFinished.tryEmit(Unit)
+                recordSession(StopwatchRecordStatus.FINISHED)
+                resetSession()
             }
             if (remaining > 0) delay(TICK_MS)
         }
         Timber.d("StopwatchOperationUseCase: flow completed")
     }
 
+    private suspend fun recordSession(status: StopwatchRecordStatus) {
+        val endedAt = System.currentTimeMillis()
+        Timber.d("StopwatchOperationUseCase: recordSession status=$status startedAt=$startEpochMs endedAt=$endedAt")
+        runCatching {
+            stopwatchRecordRepository.insertRecord(
+                startedAt = startEpochMs,
+                endedAt = endedAt,
+                durationMinutes = durationMinutes,
+                status = status,
+            )
+        }.onFailure { Timber.e(it, "StopwatchOperationUseCase: recordSession failed") }
+    }
+
+    private fun resetSession() {
+        startEpochMs = 0L
+        totalSeconds = 0
+        durationMinutes = 0
+    }
+
     companion object {
+        private const val SECONDS_IN_MINUTE = 60
+        private const val MILLIS_IN_SECOND = 1000L
         private const val TICK_MS = 1000L
     }
 }

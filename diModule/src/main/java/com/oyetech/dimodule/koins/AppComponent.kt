@@ -9,6 +9,7 @@ import com.oyetech.firebaserealtime.di.FirebaseRealtimeModule
 import com.oyetech.glidemodule.GlideModuleDi
 import com.oyetech.googlelogin.di.GoogleSignInModule
 import com.oyetech.languageimp.LanguageImplModule
+import com.oyetech.local.di.LocalDatabaseModule
 import com.oyetech.notificationmodule.di.FirebaseNotificationModule
 import com.oyetech.remote.di.QuestionSupabaseRemote
 import com.oyetech.remote.di.RandomOperationModuleDI
@@ -32,6 +33,7 @@ object AppComponent {
         Modules.MainModule,
         KoinHelperInits.HelperModule,
         CommonsModule.module,
+        LocalDatabaseModule.module,
         dataSourceModule,
         QuestionRepositoryModule.questionRepositoryModule,
 
