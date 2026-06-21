@@ -1,7 +1,6 @@
 package com.oyetech.watchAppFeatures
 
 import android.annotation.SuppressLint
-import android.app.ActivityOptions
 import android.app.AlarmManager
 import android.app.Notification
 import android.app.NotificationChannel
@@ -108,28 +107,21 @@ class WearTimerService : Service() {
     /**
      * PendingIntent for alarm/finished notifications — carries EXTRA_FROM_ALARM so the
      * activity knows the timer has finished and navigates to the result screen.
+     *
+     * BAL exemption is granted by the SENDER (AlarmManager via setAlarmClock, or
+     * NotificationManager via fullScreenIntent + USE_FULL_SCREEN_INTENT), not by the creator.
+     * ActivityOptions.setPendingIntentBackgroundActivityStartMode must NOT be set here.
      */
     private fun buildOpenAppPendingIntent(requestCode: Int): PendingIntent {
         val intent = Intent(this, WearMainActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
             putExtra(WearMainActivity.EXTRA_FROM_ALARM, true)
         }
-        val activityOptions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            @Suppress("DEPRECATION")
-            ActivityOptions.makeBasic()
-                .setPendingIntentBackgroundActivityStartMode(
-                    ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED
-                )
-                .toBundle()
-        } else {
-            null
-        }
         return PendingIntent.getActivity(
             this,
             requestCode,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-            activityOptions,
         )
     }
 
