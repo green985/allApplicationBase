@@ -6,16 +6,19 @@
 package com.oyetech.presentation
 
 import android.Manifest
+import android.app.AlarmManager
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.core.content.ContextCompat
@@ -50,6 +53,8 @@ class WearMainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         requestNotificationPermissionIfNeeded()
+        requestFullScreenIntentPermissionIfNeeded()
+        requestExactAlarmPermissionIfNeeded()
         restoreFinishedFlagIfNeeded(intent)
         setContent {
             val backStack = rememberNavBackStack(AppRoute.StopwatchDurationScreen)
@@ -83,7 +88,14 @@ class WearMainActivity : ComponentActivity() {
      */
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        Timber.d("WearMainActivity: onNewIntent fromAlarm=${intent.getBooleanExtra(EXTRA_FROM_ALARM, false)}")
+        Timber.d(
+            "WearMainActivity: onNewIntent fromAlarm=${
+                intent.getBooleanExtra(
+                    EXTRA_FROM_ALARM,
+                    false
+                )
+            }"
+        )
         restoreFinishedFlagIfNeeded(intent)
         if (stopwatchOperationUseCase.isFinishedPendingDisplay) {
             navigationUseCase.navigateTo(AppRoute.StopwatchScreen())
@@ -117,6 +129,57 @@ class WearMainActivity : ComponentActivity() {
         }
     }
 
+    /**
+     * SCHEDULE_EXACT_ALARM is required for AlarmManager.setAlarmClock() on API 31+.
+     * Without it, the timer finish alarm cannot auto-open the activity.
+     * Redirects to system settings so the user can grant it once.
+     */
+    private fun requestExactAlarmPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val alarmManager = getSystemService(AlarmManager::class.java)
+            val canSchedule = alarmManager.canScheduleExactAlarms()
+            Timber.d("WearMainActivity: canScheduleExactAlarms=$canSchedule")
+            if (!canSchedule) {
+                Timber.w("WearMainActivity: SCHEDULE_EXACT_ALARM not granted — redirecting to settings")
+                runCatching {
+                    startActivity(
+                        Intent(
+                            Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                            Uri.parse("package:$packageName"),
+                        )
+                    )
+                }.onFailure { Timber.e(it, "WearMainActivity: cannot open exact alarm settings") }
+            }
+        }
+    }
+
+    /**
+     * USE_FULL_SCREEN_INTENT: lets NotificationManager fire the fullScreenIntent with BAL
+     * allowance (balAllowedByPiSender → BAL_ALLOW_ALLOWLISTED_COMPONENT).
+     * On Android 14+, auto-granted only for CATEGORY_ALARM apps or via user approval in Settings.
+     */
+    private fun requestFullScreenIntentPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            val nm = getSystemService(NotificationManager::class.java)
+            val canUse = nm.canUseFullScreenIntent()
+            Timber.d("WearMainActivity: canUseFullScreenIntent=$canUse")
+            if (!canUse) {
+                runCatching {
+                    startActivity(
+                        Intent(
+                            Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT,
+                            Uri.parse("package:$packageName"),
+                        )
+                    )
+                }.onFailure {
+                    Timber.e(
+                        it,
+                        "WearMainActivity: cannot open full screen intent settings"
+                    )
+                }
+            }
+        }
+    }
 
     companion object {
         const val PREFS_NAME = "wear_timer_prefs"

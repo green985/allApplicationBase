@@ -90,13 +90,14 @@ class StopwatchDurationVm(
         Timber.d("StopwatchDurationVm: observeFinished started")
         viewModelScope.launch(getDispatcherIo()) {
             stopwatchOperationUseCase.onFinished.collect {
-                Timber.d("StopwatchDurationVm: timer finished event received")
+                Timber.d("StopwatchDurationVm: timer finished event received — navigating to StopwatchScreen")
                 uiState.updateState {
                     copy(
                         isTimerFinished = true,
                         formattedTime = "00:00",
                     )
                 }
+                navigationUseCase.navigateTo(AppRoute.StopwatchScreen())
             }
         }
     }

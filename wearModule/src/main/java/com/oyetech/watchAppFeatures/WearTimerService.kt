@@ -9,6 +9,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
 import android.os.VibrationEffect
@@ -127,6 +128,10 @@ class WearTimerService : Service() {
             Timber.e("WearTimerService: AlarmManager not available")
             return
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
+            Timber.w("WearTimerService: SCHEDULE_EXACT_ALARM not granted — notification fallback only")
+            return
+        }
         val pendingIntent = buildOpenAppPendingIntent(REQUEST_CODE_ALARM)
         val alarmClockInfo = AlarmManager.AlarmClockInfo(
             System.currentTimeMillis() + ALARM_DELAY_MS,
@@ -216,6 +221,7 @@ class WearTimerService : Service() {
         private const val NOTIFICATION_ID = 1001
         private const val REQUEST_CODE_ALARM = 1002
         private const val REQUEST_CODE_CONTENT = 1003
+        private const val REQUEST_CODE_FULL_SCREEN = 1004
         private const val CHANNEL_ID = "wear_timer_channel_v2"
         private const val SECONDS_IN_MINUTE = 60
         private const val MAX_DURATION_MS = 25 * 60 * 1000L
