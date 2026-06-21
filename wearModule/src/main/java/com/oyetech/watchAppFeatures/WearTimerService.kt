@@ -6,6 +6,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.os.PowerManager
@@ -51,7 +52,7 @@ class WearTimerService : Service() {
         val minutes = intent?.getIntExtra("minutes", 0) ?: 0
         Timber.d("WearTimerService: onStartCommand minutes=$minutes")
 
-        startForeground(NOTIFICATION_ID, buildNotification("Starting…"))
+        startForeground(NOTIFICATION_ID, buildTickNotification("Starting…"))
 
         when {
             minutes > 0 -> collectFlow { stopwatchOperationUseCase.startCountdown(minutes) }
@@ -86,23 +87,68 @@ class WearTimerService : Service() {
         Timber.d("WearTimerService: tick remaining=$remainingSeconds fmt=$formatted fin=$isFinished")
 
         if (isFinished) {
-            Timber.d("WearTimerService: timer finished — notifying, launching app, stopping")
+            Timber.d("WearTimerService: timer finished — showing fullScreenIntent notification")
             stopwatchOperationUseCase.markFinishedPendingDisplay()
-            notificationManager.notify(NOTIFICATION_ID, buildNotification("Time's up!"))
+            persistFinishedFlag()
             vibrate()
-            launchApp()
+            // fullScreenIntent: auto-opens activity on Wear OS.
+            // USE_FULL_SCREEN_INTENT is auto-granted for timer/alarm foreground services.
+            // This is the only BAL-compliant way to open UI on targetSdk 35+ for non-clock apps.
+            notificationManager.notify(NOTIFICATION_ID, buildFinishedNotification())
             stopSelf()
         } else {
-            notificationManager.notify(NOTIFICATION_ID, buildNotification(formatted))
+            notificationManager.notify(NOTIFICATION_ID, buildTickNotification(formatted))
         }
     }
 
-    private fun launchApp() {
+    private fun buildOpenAppPendingIntent(requestCode: Int): PendingIntent {
         val intent = Intent(this, WearMainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            putExtra(WearMainActivity.EXTRA_FROM_ALARM, true)
         }
-        Timber.d("WearTimerService: launchApp")
-        startActivity(intent)
+        return PendingIntent.getActivity(
+            this,
+            requestCode,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+    }
+
+    private fun buildFinishedNotification(): Notification {
+        val fullScreenPendingIntent = buildOpenAppPendingIntent(REQUEST_CODE_FULL_SCREEN)
+        val contentPendingIntent = buildOpenAppPendingIntent(REQUEST_CODE_CONTENT)
+        return NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle("Timer finished")
+            .setContentText("Time's up!")
+            .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
+            .setOngoing(false)
+            .setAutoCancel(true)
+            .setCategory(NotificationCompat.CATEGORY_ALARM)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setFullScreenIntent(fullScreenPendingIntent, true)
+            .setContentIntent(contentPendingIntent)
+            .build()
+    }
+
+    private fun buildTickNotification(text: String): Notification {
+        val pendingIntent = buildOpenAppPendingIntent(REQUEST_CODE_CONTENT)
+        return NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle("Stopwatch")
+            .setContentText(text)
+            .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
+            .setOngoing(true)
+            .setOnlyAlertOnce(true)
+            .setCategory(NotificationCompat.CATEGORY_STOPWATCH)
+            .setContentIntent(pendingIntent)
+            .build()
+    }
+
+    private fun persistFinishedFlag() {
+        Timber.d("WearTimerService: persistFinishedFlag")
+        getSharedPreferences(WearMainActivity.PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean(WearMainActivity.KEY_TIMER_FINISHED, true)
+            .apply()
     }
 
     private fun acquireWakeLock() {
@@ -119,11 +165,7 @@ class WearTimerService : Service() {
     @SuppressLint("MissingPermission")
     private fun vibrate() {
         val vibrator = getSystemService(Vibrator::class.java) ?: return
-        val effect = VibrationEffect.createWaveform(
-            VIBRATION_PATTERN,
-            VIBRATION_AMPLITUDES,
-            -1,
-        )
+        val effect = VibrationEffect.createWaveform(VIBRATION_PATTERN, VIBRATION_AMPLITUDES, -1)
         vibrator.vibrate(effect)
     }
 
@@ -140,33 +182,6 @@ class WearTimerService : Service() {
         notificationManager.createNotificationChannel(channel)
     }
 
-    private fun buildNotification(text: String): Notification {
-        val openAppIntent = Intent(this, WearMainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-        }
-        val pendingIntent = PendingIntent.getActivity(
-            this,
-            0,
-            openAppIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-        )
-
-        return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Stopwatch")
-            .setContentText(text)
-            .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
-            .setOngoing(true)
-            .setOnlyAlertOnce(true)
-            .setCategory(NotificationCompat.CATEGORY_STOPWATCH)
-            .setContentIntent(pendingIntent)
-            .extend(
-                NotificationCompat.WearableExtender()
-                    .setHintShowBackgroundOnly(true)
-                    .setContentIntentAvailableOffline(true)
-            )
-            .build()
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         Timber.d("WearTimerService: onDestroy")
@@ -179,9 +194,11 @@ class WearTimerService : Service() {
 
     companion object {
         private const val NOTIFICATION_ID = 1001
+        private const val REQUEST_CODE_FULL_SCREEN = 1002
+        private const val REQUEST_CODE_CONTENT = 1003
         private const val CHANNEL_ID = "wear_timer_channel_v2"
         private const val SECONDS_IN_MINUTE = 60
-        private const val MAX_DURATION_MS = 25 * 60 * 1000L // 25 min safety margin
+        private const val MAX_DURATION_MS = 25 * 60 * 1000L
         private val VIBRATION_PATTERN = longArrayOf(0, 300, 200, 300, 200, 500)
         private val VIBRATION_AMPLITUDES = intArrayOf(0, 255, 0, 255, 0, 255)
     }

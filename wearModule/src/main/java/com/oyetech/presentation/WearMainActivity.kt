@@ -6,9 +6,14 @@
 package com.oyetech.presentation
 
 import android.Manifest
+import android.app.NotificationManager
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -22,6 +27,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.domain.useCases.NavigationUseCase
+import com.oyetech.domain.useCases.StopwatchOperationUseCase
 import com.oyetech.watchAppFeatures.wearAppNavigation
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
@@ -31,6 +37,9 @@ class WearMainActivity : ComponentActivity() {
 
     private val navigationUseCase: NavigationUseCase by KoinJavaComponent.inject(
         NavigationUseCase::class.java
+    )
+    private val stopwatchOperationUseCase: StopwatchOperationUseCase by KoinJavaComponent.inject(
+        StopwatchOperationUseCase::class.java
     )
 
     private val notificationPermissionLauncher = registerForActivityResult(
@@ -43,6 +52,8 @@ class WearMainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         requestNotificationPermissionIfNeeded()
+        requestFullScreenIntentPermissionIfNeeded()
+        restoreFinishedFlagIfNeeded(intent)
         setContent {
             val backStack = rememberNavBackStack(AppRoute.StopwatchDurationScreen)
             val coroutineScope = rememberCoroutineScope()
@@ -69,6 +80,33 @@ class WearMainActivity : ComponentActivity() {
         }
     }
 
+    /**
+     * Called when activity is already alive and AlarmManager fires or user taps notification.
+     * Activity is not recreated — only onNewIntent is called.
+     */
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        Timber.d("WearMainActivity: onNewIntent fromAlarm=${intent.getBooleanExtra(EXTRA_FROM_ALARM, false)}")
+        restoreFinishedFlagIfNeeded(intent)
+        if (stopwatchOperationUseCase.isFinishedPendingDisplay) {
+            navigationUseCase.navigateTo(AppRoute.StopwatchScreen())
+        }
+    }
+
+    /**
+     * If process was killed after timer finished, AlarmManager re-launches the activity.
+     * The in-memory flag is gone but SharedPreferences persists the finished state.
+     */
+    private fun restoreFinishedFlagIfNeeded(intent: Intent?) {
+        val fromAlarm = intent?.getBooleanExtra(EXTRA_FROM_ALARM, false) == true
+        val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val wasFinished = prefs.getBoolean(KEY_TIMER_FINISHED, false)
+        Timber.d("WearMainActivity: restoreFinishedFlagIfNeeded fromAlarm=$fromAlarm wasFinished=$wasFinished")
+        if (fromAlarm || wasFinished) {
+            stopwatchOperationUseCase.markFinishedPendingDisplay()
+        }
+    }
+
     private fun requestNotificationPermissionIfNeeded() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             val granted = ContextCompat.checkSelfPermission(
@@ -80,5 +118,34 @@ class WearMainActivity : ComponentActivity() {
                 notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
+    }
+
+    /**
+     * USE_FULL_SCREEN_INTENT is auto-granted for timer/alarm foreground services on Android 14+.
+     * If not granted (non-timer app scenario), redirect to settings.
+     */
+    private fun requestFullScreenIntentPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            val nm = getSystemService(NotificationManager::class.java)
+            val canUse = nm.canUseFullScreenIntent()
+            Timber.d("WearMainActivity: canUseFullScreenIntent=$canUse")
+            if (!canUse) {
+                Timber.w("WearMainActivity: USE_FULL_SCREEN_INTENT not granted — redirecting to settings")
+                runCatching {
+                    startActivity(
+                        Intent(
+                            Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT,
+                            Uri.parse("package:$packageName")
+                        )
+                    )
+                }.onFailure { Timber.e(it, "WearMainActivity: cannot open full screen intent settings") }
+            }
+        }
+    }
+
+    companion object {
+        const val PREFS_NAME = "wear_timer_prefs"
+        const val KEY_TIMER_FINISHED = "timer_finished"
+        const val EXTRA_FROM_ALARM = "extra_from_alarm"
     }
 }
