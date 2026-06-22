@@ -20,6 +20,7 @@ import android.os.Vibrator
 import androidx.core.app.NotificationCompat
 import com.oyetech.domain.useCases.StopwatchOperationUseCase
 import com.oyetech.domain.useCases.StopwatchTickResult
+import com.oyetech.presentation.TimerFinishedActivity
 import com.oyetech.presentation.WearMainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -115,26 +116,41 @@ class WearTimerService : Service() {
         }
     }
 
+    /**
+     * PendingIntent fired by AlarmManager.setAlarmClock(). It targets [TimerAlarmReceiver]
+     * (a BroadcastReceiver) rather than an activity, because the alarm-clock broadcast grants
+     * the receiver a temporary Background Activity Launch allowlist token — the receiver then
+     * starts [TimerFinishedActivity], which is reliably allowed on Android 14/15/16 (SDK 36).
+     *
+     * FLAG_IMMUTABLE is correct here: the receiver does not need to mutate the intent and the
+     * BAL privilege comes from the alarm-clock delivery, not from creator/sender opt-in.
+     */
+    private fun buildAlarmBroadcastPendingIntent(): PendingIntent {
+        val intent = Intent(this, TimerAlarmReceiver::class.java).apply {
+            action = TimerAlarmReceiver.ACTION_TIMER_FINISHED
+        }
+        return PendingIntent.getBroadcast(
+            this,
+            REQUEST_CODE_ALARM,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+    }
+
 
     /**
-     * PendingIntent for alarm/finished notifications — carries EXTRA_FROM_ALARM so the
-     * activity knows the timer has finished and navigates to the result screen.
+     * PendingIntent that opens the dedicated alarm screen [TimerFinishedActivity] — used for
+     * the finished notification's full-screen intent and content tap.
      *
-     * FLAG_MUTABLE is used so the sender (AlarmManager / NotificationManager) can attach
-     * its own BAL options when firing.
-     *
-     * On Android 14+ (targetSdk 34+) the system blocks the background activity launch
-     * unless the PendingIntent *creator* opts in. We grant that opt-in via
-     * setPendingIntentCreatorBackgroundActivityStartMode(MODE_BACKGROUND_ACTIVITY_START_ALLOWED).
-     * NOTE: this is the CREATOR mode — it is allowed when creating a PendingIntent.
-     * The SENDER mode (setPendingIntentBackgroundActivityStartMode) is the one that throws
-     * IllegalArgumentException here, so we must not use that one.
+     * FLAG_MUTABLE lets the sender (NotificationManager) attach its own BAL options when firing.
+     * On Android 14+ the creator opts in via setPendingIntentCreatorBackgroundActivityStartMode
+     * (see [creatorBalOptions]); the SENDER mode must NOT be set on the creator side as it
+     * throws IllegalArgumentException.
      */
     @SuppressLint("MutableImplicitPendingIntent")
-    private fun buildOpenAppPendingIntent(requestCode: Int): PendingIntent {
-        val intent = Intent(this, WearMainActivity::class.java).apply {
+    private fun buildFinishedActivityPendingIntent(requestCode: Int): PendingIntent {
+        val intent = Intent(this, TimerFinishedActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            putExtra(WearMainActivity.EXTRA_FROM_ALARM, true)
         }
         return PendingIntent.getActivity(
             this,
@@ -191,21 +207,20 @@ class WearTimerService : Service() {
             Timber.w("WearTimerService: SCHEDULE_EXACT_ALARM not granted — notification fallback only")
             return
         }
-        val pendingIntent = buildOpenAppPendingIntent(REQUEST_CODE_ALARM)
+        val pendingIntent = buildAlarmBroadcastPendingIntent()
         val alarmClockInfo = AlarmManager.AlarmClockInfo(
             System.currentTimeMillis() + ALARM_DELAY_MS,
             pendingIntent,
         )
         alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
-        Timber.d("WearTimerService: alarm clock scheduled — activity will open in ${ALARM_DELAY_MS}ms")
+        Timber.d("WearTimerService: alarm clock scheduled — TimerAlarmReceiver fires in ${ALARM_DELAY_MS}ms")
     }
 
     private fun buildFinishedNotification(): Notification {
-        val contentPendingIntent = buildOpenAppPendingIntent(REQUEST_CODE_CONTENT)
-        // Use REQUEST_CODE_ALARM so AlarmManager and fullScreenIntent share the same
-        // PendingIntent token — prevents the system from opening two activity windows
-        // simultaneously, which causes "Channel is unrecoverably broken".
-        val fullScreenPendingIntent = buildOpenAppPendingIntent(REQUEST_CODE_ALARM)
+        val contentPendingIntent = buildFinishedActivityPendingIntent(REQUEST_CODE_CONTENT)
+        // Use REQUEST_CODE_ALARM so the full-screen intent uses its own token, separate from
+        // the content tap, both opening the dedicated alarm screen TimerFinishedActivity.
+        val fullScreenPendingIntent = buildFinishedActivityPendingIntent(REQUEST_CODE_ALARM)
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Timer finished")
             .setContentText("Time's up! Tap to view results.")

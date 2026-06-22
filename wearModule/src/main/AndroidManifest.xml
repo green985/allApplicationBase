@@ -65,6 +65,30 @@
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="timer" />
         </service>
+
+        <!-- Dedicated alarm screen launched when the countdown finishes. The showWhenLocked /
+             turnScreenOn attributes make it a true alarm UI: it wakes the screen and shows over
+             the lock screen. excludeFromRecents + a private taskAffinity keep it out of the
+             launcher's task so it is treated as a standalone alarm, not the main app. -->
+        <activity
+            android:name=".presentation.TimerFinishedActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:showWhenLocked="true"
+            android:taskAffinity=".presentation.TimerFinishedActivity"
+            android:theme="@android:style/Theme.DeviceDefault"
+            android:turnScreenOn="true" />
+
+        <!-- Receives the AlarmManager.setAlarmClock() broadcast and starts TimerFinishedActivity
+             while holding the temporary alarm-clock BAL allowlist token. -->
+        <receiver
+            android:name=".watchAppFeatures.TimerAlarmReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.oyetech.wear.ACTION_TIMER_FINISHED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
