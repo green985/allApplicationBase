@@ -108,10 +108,12 @@ class WearTimerService : Service() {
      * PendingIntent for alarm/finished notifications — carries EXTRA_FROM_ALARM so the
      * activity knows the timer has finished and navigates to the result screen.
      *
-     * BAL exemption is granted by the SENDER (AlarmManager via setAlarmClock, or
-     * NotificationManager via fullScreenIntent + USE_FULL_SCREEN_INTENT), not by the creator.
-     * ActivityOptions.setPendingIntentBackgroundActivityStartMode must NOT be set here.
+     * FLAG_MUTABLE is used so the sender (AlarmManager / NotificationManager) can attach
+     * its own BAL options when firing. Setting ActivityOptions on the creator throws
+     * IllegalArgumentException ("pendingIntentBackgroundActivityStartMode must not be set
+     * when creating a PendingIntent") on Android 14+.
      */
+    @SuppressLint("MutableImplicitPendingIntent")
     private fun buildOpenAppPendingIntent(requestCode: Int): PendingIntent {
         val intent = Intent(this, WearMainActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -121,7 +123,7 @@ class WearTimerService : Service() {
             this,
             requestCode,
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE,
         )
     }
 
