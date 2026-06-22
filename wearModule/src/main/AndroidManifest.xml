@@ -7,8 +7,13 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <!-- USE_EXACT_ALARM is auto-granted at install for alarm/timer apps targeting API 33+,
+         so canScheduleExactAlarms() returns true without any user-facing permission prompt.
+         This makes AlarmManager.setAlarmClock() (the BAL-exempt activity launcher) reliable
+         on Wear OS, where the exact-alarm and full-screen-intent settings screens are absent. -->
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
 
     <uses-feature android:name="android.hardware.type.watch" />
 

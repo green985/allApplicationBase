@@ -158,6 +158,7 @@ class WearMainActivity : ComponentActivity() {
         }
     }
 
+
     /**
      * USE_FULL_SCREEN_INTENT: lets NotificationManager fire the fullScreenIntent with BAL
      * allowance (balAllowedByPiSender → BAL_ALLOW_ALLOWLISTED_COMPONENT).

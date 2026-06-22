@@ -98,24 +98,23 @@ class WearTimerService : Service() {
             stopwatchOperationUseCase.markFinishedPendingDisplay()
             persistFinishedFlag()
             vibrate()
-            // AlarmManager.setAlarmClock() is BAL-exempt and kept as a cold-start fallback
-            // (re-launches the activity if the process is killed before NMS fires the FSI).
+            // PRIMARY launch path: AlarmManager.setAlarmClock() is BAL-exempt on all Android
+            // versions (sender = AlarmManagerService, an allowlisted component). With the
+            // USE_EXACT_ALARM permission auto-granted, canScheduleExactAlarms() is true so the
+            // alarm actually fires and opens the activity from the background — no user-granted
+            // full-screen-intent / overlay permission required (neither exists on Wear OS).
             scheduleAlarmClock()
-            // Detach the foreground notification BEFORE posting the finished one. Otherwise
-            // stopSelf() removes the foreground notification (default STOP_FOREGROUND_REMOVE),
-            // which — because the finished notification reused the same id — cancelled the
-            // full-screen-intent notification before NotificationManagerService could fire it.
-            // NMS is the only BAL-allowed sender here (balAllowedByPiSender path), so the FSI
-            // notification must survive independently with its own id.
+            // Detach the foreground notification BEFORE posting the finished one so stopSelf()
+            // does not remove it. The notification is shown for visibility / as a tap target.
             stopForeground(STOP_FOREGROUND_DETACH)
             notificationManager.notify(FINISHED_NOTIFICATION_ID, buildFinishedNotification())
-            // Delay teardown so NMS has time to process and fire the full-screen intent
-            // before the service/process is destroyed.
+            // Delay teardown so AlarmManager can fire the launch before the process is destroyed.
             mainHandler.postDelayed({ stopSelf() }, STOP_DELAY_MS)
         } else {
             notificationManager.notify(NOTIFICATION_ID, buildTickNotification(formatted))
         }
     }
+
 
     /**
      * PendingIntent for alarm/finished notifications — carries EXTRA_FROM_ALARM so the
