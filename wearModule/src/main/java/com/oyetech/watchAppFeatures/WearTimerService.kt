@@ -1,6 +1,7 @@
 package com.oyetech.watchAppFeatures
 
 import android.annotation.SuppressLint
+import android.app.ActivityOptions
 import android.app.AlarmManager
 import android.app.Notification
 import android.app.NotificationChannel
@@ -10,7 +11,9 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.os.PowerManager
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -36,6 +39,8 @@ class WearTimerService : Service() {
     )
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var countdownJob: Job? = null
+
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     private lateinit var notificationManager: NotificationManager
     private var wakeLock: PowerManager.WakeLock? = null
@@ -93,12 +98,20 @@ class WearTimerService : Service() {
             stopwatchOperationUseCase.markFinishedPendingDisplay()
             persistFinishedFlag()
             vibrate()
-            // AlarmManager.setAlarmClock() is BAL-exempt on all Android versions including
-            // targetSdk 36. The system fires the PendingIntent as an alarm clock entry,
-            // bypassing background activity launch restrictions entirely.
+            // AlarmManager.setAlarmClock() is BAL-exempt and kept as a cold-start fallback
+            // (re-launches the activity if the process is killed before NMS fires the FSI).
             scheduleAlarmClock()
-            notificationManager.notify(NOTIFICATION_ID, buildFinishedNotification())
-            stopSelf()
+            // Detach the foreground notification BEFORE posting the finished one. Otherwise
+            // stopSelf() removes the foreground notification (default STOP_FOREGROUND_REMOVE),
+            // which — because the finished notification reused the same id — cancelled the
+            // full-screen-intent notification before NotificationManagerService could fire it.
+            // NMS is the only BAL-allowed sender here (balAllowedByPiSender path), so the FSI
+            // notification must survive independently with its own id.
+            stopForeground(STOP_FOREGROUND_DETACH)
+            notificationManager.notify(FINISHED_NOTIFICATION_ID, buildFinishedNotification())
+            // Delay teardown so NMS has time to process and fire the full-screen intent
+            // before the service/process is destroyed.
+            mainHandler.postDelayed({ stopSelf() }, STOP_DELAY_MS)
         } else {
             notificationManager.notify(NOTIFICATION_ID, buildTickNotification(formatted))
         }
@@ -109,9 +122,14 @@ class WearTimerService : Service() {
      * activity knows the timer has finished and navigates to the result screen.
      *
      * FLAG_MUTABLE is used so the sender (AlarmManager / NotificationManager) can attach
-     * its own BAL options when firing. Setting ActivityOptions on the creator throws
-     * IllegalArgumentException ("pendingIntentBackgroundActivityStartMode must not be set
-     * when creating a PendingIntent") on Android 14+.
+     * its own BAL options when firing.
+     *
+     * On Android 14+ (targetSdk 34+) the system blocks the background activity launch
+     * unless the PendingIntent *creator* opts in. We grant that opt-in via
+     * setPendingIntentCreatorBackgroundActivityStartMode(MODE_BACKGROUND_ACTIVITY_START_ALLOWED).
+     * NOTE: this is the CREATOR mode — it is allowed when creating a PendingIntent.
+     * The SENDER mode (setPendingIntentBackgroundActivityStartMode) is the one that throws
+     * IllegalArgumentException here, so we must not use that one.
      */
     @SuppressLint("MutableImplicitPendingIntent")
     private fun buildOpenAppPendingIntent(requestCode: Int): PendingIntent {
@@ -124,7 +142,22 @@ class WearTimerService : Service() {
             requestCode,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE,
+            creatorBalOptions(),
         )
+    }
+
+    /**
+     * Bundle that opts the PendingIntent creator in to background activity starts.
+     * Required on Android 14+ (UPSIDE_DOWN_CAKE / API 34) — returns null on older
+     * versions where the opt-in does not exist and BAL is already permitted.
+     */
+    private fun creatorBalOptions(): android.os.Bundle? {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) return null
+        return ActivityOptions.makeBasic()
+            .setPendingIntentCreatorBackgroundActivityStartMode(
+                ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED,
+            )
+            .toBundle()
     }
 
     /**
@@ -242,6 +275,7 @@ class WearTimerService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         Timber.d("WearTimerService: onDestroy")
+        mainHandler.removeCallbacksAndMessages(null)
         wakeLock?.let {
             if (it.isHeld) it.release()
             Timber.d("WearTimerService: WakeLock released")
@@ -253,10 +287,12 @@ class WearTimerService : Service() {
         private const val NOTIFICATION_ID = 1001
         private const val REQUEST_CODE_ALARM = 1002
         private const val REQUEST_CODE_CONTENT = 1003
+        private const val FINISHED_NOTIFICATION_ID = 1004
         private const val CHANNEL_ID = "wear_timer_channel_v2"
         private const val SECONDS_IN_MINUTE = 60
         private const val MAX_DURATION_MS = 25 * 60 * 1000L
         private const val ALARM_DELAY_MS = 1000L
+        private const val STOP_DELAY_MS = 2000L
         private val VIBRATION_PATTERN = longArrayOf(0, 300, 200, 300, 200, 500)
         private val VIBRATION_AMPLITUDES = intArrayOf(0, 255, 0, 255, 0, 255)
     }
