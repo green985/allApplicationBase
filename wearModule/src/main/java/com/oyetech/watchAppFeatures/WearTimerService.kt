@@ -117,35 +117,21 @@ class WearTimerService : Service() {
     }
 
     /**
-     * PendingIntent fired by AlarmManager.setAlarmClock(). It targets [TimerAlarmReceiver]
-     * (a BroadcastReceiver) rather than an activity, because the alarm-clock broadcast grants
-     * the receiver a temporary Background Activity Launch allowlist token — the receiver then
-     * starts [TimerFinishedActivity], which is reliably allowed on Android 14/15/16 (SDK 36).
+     * PendingIntent that opens the dedicated alarm screen [TimerFinishedActivity].
      *
-     * FLAG_IMMUTABLE is correct here: the receiver does not need to mutate the intent and the
-     * BAL privilege comes from the alarm-clock delivery, not from creator/sender opt-in.
-     */
-    private fun buildAlarmBroadcastPendingIntent(): PendingIntent {
-        val intent = Intent(this, TimerAlarmReceiver::class.java).apply {
-            action = TimerAlarmReceiver.ACTION_TIMER_FINISHED
-        }
-        return PendingIntent.getBroadcast(
-            this,
-            REQUEST_CODE_ALARM,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-        )
-    }
-
-
-    /**
-     * PendingIntent that opens the dedicated alarm screen [TimerFinishedActivity] — used for
-     * the finished notification's full-screen intent and content tap.
+     * Used both as the AlarmManager.setAlarmClock() target and for the finished notification's
+     * full-screen intent / content tap.
      *
-     * FLAG_MUTABLE lets the sender (NotificationManager) attach its own BAL options when firing.
-     * On Android 14+ the creator opts in via setPendingIntentCreatorBackgroundActivityStartMode
-     * (see [creatorBalOptions]); the SENDER mode must NOT be set on the creator side as it
-     * throws IllegalArgumentException.
+     * The alarm is fired DIRECTLY at this activity PendingIntent (no BroadcastReceiver in
+     * between): an alarm-clock PendingIntent that starts an activity is exempt from Background
+     * Activity Launch restrictions because the sender is AlarmManagerService (an allowlisted
+     * component). Routing it through a receiver and calling startActivity() there loses that
+     * exemption (the launch becomes a non-PendingIntent start from RECEIVER proc state).
+     *
+     * FLAG_MUTABLE lets the sender (AlarmManager / NotificationManager) attach its own BAL
+     * options when firing. On Android 14+ the creator opts in via
+     * setPendingIntentCreatorBackgroundActivityStartMode (see [creatorBalOptions]); the SENDER
+     * mode must NOT be set on the creator side as it throws IllegalArgumentException.
      */
     @SuppressLint("MutableImplicitPendingIntent")
     private fun buildFinishedActivityPendingIntent(requestCode: Int): PendingIntent {
@@ -207,13 +193,13 @@ class WearTimerService : Service() {
             Timber.w("WearTimerService: SCHEDULE_EXACT_ALARM not granted — notification fallback only")
             return
         }
-        val pendingIntent = buildAlarmBroadcastPendingIntent()
+        val pendingIntent = buildFinishedActivityPendingIntent(REQUEST_CODE_ALARM)
         val alarmClockInfo = AlarmManager.AlarmClockInfo(
             System.currentTimeMillis() + ALARM_DELAY_MS,
             pendingIntent,
         )
         alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
-        Timber.d("WearTimerService: alarm clock scheduled — TimerAlarmReceiver fires in ${ALARM_DELAY_MS}ms")
+        Timber.d("WearTimerService: alarm clock scheduled — TimerFinishedActivity opens in ${ALARM_DELAY_MS}ms")
     }
 
     private fun buildFinishedNotification(): Notification {
