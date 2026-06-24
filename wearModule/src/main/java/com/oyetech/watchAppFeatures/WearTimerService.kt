@@ -68,6 +68,7 @@ class WearTimerService : Service() {
             seconds > 0 -> collectFlow {
                 stopwatchOperationUseCase.startCountdown(StopwatchSession(durationSeconds = seconds))
             }
+
             stopwatchOperationUseCase.hasActiveSession() -> collectFlow { stopwatchOperationUseCase.resumeCountdown() }
             else -> {
                 Timber.w("WearTimerService: no active session — stopping")
@@ -107,7 +108,11 @@ class WearTimerService : Service() {
             stopwatchOperationUseCase.markFinishedPendingDisplay()
             persistFinishedFlag()
             vibrate()
-            // PRIMARY launch path: AlarmManager.setAlarmClock() is BAL-exempt on all Android
+            // PRIMARY launch path: send the activity PendingIntent ourselves with the SENDER-side
+            // BAL opt-in (setPendingIntentBackgroundActivityStartMode). This sets
+            // balAllowedByPiSender on the send, which the creator-side opt-in alone cannot do.
+            launchViaSenderBal()
+            // SECONDARY launch path: AlarmManager.setAlarmClock() is BAL-exempt on all Android
             // versions (sender = AlarmManagerService, an allowlisted component). With the
             // USE_EXACT_ALARM permission auto-granted, canScheduleExactAlarms() is true so the
             // alarm actually fires and opens the activity from the background — no user-granted
@@ -180,6 +185,37 @@ class WearTimerService : Service() {
 
             .toBundle()
 
+    }
+
+    /**
+     * Bundle that grants the PendingIntent SENDER background-activity-start privilege.
+     * Used when WE call [PendingIntent.send] directly (we become the sender), so the platform
+     * records balAllowedByPiSender for the launch instead of BSP.NONE. Returns null below
+     * Android 14 (API 34) where the opt-in does not exist and BAL is already permitted.
+     */
+    private fun senderBalOptions(): Bundle? {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) return null
+        val mode = if (Build.VERSION.SDK_INT >= ANDROID_16_SDK) {
+            ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOW_ALWAYS
+        } else {
+            ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED
+        }
+        return ActivityOptions.makeBasic()
+            .setPendingIntentBackgroundActivityStartMode(mode)
+            .toBundle()
+    }
+
+    /**
+     * Sends the launch PendingIntent ourselves with the sender-side BAL opt-in
+     * (setPendingIntentBackgroundActivityStartMode). This is the only way to set
+     * balAllowedByPiSender — neither AlarmManager nor the creator-side opt-in can.
+     */
+    private fun launchViaSenderBal() {
+        val pendingIntent = buildLaunchPendingIntent()
+        runCatching {
+            pendingIntent.send(senderBalOptions())
+            Timber.d("WearTimerService: launchViaSenderBal — PendingIntent sent with sender BAL opt-in")
+        }.onFailure { Timber.e(it, "WearTimerService: launchViaSenderBal failed") }
     }
 
     /**
@@ -335,6 +371,7 @@ class WearTimerService : Service() {
         private const val REQUEST_CODE_ALARM_SHOW = 1005
         private const val CHANNEL_ID = "wear_timer_channel_v2"
         private const val SECONDS_IN_MINUTE = 60
+        private const val ANDROID_16_SDK = 36
         private const val MAX_DURATION_MS = 25 * 60 * 1000L
         private const val ALARM_DELAY_MS = 1000L
         private const val STOP_DELAY_MS = 2000L

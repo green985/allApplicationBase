@@ -46,8 +46,8 @@ class TimerFinishedActivity : ComponentActivity() {
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         Timber.d("TimerFinishedActivity: onCreate")
+        super.onCreate(savedInstanceState)
         showWhenLockedAndTurnScreenOn()
         enableEdgeToEdge()
         stopwatchOperationUseCase.markFinishedPendingDisplay()
@@ -74,7 +74,7 @@ class TimerFinishedActivity : ComponentActivity() {
         } else {
             window.addFlags(
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
-                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
             )
         }
         val keyguardManager = getSystemService(KeyguardManager::class.java)
