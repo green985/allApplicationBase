@@ -1,6 +1,9 @@
 package com.oyetech.presentation
 
 import android.app.Application
+import android.os.Build
+import android.os.StrictMode
+import androidx.annotation.RequiresApi
 import com.oyetech.composebase.di.ComposeMainModule
 import com.oyetech.composebase.projectQuestionsFeature.QuestionProjectModule
 import com.oyetech.dimodule.BaseApplication
@@ -22,12 +25,20 @@ class WearApplication : Application() {
         LanguageOperationHelper::class.java
     )
 
+    @RequiresApi(Build.VERSION_CODES.BAKLAVA)
     override fun onCreate() {
         super.onCreate()
         if (this.isDebug()) {
             Timber.uprootAll()
             Timber.plant(Timber.DebugTree())
         }
+        StrictMode.setVmPolicy(
+            StrictMode.VmPolicy.Builder()
+                .detectBlockedBackgroundActivityLaunch()
+                .penaltyLog()
+                .build()
+        )
+
         configureDi()
         languageOperationHelper.initLanguageHelper(true)
         BaseApplication.setAppContext(this)

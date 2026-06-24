@@ -45,6 +45,7 @@
 
         <activity
             android:name=".presentation.WearMainActivity"
+            android:allowCrossUidActivitySwitchFromBelow="true"
             android:exported="true"
             android:taskAffinity=""
             android:theme="@style/WearMainActivityTheme.Starting">

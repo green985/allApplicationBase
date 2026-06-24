@@ -11,6 +11,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
@@ -83,7 +84,11 @@ class WearTimerService : Service() {
         }
     }
 
-    private fun updateNotification(remainingSeconds: Int, isFinished: Boolean, isCancelled: Boolean) {
+    private fun updateNotification(
+        remainingSeconds: Int,
+        isFinished: Boolean,
+        isCancelled: Boolean,
+    ) {
         if (isCancelled) {
             Timber.d("WearTimerService: timer cancelled — stopping")
             stopSelf()
@@ -152,13 +157,26 @@ class WearTimerService : Service() {
      * Required on Android 14+ (UPSIDE_DOWN_CAKE / API 34) — returns null on older
      * versions where the opt-in does not exist and BAL is already permitted.
      */
-    private fun creatorBalOptions(): android.os.Bundle? {
+    private fun creatorBalOptions(): Bundle? {
+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) return null
+
+        val mode = if (Build.VERSION.SDK_INT >= 36) {
+
+            ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOW_ALWAYS
+
+        } else {
+
+            ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED
+
+        }
+
         return ActivityOptions.makeBasic()
-            .setPendingIntentCreatorBackgroundActivityStartMode(
-                ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED,
-            )
+
+            .setPendingIntentCreatorBackgroundActivityStartMode(mode)
+
             .toBundle()
+
     }
 
     /**
@@ -179,10 +197,32 @@ class WearTimerService : Service() {
     }
 
     /**
+     * The "launch" PendingIntent — this is the OPERATION fired by AlarmManager when the alarm
+     * triggers. It is the one whose creator-side BAL opt-in matters because the system actually
+     * sends() it from AlarmManagerService (an allowlisted sender). Carries its own request code
+     * so it never collides with the show intent in the PendingIntent cache.
+     */
+    private fun buildLaunchPendingIntent(): PendingIntent =
+        buildFinishedActivityPendingIntent(REQUEST_CODE_ALARM_LAUNCH)
+
+    /**
+     * The "show" PendingIntent — passed as AlarmClockInfo.showIntent. The system UI / system
+     * alarm surfaces use this to let the user open/inspect the alarm; it is NOT the object the
+     * alarm fires. It MUST be a different PendingIntent object (different request code) from the
+     * launch intent, otherwise the platform treats them as the same token and the alarm's launch
+     * inherits the show intent's (non-firing) BAL context.
+     */
+    private fun buildShowPendingIntent(): PendingIntent =
+        buildFinishedActivityPendingIntent(REQUEST_CODE_ALARM_SHOW)
+
+    /**
      * Schedules an immediate alarm clock via AlarmManager.setAlarmClock().
-     * Alarm clock intents are exempt from Background Activity Launch (BAL) restrictions
-     * on all Android versions, including apps targeting SDK 35+.
-     * The activity will be launched ~1 second after this call.
+     *
+     * Alarm-clock alarms are the only AlarmManager category whose firing PendingIntent is BAL
+     * exempt (sender = AlarmManagerService). The showIntent and the operation (launch) intent are
+     * intentionally TWO DISTINCT PendingIntent objects with separate request codes so the launch
+     * operation carries its own creator BAL opt-in and is not conflated with the show token.
+     * The activity is launched ~1 second after this call.
      */
     private fun scheduleAlarmClock() {
         val alarmManager = getSystemService(AlarmManager::class.java) ?: run {
@@ -193,20 +233,21 @@ class WearTimerService : Service() {
             Timber.w("WearTimerService: SCHEDULE_EXACT_ALARM not granted — notification fallback only")
             return
         }
-        val pendingIntent = buildFinishedActivityPendingIntent(REQUEST_CODE_ALARM)
+        val launchPendingIntent = buildLaunchPendingIntent()
+        val showPendingIntent = buildShowPendingIntent()
         val alarmClockInfo = AlarmManager.AlarmClockInfo(
             System.currentTimeMillis() + ALARM_DELAY_MS,
-            pendingIntent,
+            showPendingIntent,
         )
-        alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
-        Timber.d("WearTimerService: alarm clock scheduled — TimerFinishedActivity opens in ${ALARM_DELAY_MS}ms")
+        alarmManager.setAlarmClock(alarmClockInfo, launchPendingIntent)
+        Timber.d("WearTimerService: alarm clock scheduled — distinct show/launch PIs — opens in ${ALARM_DELAY_MS}ms")
     }
 
     private fun buildFinishedNotification(): Notification {
         val contentPendingIntent = buildFinishedActivityPendingIntent(REQUEST_CODE_CONTENT)
-        // Use REQUEST_CODE_ALARM so the full-screen intent uses its own token, separate from
+        // Use REQUEST_CODE_ALARM_LAUNCH so the full-screen intent uses its own token, separate from
         // the content tap, both opening the dedicated alarm screen TimerFinishedActivity.
-        val fullScreenPendingIntent = buildFinishedActivityPendingIntent(REQUEST_CODE_ALARM)
+        val fullScreenPendingIntent = buildFinishedActivityPendingIntent(REQUEST_CODE_ALARM_LAUNCH)
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Timer finished")
             .setContentText("Time's up! Tap to view results.")
@@ -216,7 +257,7 @@ class WearTimerService : Service() {
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setContentIntent(contentPendingIntent)
-            .setFullScreenIntent(fullScreenPendingIntent, true)
+//            .setFullScreenIntent(fullScreenPendingIntent, true)
             .build()
     }
 
@@ -285,9 +326,10 @@ class WearTimerService : Service() {
 
     companion object {
         private const val NOTIFICATION_ID = 1001
-        private const val REQUEST_CODE_ALARM = 1002
+        private const val REQUEST_CODE_ALARM_LAUNCH = 1002
         private const val REQUEST_CODE_CONTENT = 1003
         private const val FINISHED_NOTIFICATION_ID = 1004
+        private const val REQUEST_CODE_ALARM_SHOW = 1005
         private const val CHANNEL_ID = "wear_timer_channel_v2"
         private const val SECONDS_IN_MINUTE = 60
         private const val MAX_DURATION_MS = 25 * 60 * 1000L
