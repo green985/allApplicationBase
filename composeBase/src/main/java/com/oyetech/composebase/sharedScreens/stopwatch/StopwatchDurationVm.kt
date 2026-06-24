@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.navigator.AppRoute
+import com.oyetech.domain.repository.stopwatch.StopwatchSession
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.domain.useCases.StopwatchOperationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
@@ -26,6 +27,7 @@ class StopwatchDurationVm(
 
     init {
         Timber.d("StopwatchDurationVm: init")
+        buildDurations()
         if (stopwatchOperationUseCase.hasActiveSession() || stopwatchOperationUseCase.isFinishedPendingDisplay) {
             Timber.d("StopwatchDurationVm: active or finished session found — navigating to StopwatchScreen")
             navigationUseCase.navigateTo(AppRoute.StopwatchScreen())
@@ -34,28 +36,46 @@ class StopwatchDurationVm(
         observeFinished()
     }
 
+    private fun buildDurations() {
+        val items = DURATION_SECONDS.map { seconds ->
+            StopwatchDurationItem(
+                session = StopwatchSession(durationSeconds = seconds),
+                label = formatDurationLabel(seconds),
+            )
+        }
+        uiState.updateState { copy(durations = items) }
+    }
+
+    private fun formatDurationLabel(durationSeconds: Int): String {
+        return if (durationSeconds % SECONDS_IN_MINUTE == 0) {
+            "${durationSeconds / SECONDS_IN_MINUTE} min"
+        } else {
+            "$durationSeconds sec"
+        }
+    }
+
     override fun onEvent(event: Any) {
         Timber.d("StopwatchDurationVm: onEvent -> $event")
         if (event is StopwatchDurationEvent) {
             when (event) {
-                is StopwatchDurationEvent.OnDurationSelected -> onDurationSelected(event.minutes)
+                is StopwatchDurationEvent.OnDurationSelected -> onDurationSelected(event.session)
             }
         }
     }
 
-    private fun onDurationSelected(minutes: Int) {
-        Timber.d("StopwatchDurationVm: onDurationSelected minutes=$minutes")
-        uiState.updateState { copy(selectedMinutes = minutes) }
-        startTimerService(minutes)
+    private fun onDurationSelected(session: StopwatchSession) {
+        Timber.d("StopwatchDurationVm: onDurationSelected durationSeconds=${session.durationSeconds}")
+        uiState.updateState { copy(selectedDurationSeconds = session.durationSeconds) }
+        startTimerService(session)
         navigationUseCase.navigateTo(AppRoute.StopwatchScreen())
     }
 
     @SuppressLint("NewApi")
-    private fun startTimerService(minutes: Int) {
-        Timber.d("StopwatchDurationVm: startTimerService minutes=$minutes packageName=${appContext.packageName}")
+    private fun startTimerService(session: StopwatchSession) {
+        Timber.d("StopwatchDurationVm: startTimerService durationSeconds=${session.durationSeconds} packageName=${appContext.packageName}")
         val intent = Intent("com.oyetech.wear.ACTION_START_TIMER").apply {
             setPackage(appContext.packageName)
-            putExtra("minutes", minutes)
+            putExtra("seconds", session.durationSeconds)
         }
         ContextCompat.startForegroundService(appContext, intent)
     }
@@ -67,7 +87,7 @@ class StopwatchDurationVm(
                 Timber.d(
                     "StopwatchDurationVm: tick remaining=${tick.remainingSeconds} fin=${tick.isFinished}"
                 )
-                if (tick.remainingSeconds == 0 && uiState.value.selectedMinutes == 0) {
+                if (tick.remainingSeconds == 0 && uiState.value.selectedDurationSeconds == 0) {
                     Timber.d("StopwatchDurationVm: tick skipped — no duration selected yet")
                     return@collect
                 }
@@ -104,5 +124,6 @@ class StopwatchDurationVm(
 
     companion object {
         private const val SECONDS_IN_MINUTE = 60
+        private val DURATION_SECONDS = listOf(10, 60, 5 * 60, 10 * 60, 15 * 60)
     }
 }

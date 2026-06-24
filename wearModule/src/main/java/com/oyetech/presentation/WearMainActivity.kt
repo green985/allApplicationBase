@@ -80,7 +80,21 @@ class WearMainActivity : ComponentActivity() {
                 }
             )
         }
+
     }
+
+    override fun onResume() {
+
+        super.onResume()
+
+        if (Settings.canDrawOverlays(this)) {
+
+            Timber.d("Overlay permission granted")
+
+        }
+
+    }
+
 
     /**
      * Called when activity is already alive and AlarmManager fires or user taps notification.

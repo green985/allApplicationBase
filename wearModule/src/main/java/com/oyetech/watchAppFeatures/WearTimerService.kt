@@ -19,6 +19,7 @@ import android.os.PowerManager
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.core.app.NotificationCompat
+import com.oyetech.domain.repository.stopwatch.StopwatchSession
 import com.oyetech.domain.useCases.StopwatchOperationUseCase
 import com.oyetech.domain.useCases.StopwatchTickResult
 import com.oyetech.presentation.TimerFinishedActivity
@@ -58,13 +59,15 @@ class WearTimerService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val minutes = intent?.getIntExtra("minutes", 0) ?: 0
-        Timber.d("WearTimerService: onStartCommand minutes=$minutes")
+        val seconds = intent?.getIntExtra("seconds", 0) ?: 0
+        Timber.d("WearTimerService: onStartCommand seconds=$seconds")
 
         startForeground(NOTIFICATION_ID, buildTickNotification("Starting…"))
 
         when {
-            minutes > 0 -> collectFlow { stopwatchOperationUseCase.startCountdown(minutes) }
+            seconds > 0 -> collectFlow {
+                stopwatchOperationUseCase.startCountdown(StopwatchSession(durationSeconds = seconds))
+            }
             stopwatchOperationUseCase.hasActiveSession() -> collectFlow { stopwatchOperationUseCase.resumeCountdown() }
             else -> {
                 Timber.w("WearTimerService: no active session — stopping")

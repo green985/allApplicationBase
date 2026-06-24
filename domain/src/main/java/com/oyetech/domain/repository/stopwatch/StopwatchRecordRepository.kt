@@ -15,6 +15,15 @@ interface StopwatchRecordRepository {
 
 enum class StopwatchRecordStatus { FINISHED, CANCELLED }
 
+/**
+ * Model passed when starting a stopwatch session.
+ * Duration is expressed in seconds so both second- and minute-based selections are supported.
+ * Future fields such as note or task can be added here without changing the start signature.
+ */
+data class StopwatchSession(
+    val durationSeconds: Int,
+)
+
 data class StopwatchRecord(
     val id: Long,
     val startedAt: Long,

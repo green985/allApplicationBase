@@ -2,6 +2,7 @@ package com.oyetech.domain.useCases
 
 import com.oyetech.domain.repository.stopwatch.StopwatchRecordRepository
 import com.oyetech.domain.repository.stopwatch.StopwatchRecordStatus
+import com.oyetech.domain.repository.stopwatch.StopwatchSession
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -56,11 +57,11 @@ class StopwatchOperationUseCase(
         isCancelRequested = true
     }
 
-    fun startCountdown(minutes: Int): Flow<StopwatchTickResult> {
-        totalSeconds = minutes * SECONDS_IN_MINUTE
-        durationMinutes = minutes
+    fun startCountdown(session: StopwatchSession): Flow<StopwatchTickResult> {
+        totalSeconds = session.durationSeconds
+        durationMinutes = session.durationSeconds / SECONDS_IN_MINUTE
         startEpochMs = System.currentTimeMillis()
-        Timber.d("StopwatchOperationUseCase: startCountdown minutes=$minutes totalSeconds=$totalSeconds")
+        Timber.d("StopwatchOperationUseCase: startCountdown durationSeconds=${session.durationSeconds} totalSeconds=$totalSeconds")
         return buildFlow(totalSeconds)
     }
 

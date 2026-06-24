@@ -57,24 +57,24 @@ fun StopwatchDurationScreen(
             style = AppTextStyles.titleSmall,
         )
 
-        if (uiState.selectedMinutes > 0) {
+        if (uiState.selectedDurationSeconds > 0) {
             Text(
                 text = uiState.formattedTime,
                 style = AppTextStyles.titleLarge,
             )
         }
 
-        uiState.durations.forEach { minutes ->
+        uiState.durations.forEach { item ->
             Button(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { onEvent(StopwatchDurationEvent.OnDurationSelected(minutes)) },
+                onClick = { onEvent(StopwatchDurationEvent.OnDurationSelected(item.session)) },
                 contentPadding = PaddingValues(
                     horizontal = AppSpacing.sm,
                     vertical = AppSpacing.xs
                 ),
             ) {
                 Text(
-                    text = "$minutes min",
+                    text = item.label,
                     style = AppTextStyles.bodySecondary,
                 )
             }
