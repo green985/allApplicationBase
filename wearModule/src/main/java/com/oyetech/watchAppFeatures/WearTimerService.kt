@@ -105,19 +105,20 @@ class WearTimerService : Service() {
 
         if (isFinished) {
             Timber.d("WearTimerService: timer finished — launching activity via AlarmManager")
+            logBalDeviceState()
             stopwatchOperationUseCase.markFinishedPendingDisplay()
             persistFinishedFlag()
             vibrate()
             // PRIMARY launch path: send the activity PendingIntent ourselves with the SENDER-side
             // BAL opt-in (setPendingIntentBackgroundActivityStartMode). This sets
             // balAllowedByPiSender on the send, which the creator-side opt-in alone cannot do.
-            launchViaSenderBal()
+//            launchViaSenderBal()
             // SECONDARY launch path: AlarmManager.setAlarmClock() is BAL-exempt on all Android
             // versions (sender = AlarmManagerService, an allowlisted component). With the
             // USE_EXACT_ALARM permission auto-granted, canScheduleExactAlarms() is true so the
             // alarm actually fires and opens the activity from the background — no user-granted
             // full-screen-intent / overlay permission required (neither exists on Wear OS).
-            scheduleAlarmClock()
+//            scheduleAlarmClock()
             // Detach the foreground notification BEFORE posting the finished one so stopSelf()
             // does not remove it. The notification is shown for visibility / as a tap target.
             stopForeground(STOP_FOREGROUND_DETACH)
@@ -188,6 +189,29 @@ class WearTimerService : Service() {
     }
 
     /**
+     * Diagnostics for the BAL investigation: correlates the ActivityTaskManager verdict with the
+     * device state at the exact moment the launch is attempted. A full-screen intent only gets
+     * sender BAL from NotificationManagerService when it is actually elevated — which on Wear
+     * typically requires the screen to be non-interactive / keyguard showing.
+     */
+    private fun logBalDeviceState() {
+        val powerManager = getSystemService(PowerManager::class.java)
+        val keyguardManager = getSystemService(android.app.KeyguardManager::class.java)
+        val canUseFsi = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            notificationManager.canUseFullScreenIntent()
+        } else {
+            true
+        }
+        Timber.d(
+            "WearTimerService: BAL state interactive=%s deviceLocked=%s keyguardLocked=%s canUseFsi=%s",
+            powerManager?.isInteractive,
+            keyguardManager?.isDeviceLocked,
+            keyguardManager?.isKeyguardLocked,
+            canUseFsi,
+        )
+    }
+
+    /**
      * Bundle that grants the PendingIntent SENDER background-activity-start privilege.
      * Used when WE call [PendingIntent.send] directly (we become the sender), so the platform
      * records balAllowedByPiSender for the launch instead of BSP.NONE. Returns null below
@@ -213,7 +237,11 @@ class WearTimerService : Service() {
     private fun launchViaSenderBal() {
         val pendingIntent = buildLaunchPendingIntent()
         runCatching {
-            pendingIntent.send(senderBalOptions())
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                pendingIntent.send(senderBalOptions())
+            } else {
+                pendingIntent.send()
+            }
             Timber.d("WearTimerService: launchViaSenderBal — PendingIntent sent with sender BAL opt-in")
         }.onFailure { Timber.e(it, "WearTimerService: launchViaSenderBal failed") }
     }
@@ -296,7 +324,7 @@ class WearTimerService : Service() {
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setContentIntent(contentPendingIntent)
-//            .setFullScreenIntent(fullScreenPendingIntent, true)
+            .setFullScreenIntent(fullScreenPendingIntent, true)
             .build()
     }
 
