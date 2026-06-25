@@ -24,7 +24,6 @@ import androidx.core.app.NotificationCompat
 import com.oyetech.domain.repository.stopwatch.StopwatchSession
 import com.oyetech.domain.useCases.StopwatchOperationUseCase
 import com.oyetech.domain.useCases.StopwatchTickResult
-import com.oyetech.presentation.TimerFinishedActivity
 import com.oyetech.presentation.WearMainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -164,12 +163,13 @@ class WearTimerService : Service() {
             "CREATE_FINISHED_PI requestCode=%s",
             requestCode
         )
-        val intent = Intent(this, TimerFinishedActivity::class.java).apply {
+        val intent = Intent(this, WearMainActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            putExtra(WearMainActivity.EXTRA_FROM_ALARM, true)
         }
         Timber.e(
             "CREATE_FINISHED_PI target=%s flags=MUTABLE|UPDATE_CURRENT",
-            TimerFinishedActivity::class.java.simpleName
+            WearMainActivity::class.java.simpleName
         )
         return PendingIntent.getActivity(
             this,
