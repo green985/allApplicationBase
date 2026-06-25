@@ -46,19 +46,75 @@ class TimerFinishedActivity : ComponentActivity() {
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Timber.d("TimerFinishedActivity: onCreate")
+
+        Timber.e("TIMER_ACTIVITY onCreate")
+
+        Timber.e("TIMER_ACTIVITY intent=$intent")
+
         super.onCreate(savedInstanceState)
+
         showWhenLockedAndTurnScreenOn()
+
         enableEdgeToEdge()
+
         stopwatchOperationUseCase.markFinishedPendingDisplay()
+
         setContent {
+
             AllApplicationBaseTheme {
+
                 TimerFinishedScreen(
+
                     onViewResults = ::openResults,
+
                     onDismiss = ::dismiss,
-                )
+
+                    )
+
             }
+
         }
+
+    }
+
+    override fun onStart() {
+
+        super.onStart()
+
+        Timber.e("TIMER_ACTIVITY onStart")
+
+    }
+
+    override fun onResume() {
+
+        super.onResume()
+
+        Timber.e("TIMER_ACTIVITY onResume")
+
+    }
+
+    override fun onPause() {
+
+        Timber.e("TIMER_ACTIVITY onPause")
+
+        super.onPause()
+
+    }
+
+    override fun onStop() {
+
+        Timber.e("TIMER_ACTIVITY onStop")
+
+        super.onStop()
+
+    }
+
+    override fun onDestroy() {
+
+        Timber.e("TIMER_ACTIVITY onDestroy")
+
+        super.onDestroy()
+
     }
 
     /**

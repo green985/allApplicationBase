@@ -10,6 +10,8 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.media.AudioAttributes
+import android.media.RingtoneManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -122,6 +124,15 @@ class WearTimerService : Service() {
             // Detach the foreground notification BEFORE posting the finished one so stopSelf()
             // does not remove it. The notification is shown for visibility / as a tap target.
             stopForeground(STOP_FOREGROUND_DETACH)
+            Timber.e("POSTING_FINISHED_NOTIFICATION")
+            Timber.e(
+                "POSTING_FINISHED_NOTIFICATION canUseFsi=%s",
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    notificationManager.canUseFullScreenIntent()
+                } else {
+                    true
+                }
+            )
             notificationManager.notify(FINISHED_NOTIFICATION_ID, buildFinishedNotification())
             // Delay teardown so AlarmManager can fire the launch before the process is destroyed.
             mainHandler.postDelayed({ stopSelf() }, STOP_DELAY_MS)
@@ -149,9 +160,17 @@ class WearTimerService : Service() {
      */
     @SuppressLint("MutableImplicitPendingIntent")
     private fun buildFinishedActivityPendingIntent(requestCode: Int): PendingIntent {
+        Timber.e(
+            "CREATE_FINISHED_PI requestCode=%s",
+            requestCode
+        )
         val intent = Intent(this, TimerFinishedActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
         }
+        Timber.e(
+            "CREATE_FINISHED_PI target=%s flags=MUTABLE|UPDATE_CURRENT",
+            TimerFinishedActivity::class.java.simpleName
+        )
         return PendingIntent.getActivity(
             this,
             requestCode,
@@ -311,10 +330,16 @@ class WearTimerService : Service() {
     }
 
     private fun buildFinishedNotification(): Notification {
+        Timber.e("BUILD_FINISHED_NOTIFICATION")
         val contentPendingIntent = buildFinishedActivityPendingIntent(REQUEST_CODE_CONTENT)
         // Use REQUEST_CODE_ALARM_LAUNCH so the full-screen intent uses its own token, separate from
         // the content tap, both opening the dedicated alarm screen TimerFinishedActivity.
         val fullScreenPendingIntent = buildFinishedActivityPendingIntent(REQUEST_CODE_ALARM_LAUNCH)
+        Timber.e(
+            "BUILD_FINISHED_NOTIFICATION contentPi=%s fullScreenPi=%s",
+            contentPendingIntent,
+            fullScreenPendingIntent
+        )
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Timer finished")
             .setContentText("Time's up! Tap to view results.")
@@ -371,13 +396,44 @@ class WearTimerService : Service() {
         val channel = NotificationChannel(
             CHANNEL_ID,
             "Timer",
-            NotificationManager.IMPORTANCE_HIGH,
+            NotificationManager.IMPORTANCE_MAX,
         ).apply {
             setShowBadge(false)
-            setSound(null, null)
-            enableVibration(false)
+            setSound(
+
+                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM),
+
+                AudioAttributes.Builder()
+
+                    .setUsage(AudioAttributes.USAGE_ALARM)
+
+                    .build()
+
+            )
+            enableVibration(true)
         }
+        val existing = notificationManager.getNotificationChannel(CHANNEL_ID)
+
+        Timber.e(
+
+            "CHANNEL importance=%s vibration=%s sound=%s",
+
+            existing?.importance,
+
+            existing?.shouldVibrate(),
+
+            existing?.sound
+
+        )
         notificationManager.createNotificationChannel(channel)
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+
+        Timber.e("WearTimerService: onTaskRemoved")
+
+        super.onTaskRemoved(rootIntent)
+
     }
 
     override fun onDestroy() {
@@ -397,7 +453,7 @@ class WearTimerService : Service() {
         private const val REQUEST_CODE_CONTENT = 1003
         private const val FINISHED_NOTIFICATION_ID = 1004
         private const val REQUEST_CODE_ALARM_SHOW = 1005
-        private const val CHANNEL_ID = "wear_timer_channel_v2"
+        private const val CHANNEL_ID = "wear_timer_channel_v552"
         private const val SECONDS_IN_MINUTE = 60
         private const val ANDROID_16_SDK = 36
         private const val MAX_DURATION_MS = 25 * 60 * 1000L
