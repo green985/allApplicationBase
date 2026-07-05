@@ -14,7 +14,6 @@ import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.domain.repository.stopwatch.StopwatchRecord
 import com.oyetech.domain.repository.stopwatch.StopwatchRecordRepository
 import com.oyetech.domain.repository.stopwatch.StopwatchSession
-import com.oyetech.domain.repository.stopwatch.StopwatchTag
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.domain.useCases.StopwatchOperationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
@@ -109,10 +108,12 @@ class StopwatchDurationVm(
             val records = stopwatchRecordRepository.getAll().first()
             val text = formatRecordsForExport(records)
             Timber.d("StopwatchDurationVm: export text=\n$text")
-            val clipboard = appContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clipboard =
+                appContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             clipboard.setPrimaryClip(ClipData.newPlainText("stopwatch_records", text))
             withContext(kotlinx.coroutines.Dispatchers.Main) {
-                Toast.makeText(appContext, "Kopyalandı (${records.size} kayıt)", Toast.LENGTH_SHORT).show()
+                Toast.makeText(appContext, "Kopyalandı (${records.size} kayıt)", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
@@ -139,24 +140,16 @@ class StopwatchDurationVm(
             } else {
                 "${r.durationSeconds / SECONDS_IN_MINUTE}dk"
             }
-            val tag = r.tag?.displayLabel() ?: "-"
+            val tag = r.tag?.label ?: "-"
             val status = if (r.status.name == "FINISHED") "Bitti" else "İptal"
             sb.appendLine("[ $dateLabel ] $tag | $dur ($status)")
         }
         return sb.toString().trimEnd()
     }
 
-    private fun StopwatchTag.displayLabel(): String = when (this) {
-        StopwatchTag.KAHVALTI -> "Kahvaltı"
-        StopwatchTag.SIGARA -> "Sigara"
-        StopwatchTag.MEDITASYON -> "Meditasyon"
-        StopwatchTag.YEMEK_HAZIRLAMA -> "Yemek Hazırlama"
-        StopwatchTag.YEMEK_YEME -> "Yemek Yeme"
-        StopwatchTag.DENEME -> "Deneme"
-    }
 
     companion object {
         private const val SECONDS_IN_MINUTE = 60
-        private val DURATION_SECONDS = listOf(10, 60 * 2, 5 * 60, 10 * 60, 15 * 60)
+        private val DURATION_SECONDS = listOf(10, 60 * 2, 5 * 60, 10 * 60, 15 * 60, 20 * 60)
     }
 }

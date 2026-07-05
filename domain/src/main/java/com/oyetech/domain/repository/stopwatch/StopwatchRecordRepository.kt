@@ -16,49 +16,49 @@ interface StopwatchRecordRepository {
 
 enum class StopwatchRecordStatus { FINISHED, CANCELLED }
 
-enum class StopwatchTag {
-    KAHVALTI,
-    OGLE_YEMEGI,
-    AKSAM_YEMEGI,
-    ARA_OGUN,
+enum class StopwatchTag(val label: String) {
+    KAHVALTI("Kahvaltı"),
+    OGLE_YEMEGI("Öğle Yemeği"),
+    AKSAM_YEMEGI("Akşam Yemeği"),
+    ARA_OGUN("Ara Öğün"),
 
-    SIGARA,
-    KAHVE,
-    BIRA,
-    SU_IC,
+    SIGARA("Sigara"),
+    KAHVE("Kahve"),
+    BIRA("Bira"),
+    SU_IC("Su İç"),
 
-    MEDITASYON,
-    NEFES_EGZERSIZI,
-    ESNEME,
-    SCHROTH,
-    POSTUR,
+    MEDITASYON("Meditasyon"),
+    NEFES_EGZERSIZI("Nefes Egzersizi"),
+    ESNEME("Esneme"),
+    SCHROTH("Schroth"),
+    POSTUR("Postür"),
 
-    YUZME,
-    YURUYUS,
-    BARFIKS,
-    DIP,
-    SINAV,
-    CORE,
-    MOBILITE,
+    YUZME("Yüzme"),
+    YURUYUS("Yürüyüş"),
+    BARFIKS("Barfiks"),
+    DIP("Dip"),
+    SINAV("Şınav"),
+    CORE("Core"),
+    MOBILITE("Mobilite"),
 
-    YEMEK_HAZIRLAMA,
-    YEMEK_YEME,
+    YEMEK_HAZIRLAMA("Yemek Hazırlama"),
+    YEMEK_YEME("Yemek Yeme"),
 
-    KITAP_OKUMA,
-    STOACILIK,
-    GUNLUK,
-    DUSUNME,
+    KITAP_OKUMA("Kitap Okuma"),
+    STOACILIK("Stoacılık"),
+    GUNLUK("Günlük"),
+    DUSUNME("Düşünme"),
 
-    YAZILIM,
-    KODLAMA,
-    HATA_AYIKLAMA,
-    PLANLAMA,
+    YAZILIM("Yazılım"),
+    KODLAMA("Kodlama"),
+    HATA_AYIKLAMA("Hata Ayıklama"),
+    PLANLAMA("Planlama"),
 
-    TEMIZLIK,
-    CAFE,
-    DINLENME,
+    TEMIZLIK("Temizlik"),
+    CAFE("Cafe"),
+    DINLENME("Dinlenme"),
 
-    DENEME,
+    DENEME("Deneme"),
 }
 
 /**

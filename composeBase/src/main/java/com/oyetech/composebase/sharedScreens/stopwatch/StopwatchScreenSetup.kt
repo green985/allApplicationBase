@@ -26,7 +26,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oyetech.composebase.projectQuestionsFeature.theme.AppSpacing
 import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
-import com.oyetech.domain.repository.stopwatch.StopwatchTag
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -88,12 +87,7 @@ fun StopwatchScreen(
                         modifier = Modifier.wrapContentWidth(),
                         selected = uiState.selectedTag == tag,
                         onClick = { onEvent(StopwatchEvent.OnTagSelected(tag)) },
-                        label = {
-                            Text(
-                                text = tag.displayLabel(),
-                                maxLines = 1,
-                            )
-                        },
+                        label = { Text(text = tag.label, maxLines = 1) },
                     )
                 }
             }
@@ -133,14 +127,6 @@ fun StopwatchScreen(
     }
 }
 
-private fun StopwatchTag.displayLabel(): String = when (this) {
-    StopwatchTag.KAHVALTI -> "Kahvaltı"
-    StopwatchTag.SIGARA -> "Sigara"
-    StopwatchTag.MEDITASYON -> "Meditasyon"
-    StopwatchTag.YEMEK_HAZIRLAMA -> "Yemek Hazırlama"
-    StopwatchTag.YEMEK_YEME -> "Yemek Yeme"
-    StopwatchTag.DENEME -> "Deneme"
-}
 
 @Preview(showBackground = true)
 @Composable
