@@ -71,7 +71,7 @@ class StopwatchOperationUseCase(
         sessionTag = session.tag
         Timber.d(
             "StopwatchOperationUseCase: startCountdown durationSeconds=${session.durationSeconds} " +
-                "totalSeconds=$totalSeconds tag=$sessionTag"
+                    "totalSeconds=$totalSeconds tag=$sessionTag"
         )
         return buildFlow(totalSeconds)
     }
@@ -121,7 +121,7 @@ class StopwatchOperationUseCase(
         val endedAt = System.currentTimeMillis()
         Timber.d(
             "StopwatchOperationUseCase: recordSession status=$status startedAt=$startEpochMs " +
-                "endedAt=$endedAt tag=$sessionTag"
+                    "endedAt=$endedAt tag=$sessionTag"
         )
         runCatching {
             stopwatchRecordRepository.insertRecord(
@@ -142,13 +142,50 @@ class StopwatchOperationUseCase(
     }
 
     fun suggestedTagsFor(durationSeconds: Int): List<StopwatchTag> = when {
-        durationSeconds == SECONDS_10 -> listOf(StopwatchTag.DENEME)
-        durationSeconds / SECONDS_IN_MINUTE == MINUTES_5 -> listOf(StopwatchTag.KAHVALTI, StopwatchTag.SIGARA)
+        durationSeconds == SECONDS_10 -> listOf(
+            StopwatchTag.DENEME,
+        )
+
+        durationSeconds / SECONDS_IN_MINUTE == MINUTES_2 -> listOf(
+            StopwatchTag.SIGARA,
+            StopwatchTag.SU_IC,
+            StopwatchTag.NEFES_EGZERSIZI,
+            StopwatchTag.POSTUR,
+        )
+
+        durationSeconds / SECONDS_IN_MINUTE == MINUTES_5 -> listOf(
+            StopwatchTag.KAHVE,
+            StopwatchTag.SIGARA,
+            StopwatchTag.ESNEME,
+            StopwatchTag.CORE,
+            StopwatchTag.BARFIKS,
+            StopwatchTag.GUNLUK,
+        )
+
         durationSeconds / SECONDS_IN_MINUTE == MINUTES_10 -> listOf(
             StopwatchTag.MEDITASYON,
+            StopwatchTag.MOBILITE,
             StopwatchTag.YEMEK_HAZIRLAMA,
             StopwatchTag.YEMEK_YEME,
+            StopwatchTag.KITAP_OKUMA,
         )
+
+        durationSeconds / SECONDS_IN_MINUTE == MINUTES_15 -> listOf(
+            StopwatchTag.YUZME,
+            StopwatchTag.YAZILIM,
+            StopwatchTag.PLANLAMA,
+            StopwatchTag.STOACILIK,
+            StopwatchTag.DUSUNME,
+        )
+
+        durationSeconds / SECONDS_IN_MINUTE == MINUTES_20 -> listOf(
+            StopwatchTag.YAZILIM,
+            StopwatchTag.HATA_AYIKLAMA,
+            StopwatchTag.YUZME,
+            StopwatchTag.YURUYUS,
+            StopwatchTag.CAFE,
+        )
+
         else -> emptyList()
     }
 
@@ -170,7 +207,10 @@ class StopwatchOperationUseCase(
         private const val MILLIS_IN_SECOND = 1000L
         private const val TICK_MS = 1000L
         private const val SECONDS_10 = 10
+        private const val MINUTES_2 = 5
         private const val MINUTES_5 = 5
         private const val MINUTES_10 = 10
+        private const val MINUTES_15 = 15
+        private const val MINUTES_20 = 20
     }
 }

@@ -18,10 +18,46 @@ enum class StopwatchRecordStatus { FINISHED, CANCELLED }
 
 enum class StopwatchTag {
     KAHVALTI,
+    OGLE_YEMEGI,
+    AKSAM_YEMEGI,
+    ARA_OGUN,
+
     SIGARA,
+    KAHVE,
+    BIRA,
+    SU_IC,
+
     MEDITASYON,
+    NEFES_EGZERSIZI,
+    ESNEME,
+    SCHROTH,
+    POSTUR,
+
+    YUZME,
+    YURUYUS,
+    BARFIKS,
+    DIP,
+    SINAV,
+    CORE,
+    MOBILITE,
+
     YEMEK_HAZIRLAMA,
     YEMEK_YEME,
+
+    KITAP_OKUMA,
+    STOACILIK,
+    GUNLUK,
+    DUSUNME,
+
+    YAZILIM,
+    KODLAMA,
+    HATA_AYIKLAMA,
+    PLANLAMA,
+
+    TEMIZLIK,
+    CAFE,
+    DINLENME,
+
     DENEME,
 }
 
