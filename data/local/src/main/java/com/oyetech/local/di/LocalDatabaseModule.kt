@@ -12,7 +12,9 @@ object LocalDatabaseModule {
                 get<Context>(),
                 AppDatabase::class.java,
                 "app_database"
-            ).build()
+            )
+                .addMigrations(AppDatabase.MIGRATION_1_2)
+                .build()
         }
         single { get<AppDatabase>().stopwatchRecordDao() }
     }

@@ -22,9 +22,7 @@ import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun StopwatchDurationScreenSetup(
-    modifier: Modifier = Modifier,
-) {
+fun StopwatchDurationScreenSetup() {
     val vm = koinViewModel<StopwatchDurationVm>()
     val uiState by vm.uiState.collectAsStateWithLifecycle()
 
@@ -40,7 +38,6 @@ fun StopwatchDurationScreen(
     uiState: StopwatchDurationUiState,
     onEvent: (StopwatchDurationEvent) -> Unit,
 ) {
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -92,4 +89,3 @@ private fun StopwatchDurationScreenPreview() {
         )
     }
 }
-

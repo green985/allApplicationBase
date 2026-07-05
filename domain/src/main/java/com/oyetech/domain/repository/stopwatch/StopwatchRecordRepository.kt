@@ -8,12 +8,21 @@ interface StopwatchRecordRepository {
         endedAt: Long,
         durationMinutes: Int,
         status: StopwatchRecordStatus,
+        tag: StopwatchTag? = null,
     )
 
     fun getAll(): Flow<List<StopwatchRecord>>
 }
 
 enum class StopwatchRecordStatus { FINISHED, CANCELLED }
+
+enum class StopwatchTag {
+    KAHVALTI,
+    SIGARA,
+    MEDITASYON,
+    YEMEK_HAZIRLAMA,
+    YEMEK_YEME,
+}
 
 /**
  * Model passed when starting a stopwatch session.
@@ -22,6 +31,7 @@ enum class StopwatchRecordStatus { FINISHED, CANCELLED }
  */
 data class StopwatchSession(
     val durationSeconds: Int,
+    val tag: StopwatchTag? = null,
 )
 
 data class StopwatchRecord(
@@ -30,5 +40,6 @@ data class StopwatchRecord(
     val endedAt: Long,
     val durationMinutes: Int,
     val status: StopwatchRecordStatus,
+    val tag: StopwatchTag? = null,
 )
 

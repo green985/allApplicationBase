@@ -3,6 +3,7 @@ package com.oyetech.composebase.sharedScreens.stopwatch
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
+import com.oyetech.domain.repository.stopwatch.StopwatchTag
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.domain.useCases.StopwatchOperationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
@@ -20,6 +21,7 @@ class StopwatchVm(
 
     init {
         Timber.d("StopwatchVm: init")
+        loadSuggestedTags()
         observeTickState()
     }
 
@@ -28,8 +30,23 @@ class StopwatchVm(
         if (event is StopwatchEvent) {
             when (event) {
                 StopwatchEvent.OnCancelClicked -> onCancel()
+                is StopwatchEvent.OnTagSelected -> onTagSelected(event.tag)
             }
         }
+    }
+
+    private fun loadSuggestedTags() {
+        val tags = stopwatchOperationUseCase.currentSuggestedTags()
+        Timber.d("StopwatchVm: loadSuggestedTags tags=$tags")
+        uiState.updateState { copy(suggestedTags = tags) }
+    }
+
+    private fun onTagSelected(tag: StopwatchTag) {
+        val current = uiState.value.selectedTag
+        val next = if (current == tag) null else tag
+        Timber.d("StopwatchVm: onTagSelected tag=$tag next=$next")
+        stopwatchOperationUseCase.updateSessionTag(next)
+        uiState.updateState { copy(selectedTag = next) }
     }
 
     private fun observeTickState() {

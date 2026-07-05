@@ -3,6 +3,7 @@ package com.oyetech.domain.useCases
 import com.oyetech.domain.repository.stopwatch.StopwatchRecordRepository
 import com.oyetech.domain.repository.stopwatch.StopwatchRecordStatus
 import com.oyetech.domain.repository.stopwatch.StopwatchSession
+import com.oyetech.domain.repository.stopwatch.StopwatchTag
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,6 +20,7 @@ data class StopwatchTickResult(
     val isCancelled: Boolean = false,
 )
 
+@Suppress("TooManyFunctions")
 class StopwatchOperationUseCase(
     private val stopwatchRecordRepository: StopwatchRecordRepository,
 ) {
@@ -33,6 +35,7 @@ class StopwatchOperationUseCase(
     private var totalSeconds: Int = 0
     private var durationMinutes: Int = 0
     private var isCancelRequested: Boolean = false
+    private var sessionTag: StopwatchTag? = null
     var isFinishedPendingDisplay: Boolean = false
         private set
 
@@ -61,7 +64,11 @@ class StopwatchOperationUseCase(
         totalSeconds = session.durationSeconds
         durationMinutes = session.durationSeconds / SECONDS_IN_MINUTE
         startEpochMs = System.currentTimeMillis()
-        Timber.d("StopwatchOperationUseCase: startCountdown durationSeconds=${session.durationSeconds} totalSeconds=$totalSeconds")
+        sessionTag = session.tag
+        Timber.d(
+            "StopwatchOperationUseCase: startCountdown durationSeconds=${session.durationSeconds} " +
+                "totalSeconds=$totalSeconds tag=$sessionTag"
+        )
         return buildFlow(totalSeconds)
     }
 
@@ -109,13 +116,17 @@ class StopwatchOperationUseCase(
 
     private suspend fun recordSession(status: StopwatchRecordStatus) {
         val endedAt = System.currentTimeMillis()
-        Timber.d("StopwatchOperationUseCase: recordSession status=$status startedAt=$startEpochMs endedAt=$endedAt")
+        Timber.d(
+            "StopwatchOperationUseCase: recordSession status=$status startedAt=$startEpochMs " +
+                "endedAt=$endedAt tag=$sessionTag"
+        )
         runCatching {
             stopwatchRecordRepository.insertRecord(
                 startedAt = startEpochMs,
                 endedAt = endedAt,
                 durationMinutes = durationMinutes,
                 status = status,
+                tag = sessionTag,
             )
         }.onFailure { Timber.e(it, "StopwatchOperationUseCase: recordSession failed") }
     }
@@ -124,11 +135,27 @@ class StopwatchOperationUseCase(
         startEpochMs = 0L
         totalSeconds = 0
         durationMinutes = 0
+        sessionTag = null
+    }
+
+    fun suggestedTagsFor(durationSeconds: Int): List<StopwatchTag> = when (durationSeconds / SECONDS_IN_MINUTE) {
+        MINUTES_5 -> listOf(StopwatchTag.KAHVALTI, StopwatchTag.SIGARA)
+        MINUTES_10 -> listOf(StopwatchTag.MEDITASYON, StopwatchTag.YEMEK_HAZIRLAMA, StopwatchTag.YEMEK_YEME)
+        else -> emptyList()
+    }
+
+    fun currentSuggestedTags(): List<StopwatchTag> = suggestedTagsFor(totalSeconds)
+
+    fun updateSessionTag(tag: StopwatchTag?) {
+        Timber.d("StopwatchOperationUseCase: updateSessionTag tag=$tag")
+        sessionTag = tag
     }
 
     companion object {
         private const val SECONDS_IN_MINUTE = 60
         private const val MILLIS_IN_SECOND = 1000L
         private const val TICK_MS = 1000L
+        private const val MINUTES_5 = 5
+        private const val MINUTES_10 = 10
     }
 }

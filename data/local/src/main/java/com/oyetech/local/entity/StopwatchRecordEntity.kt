@@ -12,5 +12,6 @@ data class StopwatchRecordEntity(
     val endedAt: Long,          // epoch ms
     val durationMinutes: Int,
     val status: String,         // "FINISHED" | "CANCELLED"
+    val tag: String? = null,    // StopwatchTag name or null
 )
 

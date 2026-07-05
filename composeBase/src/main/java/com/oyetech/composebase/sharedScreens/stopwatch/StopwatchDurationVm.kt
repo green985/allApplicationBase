@@ -124,6 +124,6 @@ class StopwatchDurationVm(
 
     companion object {
         private const val SECONDS_IN_MINUTE = 60
-        private val DURATION_SECONDS = listOf(10, 60, 5 * 60, 10 * 60, 15 * 60)
+        private val DURATION_SECONDS = listOf(10, 60 * 2, 5 * 60, 10 * 60, 15 * 60)
     }
 }
