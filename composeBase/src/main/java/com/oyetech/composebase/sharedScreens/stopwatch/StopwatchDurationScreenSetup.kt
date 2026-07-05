@@ -54,12 +54,6 @@ fun StopwatchDurationScreen(
             style = AppTextStyles.titleSmall,
         )
 
-        if (uiState.selectedDurationSeconds > 0) {
-            Text(
-                text = uiState.formattedTime,
-                style = AppTextStyles.titleLarge,
-            )
-        }
 
         uiState.durations.forEach { item ->
             Button(

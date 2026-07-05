@@ -5,11 +5,7 @@ import com.oyetech.composebase.base.BaseUIState
 import com.oyetech.domain.repository.stopwatch.StopwatchSession
 
 data class StopwatchDurationUiState(
-    val selectedDurationSeconds: Int = 0,
     val durations: List<StopwatchDurationItem> = emptyList(),
-    val remainingMinutes: Int = 0,
-    val remainingSeconds: Int = 0,
-    val formattedTime: String = "00:00",
     val isTimerFinished: Boolean = false,
 ) : BaseUIState()
 

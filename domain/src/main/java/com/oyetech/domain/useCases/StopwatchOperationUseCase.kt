@@ -31,6 +31,9 @@ class StopwatchOperationUseCase(
     private val _onFinished = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     val onFinished = _onFinished.asSharedFlow()
 
+    private val _onFinishedCleared = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val onFinishedCleared = _onFinishedCleared.asSharedFlow()
+
     private var startEpochMs: Long = 0L
     private var totalSeconds: Int = 0
     private var durationMinutes: Int = 0
@@ -53,6 +56,7 @@ class StopwatchOperationUseCase(
     fun clearFinishedPendingDisplay() {
         Timber.d("StopwatchOperationUseCase: clearFinishedPendingDisplay")
         isFinishedPendingDisplay = false
+        _onFinishedCleared.tryEmit(Unit)
     }
 
     fun cancelCountdown() {

@@ -100,18 +100,35 @@ fun StopwatchScreen(
         }
 
         Spacer(modifier = Modifier.height(AppSpacing.md))
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { onEvent(StopwatchEvent.OnCancelClicked) },
-            contentPadding = PaddingValues(
-                horizontal = AppSpacing.sm,
-                vertical = AppSpacing.xs,
-            ),
-        ) {
-            Text(
-                text = "Cancel",
-                style = AppTextStyles.bodySecondary,
-            )
+        if (uiState.isFinished) {
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { onEvent(StopwatchEvent.OnFinishClicked) },
+                enabled = uiState.selectedTag != null,
+                contentPadding = PaddingValues(
+                    horizontal = AppSpacing.sm,
+                    vertical = AppSpacing.xs,
+                ),
+            ) {
+                Text(
+                    text = "Bitir",
+                    style = AppTextStyles.bodySecondary,
+                )
+            }
+        } else {
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { onEvent(StopwatchEvent.OnCancelClicked) },
+                contentPadding = PaddingValues(
+                    horizontal = AppSpacing.sm,
+                    vertical = AppSpacing.xs,
+                ),
+            ) {
+                Text(
+                    text = "Cancel",
+                    style = AppTextStyles.bodySecondary,
+                )
+            }
         }
     }
 }

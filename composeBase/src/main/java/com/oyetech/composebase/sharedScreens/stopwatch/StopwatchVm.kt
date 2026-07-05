@@ -29,6 +29,7 @@ class StopwatchVm(
         if (event is StopwatchEvent) {
             when (event) {
                 StopwatchEvent.OnCancelClicked -> onCancel()
+                StopwatchEvent.OnFinishClicked -> onFinish()
                 is StopwatchEvent.OnTagSelected -> onTagSelected(event.tag)
             }
         }
@@ -50,6 +51,9 @@ class StopwatchVm(
                         "fin=${tick.isFinished} cancelled=${tick.isCancelled}"
                 )
                 if (tick.isCancelled) return@collect
+                if (tick.isFinished) {
+                    uiState.updateState { copy(isFinished = true) }
+                }
                 if (tick.remainingSeconds > 0) {
                     val tags = stopwatchOperationUseCase.currentSuggestedTags()
                     if (uiState.value.suggestedTags != tags) {
@@ -67,6 +71,12 @@ class StopwatchVm(
                 }
             }
         }
+    }
+
+    private fun onFinish() {
+        Timber.d("StopwatchVm: onFinish")
+        stopwatchOperationUseCase.clearFinishedPendingDisplay()
+        navigationUseCase.goBack()
     }
 
     private fun onCancel() {
