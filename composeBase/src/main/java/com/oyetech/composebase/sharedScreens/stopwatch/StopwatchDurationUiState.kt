@@ -16,5 +16,6 @@ data class StopwatchDurationItem(
 
 sealed class StopwatchDurationEvent : BaseEvent() {
     data class OnDurationSelected(val session: StopwatchSession) : StopwatchDurationEvent()
+    data object OnExportClicked : StopwatchDurationEvent()
 }
 

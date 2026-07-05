@@ -1,25 +1,38 @@
 package com.oyetech.composebase.sharedScreens.stopwatch
 
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.navigator.AppRoute
+import com.oyetech.domain.repository.stopwatch.StopwatchRecord
+import com.oyetech.domain.repository.stopwatch.StopwatchRecordRepository
 import com.oyetech.domain.repository.stopwatch.StopwatchSession
+import com.oyetech.domain.repository.stopwatch.StopwatchTag
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.domain.useCases.StopwatchOperationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
+@Suppress("TooManyFunctions")
 class StopwatchDurationVm(
     appDispatchers: AppDispatchers,
     private val navigationUseCase: NavigationUseCase,
     private val stopwatchOperationUseCase: StopwatchOperationUseCase,
+    private val stopwatchRecordRepository: StopwatchRecordRepository,
     private val appContext: Context,
 ) : BaseViewModel(appDispatchers) {
 
@@ -58,6 +71,7 @@ class StopwatchDurationVm(
         if (event is StopwatchDurationEvent) {
             when (event) {
                 is StopwatchDurationEvent.OnDurationSelected -> onDurationSelected(event.session)
+                StopwatchDurationEvent.OnExportClicked -> onExportClicked()
             }
         }
     }
@@ -86,6 +100,59 @@ class StopwatchDurationVm(
                 uiState.updateState { copy(isTimerFinished = true) }
             }
         }
+    }
+
+    @SuppressLint("NewApi")
+    private fun onExportClicked() {
+        Timber.d("StopwatchDurationVm: onExportClicked")
+        viewModelScope.launch(getDispatcherIo()) {
+            val records = stopwatchRecordRepository.getAll().first()
+            val text = formatRecordsForExport(records)
+            Timber.d("StopwatchDurationVm: export text=\n$text")
+            val clipboard = appContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            clipboard.setPrimaryClip(ClipData.newPlainText("stopwatch_records", text))
+            withContext(kotlinx.coroutines.Dispatchers.Main) {
+                Toast.makeText(appContext, "Kopyalandı (${records.size} kayıt)", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun formatRecordsForExport(records: List<StopwatchRecord>): String {
+        if (records.isEmpty()) return "Kayıt yok."
+        val todayFmt = SimpleDateFormat("h:mm a", Locale.getDefault())
+        val otherFmt = SimpleDateFormat("d MMM h:mm a", Locale.getDefault())
+        val todayStart = java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, 0)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }.timeInMillis
+        val sb = StringBuilder()
+        records.forEach { r ->
+            val dateLabel = if (r.startedAt >= todayStart) {
+                "Today ${todayFmt.format(Date(r.startedAt))}"
+            } else {
+                otherFmt.format(Date(r.startedAt))
+            }
+            val dur = if (r.durationSeconds < SECONDS_IN_MINUTE) {
+                "${r.durationSeconds}sn"
+            } else {
+                "${r.durationSeconds / SECONDS_IN_MINUTE}dk"
+            }
+            val tag = r.tag?.displayLabel() ?: "-"
+            val status = if (r.status.name == "FINISHED") "Bitti" else "İptal"
+            sb.appendLine("[ $dateLabel ] $tag | $dur ($status)")
+        }
+        return sb.toString().trimEnd()
+    }
+
+    private fun StopwatchTag.displayLabel(): String = when (this) {
+        StopwatchTag.KAHVALTI -> "Kahvaltı"
+        StopwatchTag.SIGARA -> "Sigara"
+        StopwatchTag.MEDITASYON -> "Meditasyon"
+        StopwatchTag.YEMEK_HAZIRLAMA -> "Yemek Hazırlama"
+        StopwatchTag.YEMEK_YEME -> "Yemek Yeme"
+        StopwatchTag.DENEME -> "Deneme"
     }
 
     companion object {
