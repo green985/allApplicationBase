@@ -27,6 +27,9 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
+import androidx.wear.compose.material3.AppScaffold
+import androidx.wear.compose.material3.AppScaffold
+import androidx.wear.compose.material3.TimeText
 import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.domain.useCases.StopwatchOperationUseCase
@@ -82,12 +85,16 @@ class WearMainActivity : ComponentActivity() {
                 }
             }
 
-            NavDisplay(
-                backStack = backStack,
-                entryProvider = entryProvider {
-                    wearAppNavigation()
-                }
-            )
+            AppScaffold(
+                timeText = { TimeText() },
+            ) {
+                NavDisplay(
+                    backStack = backStack,
+                    entryProvider = entryProvider {
+                        wearAppNavigation()
+                    }
+                )
+            }
         }
 
     }
