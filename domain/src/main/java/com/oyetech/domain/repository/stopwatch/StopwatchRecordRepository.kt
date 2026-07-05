@@ -6,7 +6,7 @@ interface StopwatchRecordRepository {
     suspend fun insertRecord(
         startedAt: Long,
         endedAt: Long,
-        durationMinutes: Int,
+        durationSeconds: Int,
         status: StopwatchRecordStatus,
         tag: StopwatchTag? = null,
     )
@@ -39,7 +39,7 @@ data class StopwatchRecord(
     val id: Long,
     val startedAt: Long,
     val endedAt: Long,
-    val durationMinutes: Int,
+    val durationSeconds: Int,
     val status: StopwatchRecordStatus,
     val tag: StopwatchTag? = null,
 )

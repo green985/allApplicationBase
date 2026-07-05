@@ -16,7 +16,7 @@ class StopwatchRecordRepositoryImpl(
     override suspend fun insertRecord(
         startedAt: Long,
         endedAt: Long,
-        durationMinutes: Int,
+        durationSeconds: Int,
         status: StopwatchRecordStatus,
         tag: StopwatchTag?,
     ) {
@@ -24,7 +24,7 @@ class StopwatchRecordRepositoryImpl(
             StopwatchRecordEntity(
                 startedAt = startedAt,
                 endedAt = endedAt,
-                durationMinutes = durationMinutes,
+                durationSeconds = durationSeconds,
                 status = status.name,
                 tag = tag?.name,
             )
@@ -38,7 +38,7 @@ class StopwatchRecordRepositoryImpl(
                     id = entity.id,
                     startedAt = entity.startedAt,
                     endedAt = entity.endedAt,
-                    durationMinutes = entity.durationMinutes,
+                    durationSeconds = entity.durationSeconds,
                     status = StopwatchRecordStatus.valueOf(entity.status),
                     tag = entity.tag?.let { runCatching { StopwatchTag.valueOf(it) }.getOrNull() },
                 )

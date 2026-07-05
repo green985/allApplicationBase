@@ -36,7 +36,7 @@ class StopwatchOperationUseCase(
 
     private var startEpochMs: Long = 0L
     private var totalSeconds: Int = 0
-    private var durationMinutes: Int = 0
+    private var durationSeconds: Int = 0
     private var isCancelRequested: Boolean = false
     private var sessionTag: StopwatchTag? = null
     var isFinishedPendingDisplay: Boolean = false
@@ -66,7 +66,7 @@ class StopwatchOperationUseCase(
 
     fun startCountdown(session: StopwatchSession): Flow<StopwatchTickResult> {
         totalSeconds = session.durationSeconds
-        durationMinutes = session.durationSeconds / SECONDS_IN_MINUTE
+        durationSeconds = session.durationSeconds
         startEpochMs = System.currentTimeMillis()
         sessionTag = session.tag
         Timber.d(
@@ -110,8 +110,7 @@ class StopwatchOperationUseCase(
             if (remaining == 0) {
                 Timber.d("StopwatchOperationUseCase: emitting onFinished")
                 _onFinished.tryEmit(Unit)
-                recordSession(StopwatchRecordStatus.FINISHED)
-                resetSession()
+                // Recording deferred — caller must invoke finishSession() after tag selection
             }
             if (remaining > 0) delay(TICK_MS)
         }
@@ -128,7 +127,7 @@ class StopwatchOperationUseCase(
             stopwatchRecordRepository.insertRecord(
                 startedAt = startEpochMs,
                 endedAt = endedAt,
-                durationMinutes = durationMinutes,
+                durationSeconds = durationSeconds,
                 status = status,
                 tag = sessionTag,
             )
@@ -138,7 +137,7 @@ class StopwatchOperationUseCase(
     private fun resetSession() {
         startEpochMs = 0L
         totalSeconds = 0
-        durationMinutes = 0
+        durationSeconds = 0
         sessionTag = null
     }
 
@@ -158,6 +157,12 @@ class StopwatchOperationUseCase(
     fun updateSessionTag(tag: StopwatchTag?) {
         Timber.d("StopwatchOperationUseCase: updateSessionTag tag=$tag")
         sessionTag = tag
+    }
+
+    suspend fun finishSession() {
+        Timber.d("StopwatchOperationUseCase: finishSession tag=$sessionTag")
+        recordSession(StopwatchRecordStatus.FINISHED)
+        resetSession()
     }
 
     companion object {

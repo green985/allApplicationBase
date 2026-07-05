@@ -75,8 +75,11 @@ class StopwatchVm(
 
     private fun onFinish() {
         Timber.d("StopwatchVm: onFinish")
-        stopwatchOperationUseCase.clearFinishedPendingDisplay()
-        navigationUseCase.goBack()
+        viewModelScope.launch(getDispatcherIo()) {
+            stopwatchOperationUseCase.finishSession()
+            stopwatchOperationUseCase.clearFinishedPendingDisplay()
+            navigationUseCase.goBack()
+        }
     }
 
     private fun onCancel() {

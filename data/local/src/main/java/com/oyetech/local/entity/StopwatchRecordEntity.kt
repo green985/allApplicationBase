@@ -10,7 +10,7 @@ data class StopwatchRecordEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val startedAt: Long,        // epoch ms
     val endedAt: Long,          // epoch ms
-    val durationMinutes: Int,
+    val durationSeconds: Int,
     val status: String,         // "FINISHED" | "CANCELLED"
     val tag: String? = null,    // StopwatchTag name or null
 )
