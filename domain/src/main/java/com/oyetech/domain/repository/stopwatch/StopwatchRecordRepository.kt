@@ -22,6 +22,7 @@ enum class StopwatchTag {
     MEDITASYON,
     YEMEK_HAZIRLAMA,
     YEMEK_YEME,
+    DENEME,
 }
 
 /**

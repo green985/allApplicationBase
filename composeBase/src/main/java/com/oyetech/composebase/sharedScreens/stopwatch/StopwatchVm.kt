@@ -21,7 +21,6 @@ class StopwatchVm(
 
     init {
         Timber.d("StopwatchVm: init")
-        loadSuggestedTags()
         observeTickState()
     }
 
@@ -35,12 +34,6 @@ class StopwatchVm(
         }
     }
 
-    private fun loadSuggestedTags() {
-        val tags = stopwatchOperationUseCase.currentSuggestedTags()
-        Timber.d("StopwatchVm: loadSuggestedTags tags=$tags")
-        uiState.updateState { copy(suggestedTags = tags) }
-    }
-
     private fun onTagSelected(tag: StopwatchTag) {
         val current = uiState.value.selectedTag
         val next = if (current == tag) null else tag
@@ -52,13 +45,24 @@ class StopwatchVm(
     private fun observeTickState() {
         viewModelScope.launch(getDispatcherIo()) {
             stopwatchOperationUseCase.tickState.collect { tick ->
-                Timber.d("StopwatchVm: tick remaining=${tick.remainingSeconds} fin=${tick.isFinished} cancelled=${tick.isCancelled}")
+                Timber.d(
+                    "StopwatchVm: tick remaining=${tick.remainingSeconds} " +
+                        "fin=${tick.isFinished} cancelled=${tick.isCancelled}"
+                )
                 if (tick.isCancelled) return@collect
+                if (tick.remainingSeconds > 0) {
+                    val tags = stopwatchOperationUseCase.currentSuggestedTags()
+                    if (uiState.value.suggestedTags != tags) {
+                        Timber.d("StopwatchVm: suggestedTags changed — updating tags=$tags")
+                        uiState.updateState { copy(suggestedTags = tags, selectedTag = null) }
+                    }
+                }
                 val mins = tick.remainingSeconds / SECONDS_IN_MINUTE
                 val secs = tick.remainingSeconds % SECONDS_IN_MINUTE
                 uiState.updateState {
                     copy(
-                        formattedTime = "${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}",
+                        formattedTime = "${mins.toString().padStart(2, '0')}:" +
+                            secs.toString().padStart(2, '0'),
                     )
                 }
             }

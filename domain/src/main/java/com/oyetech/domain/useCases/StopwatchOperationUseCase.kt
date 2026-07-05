@@ -138,9 +138,14 @@ class StopwatchOperationUseCase(
         sessionTag = null
     }
 
-    fun suggestedTagsFor(durationSeconds: Int): List<StopwatchTag> = when (durationSeconds / SECONDS_IN_MINUTE) {
-        MINUTES_5 -> listOf(StopwatchTag.KAHVALTI, StopwatchTag.SIGARA)
-        MINUTES_10 -> listOf(StopwatchTag.MEDITASYON, StopwatchTag.YEMEK_HAZIRLAMA, StopwatchTag.YEMEK_YEME)
+    fun suggestedTagsFor(durationSeconds: Int): List<StopwatchTag> = when {
+        durationSeconds == SECONDS_10 -> listOf(StopwatchTag.DENEME)
+        durationSeconds / SECONDS_IN_MINUTE == MINUTES_5 -> listOf(StopwatchTag.KAHVALTI, StopwatchTag.SIGARA)
+        durationSeconds / SECONDS_IN_MINUTE == MINUTES_10 -> listOf(
+            StopwatchTag.MEDITASYON,
+            StopwatchTag.YEMEK_HAZIRLAMA,
+            StopwatchTag.YEMEK_YEME,
+        )
         else -> emptyList()
     }
 
@@ -155,6 +160,7 @@ class StopwatchOperationUseCase(
         private const val SECONDS_IN_MINUTE = 60
         private const val MILLIS_IN_SECOND = 1000L
         private const val TICK_MS = 1000L
+        private const val SECONDS_10 = 10
         private const val MINUTES_5 = 5
         private const val MINUTES_10 = 10
     }

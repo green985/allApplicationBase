@@ -1,6 +1,7 @@
 package com.oyetech.composebase.sharedScreens.stopwatch
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -41,6 +43,7 @@ fun StopwatchScreenSetup(
     )
 }
 
+@Suppress("LongMethod")
 @Composable
 fun StopwatchScreen(
     modifier: Modifier = Modifier,
@@ -69,15 +72,28 @@ fun StopwatchScreen(
                 style = AppTextStyles.label,
             )
             Spacer(modifier = Modifier.height(AppSpacing.xs))
+            val orderedTags = if (uiState.selectedTag != null) {
+                listOf(uiState.selectedTag) + uiState.suggestedTags.filter { it != uiState.selectedTag }
+            } else {
+                uiState.suggestedTags
+            }
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(AppSpacing.sm),
             ) {
-                uiState.suggestedTags.forEach { tag ->
+                orderedTags.forEach { tag ->
                     FilterChip(
+                        modifier = Modifier.wrapContentWidth(),
                         selected = uiState.selectedTag == tag,
                         onClick = { onEvent(StopwatchEvent.OnTagSelected(tag)) },
-                        label = { Text(text = tag.displayLabel()) },
+                        label = {
+                            Text(
+                                text = tag.displayLabel(),
+                                maxLines = 1,
+                            )
+                        },
                     )
                 }
             }
@@ -106,6 +122,7 @@ private fun StopwatchTag.displayLabel(): String = when (this) {
     StopwatchTag.MEDITASYON -> "Meditasyon"
     StopwatchTag.YEMEK_HAZIRLAMA -> "Yemek Hazırlama"
     StopwatchTag.YEMEK_YEME -> "Yemek Yeme"
+    StopwatchTag.DENEME -> "Deneme"
 }
 
 @Preview(showBackground = true)
