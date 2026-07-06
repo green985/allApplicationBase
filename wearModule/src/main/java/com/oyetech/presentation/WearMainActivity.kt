@@ -19,18 +19,23 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.wear.compose.material3.AppScaffold
-import androidx.wear.compose.material3.AppScaffold
 import androidx.wear.compose.material3.TimeText
 import com.oyetech.composebase.navigator.AppRoute
+import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
+import com.oyetech.composebase.projectQuestionsFeature.theme.RadioAppTheme
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.domain.useCases.StopwatchOperationUseCase
 import com.oyetech.watchAppFeatures.wearAppNavigation
@@ -85,15 +90,23 @@ class WearMainActivity : ComponentActivity() {
                 }
             }
 
-            AppScaffold(
-                timeText = { TimeText() },
-            ) {
-                NavDisplay(
-                    backStack = backStack,
-                    entryProvider = entryProvider {
-                        wearAppNavigation()
+            RadioAppTheme {
+                AppScaffold(
+                    timeText = { TimeText() },
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(AppColors.background),
+                    ) {
+                        NavDisplay(
+                            backStack = backStack,
+                            entryProvider = entryProvider {
+                                wearAppNavigation()
+                            }
+                        )
                     }
-                )
+                }
             }
         }
 

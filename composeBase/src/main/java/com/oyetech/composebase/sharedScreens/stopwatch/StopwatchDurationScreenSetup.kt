@@ -44,8 +44,8 @@ fun StopwatchDurationScreen(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(
-                horizontal = AppSpacing.xxl,
-                vertical = AppSpacing.sm
+                top = AppSpacing.xxxl,
+                bottom = AppSpacing.sm,
             ),
         verticalArrangement = Arrangement.spacedBy(AppSpacing.xs),
         horizontalAlignment = Alignment.CenterHorizontally,
