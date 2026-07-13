@@ -388,7 +388,10 @@ class WearTimerService : Service() {
     @SuppressLint("MissingPermission")
     private fun vibrate() {
         val vibrator = getSystemService(Vibrator::class.java) ?: return
-        val effect = VibrationEffect.createWaveform(VIBRATION_PATTERN, VIBRATION_AMPLITUDES, -1)
+        // Do NOT pass amplitude array — most Wear OS hardware reports hasAmplitudeControl()=false
+        // and silently ignores or aborts the effect when amplitudes are provided.
+        // The no-amplitude overload (repeat=-1 means play once) uses full power on all devices.
+        val effect = VibrationEffect.createWaveform(VIBRATION_PATTERN, -1)
         vibrator.vibrate(effect)
     }
 
@@ -459,50 +462,6 @@ class WearTimerService : Service() {
         private const val ALARM_DELAY_MS = 1000L
         private const val STOP_DELAY_MS = 2000L
         private val VIBRATION_PATTERN =
-            longArrayOf(
-                0,
-                900,
-                200,
-                900,
-                200,
-                900,
-                200,
-                900,
-                200,
-                900,
-                200,
-                900,
-                200,
-                900,
-                200,
-                900,
-                200,
-                900,
-                200,
-                900
-            )
-        private val VIBRATION_AMPLITUDES =
-            intArrayOf(
-                0,
-                255,
-                0,
-                255,
-                0,
-                255,
-                0,
-                255,
-                0,
-                255,
-                0,
-                255,
-                0,
-                255,
-                0,
-                255,
-                0,
-                255,
-                0,
-                255
-            )
+            longArrayOf(0, 900, 200, 900, 200, 900, 200, 900, 200, 900, 200, 900, 200, 900, 200, 900, 200, 900, 200, 900)
     }
 }
