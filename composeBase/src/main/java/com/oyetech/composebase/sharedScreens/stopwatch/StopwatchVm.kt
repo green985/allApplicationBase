@@ -7,8 +7,10 @@ import com.oyetech.domain.repository.stopwatch.StopwatchTag
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.domain.useCases.StopwatchOperationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class StopwatchVm(
@@ -73,12 +75,18 @@ class StopwatchVm(
         }
     }
 
+    private var isFinishing = false
+
     private fun onFinish() {
+        if (isFinishing) return
+        isFinishing = true
         Timber.d("StopwatchVm: onFinish")
         viewModelScope.launch(getDispatcherIo()) {
             stopwatchOperationUseCase.finishSession()
             stopwatchOperationUseCase.clearFinishedPendingDisplay()
-            navigationUseCase.goBack()
+            withContext(Dispatchers.Main) {
+                navigationUseCase.goBack()
+            }
         }
     }
 
