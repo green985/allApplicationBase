@@ -65,6 +65,7 @@ class StopwatchOperationUseCase(
     }
 
     fun startCountdown(session: StopwatchSession): Flow<StopwatchTickResult> {
+        _tickState.value = StopwatchTickResult()
         totalSeconds = session.durationSeconds
         durationSeconds = session.durationSeconds
         startEpochMs = System.currentTimeMillis()
@@ -207,7 +208,7 @@ class StopwatchOperationUseCase(
         private const val MILLIS_IN_SECOND = 1000L
         private const val TICK_MS = 1000L
         private const val SECONDS_10 = 10
-        private const val MINUTES_2 = 5
+        private const val MINUTES_2 = 2
         private const val MINUTES_5 = 5
         private const val MINUTES_10 = 10
         private const val MINUTES_15 = 15
