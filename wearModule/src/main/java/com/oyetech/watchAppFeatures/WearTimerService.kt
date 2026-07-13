@@ -120,9 +120,11 @@ class WearTimerService : Service() {
             // alarm actually fires and opens the activity from the background — no user-granted
             // full-screen-intent / overlay permission required (neither exists on Wear OS).
 //            scheduleAlarmClock()
-            // Detach the foreground notification BEFORE posting the finished one so stopSelf()
-            // does not remove it. The notification is shown for visibility / as a tap target.
-            stopForeground(STOP_FOREGROUND_DETACH)
+            // Remove the tick foreground notification, then post the finished notification.
+            // STOP_FOREGROUND_REMOVE cancels the ongoing tick notification (NOTIFICATION_ID).
+            // The finished notification (FINISHED_NOTIFICATION_ID) is posted after this call
+            // so it is not affected by stopSelf().
+            stopForeground(STOP_FOREGROUND_REMOVE)
             Timber.e("POSTING_FINISHED_NOTIFICATION")
             Timber.e(
                 "POSTING_FINISHED_NOTIFICATION canUseFsi=%s",
@@ -332,15 +334,13 @@ class WearTimerService : Service() {
     private fun buildFinishedNotification(): Notification {
         Timber.e("BUILD_FINISHED_NOTIFICATION")
         val contentPendingIntent = buildFinishedActivityPendingIntent(REQUEST_CODE_CONTENT)
-        // Use REQUEST_CODE_ALARM_LAUNCH so the full-screen intent uses its own token, separate from
-        // the content tap, both opening the dedicated alarm screen TimerFinishedActivity.
         val fullScreenPendingIntent = buildFinishedActivityPendingIntent(REQUEST_CODE_ALARM_LAUNCH)
         Timber.e(
             "BUILD_FINISHED_NOTIFICATION contentPi=%s fullScreenPi=%s",
             contentPendingIntent,
             fullScreenPendingIntent
         )
-        return NotificationCompat.Builder(this, CHANNEL_ID)
+        return NotificationCompat.Builder(this, FINISHED_CHANNEL_ID)
             .setContentTitle("Timer finished")
             .setContentText("Time's up! Tap to view results.")
             .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
@@ -355,7 +355,7 @@ class WearTimerService : Service() {
 
     private fun buildTickNotification(text: String): Notification {
         val pendingIntent = buildTickContentPendingIntent()
-        return NotificationCompat.Builder(this, CHANNEL_ID)
+        return NotificationCompat.Builder(this, TICK_CHANNEL_ID)
             .setContentTitle("Stopwatch")
             .setContentText(text)
             .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
@@ -393,39 +393,37 @@ class WearTimerService : Service() {
     }
 
     private fun createNotificationChannel() {
-        val channel = NotificationChannel(
-            CHANNEL_ID,
-            "Timer",
-            NotificationManager.IMPORTANCE_MAX,
+        // Tick channel: no sound, no vibration — the foreground countdown notification
+        // should not buzz on every update (setOnlyAlertOnce handles the first alert).
+        val tickChannel = NotificationChannel(
+            TICK_CHANNEL_ID,
+            "Timer Countdown",
+            NotificationManager.IMPORTANCE_HIGH,
         ).apply {
             setShowBadge(false)
-            setSound(
-
-                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM),
-
-                AudioAttributes.Builder()
-
-                    .setUsage(AudioAttributes.USAGE_ALARM)
-
-                    .build()
-
-            )
-            enableVibration(true)
+            setSound(null, null)
+            enableVibration(false)
         }
-        val existing = notificationManager.getNotificationChannel(CHANNEL_ID)
+        notificationManager.createNotificationChannel(tickChannel)
 
-        Timber.e(
-
-            "CHANNEL importance=%s vibration=%s sound=%s",
-
-            existing?.importance,
-
-            existing?.shouldVibrate(),
-
-            existing?.sound
-
-        )
-        notificationManager.createNotificationChannel(channel)
+        // Finished channel: sound only, vibration disabled at channel level so the
+        // explicit vibrator.vibrate() call in vibrate() runs without the channel
+        // cancelling it with a short default buzz.
+        val finishedChannel = NotificationChannel(
+            FINISHED_CHANNEL_ID,
+            "Timer Finished",
+            NotificationManager.IMPORTANCE_HIGH,
+        ).apply {
+            setShowBadge(false)
+            enableVibration(false)
+            setSound(
+                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM),
+                AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_ALARM)
+                    .build()
+            )
+        }
+        notificationManager.createNotificationChannel(finishedChannel)
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
@@ -453,13 +451,58 @@ class WearTimerService : Service() {
         private const val REQUEST_CODE_CONTENT = 1003
         private const val FINISHED_NOTIFICATION_ID = 1004
         private const val REQUEST_CODE_ALARM_SHOW = 1005
-        private const val CHANNEL_ID = "wear_timer_channel_v552"
+        private const val TICK_CHANNEL_ID = "wear_timer_tick_v1"
+        private const val FINISHED_CHANNEL_ID = "wear_timer_finished_v1"
         private const val SECONDS_IN_MINUTE = 60
         private const val ANDROID_16_SDK = 36
         private const val MAX_DURATION_MS = 25 * 60 * 1000L
         private const val ALARM_DELAY_MS = 1000L
         private const val STOP_DELAY_MS = 2000L
-        private val VIBRATION_PATTERN = longArrayOf(0, 300, 200, 300, 200, 500)
-        private val VIBRATION_AMPLITUDES = intArrayOf(0, 255, 0, 255, 0, 255)
+        private val VIBRATION_PATTERN =
+            longArrayOf(
+                0,
+                900,
+                200,
+                900,
+                200,
+                900,
+                200,
+                900,
+                200,
+                900,
+                200,
+                900,
+                200,
+                900,
+                200,
+                900,
+                200,
+                900,
+                200,
+                900
+            )
+        private val VIBRATION_AMPLITUDES =
+            intArrayOf(
+                0,
+                255,
+                0,
+                255,
+                0,
+                255,
+                0,
+                255,
+                0,
+                255,
+                0,
+                255,
+                0,
+                255,
+                0,
+                255,
+                0,
+                255,
+                0,
+                255
+            )
     }
 }

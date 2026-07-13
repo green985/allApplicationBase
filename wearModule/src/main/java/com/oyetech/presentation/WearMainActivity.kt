@@ -140,7 +140,12 @@ class WearMainActivity : ComponentActivity() {
             }"
         )
         restoreFinishedFlagIfNeeded(intent)
-        if (stopwatchOperationUseCase.isFinishedPendingDisplay) {
+        // Guard: if tickState.isFinished is already true, StopwatchVm is already showing the
+        // finished state on StopwatchScreen. Navigating again would push a duplicate entry,
+        // requiring the user to press "Bitir" twice to get back to the duration list.
+        if (stopwatchOperationUseCase.isFinishedPendingDisplay &&
+            !stopwatchOperationUseCase.tickState.value.isFinished
+        ) {
             navigationUseCase.navigateTo(AppRoute.StopwatchScreen())
         }
     }
