@@ -21,6 +21,7 @@ import android.os.PowerManager
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.core.app.NotificationCompat
+import androidx.wear.tiles.TileService
 import com.oyetech.domain.repository.stopwatch.StopwatchSession
 import com.oyetech.domain.useCases.StopwatchOperationUseCase
 import com.oyetech.domain.useCases.StopwatchTickResult
@@ -96,6 +97,7 @@ class WearTimerService : Service() {
     ) {
         if (isCancelled) {
             Timber.d("WearTimerService: timer cancelled — stopping")
+            requestTileUpdate()
             stopSelf()
             return
         }
@@ -135,11 +137,19 @@ class WearTimerService : Service() {
                 }
             )
             notificationManager.notify(FINISHED_NOTIFICATION_ID, buildFinishedNotification())
+            requestTileUpdate()
             // Delay teardown so AlarmManager can fire the launch before the process is destroyed.
             mainHandler.postDelayed({ stopSelf() }, STOP_DELAY_MS)
         } else {
             notificationManager.notify(NOTIFICATION_ID, buildTickNotification(formatted))
         }
+    }
+
+    private fun requestTileUpdate() {
+        runCatching {
+            TileService.getUpdater(this)
+                .requestUpdate(StopwatchDurationTileService::class.java)
+        }.onFailure { Timber.w(it, "WearTimerService: requestTileUpdate failed") }
     }
 
     /**
