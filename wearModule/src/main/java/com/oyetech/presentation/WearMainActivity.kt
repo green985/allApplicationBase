@@ -1,8 +1,3 @@
-/* While this template provides a good starting point for using Wear Compose, you can always
- * take a look at https://github.com/android/wear-os-samples/tree/main/ComposeStarter to find the
- * most up to date changes to the libraries and their usages.
- */
-
 package com.oyetech.presentation
 
 import android.Manifest
@@ -123,19 +118,6 @@ class WearMainActivity : ComponentActivity() {
         }
 
     }
-
-    override fun onResume() {
-
-        super.onResume()
-
-        if (Settings.canDrawOverlays(this)) {
-
-            Timber.d("Overlay permission granted")
-
-        }
-
-    }
-
 
     /**
      * Called when activity is already alive and AlarmManager fires or user taps notification.

@@ -2,7 +2,6 @@ package com.oyetech.watchAppFeatures
 
 import android.annotation.SuppressLint
 import android.app.ActivityOptions
-import android.app.AlarmManager
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -107,38 +106,14 @@ class WearTimerService : Service() {
         Timber.d("WearTimerService: tick remaining=$remainingSeconds fmt=$formatted fin=$isFinished")
 
         if (isFinished) {
-            Timber.d("WearTimerService: timer finished — launching activity via AlarmManager")
+            Timber.d("WearTimerService: timer finished")
             logBalDeviceState()
             stopwatchOperationUseCase.markFinishedPendingDisplay()
             persistFinishedFlag()
             vibrate()
-            // PRIMARY launch path: send the activity PendingIntent ourselves with the SENDER-side
-            // BAL opt-in (setPendingIntentBackgroundActivityStartMode). This sets
-            // balAllowedByPiSender on the send, which the creator-side opt-in alone cannot do.
-//            launchViaSenderBal()
-            // SECONDARY launch path: AlarmManager.setAlarmClock() is BAL-exempt on all Android
-            // versions (sender = AlarmManagerService, an allowlisted component). With the
-            // USE_EXACT_ALARM permission auto-granted, canScheduleExactAlarms() is true so the
-            // alarm actually fires and opens the activity from the background — no user-granted
-            // full-screen-intent / overlay permission required (neither exists on Wear OS).
-//            scheduleAlarmClock()
-            // Remove the tick foreground notification, then post the finished notification.
-            // STOP_FOREGROUND_REMOVE cancels the ongoing tick notification (NOTIFICATION_ID).
-            // The finished notification (FINISHED_NOTIFICATION_ID) is posted after this call
-            // so it is not affected by stopSelf().
             stopForeground(STOP_FOREGROUND_REMOVE)
-            Timber.e("POSTING_FINISHED_NOTIFICATION")
-            Timber.e(
-                "POSTING_FINISHED_NOTIFICATION canUseFsi=%s",
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                    notificationManager.canUseFullScreenIntent()
-                } else {
-                    true
-                }
-            )
             notificationManager.notify(FINISHED_NOTIFICATION_ID, buildFinishedNotification())
             requestTileUpdate()
-            // Delay teardown so AlarmManager can fire the launch before the process is destroyed.
             mainHandler.postDelayed({ stopSelf() }, STOP_DELAY_MS)
         } else {
             notificationManager.notify(NOTIFICATION_ID, buildTickNotification(formatted))
@@ -155,34 +130,17 @@ class WearTimerService : Service() {
     /**
      * PendingIntent that opens the dedicated alarm screen [TimerFinishedActivity].
      *
-     * Used both as the AlarmManager.setAlarmClock() target and for the finished notification's
-     * full-screen intent / content tap.
+     * Used for the finished notification's full-screen intent and content tap.
      *
-     * The alarm is fired DIRECTLY at this activity PendingIntent (no BroadcastReceiver in
-     * between): an alarm-clock PendingIntent that starts an activity is exempt from Background
-     * Activity Launch restrictions because the sender is AlarmManagerService (an allowlisted
-     * component). Routing it through a receiver and calling startActivity() there loses that
-     * exemption (the launch becomes a non-PendingIntent start from RECEIVER proc state).
-     *
-     * FLAG_MUTABLE lets the sender (AlarmManager / NotificationManager) attach its own BAL
-     * options when firing. On Android 14+ the creator opts in via
-     * setPendingIntentCreatorBackgroundActivityStartMode (see [creatorBalOptions]); the SENDER
-     * mode must NOT be set on the creator side as it throws IllegalArgumentException.
+     * FLAG_MUTABLE lets the sender (NotificationManager) attach its own BAL options when firing.
+     * On Android 14+ the creator opts in via setPendingIntentCreatorBackgroundActivityStartMode.
      */
     @SuppressLint("MutableImplicitPendingIntent")
     private fun buildFinishedActivityPendingIntent(requestCode: Int): PendingIntent {
-        Timber.e(
-            "CREATE_FINISHED_PI requestCode=%s",
-            requestCode
-        )
         val intent = Intent(this, WearMainActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
             putExtra(WearMainActivity.EXTRA_FROM_ALARM, true)
         }
-        Timber.e(
-            "CREATE_FINISHED_PI target=%s flags=MUTABLE|UPDATE_CURRENT",
-            WearMainActivity::class.java.simpleName
-        )
         return PendingIntent.getActivity(
             this,
             requestCode,
@@ -198,25 +156,15 @@ class WearTimerService : Service() {
      * versions where the opt-in does not exist and BAL is already permitted.
      */
     private fun creatorBalOptions(): Bundle? {
-
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) return null
-
         val mode = if (Build.VERSION.SDK_INT >= 36) {
-
             ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOW_ALWAYS
-
         } else {
-
             ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED
-
         }
-
         return ActivityOptions.makeBasic()
-
             .setPendingIntentCreatorBackgroundActivityStartMode(mode)
-
             .toBundle()
-
     }
 
     /**
@@ -243,41 +191,6 @@ class WearTimerService : Service() {
     }
 
     /**
-     * Bundle that grants the PendingIntent SENDER background-activity-start privilege.
-     * Used when WE call [PendingIntent.send] directly (we become the sender), so the platform
-     * records balAllowedByPiSender for the launch instead of BSP.NONE. Returns null below
-     * Android 14 (API 34) where the opt-in does not exist and BAL is already permitted.
-     */
-    private fun senderBalOptions(): Bundle? {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) return null
-        val mode = if (Build.VERSION.SDK_INT >= ANDROID_16_SDK) {
-            ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOW_ALWAYS
-        } else {
-            ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED
-        }
-        return ActivityOptions.makeBasic()
-            .setPendingIntentBackgroundActivityStartMode(mode)
-            .toBundle()
-    }
-
-    /**
-     * Sends the launch PendingIntent ourselves with the sender-side BAL opt-in
-     * (setPendingIntentBackgroundActivityStartMode). This is the only way to set
-     * balAllowedByPiSender — neither AlarmManager nor the creator-side opt-in can.
-     */
-    private fun launchViaSenderBal() {
-        val pendingIntent = buildLaunchPendingIntent()
-        runCatching {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                pendingIntent.send(senderBalOptions())
-            } else {
-                pendingIntent.send()
-            }
-            Timber.d("WearTimerService: launchViaSenderBal — PendingIntent sent with sender BAL opt-in")
-        }.onFailure { Timber.e(it, "WearTimerService: launchViaSenderBal failed") }
-    }
-
-    /**
      * PendingIntent for the running-timer (tick) notification tap.
      * Does NOT carry EXTRA_FROM_ALARM — opening the app while the timer is running
      * must not mark the session as finished.
@@ -294,62 +207,9 @@ class WearTimerService : Service() {
         )
     }
 
-    /**
-     * The "launch" PendingIntent — this is the OPERATION fired by AlarmManager when the alarm
-     * triggers. It is the one whose creator-side BAL opt-in matters because the system actually
-     * sends() it from AlarmManagerService (an allowlisted sender). Carries its own request code
-     * so it never collides with the show intent in the PendingIntent cache.
-     */
-    private fun buildLaunchPendingIntent(): PendingIntent =
-        buildFinishedActivityPendingIntent(REQUEST_CODE_ALARM_LAUNCH)
-
-    /**
-     * The "show" PendingIntent — passed as AlarmClockInfo.showIntent. The system UI / system
-     * alarm surfaces use this to let the user open/inspect the alarm; it is NOT the object the
-     * alarm fires. It MUST be a different PendingIntent object (different request code) from the
-     * launch intent, otherwise the platform treats them as the same token and the alarm's launch
-     * inherits the show intent's (non-firing) BAL context.
-     */
-    private fun buildShowPendingIntent(): PendingIntent =
-        buildFinishedActivityPendingIntent(REQUEST_CODE_ALARM_SHOW)
-
-    /**
-     * Schedules an immediate alarm clock via AlarmManager.setAlarmClock().
-     *
-     * Alarm-clock alarms are the only AlarmManager category whose firing PendingIntent is BAL
-     * exempt (sender = AlarmManagerService). The showIntent and the operation (launch) intent are
-     * intentionally TWO DISTINCT PendingIntent objects with separate request codes so the launch
-     * operation carries its own creator BAL opt-in and is not conflated with the show token.
-     * The activity is launched ~1 second after this call.
-     */
-    private fun scheduleAlarmClock() {
-        val alarmManager = getSystemService(AlarmManager::class.java) ?: run {
-            Timber.e("WearTimerService: AlarmManager not available")
-            return
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
-            Timber.w("WearTimerService: SCHEDULE_EXACT_ALARM not granted — notification fallback only")
-            return
-        }
-        val launchPendingIntent = buildLaunchPendingIntent()
-        val showPendingIntent = buildShowPendingIntent()
-        val alarmClockInfo = AlarmManager.AlarmClockInfo(
-            System.currentTimeMillis() + ALARM_DELAY_MS,
-            showPendingIntent,
-        )
-        alarmManager.setAlarmClock(alarmClockInfo, launchPendingIntent)
-        Timber.d("WearTimerService: alarm clock scheduled — distinct show/launch PIs — opens in ${ALARM_DELAY_MS}ms")
-    }
-
     private fun buildFinishedNotification(): Notification {
-        Timber.e("BUILD_FINISHED_NOTIFICATION")
         val contentPendingIntent = buildFinishedActivityPendingIntent(REQUEST_CODE_CONTENT)
         val fullScreenPendingIntent = buildFinishedActivityPendingIntent(REQUEST_CODE_ALARM_LAUNCH)
-        Timber.e(
-            "BUILD_FINISHED_NOTIFICATION contentPi=%s fullScreenPi=%s",
-            contentPendingIntent,
-            fullScreenPendingIntent
-        )
         return NotificationCompat.Builder(this, FINISHED_CHANNEL_ID)
             .setContentTitle("Timer finished")
             .setContentText("Time's up! Tap to view results.")
@@ -440,11 +300,7 @@ class WearTimerService : Service() {
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-
-        Timber.e("WearTimerService: onTaskRemoved")
-
         super.onTaskRemoved(rootIntent)
-
     }
 
     override fun onDestroy() {
@@ -463,13 +319,10 @@ class WearTimerService : Service() {
         private const val REQUEST_CODE_ALARM_LAUNCH = 1002
         private const val REQUEST_CODE_CONTENT = 1003
         private const val FINISHED_NOTIFICATION_ID = 1004
-        private const val REQUEST_CODE_ALARM_SHOW = 1005
         private const val TICK_CHANNEL_ID = "wear_timer_tick_v1"
         private const val FINISHED_CHANNEL_ID = "wear_timer_finished_v1"
         private const val SECONDS_IN_MINUTE = 60
-        private const val ANDROID_16_SDK = 36
         private const val MAX_DURATION_MS = 25 * 60 * 1000L
-        private const val ALARM_DELAY_MS = 1000L
         private const val STOP_DELAY_MS = 2000L
         private val VIBRATION_PATTERN =
             longArrayOf(0, 900, 200, 900, 200, 900, 200, 900, 200, 900, 200, 900, 200, 900, 200, 900, 200, 900, 200, 900)
