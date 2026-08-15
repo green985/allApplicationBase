@@ -31,7 +31,7 @@ class StopwatchOperationUseCase(
     private val _onFinished = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     val onFinished = _onFinished.asSharedFlow()
 
-    private val _onFinishedCleared = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    private val _onFinishedCleared = MutableSharedFlow<Unit>(replay = 1, extraBufferCapacity = 1)
     val onFinishedCleared = _onFinishedCleared.asSharedFlow()
 
     private var startEpochMs: Long = 0L

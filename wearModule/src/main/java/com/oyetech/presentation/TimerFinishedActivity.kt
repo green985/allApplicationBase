@@ -151,7 +151,15 @@ class TimerFinishedActivity : ComponentActivity() {
     private fun dismiss() {
         Timber.d("TimerFinishedActivity: dismiss")
         stopwatchOperationUseCase.clearFinishedPendingDisplay()
+        requestTileUpdate()
         finish()
+    }
+
+    private fun requestTileUpdate() {
+        runCatching {
+            androidx.wear.tiles.TileService.getUpdater(this)
+                .requestUpdate(com.oyetech.watchAppFeatures.StopwatchDurationTileService::class.java)
+        }.onFailure { Timber.w(it, "TimerFinishedActivity: requestTileUpdate failed") }
     }
 }
 
