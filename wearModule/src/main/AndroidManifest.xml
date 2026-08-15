@@ -67,6 +67,18 @@
                 android:value="timer" />
         </service>
 
+        <service
+            android:name=".watchAppFeatures.StopwatchDurationTileService"
+            android:description="@string/tile_duration_description"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/tile_duration_label"
+            android:permission="com.google.android.wearable.permission.BIND_TILE_PROVIDER">
+            <intent-filter>
+                <action android:name="androidx.wear.tiles.action.BIND_TILE_PROVIDER" />
+            </intent-filter>
+        </service>
+
         <!-- Dedicated alarm screen launched directly by AlarmManager.setAlarmClock() when the
              countdown finishes. The showWhenLocked / turnScreenOn attributes make it a true
              alarm UI: it wakes the screen and shows over the lock screen. excludeFromRecents +

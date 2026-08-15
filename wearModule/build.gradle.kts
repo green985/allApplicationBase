@@ -67,6 +67,10 @@ dependencies {
     implementation(libs.androidx.wear.tooling.preview)
     implementation(libs.core.splashscreen)
     implementation(libs.play.services.wearable)
+    implementation("androidx.wear.tiles:tiles:1.6.2")
+    implementation("androidx.wear.protolayout:protolayout:1.4.2")
+    implementation("androidx.wear.protolayout:protolayout-material3:1.4.2")
+    implementation("androidx.wear.protolayout:protolayout-expression:1.4.2")
     androidTestImplementation(platform(libs.compose.bom))
     debugImplementation(libs.androides.ui.tooling)
 

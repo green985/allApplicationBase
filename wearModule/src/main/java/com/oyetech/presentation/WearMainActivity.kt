@@ -65,8 +65,17 @@ class WearMainActivity : ComponentActivity() {
         requestFullScreenIntentPermissionIfNeeded()
         requestExactAlarmPermissionIfNeeded()
         restoreFinishedFlagIfNeeded(intent)
+        val launchSeconds = intent?.getIntExtra(EXTRA_START_SECONDS, 0) ?: 0
+        if (launchSeconds > 0) {
+            startTimerService(launchSeconds)
+        }
         setContent {
-            val backStack = rememberNavBackStack(AppRoute.StopwatchDurationScreen)
+            val startRoute = if (launchSeconds > 0) {
+                AppRoute.StopwatchScreen()
+            } else {
+                AppRoute.StopwatchDurationScreen
+            }
+            val backStack = rememberNavBackStack(startRoute)
             val coroutineScope = rememberCoroutineScope()
 
             SideEffect {
@@ -140,6 +149,12 @@ class WearMainActivity : ComponentActivity() {
             }"
         )
         restoreFinishedFlagIfNeeded(intent)
+        val launchSeconds = intent.getIntExtra(EXTRA_START_SECONDS, 0)
+        if (launchSeconds > 0) {
+            startTimerService(launchSeconds)
+            navigationUseCase.navigateTo(AppRoute.StopwatchScreen())
+            return
+        }
         // Guard: if tickState.isFinished is already true, StopwatchVm is already showing the
         // finished state on StopwatchScreen. Navigating again would push a duplicate entry,
         // requiring the user to press "Bitir" twice to get back to the duration list.
@@ -180,6 +195,14 @@ class WearMainActivity : ComponentActivity() {
                 notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
+    }
+
+    private fun startTimerService(seconds: Int) {
+        val timerIntent = Intent(ACTION_START_TIMER).apply {
+            setPackage(packageName)
+            putExtra(EXTRA_SECONDS, seconds)
+        }
+        ContextCompat.startForegroundService(this, timerIntent)
     }
 
     /**
@@ -236,6 +259,9 @@ class WearMainActivity : ComponentActivity() {
     }
 
     companion object {
+        private const val ACTION_START_TIMER = "com.oyetech.wear.ACTION_START_TIMER"
+        private const val EXTRA_SECONDS = "seconds"
+        const val EXTRA_START_SECONDS = "extra_start_seconds"
         const val PREFS_NAME = "wear_timer_prefs"
         const val KEY_TIMER_FINISHED = "timer_finished"
         const val EXTRA_FROM_ALARM = "extra_from_alarm"
