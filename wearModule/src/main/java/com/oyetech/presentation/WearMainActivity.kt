@@ -33,11 +33,13 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.wear.compose.material3.AppScaffold
 import androidx.wear.compose.material3.TimeText
+import androidx.wear.tiles.TileService
 import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
 import com.oyetech.composebase.projectQuestionsFeature.theme.RadioAppTheme
 import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.domain.useCases.StopwatchOperationUseCase
+import com.oyetech.watchAppFeatures.StopwatchDurationTileService
 import com.oyetech.watchAppFeatures.wearAppNavigation
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
@@ -96,6 +98,7 @@ class WearMainActivity : ComponentActivity() {
                     Timber.d("WearMainActivity: onFinishedCleared — removing KEY_TIMER_FINISHED from prefs")
                     getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                         .edit().remove(KEY_TIMER_FINISHED).apply()
+                    requestTileUpdate()
                 }
             }
 
@@ -203,6 +206,14 @@ class WearMainActivity : ComponentActivity() {
             putExtra(EXTRA_SECONDS, seconds)
         }
         ContextCompat.startForegroundService(this, timerIntent)
+        requestTileUpdate()
+    }
+
+    private fun requestTileUpdate() {
+        runCatching {
+            TileService.getUpdater(this)
+                .requestUpdate(StopwatchDurationTileService::class.java)
+        }.onFailure { Timber.w(it, "WearMainActivity: requestTileUpdate failed") }
     }
 
     /**
