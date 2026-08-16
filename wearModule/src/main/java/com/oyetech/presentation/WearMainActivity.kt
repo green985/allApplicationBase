@@ -17,11 +17,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -66,6 +66,7 @@ class WearMainActivity : ComponentActivity() {
         if (launchSeconds > 0) {
             startTimerService(launchSeconds)
         }
+        observeFinishedCleared()
         setContent {
             val backStack = if (launchSeconds > 0) {
                 rememberNavBackStack(AppRoute.StopwatchDurationScreen, AppRoute.StopwatchScreen())
@@ -85,15 +86,6 @@ class WearMainActivity : ComponentActivity() {
                         }
                     }
                 )
-            }
-
-            LaunchedEffect(Unit) {
-                stopwatchOperationUseCase.onFinishedCleared.collect {
-                    Timber.d("WearMainActivity: onFinishedCleared — removing KEY_TIMER_FINISHED from prefs")
-                    getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-                        .edit().remove(KEY_TIMER_FINISHED).apply()
-                    requestTileUpdate()
-                }
             }
 
             RadioAppTheme {
@@ -177,6 +169,17 @@ class WearMainActivity : ComponentActivity() {
             Timber.d("WearMainActivity: POST_NOTIFICATIONS already granted=$granted")
             if (!granted) {
                 notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+
+    private fun observeFinishedCleared() {
+        lifecycleScope.launch {
+            stopwatchOperationUseCase.onFinishedCleared.collect {
+                Timber.d("WearMainActivity: onFinishedCleared — clearing prefs + updating tile")
+                getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                    .edit().remove(KEY_TIMER_FINISHED).apply()
+                requestTileUpdate()
             }
         }
     }

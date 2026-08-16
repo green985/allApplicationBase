@@ -37,6 +37,7 @@ class StopwatchOperationUseCase(
     private var startEpochMs: Long = 0L
     private var totalSeconds: Int = 0
     private var durationSeconds: Int = 0
+    @Volatile
     private var isCancelRequested: Boolean = false
     private var sessionTag: StopwatchTag? = null
     var isFinishedPendingDisplay: Boolean = false

@@ -96,6 +96,7 @@ class WearTimerService : Service() {
     ) {
         if (isCancelled) {
             Timber.d("WearTimerService: timer cancelled — stopping")
+            stopForeground(STOP_FOREGROUND_REMOVE)
             requestTileUpdate()
             stopSelf()
             return
