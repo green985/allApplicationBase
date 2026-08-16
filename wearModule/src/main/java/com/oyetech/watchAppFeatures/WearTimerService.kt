@@ -128,7 +128,7 @@ class WearTimerService : Service() {
     }
 
     /**
-     * PendingIntent that opens the dedicated alarm screen [TimerFinishedActivity].
+     * PendingIntent that opens [WearMainActivity] with EXTRA_FROM_ALARM=true when the timer finishes.
      *
      * Used for the finished notification's full-screen intent and content tap.
      *

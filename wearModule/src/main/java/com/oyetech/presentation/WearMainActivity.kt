@@ -67,12 +67,11 @@ class WearMainActivity : ComponentActivity() {
             startTimerService(launchSeconds)
         }
         setContent {
-            val startRoute = if (launchSeconds > 0) {
-                AppRoute.StopwatchScreen()
+            val backStack = if (launchSeconds > 0) {
+                rememberNavBackStack(AppRoute.StopwatchDurationScreen, AppRoute.StopwatchScreen())
             } else {
-                AppRoute.StopwatchDurationScreen
+                rememberNavBackStack(AppRoute.StopwatchDurationScreen)
             }
-            val backStack = rememberNavBackStack(startRoute)
             val coroutineScope = rememberCoroutineScope()
 
             SideEffect {

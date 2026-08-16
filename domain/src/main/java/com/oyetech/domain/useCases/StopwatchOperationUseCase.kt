@@ -148,43 +148,45 @@ class StopwatchOperationUseCase(
         )
 
         durationSeconds / SECONDS_IN_MINUTE == MINUTES_2 -> listOf(
-            StopwatchTag.SIGARA,
-            StopwatchTag.SU_IC,
-            StopwatchTag.NEFES_EGZERSIZI,
+            StopwatchTag.YUMRUK,
+            StopwatchTag.ODAK,
             StopwatchTag.POSTUR,
         )
 
         durationSeconds / SECONDS_IN_MINUTE == MINUTES_5 -> listOf(
-            StopwatchTag.KAHVE,
             StopwatchTag.SIGARA,
-            StopwatchTag.ESNEME,
-            StopwatchTag.CORE,
-            StopwatchTag.BARFIKS,
-            StopwatchTag.GUNLUK,
+            StopwatchTag.KITAP_OKUMA,
+            StopwatchTag.KAHVALTI,
+            StopwatchTag.MEDITASYON,
+            StopwatchTag.YAZMA,
         )
 
         durationSeconds / SECONDS_IN_MINUTE == MINUTES_10 -> listOf(
             StopwatchTag.MEDITASYON,
-            StopwatchTag.MOBILITE,
+            StopwatchTag.KITAP_OKUMA,
             StopwatchTag.YEMEK_HAZIRLAMA,
             StopwatchTag.YEMEK_YEME,
-            StopwatchTag.KITAP_OKUMA,
+            StopwatchTag.DUSUNME,
+            StopwatchTag.KUCUK_GOREV,
         )
 
         durationSeconds / SECONDS_IN_MINUTE == MINUTES_15 -> listOf(
-            StopwatchTag.YUZME,
+            StopwatchTag.ORTA_GOREV,
+            StopwatchTag.DUSUNME,
             StopwatchTag.YAZILIM,
             StopwatchTag.PLANLAMA,
-            StopwatchTag.STOACILIK,
-            StopwatchTag.DUSUNME,
+            StopwatchTag.YUZME,
+            StopwatchTag.YEMEK_YEME,
+            StopwatchTag.YEMEK_HAZIRLAMA,
         )
 
         durationSeconds / SECONDS_IN_MINUTE == MINUTES_20 -> listOf(
+            StopwatchTag.BUYUK_GOREV,
             StopwatchTag.YAZILIM,
-            StopwatchTag.HATA_AYIKLAMA,
-            StopwatchTag.YUZME,
+            StopwatchTag.KITAP_OKUMA,
             StopwatchTag.YURUYUS,
-            StopwatchTag.CAFE,
+            StopwatchTag.YEMEK_YEME,
+            StopwatchTag.YEMEK_HAZIRLAMA,
         )
 
         else -> emptyList()

@@ -21,11 +21,16 @@ enum class StopwatchTag(val label: String) {
     OGLE_YEMEGI("Öğle Yemeği"),
     AKSAM_YEMEGI("Akşam Yemeği"),
     ARA_OGUN("Ara Öğün"),
+    KUCUK_GOREV("Küçük Görev"),
+    ORTA_GOREV("Orta Görev"),
+    BUYUK_GOREV("Büyük Görev"),
 
     SIGARA("Sigara"),
+    YUMRUK("Yumruk"),
     KAHVE("Kahve"),
     BIRA("Bira"),
     SU_IC("Su İç"),
+    ODAK("Odak"),
 
     MEDITASYON("Meditasyon"),
     NEFES_EGZERSIZI("Nefes Egzersizi"),
@@ -36,17 +41,12 @@ enum class StopwatchTag(val label: String) {
     YUZME("Yüzme"),
     YURUYUS("Yürüyüş"),
     BARFIKS("Barfiks"),
-    DIP("Dip"),
-    SINAV("Şınav"),
-    CORE("Core"),
-    MOBILITE("Mobilite"),
 
     YEMEK_HAZIRLAMA("Yemek Hazırlama"),
     YEMEK_YEME("Yemek Yeme"),
 
     KITAP_OKUMA("Kitap Okuma"),
-    STOACILIK("Stoacılık"),
-    GUNLUK("Günlük"),
+    YAZMA("Yazma"),
     DUSUNME("Düşünme"),
 
     YAZILIM("Yazılım"),

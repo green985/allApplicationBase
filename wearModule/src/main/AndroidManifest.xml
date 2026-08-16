@@ -79,20 +79,6 @@
             </intent-filter>
         </service>
 
-        <!-- Dedicated alarm screen launched directly by AlarmManager.setAlarmClock() when the
-             countdown finishes. The showWhenLocked / turnScreenOn attributes make it a true
-             alarm UI: it wakes the screen and shows over the lock screen. excludeFromRecents +
-             a private taskAffinity keep it out of the launcher's task so it is treated as a
-             standalone alarm, not the main app. -->
-        <activity
-            android:name=".presentation.TimerFinishedActivity"
-            android:excludeFromRecents="true"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:showWhenLocked="true"
-            android:taskAffinity=".presentation.TimerFinishedActivity"
-            android:theme="@android:style/Theme.DeviceDefault"
-            android:turnScreenOn="true" />
     </application>
 
 </manifest>
