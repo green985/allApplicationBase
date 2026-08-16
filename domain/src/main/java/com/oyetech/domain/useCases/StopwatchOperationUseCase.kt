@@ -34,14 +34,36 @@ class StopwatchOperationUseCase(
     private val _onFinishedCleared = MutableSharedFlow<Unit>(replay = 1, extraBufferCapacity = 1)
     val onFinishedCleared = _onFinishedCleared.asSharedFlow()
 
-    private var startEpochMs: Long = 0L
-    private var totalSeconds: Int = 0
-    private var durationSeconds: Int = 0
-    @Volatile
-    private var isCancelRequested: Boolean = false
-    private var sessionTag: StopwatchTag? = null
-    var isFinishedPendingDisplay: Boolean = false
-        private set
+    private val _startEpochMs = MutableStateFlow(0L)
+    private val _totalSeconds = MutableStateFlow(0)
+    private val _durationSeconds = MutableStateFlow(0)
+    private val _isCancelRequested = MutableStateFlow(false)
+    private val _sessionTag = MutableStateFlow<StopwatchTag?>(null)
+    private val _isFinishedPendingDisplay = MutableStateFlow(false)
+
+    private var startEpochMs: Long
+        get() = _startEpochMs.value
+        set(value) { _startEpochMs.value = value }
+
+    private var totalSeconds: Int
+        get() = _totalSeconds.value
+        set(value) { _totalSeconds.value = value }
+
+    private var durationSeconds: Int
+        get() = _durationSeconds.value
+        set(value) { _durationSeconds.value = value }
+
+    private var isCancelRequested: Boolean
+        get() = _isCancelRequested.value
+        set(value) { _isCancelRequested.value = value }
+
+    private var sessionTag: StopwatchTag?
+        get() = _sessionTag.value
+        set(value) { _sessionTag.value = value }
+
+    var isFinishedPendingDisplay: Boolean
+        get() = _isFinishedPendingDisplay.value
+        private set(value) { _isFinishedPendingDisplay.value = value }
 
     fun hasActiveSession(): Boolean {
         val active = startEpochMs > 0L && remainingSecondsFromWallClock() > 0
