@@ -49,6 +49,8 @@ class WearMainActivity : ComponentActivity() {
         StopwatchOperationUseCase::class.java
     )
 
+    private var activeBackStack: List<NavKey>? = null
+
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -68,7 +70,10 @@ class WearMainActivity : ComponentActivity() {
         }
         observeFinishedCleared()
         setContent {
-            val backStack = if (launchSeconds > 0) {
+            val openStopwatch = launchSeconds > 0
+                || stopwatchOperationUseCase.isFinishedPendingDisplay
+                || stopwatchOperationUseCase.hasActiveSession()
+            val backStack = if (openStopwatch) {
                 rememberNavBackStack(AppRoute.StopwatchDurationScreen, AppRoute.StopwatchScreen())
             } else {
                 rememberNavBackStack(AppRoute.StopwatchDurationScreen)
@@ -76,9 +81,12 @@ class WearMainActivity : ComponentActivity() {
             val coroutineScope = rememberCoroutineScope()
 
             SideEffect {
+                activeBackStack = backStack
                 navigationUseCase.setNavigator(
                     navigateTo = { route ->
-                        coroutineScope.launch { backStack.add(route as NavKey) }
+                        coroutineScope.launch {
+                            if (backStack.lastOrNull() != route) backStack.add(route as NavKey)
+                        }
                     },
                     goBack = {
                         coroutineScope.launch {
@@ -131,12 +139,10 @@ class WearMainActivity : ComponentActivity() {
             navigationUseCase.navigateTo(AppRoute.StopwatchScreen())
             return
         }
-        // Guard: if tickState.isFinished is already true, StopwatchVm is already showing the
-        // finished state on StopwatchScreen. Navigating again would push a duplicate entry,
-        // requiring the user to press "Bitir" twice to get back to the duration list.
-        if (stopwatchOperationUseCase.isFinishedPendingDisplay &&
-            !stopwatchOperationUseCase.tickState.value.isFinished
-        ) {
+        val shouldOpenStopwatch = stopwatchOperationUseCase.isFinishedPendingDisplay
+            || stopwatchOperationUseCase.hasActiveSession()
+        val isAlreadyOnStopwatch = activeBackStack?.lastOrNull() is AppRoute.StopwatchScreen
+        if (shouldOpenStopwatch && !isAlreadyOnStopwatch) {
             navigationUseCase.navigateTo(AppRoute.StopwatchScreen())
         }
     }

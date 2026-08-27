@@ -40,10 +40,6 @@ class StopwatchDurationVm(
     init {
         Timber.d("StopwatchDurationVm: init")
         buildDurations()
-        if (stopwatchOperationUseCase.hasActiveSession() || stopwatchOperationUseCase.isFinishedPendingDisplay) {
-            Timber.d("StopwatchDurationVm: active or finished session found — navigating to StopwatchScreen")
-            navigationUseCase.navigateTo(AppRoute.StopwatchScreen())
-        }
         observeFinished()
     }
 
