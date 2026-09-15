@@ -37,7 +37,7 @@ class LoginViewModel(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            username = user.username,
+                            username = user.username ?: "daha belli degil !",
                         )
                     }
                 },

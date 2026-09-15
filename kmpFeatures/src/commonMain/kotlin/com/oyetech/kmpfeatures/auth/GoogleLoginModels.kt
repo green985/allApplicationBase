@@ -26,5 +26,5 @@ data class AuthenticatedUser(
     val token: String = "",
     val accessToken: String = "",
     val userId: String = "",
-    val username: String = "",
+    val username: String? = "",
 )
