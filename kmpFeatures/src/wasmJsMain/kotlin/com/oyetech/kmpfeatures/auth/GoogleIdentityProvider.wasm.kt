@@ -7,9 +7,17 @@ import kotlin.coroutines.resume
 actual class GoogleIdentityProvider {
     actual suspend fun requestIdToken(clientId: String): Result<GoogleIdentityToken> =
         suspendCancellableCoroutine { continuation ->
-            startGoogleLogin(clientId) { uid, token, error ->
+            startGoogleLogin(clientId) { uid, token, nonce, error ->
                 if (token.isNotBlank()) {
-                    continuation.resume(Result.success(GoogleIdentityToken(uid = uid, token = token)))
+                    continuation.resume(
+                        Result.success(
+                            GoogleIdentityToken(
+                                uid = uid,
+                                token = token,
+                                nonce = nonce,
+                            ),
+                        ),
+                    )
                 } else {
                     continuation.resume(
                         Result.failure(Exception(error.ifBlank { "Google login failed" })),
@@ -22,16 +30,18 @@ actual class GoogleIdentityProvider {
 @OptIn(kotlin.js.ExperimentalWasmJsInterop::class)
 private fun startGoogleLogin(
     clientId: String,
-    callback: (uid: String, token: String, error: String) -> Unit,
+    callback: (uid: String, token: String, nonce: String, error: String) -> Unit,
 ): Unit = js(
     """
     {
         if (!window.google || !window.google.accounts || !window.google.accounts.id) {
-            callback("", "", "Google Identity Services yüklenemedi");
+            callback("", "", "", "Google Identity Services yüklenemedi");
             return;
         }
+        const nonce = crypto.randomUUID();
         window.google.accounts.id.initialize({
             client_id: clientId,
+            nonce: nonce,
             callback: (response) => {
                 const token = response.credential || "";
                 try {
@@ -42,17 +52,22 @@ private fun startGoogleLogin(
                     const paddedPayload =
                         encodedPayload + '='.repeat((4 - encodedPayload.length % 4) % 4);
                     const payload = token ? JSON.parse(atob(paddedPayload)) : {};
-                    callback(payload.sub || "", token, "");
+                    callback(payload.sub || "", token, nonce, "");
                 } catch (error) {
-                    callback("", "", "Google token okunamadı");
+                    callback("", "", "", "Google token okunamadı");
                 }
             }
         });
         window.google.accounts.id.prompt((notification) => {
             if (notification.isNotDisplayed()) {
-                callback("", "", notification.getNotDisplayedReason() || "Google login gösterilemedi");
+                callback(
+                    "",
+                    "",
+                    "",
+                    notification.getNotDisplayedReason() || "Google login gösterilemedi",
+                );
             } else if (notification.isSkippedMoment()) {
-                callback("", "", "Google login iptal edildi");
+                callback("", "", "", "Google login iptal edildi");
             }
         });
     }

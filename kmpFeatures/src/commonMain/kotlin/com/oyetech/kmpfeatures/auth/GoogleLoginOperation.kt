@@ -28,6 +28,7 @@ class GoogleLoginOperation(
                 request = GoogleUserRequest(
                     uid = googleCredential.uid,
                     token = googleCredential.token,
+                    nonce = googleCredential.nonce,
                 ),
             ).data
                 ?: error(

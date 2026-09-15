@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 data class GoogleUserRequest(
     val uid: String,
     val token: String,
+    val nonce: String,
 )
 
 @Serializable

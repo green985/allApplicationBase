@@ -7,4 +7,5 @@ expect class GoogleIdentityProvider() {
 data class GoogleIdentityToken(
     val uid: String,
     val token: String,
+    val nonce: String,
 )
