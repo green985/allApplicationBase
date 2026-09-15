@@ -3,7 +3,7 @@ package com.oyetech.composebase.projectQuestionsFeature.questionScreens.list
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.baseGenericList.GenericListState
-import com.oyetech.composebase.helpers.listOperations.ListOperationDelegate
+import com.oyetech.composebase.helpers.listOperations.ListOperationDelegate2
 import com.oyetech.composebase.projectQuestionsFeature.questionScreens.usecases.GetQuestionsPagedByCreatedAtUseCase
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
@@ -43,7 +43,7 @@ class QuestionListVm(
     private val adminViewState = MutableStateFlow(false)
     private val adminFilterType = MutableStateFlow(QuestionListAdminFilterType.APPROVED_ADMIN)
 
-    private val listOperationDelegate = ListOperationDelegate(
+    private val listOperationDelegate = ListOperationDelegate2(
         scope = viewModelScope,
         dispatcher = getDispatcherIo(),
         initialDataFlow = getQuestionDataFlow(isInitial = true),
@@ -102,7 +102,7 @@ class QuestionListVm(
     }
 
     fun questionItemsFlow(
-        listOperationDelegate: ListOperationDelegate<QuestionViewUiState>,
+        listOperationDelegate: ListOperationDelegate2<QuestionViewUiState>,
     ): Flow<List<QuestionViewUiState>> {
         return listOperationDelegate.listUiState
             .map { it.items }
