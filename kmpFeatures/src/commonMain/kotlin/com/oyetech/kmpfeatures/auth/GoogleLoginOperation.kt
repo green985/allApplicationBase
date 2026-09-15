@@ -1,11 +1,13 @@
 package com.oyetech.kmpfeatures.auth
 
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import kotlinx.serialization.json.Json
 
 class GoogleLoginOperation(
     private val httpClient: HttpClient,
@@ -15,26 +17,46 @@ class GoogleLoginOperation(
         return runCatching {
             val googleCredential = identityProvider.requestIdToken(clientId).getOrThrow()
             val existingUser = runCatching {
-                httpClient.post("$baseUrl/v1/getUserWithToken") {
-                    contentType(ContentType.Application.Json)
-                    setBody(UserWithTokenRequest(token = googleCredential.token))
-                }.body<GoogleApiResponse<AuthenticatedUser>>()
+                postAndLog<AuthenticatedUser>(
+                    endpoint = "$baseUrl/v1/getUserWithToken",
+                    request = UserWithTokenRequest(token = googleCredential.token),
+                )
             }.getOrNull()
 
-            existingUser?.data ?: httpClient.post("$baseUrl/v1/registerGoogleUser") {
-                contentType(ContentType.Application.Json)
-                setBody(
-                    GoogleUserRequest(
-                        uid = googleCredential.uid,
-                        token = googleCredential.token,
-                    ),
+            existingUser?.data ?: postAndLog<AuthenticatedUser>(
+                endpoint = "$baseUrl/v1/registerGoogleUser",
+                request = GoogleUserRequest(
+                    uid = googleCredential.uid,
+                    token = googleCredential.token,
+                ),
+            ).data
+                ?: error(
+                    existingUser?.message?.ifBlank { "Google login failed" }
+                        ?: "Google login failed",
                 )
-            }.body<GoogleApiResponse<AuthenticatedUser>>().data
-                ?: error(existingUser?.message?.ifBlank { "Google login failed" } ?: "Google login failed")
         }
+    }
+
+    private suspend inline fun <reified T> postAndLog(
+        endpoint: String,
+        request: Any,
+    ): GoogleApiResponse<T> {
+        val response: HttpResponse = httpClient.post(endpoint) {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }
+        val rawBody = response.bodyAsText()
+        println(
+            "GoogleLogin response endpoint=$endpoint " +
+                "status=${response.status.value} " +
+                "headers=${response.headers.entries()} " +
+                "body=$rawBody",
+        )
+        return json.decodeFromString(rawBody)
     }
 
     private companion object {
         const val baseUrl = "https://uduwhuvgdcacvdhzheyi.supabase.co/functions"
+        val json = Json { ignoreUnknownKeys = true }
     }
 }
