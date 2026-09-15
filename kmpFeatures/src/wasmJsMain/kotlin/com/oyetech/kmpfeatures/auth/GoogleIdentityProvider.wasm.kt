@@ -39,36 +39,47 @@ private fun startGoogleLogin(
             return;
         }
         const nonce = crypto.randomUUID();
-        window.google.accounts.id.initialize({
-            client_id: clientId,
-            nonce: nonce,
-            callback: (response) => {
-                const token = response.credential || "";
-                try {
-                    const encodedPayload = token
-                        .split('.')[1]
-                        .replace(/-/g, '+')
-                        .replace(/_/g, '/');
-                    const paddedPayload =
-                        encodedPayload + '='.repeat((4 - encodedPayload.length % 4) % 4);
-                    const payload = token ? JSON.parse(atob(paddedPayload)) : {};
-                    callback(payload.sub || "", token, nonce, "");
-                } catch (error) {
-                    callback("", "", "", "Google token okunamadı");
+        crypto.subtle.digest(
+            "SHA-256",
+            new TextEncoder().encode(nonce),
+        ).then((digest) => {
+            const hashedNonce = Array.from(new Uint8Array(digest))
+                .map((byte) => byte.toString(16).padStart(2, "0"))
+                .join("");
+
+            window.google.accounts.id.initialize({
+                client_id: clientId,
+                nonce: hashedNonce,
+                callback: (response) => {
+                    const token = response.credential || "";
+                    try {
+                        const encodedPayload = token
+                            .split('.')[1]
+                            .replace(/-/g, '+')
+                            .replace(/_/g, '/');
+                        const paddedPayload =
+                            encodedPayload + '='.repeat((4 - encodedPayload.length % 4) % 4);
+                        const payload = token ? JSON.parse(atob(paddedPayload)) : {};
+                        callback(payload.sub || "", token, nonce, "");
+                    } catch (error) {
+                        callback("", "", "", "Google token okunamadı");
+                    }
                 }
-            }
-        });
-        window.google.accounts.id.prompt((notification) => {
-            if (notification.isNotDisplayed()) {
-                callback(
-                    "",
-                    "",
-                    "",
-                    notification.getNotDisplayedReason() || "Google login gösterilemedi",
-                );
-            } else if (notification.isSkippedMoment()) {
-                callback("", "", "", "Google login iptal edildi");
-            }
+            });
+            window.google.accounts.id.prompt((notification) => {
+                if (notification.isNotDisplayed()) {
+                    callback(
+                        "",
+                        "",
+                        "",
+                        notification.getNotDisplayedReason() || "Google login gösterilemedi",
+                    );
+                } else if (notification.isSkippedMoment()) {
+                    callback("", "", "", "Google login iptal edildi");
+                }
+            });
+        }).catch(() => {
+            callback("", "", "", "Google nonce oluşturulamadı");
         });
     }
     """,
