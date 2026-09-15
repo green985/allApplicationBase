@@ -15,7 +15,7 @@ import org.koin.compose.koinInject
 
 @Composable
 fun HomeScreen(
-    onNavigate: (String) -> Unit,
+    onLoginClick: () -> Unit,
 ) {
     val exampleOperation = koinInject<KmpFeaturesExampleOperation>()
 
@@ -34,5 +34,8 @@ fun HomeScreen(
             text = exampleOperation.getWelcomeMessage(),
             style = MaterialTheme.typography.bodyLarge,
         )
+        androidx.compose.material3.Button(onClick = onLoginClick) {
+            Text("Google ile giriş")
+        }
     }
 }
