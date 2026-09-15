@@ -1,18 +1,15 @@
 package com.oyetech.kmpfeatures.navigation
 
-import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.composable
 import com.oyetech.kmpfeatures.home.HomeScreen
 
-@Composable
-fun KmpFeaturesNavGraph(
-    route: String,
-    onNavigate: (String) -> Unit,
+fun androidx.navigation.NavGraphBuilder.kmpFeaturesNavGraph(
+    navController: NavHostController,
 ) {
-    when (route) {
-        KmpFeaturesRoutes.Home -> {
-            HomeScreen(
-                onNavigate = onNavigate,
-            )
-        }
+    composable(KmpFeaturesRoutes.Home) {
+        HomeScreen(
+            onNavigate = navController::navigate,
+        )
     }
 }

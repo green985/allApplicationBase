@@ -77,6 +77,7 @@ composeUiTooling = "1.5.6"
 wearToolingPreview = "1.0.0"
 compose-multiplatform = "1.10.3"
 ktor = "3.3.3"
+multiplatform-navigation = "2.9.2"
 
 [libraries]
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
@@ -137,6 +138,8 @@ navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref =
 paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
 
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin-bom" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin-bom" }
+multiplatform-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "multiplatform-navigation" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin-bom" }
 koin-androidx-compose-navigation = { module = "io.insert-koin:koin-androidx-compose-navigation", version.ref = "koin-bom" }
 

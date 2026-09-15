@@ -10,11 +10,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.oyetech.kmpfeatures.example.KmpFeaturesExampleOperation
+import org.koin.compose.koinInject
 
 @Composable
 fun HomeScreen(
     onNavigate: (String) -> Unit,
 ) {
+    val exampleOperation = koinInject<KmpFeaturesExampleOperation>()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -27,7 +31,7 @@ fun HomeScreen(
             style = MaterialTheme.typography.headlineMedium,
         )
         Text(
-            text = "Home screen",
+            text = exampleOperation.getWelcomeMessage(),
             style = MaterialTheme.typography.bodyLarge,
         )
     }

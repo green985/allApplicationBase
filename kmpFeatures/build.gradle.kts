@@ -29,8 +29,10 @@ kotlin {
 
             implementation(libs.ktor.client.core)
             implementation(libs.koin.core)
+            implementation(libs.koin.compose)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.multiplatform.navigation.compose)
         }
 
         androidMain.dependencies {

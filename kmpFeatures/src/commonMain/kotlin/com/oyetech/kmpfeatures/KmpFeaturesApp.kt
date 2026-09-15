@@ -2,21 +2,25 @@ package com.oyetech.kmpfeatures
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
+import com.oyetech.kmpfeatures.di.KmpFeaturesKoin
+import com.oyetech.kmpfeatures.navigation.kmpFeaturesNavGraph
 import com.oyetech.kmpfeatures.navigation.KmpFeaturesRoutes
-import com.oyetech.kmpfeatures.navigation.KmpFeaturesNavGraph
+import org.koin.compose.KoinApplication
 
 @Composable
 fun KmpFeaturesApp() {
-    var currentRoute by remember { mutableStateOf(KmpFeaturesRoutes.Home) }
+    KoinApplication(application = { modules(KmpFeaturesKoin.module) }) {
+        val navController = rememberNavController()
 
-    MaterialTheme {
-        KmpFeaturesNavGraph(
-            route = currentRoute,
-            onNavigate = { currentRoute = it },
-        )
+        MaterialTheme {
+            NavHost(
+                navController = navController,
+                startDestination = KmpFeaturesRoutes.Home,
+            ) {
+                kmpFeaturesNavGraph(navController)
+            }
+        }
     }
 }
