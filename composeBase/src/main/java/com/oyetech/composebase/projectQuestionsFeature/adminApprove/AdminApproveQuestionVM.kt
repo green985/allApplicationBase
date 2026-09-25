@@ -3,7 +3,7 @@ package com.oyetech.composebase.projectQuestionsFeature.adminApprove
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
-import com.oyetech.domain.useCases.NavigationUseCase
+import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow

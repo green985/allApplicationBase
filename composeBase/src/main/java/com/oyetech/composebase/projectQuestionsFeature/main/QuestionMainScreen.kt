@@ -20,7 +20,7 @@ import com.oyetech.composebase.projectQuestionsFeature.navigation.questionAppNav
 import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
 import com.oyetech.composebase.projectQuestionsFeature.theme.RadioAppTheme
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigator.navHostScreenSetup
-import com.oyetech.domain.useCases.NavigationUseCase
+import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import kotlinx.coroutines.launch
 
 /**

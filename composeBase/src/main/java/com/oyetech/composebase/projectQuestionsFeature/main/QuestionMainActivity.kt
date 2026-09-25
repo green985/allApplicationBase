@@ -14,7 +14,7 @@ import com.oyetech.composebase.helpers.general.GeneralSettings
 import com.oyetech.composebase.projectQuestionsFeature.generalOperationScreen.GeneralOperationScreenSetup
 import com.oyetech.composebase.projectQuestionsFeature.navigation.QuestionAppProjectBottomNavigationDestinations
 import com.oyetech.composebase.projectQuestionsFeature.theme.RadioAppTheme
-import com.oyetech.domain.useCases.NavigationUseCase
+import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import com.oyetech.tools.debug.DebugUnlockHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -3,7 +3,6 @@ package com.oyetech.composebase.projectQuestionsFeature.questionScreens.createQu
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
-import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
 import com.oyetech.composebase.helpers.general.GeneralSettings
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent
@@ -12,7 +11,8 @@ import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionV
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewEvent.TitleChanged
 import com.oyetech.composebase.projectQuestionsFeature.views.questions.QuestionViewUiState
 import com.oyetech.domain.repository.question.QuestionSupabaseRepository
-import com.oyetech.domain.useCases.NavigationUseCase
+import com.oyetech.kmpdomain.delegate.snackbar.SnackbarDelegate
+import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.questionProject.questionOperation.ModerationStatus
 import com.oyetech.models.questionProject.questionOperation.QuestionCategories

@@ -18,7 +18,7 @@ import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.composebase.projectQuestionsFeature.ScreenKey.toolbarTitle
 import com.oyetech.composebase.projectQuestionsFeature.theme.AppSpacing
 import com.oyetech.composebase.projectQuestionsFeature.theme.AppTextStyles
-import com.oyetech.domain.useCases.NavigationUseCase
+import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
 import org.koin.java.KoinJavaComponent
 

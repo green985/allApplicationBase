@@ -32,8 +32,8 @@ import androidx.wear.tiles.TileService
 import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.composebase.projectQuestionsFeature.theme.AppColors
 import com.oyetech.composebase.projectQuestionsFeature.theme.RadioAppTheme
-import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.domain.useCases.StopwatchOperationUseCase
+import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import com.oyetech.watchAppFeatures.StopwatchDurationTileService
 import com.oyetech.watchAppFeatures.wearAppNavigation
 import kotlinx.coroutines.launch
@@ -71,8 +71,8 @@ class WearMainActivity : ComponentActivity() {
         observeFinishedCleared()
         setContent {
             val openStopwatch = launchSeconds > 0
-                || stopwatchOperationUseCase.isFinishedPendingDisplay
-                || stopwatchOperationUseCase.hasActiveSession()
+                    || stopwatchOperationUseCase.isFinishedPendingDisplay
+                    || stopwatchOperationUseCase.hasActiveSession()
             val backStack = if (openStopwatch) {
                 rememberNavBackStack(AppRoute.StopwatchDurationScreen, AppRoute.StopwatchScreen())
             } else {
@@ -140,7 +140,7 @@ class WearMainActivity : ComponentActivity() {
             return
         }
         val shouldOpenStopwatch = stopwatchOperationUseCase.isFinishedPendingDisplay
-            || stopwatchOperationUseCase.hasActiveSession()
+                || stopwatchOperationUseCase.hasActiveSession()
         val isAlreadyOnStopwatch = activeBackStack?.lastOrNull() is AppRoute.StopwatchScreen
         if (shouldOpenStopwatch && !isAlreadyOnStopwatch) {
             navigationUseCase.navigateTo(AppRoute.StopwatchScreen())

@@ -6,7 +6,7 @@ import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.domain.repository.question.QuestionSupabaseRepository
 import com.oyetech.domain.useCases.AnswerUseCase
-import com.oyetech.domain.useCases.NavigationUseCase
+import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.collections.immutable.toImmutableList

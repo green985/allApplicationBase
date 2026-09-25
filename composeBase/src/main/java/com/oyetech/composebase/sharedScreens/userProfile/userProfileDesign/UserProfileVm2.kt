@@ -7,7 +7,7 @@ import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
 import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.domain.repository.firebase.FirebaseUserPropertyRepository
 import com.oyetech.domain.repository.firebase.FirebaseUserRepository
-import com.oyetech.domain.useCases.NavigationUseCase
+import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.questionProject.questionOperation.QuestionListType
 import com.oyetech.tools.coroutineHelper.AppDispatchers

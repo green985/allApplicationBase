@@ -1,32 +1,33 @@
-package com.oyetech.domain.useCases
-
-import androidx.annotation.MainThread
+package com.oyetech.kmpdomain.usecase.navigation
 
 class NavigationUseCase {
-
     private var navigateToInternal: ((Any) -> Unit)? = null
     private var goBackInternal: (() -> Unit)? = null
     private var pendingRoute: Any? = null
 
     fun setNavigator(navigateTo: (Any) -> Unit, goBack: () -> Unit) {
-        this.navigateToInternal = navigateTo
-        this.goBackInternal = goBack
-        pendingRoute?.let {
-            navigateTo(it)
+        navigateToInternal = navigateTo
+        goBackInternal = goBack
+        pendingRoute?.let { route ->
+            navigateTo(route)
             pendingRoute = null
         }
     }
 
-    @MainThread
+    fun clearNavigator() {
+        navigateToInternal = null
+        goBackInternal = null
+    }
+
     fun navigateTo(route: Any) {
-        if (navigateToInternal != null) {
-            navigateToInternal?.invoke(route)
+        val navigator = navigateToInternal
+        if (navigator != null) {
+            navigator(route)
         } else {
             pendingRoute = route
         }
     }
 
-    @MainThread
     fun goBack() {
         goBackInternal?.invoke()
     }

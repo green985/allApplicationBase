@@ -2,15 +2,15 @@ package com.oyetech.composebase.projectQuestionsFeature.generalOperationScreen
 
 import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
-import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
 import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.domain.repository.NotificationHandlerRepository
 import com.oyetech.domain.repository.SharedOperationRepository
 import com.oyetech.domain.repository.loginOperation.AuthOperationRepository
 import com.oyetech.domain.useCases.AnswerUseCase
-import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.domain.useCases.helpers.AppReviewOperationUseCase
+import com.oyetech.kmpdomain.delegate.snackbar.SnackbarDelegate
+import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult

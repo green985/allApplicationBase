@@ -10,6 +10,7 @@ android {
 
 dependencies {
     implementation(project(":domain"))
+    implementation(project(":kmpDomain"))
     implementation(project(":data:remote"))
     implementation(project(":data:local"))
     implementation(project(":data:repository"))

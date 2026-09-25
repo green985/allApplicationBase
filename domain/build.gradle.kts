@@ -23,6 +23,7 @@ dependencies {
     implementation(project(":data:models"))
     implementation(project(":languageModule"))
     implementation(project(":subImpl:tools"))
+    implementation(project(":kmpDomain"))
 
     implementation(libs.kotlin.stdlib)
     implementation(libs.timber)

@@ -6,7 +6,7 @@ import com.oyetech.composebase.base.updateState
 import com.oyetech.composebase.experimental.authOperation.AuthOperationVM
 import com.oyetech.composebase.sharedScreens.userProfile.EditProfileEvent
 import com.oyetech.domain.repository.firebase.FirebaseUserPropertyRepository
-import com.oyetech.domain.useCases.NavigationUseCase
+import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

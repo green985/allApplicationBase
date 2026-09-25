@@ -3,7 +3,7 @@ package com.oyetech.composebase.sharedScreens.allScreenNavigator
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.composebase.sharedScreens.allScreenNavigator.AllScreenNavigatorEvent.NavigateListItemClicked
-import com.oyetech.domain.useCases.NavigationUseCase
+import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 

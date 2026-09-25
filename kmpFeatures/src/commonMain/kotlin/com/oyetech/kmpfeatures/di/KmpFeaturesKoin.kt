@@ -1,5 +1,7 @@
 package com.oyetech.kmpfeatures.di
 
+import com.oyetech.kmpdomain.delegate.snackbar.SnackbarDelegate
+import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import com.oyetech.kmpfeatures.auth.GoogleIdentityProvider
 import com.oyetech.kmpfeatures.auth.GoogleLoginOperation
 import com.oyetech.kmpfeatures.example.KmpFeaturesExampleOperation
@@ -16,6 +18,8 @@ import org.koin.dsl.module
 
 object KmpFeaturesKoin {
     val module: Module = module {
+        singleOf(::NavigationUseCase)
+        singleOf(::SnackbarDelegate)
         single {
             HttpClient {
                 install(ContentNegotiation) {

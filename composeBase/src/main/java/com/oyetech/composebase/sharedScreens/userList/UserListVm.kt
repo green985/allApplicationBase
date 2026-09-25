@@ -14,7 +14,7 @@ import com.oyetech.composebase.sharedScreens.userList.UserListEvent.RemoveUserFr
 import com.oyetech.composebase.sharedScreens.userList.item.UserListItemUiState
 import com.oyetech.composebase.sharedScreens.userList.item.mapToUiState
 import com.oyetech.domain.repository.firebase.FirebaseUserListOperationRepository
-import com.oyetech.domain.useCases.NavigationUseCase
+import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import com.oyetech.tools.coroutineHelper.asResult
 import kotlinx.coroutines.delay

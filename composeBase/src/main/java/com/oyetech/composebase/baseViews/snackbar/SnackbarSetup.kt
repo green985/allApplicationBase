@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.oyetech.kmpdomain.delegate.snackbar.SnackbarDelegate
 import org.koin.compose.koinInject
 
 /**
@@ -18,7 +19,7 @@ Created by Erdi Özbek
 fun SnacbarScreenSetup(snackbarHostState: SnackbarHostState) {
     val snackbarDelegate = koinInject<SnackbarDelegate>()
 
-    val stateee by snackbarDelegate.snacbarUiState.collectAsStateWithLifecycle()
+    val stateee by snackbarDelegate.snackbarUiState.collectAsStateWithLifecycle()
 
     DefaultSnackbar(
         snackbarHostState, onDismiss = if (stateee.onAction != null) {

@@ -30,9 +30,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.oyetech.composebase.baseViews.basePagingList.BasePagingListScreen
 import com.oyetech.composebase.baseViews.loadingErrors.LoadingDialogFullScreen
-import com.oyetech.composebase.baseViews.snackbar.SnackbarDelegate
 import com.oyetech.composebase.experimental.authOperation.AuthOperationEvent
 import com.oyetech.composebase.experimental.authOperation.AuthOperationUiState
+import com.oyetech.kmpdomain.delegate.snackbar.SnackbarDelegate
 import com.oyetech.languageModule.keyset.LanguageKey
 import com.oyetech.models.newPackages.helpers.OperationState.Error
 import com.oyetech.models.newPackages.helpers.OperationState.Idle

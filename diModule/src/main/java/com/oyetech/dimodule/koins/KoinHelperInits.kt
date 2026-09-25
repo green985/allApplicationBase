@@ -8,8 +8,9 @@ import com.oyetech.dimodule.sharedPref.SharedHelper
 import com.oyetech.dimodule.sharedPref.SharedOperationRepositoryImp
 import com.oyetech.domain.helper.ActivityProviderUseCase
 import com.oyetech.domain.repository.SharedOperationRepository
-import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.domain.useCases.helpers.AppReviewOperationUseCase
+import com.oyetech.kmpdomain.delegate.snackbar.SnackbarDelegate
+import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import com.oyetech.models.utils.const.HelperConstant.DEFAULT_TIMEOUT
 import com.oyetech.models.utils.moshi.DefaultIfNullFactory
 import com.oyetech.tools.contextHelper.isDebug
@@ -52,6 +53,7 @@ object KoinHelperInits {
         }
 
         singleOf(::NavigationUseCase)
+        singleOf(::SnackbarDelegate)
         singleOf(::ActivityProviderUseCase)
         singleOf(::AppReviewOperationUseCase)
 

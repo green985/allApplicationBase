@@ -33,6 +33,7 @@ dependencies {
 
     implementation(project(":diModule"))
     implementation(project(":domain"))
+    implementation(project(":kmpDomain"))
     implementation(project(":composeBase"))
     implementation(project(":data:repository"))
     implementation(project(":data:local"))

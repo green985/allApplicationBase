@@ -4,8 +4,8 @@ import androidx.lifecycle.viewModelScope
 import com.oyetech.composebase.base.BaseViewModel
 import com.oyetech.composebase.base.updateState
 import com.oyetech.domain.repository.stopwatch.StopwatchTag
-import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.domain.useCases.StopwatchOperationUseCase
+import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,7 +50,7 @@ class StopwatchVm(
             stopwatchOperationUseCase.tickState.collect { tick ->
                 Timber.d(
                     "StopwatchVm: tick remaining=${tick.remainingSeconds} " +
-                        "fin=${tick.isFinished} cancelled=${tick.isCancelled}"
+                            "fin=${tick.isFinished} cancelled=${tick.isCancelled}"
                 )
                 if (tick.isCancelled) return@collect
                 if (tick.isFinished) {
@@ -68,7 +68,7 @@ class StopwatchVm(
                 uiState.updateState {
                     copy(
                         formattedTime = "${mins.toString().padStart(2, '0')}:" +
-                            secs.toString().padStart(2, '0'),
+                                secs.toString().padStart(2, '0'),
                     )
                 }
             }
@@ -101,4 +101,3 @@ class StopwatchVm(
         private const val SECONDS_IN_MINUTE = 60
     }
 }
-

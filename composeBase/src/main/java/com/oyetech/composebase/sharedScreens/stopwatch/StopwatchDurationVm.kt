@@ -14,8 +14,8 @@ import com.oyetech.composebase.navigator.AppRoute
 import com.oyetech.domain.repository.stopwatch.StopwatchRecord
 import com.oyetech.domain.repository.stopwatch.StopwatchRecordRepository
 import com.oyetech.domain.repository.stopwatch.StopwatchSession
-import com.oyetech.domain.useCases.NavigationUseCase
 import com.oyetech.domain.useCases.StopwatchOperationUseCase
+import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import com.oyetech.tools.coroutineHelper.AppDispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first

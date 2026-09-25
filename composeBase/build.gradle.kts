@@ -59,6 +59,7 @@ dependencies {
 
     implementation(project(":subImpl:tools"))
     implementation(project(":domain"))
+    implementation(project(":kmpDomain"))
     implementation(project(":glideModule"))
     implementation(project(":data:models"))
     implementation(project(":radioService"))

@@ -23,7 +23,7 @@ Created by Erdi Özbek
 class FacSettingsVm(
     appDispatchers: AppDispatchers,
     private val authOperationVM: AuthOperationVM,
-    private val navigationUseCase: com.oyetech.domain.useCases.NavigationUseCase,
+    private val navigationUseCase: com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase,
 ) : BaseViewModel(appDispatchers) {
 
     val toolbarTitle = MutableStateFlow(LanguageKey.settings)
