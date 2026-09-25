@@ -22,6 +22,7 @@ import org.koin.compose.koinInject
 @Composable
 fun HomeScreenSetup(
     onLoginClick: () -> Unit,
+    onOperatorExampleClick: () -> Unit,
 ) {
     val exampleOperation = koinInject<KmpFeaturesExampleOperation>()
 
@@ -30,6 +31,7 @@ fun HomeScreenSetup(
         onAction = { action ->
             when (action) {
                 HomeAction.LoginClicked -> onLoginClick()
+                HomeAction.OperatorExampleClicked -> onOperatorExampleClick()
                 HomeAction.ErrorDismissed -> Unit
             }
         },
@@ -60,6 +62,9 @@ fun HomeScreen(
         )
         Button(onClick = { onAction(HomeAction.LoginClicked) }) {
             Text("Google ile giriş")
+        }
+        Button(onClick = { onAction(HomeAction.OperatorExampleClicked) }) {
+            Text("Operator örneğini aç")
         }
     }
 }

@@ -45,6 +45,7 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.androides.ui.tooling)
             implementation(libs.androidx.lifecycle.viewmodel.ktx)
+            implementation(libs.androidx.lifecycle.viewmodel.compose)
         }
 
         wasmJsMain.dependencies {

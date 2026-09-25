@@ -1,8 +1,13 @@
 package com.oyetech.kmpfeatures.navigation
 
+import com.oyetech.kmpmodels.navigation.RouteKMP
+
 object KmpFeaturesRoutes {
-    const val Home = "home"
-    const val Login = "login"
-    const val DailyPager = "dailyPager"
-    const val Diary = "diary"
+    fun path(route: RouteKMP): String = when (route) {
+        RouteKMP.Home -> "home"
+        RouteKMP.Login -> "login"
+        RouteKMP.DailyPager -> "dailyPager"
+        RouteKMP.Diary -> "diary"
+        RouteKMP.OperatorExample -> "operatorExample"
+    }
 }

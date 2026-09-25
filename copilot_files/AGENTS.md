@@ -116,6 +116,13 @@ Rules:
 - `Effect` is reserved for one-time operations such as navigation, messages, or external launches;
   do not store one-time effects as persistent state.
 
+### KMP Navigation Routes
+
+- Shared KMP destinations are modeled in `kmpModels` as `@Serializable sealed interface RouteKMP`.
+- KMP feature navigation must use `RouteKMP` values as the source of truth; string paths are
+  resolved only at the navigation adapter boundary.
+- Do not import Android-only `AppRoute`, `NavKey`, or Android `@Keep` into `commonMain`.
+
 ---
 
 ## Android Rules

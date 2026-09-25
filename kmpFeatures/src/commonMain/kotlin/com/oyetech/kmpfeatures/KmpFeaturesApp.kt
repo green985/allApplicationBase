@@ -6,6 +6,7 @@ import androidx.navigation.compose.rememberNavController
 import com.oyetech.kmpfeatures.di.KmpFeaturesKoin
 import com.oyetech.kmpfeatures.navigation.KmpFeaturesRoutes
 import com.oyetech.kmpfeatures.navigation.kmpFeaturesNavGraph
+import com.oyetech.kmpmodels.navigation.RouteKMP
 import com.oyetech.viewmodule.ViewModuleTheme
 import org.koin.compose.KoinApplication
 
@@ -17,7 +18,7 @@ fun KmpFeaturesApp() {
         ViewModuleTheme(darkTheme = false) {
             NavHost(
                 navController = navController,
-                startDestination = KmpFeaturesRoutes.Home,
+                startDestination = KmpFeaturesRoutes.path(RouteKMP.Home),
             ) {
                 kmpFeaturesNavGraph(navController)
             }

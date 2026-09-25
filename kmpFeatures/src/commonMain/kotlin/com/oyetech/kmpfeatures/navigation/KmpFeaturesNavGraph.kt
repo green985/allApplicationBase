@@ -4,25 +4,30 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.oyetech.kmpfeatures.daily.DailyPagerScreenSetup
 import com.oyetech.kmpfeatures.diary.DiaryScreenSetup
+import com.oyetech.kmpfeatures.example.OperatorExampleScreenSetup
 import com.oyetech.kmpfeatures.home.HomeScreenSetup
 import com.oyetech.kmpfeatures.login.LoginScreenSetup
+import com.oyetech.kmpmodels.navigation.RouteKMP
 
 fun androidx.navigation.NavGraphBuilder.kmpFeaturesNavGraph(
     navController: NavHostController,
 ) {
-    composable(KmpFeaturesRoutes.Home) {
+    composable(KmpFeaturesRoutes.path(RouteKMP.Home)) {
         HomeScreenSetup(
             onLoginClick = {
-                navController.navigate(KmpFeaturesRoutes.Login)
+                navController.navigate(KmpFeaturesRoutes.path(RouteKMP.Login))
+            },
+            onOperatorExampleClick = {
+                navController.navigate(KmpFeaturesRoutes.path(RouteKMP.OperatorExample))
             },
         )
     }
-    composable(KmpFeaturesRoutes.Login) {
+    composable(KmpFeaturesRoutes.path(RouteKMP.Login)) {
         LoginScreenSetup(
             onBackClick = navController::popBackStack,
             onLoginSuccess = {
-                navController.navigate(KmpFeaturesRoutes.Diary) {
-                    popUpTo(KmpFeaturesRoutes.Login) {
+                navController.navigate(KmpFeaturesRoutes.path(RouteKMP.Diary)) {
+                    popUpTo(KmpFeaturesRoutes.path(RouteKMP.Login)) {
                         inclusive = true
                     }
                     launchSingleTop = true
@@ -30,13 +35,18 @@ fun androidx.navigation.NavGraphBuilder.kmpFeaturesNavGraph(
             },
         )
     }
-    composable(KmpFeaturesRoutes.DailyPager) {
+    composable(KmpFeaturesRoutes.path(RouteKMP.DailyPager)) {
         DailyPagerScreenSetup(
             onBackClick = navController::popBackStack,
         )
     }
-    composable(KmpFeaturesRoutes.Diary) {
+    composable(KmpFeaturesRoutes.path(RouteKMP.Diary)) {
         DiaryScreenSetup(
+            onBackClick = navController::popBackStack,
+        )
+    }
+    composable(KmpFeaturesRoutes.path(RouteKMP.OperatorExample)) {
+        OperatorExampleScreenSetup(
             onBackClick = navController::popBackStack,
         )
     }
