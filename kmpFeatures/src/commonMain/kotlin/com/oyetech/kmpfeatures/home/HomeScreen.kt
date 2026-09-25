@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oyetech.kmpfeatures.example.KmpFeaturesExampleOperation
-import com.oyetech.kmpmodels.ui.event.HomeEvent
+import com.oyetech.kmpmodels.ui.event.HomeAction
 import com.oyetech.kmpmodels.ui.state.HomeUiState
 import com.oyetech.viewmodule.AppColors
 import com.oyetech.viewmodule.ViewModuleTheme
@@ -27,10 +27,10 @@ fun HomeScreenSetup(
 
     HomeScreen(
         uiState = HomeUiState(welcomeMessage = exampleOperation.getWelcomeMessage()),
-        onEvent = { event ->
-            when (event) {
-                HomeEvent.LoginClicked -> onLoginClick()
-                HomeEvent.ErrorDismissed -> Unit
+        onAction = { action ->
+            when (action) {
+                HomeAction.LoginClicked -> onLoginClick()
+                HomeAction.ErrorDismissed -> Unit
             }
         },
     )
@@ -39,7 +39,7 @@ fun HomeScreenSetup(
 @Composable
 fun HomeScreen(
     uiState: HomeUiState,
-    onEvent: (HomeEvent) -> Unit,
+    onAction: (HomeAction) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -58,7 +58,7 @@ fun HomeScreen(
             style = MaterialTheme.typography.bodyLarge,
             color = AppColors.textSecondary,
         )
-        Button(onClick = { onEvent(HomeEvent.LoginClicked) }) {
+        Button(onClick = { onAction(HomeAction.LoginClicked) }) {
             Text("Google ile giriş")
         }
     }
@@ -70,7 +70,7 @@ private fun HomeScreenPreview() {
     ViewModuleTheme {
         HomeScreen(
             uiState = HomeUiState(welcomeMessage = "KMP Features is ready"),
-            onEvent = {},
+            onAction = {},
         )
     }
 }

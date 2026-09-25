@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oyetech.kmpfeatures.auth.googleWebClientId
-import com.oyetech.kmpmodels.ui.event.LoginEvent
+import com.oyetech.kmpmodels.ui.event.LoginAction
 import com.oyetech.kmpmodels.ui.state.LoginUiState
 import com.oyetech.viewmodule.AppColors
 import com.oyetech.viewmodule.ViewModuleTheme
@@ -39,12 +39,12 @@ fun LoginScreenSetup(
 
     LoginScreen(
         uiState = state,
-        onEvent = { event ->
-            when (event) {
-                LoginEvent.GoogleLoginClicked -> viewModel.login(googleWebClientId())
-                LoginEvent.LocalAdminLoginClicked -> viewModel.loginAsLocalAdmin()
-                LoginEvent.BackClicked -> onBackClick()
-                LoginEvent.ErrorDismissed -> viewModel.clearError()
+        onAction = { action ->
+            when (action) {
+                LoginAction.GoogleLoginClicked -> viewModel.login(googleWebClientId())
+                LoginAction.LocalAdminLoginClicked -> viewModel.loginAsLocalAdmin()
+                LoginAction.BackClicked -> onBackClick()
+                LoginAction.ErrorDismissed -> viewModel.clearError()
             }
         },
     )
@@ -53,7 +53,7 @@ fun LoginScreenSetup(
 @Composable
 fun LoginScreen(
     uiState: LoginUiState,
-    onEvent: (LoginEvent) -> Unit,
+    onAction: (LoginAction) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -69,7 +69,7 @@ fun LoginScreen(
         )
         Button(
             enabled = !uiState.isLoading,
-            onClick = { onEvent(LoginEvent.GoogleLoginClicked) },
+            onClick = { onAction(LoginAction.GoogleLoginClicked) },
         ) {
             if (uiState.isLoading) {
                 CircularProgressIndicator()
@@ -79,7 +79,7 @@ fun LoginScreen(
         }
         Button(
             enabled = !uiState.isLoading,
-            onClick = { onEvent(LoginEvent.LocalAdminLoginClicked) },
+            onClick = { onAction(LoginAction.LocalAdminLoginClicked) },
         ) {
             Text("Admin giriş")
         }
@@ -95,7 +95,7 @@ fun LoginScreen(
                 color = AppColors.error,
             )
         }
-        Button(onClick = { onEvent(LoginEvent.BackClicked) }) {
+        Button(onClick = { onAction(LoginAction.BackClicked) }) {
             Text("Geri")
         }
     }
@@ -107,7 +107,7 @@ private fun LoginScreenPreview() {
     ViewModuleTheme {
         LoginScreen(
             uiState = LoginUiState(username = "Admin"),
-            onEvent = {},
+            onAction = {},
         )
     }
 }

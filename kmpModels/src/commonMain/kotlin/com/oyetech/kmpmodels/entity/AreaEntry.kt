@@ -1,6 +1,6 @@
 package com.oyetech.kmpmodels.entity
 
-enum class Area {
+enum class AreaEntry {
     WORK,
     BODY,
     HEALTH,

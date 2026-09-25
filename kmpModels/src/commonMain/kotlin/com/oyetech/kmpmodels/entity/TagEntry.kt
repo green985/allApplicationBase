@@ -1,6 +1,6 @@
 package com.oyetech.kmpmodels.entity
 
-data class Tag(
+data class TagEntry(
     val id: String,
     val name: String,
 )

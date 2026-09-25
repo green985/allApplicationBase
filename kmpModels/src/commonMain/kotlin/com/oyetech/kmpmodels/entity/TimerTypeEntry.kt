@@ -1,6 +1,6 @@
 package com.oyetech.kmpmodels.entity
 
-enum class TimerType {
+enum class TimerTypeEntry {
     COUNTDOWN,
     STOPWATCH,
 }

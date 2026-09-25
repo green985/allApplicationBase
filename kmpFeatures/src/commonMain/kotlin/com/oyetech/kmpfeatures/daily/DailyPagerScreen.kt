@@ -18,7 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.oyetech.kmpmodels.ui.event.DailyPagerEvent
+import com.oyetech.kmpmodels.ui.event.DailyPagerAction
 import com.oyetech.kmpmodels.ui.state.DailyPagerUiState
 import com.oyetech.viewmodule.AppColors
 import com.oyetech.viewmodule.ViewModuleTheme
@@ -41,12 +41,12 @@ fun DailyPagerScreenSetup(
             canGoPrevious = dayOffset > -1,
             canGoNext = dayOffset < 1,
         ),
-        onEvent = { event ->
-            when (event) {
-                DailyPagerEvent.PreviousDayClicked -> dayOffset--
-                DailyPagerEvent.NextDayClicked -> dayOffset++
-                DailyPagerEvent.BackClicked -> onBackClick()
-                DailyPagerEvent.ErrorDismissed -> Unit
+        onAction = { action ->
+            when (action) {
+                DailyPagerAction.PreviousDayClicked -> dayOffset--
+                DailyPagerAction.NextDayClicked -> dayOffset++
+                DailyPagerAction.BackClicked -> onBackClick()
+                DailyPagerAction.ErrorDismissed -> Unit
             }
         },
     )
@@ -55,7 +55,7 @@ fun DailyPagerScreenSetup(
 @Composable
 fun DailyPagerScreen(
     uiState: DailyPagerUiState,
-    onEvent: (DailyPagerEvent) -> Unit,
+    onAction: (DailyPagerAction) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -76,7 +76,7 @@ fun DailyPagerScreen(
         ) {
             Button(
                 enabled = uiState.canGoPrevious,
-                onClick = { onEvent(DailyPagerEvent.PreviousDayClicked) },
+                onClick = { onAction(DailyPagerAction.PreviousDayClicked) },
             ) {
                 Text("Dün")
             }
@@ -87,12 +87,12 @@ fun DailyPagerScreen(
             )
             Button(
                 enabled = uiState.canGoNext,
-                onClick = { onEvent(DailyPagerEvent.NextDayClicked) },
+                onClick = { onAction(DailyPagerAction.NextDayClicked) },
             ) {
                 Text("Yarın")
             }
         }
-        Button(onClick = { onEvent(DailyPagerEvent.BackClicked) }) {
+        Button(onClick = { onAction(DailyPagerAction.BackClicked) }) {
             Text("Geri")
         }
     }
@@ -105,7 +105,7 @@ private fun DailyPagerScreenPreview() {
     ViewModuleTheme {
         DailyPagerScreen(
             uiState = DailyPagerUiState(selectedDate = today),
-            onEvent = {},
+            onAction = {},
         )
     }
 }

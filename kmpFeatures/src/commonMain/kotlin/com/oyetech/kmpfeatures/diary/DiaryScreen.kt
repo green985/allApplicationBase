@@ -26,9 +26,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.oyetech.kmpmodels.entity.Area
+import com.oyetech.kmpmodels.entity.AreaEntry
 import com.oyetech.kmpmodels.entity.EntryEntity
-import com.oyetech.kmpmodels.ui.event.DiaryEvent
+import com.oyetech.kmpmodels.ui.event.DiaryAction
 import com.oyetech.kmpmodels.ui.state.DiaryUiState
 import com.oyetech.viewmodule.AppColors
 import com.oyetech.viewmodule.ViewModuleTheme
@@ -51,7 +51,7 @@ fun DiaryScreenSetup(
         )
     }
     var isEditorVisible by remember { mutableStateOf(false) }
-    var selectedArea by remember { mutableStateOf<Area?>(null) }
+    var selectedArea by remember { mutableStateOf<AreaEntry?>(null) }
     var text by remember { mutableStateOf("") }
     var dayQuote by remember { mutableStateOf("") }
 
@@ -65,15 +65,15 @@ fun DiaryScreenSetup(
             text = text,
             dayQuote = dayQuote,
         ),
-        onEvent = { event ->
-            when (event) {
-                DiaryEvent.PreviousDayClicked -> dayOffset--
-                DiaryEvent.NextDayClicked -> dayOffset++
-                is DiaryEvent.QuoteChanged -> dayQuote = event.value
-                is DiaryEvent.AreaSelected -> selectedArea = event.value
-                is DiaryEvent.TextChanged -> text = event.value
-                DiaryEvent.AddEntryClicked -> isEditorVisible = true
-                DiaryEvent.SaveEntryClicked -> {
+        onAction = { action ->
+            when (action) {
+                DiaryAction.PreviousDayClicked -> dayOffset--
+                DiaryAction.NextDayClicked -> dayOffset++
+                is DiaryAction.QuoteChanged -> dayQuote = action.value
+                is DiaryAction.AreaSelected -> selectedArea = action.value
+                is DiaryAction.TextChanged -> text = action.value
+                DiaryAction.AddEntryClicked -> isEditorVisible = true
+                DiaryAction.SaveEntryClicked -> {
                     val area = selectedArea
                     if (area != null && text.isNotBlank()) {
                         entries.add(EntryEntity(entries.size.toString(), area.name, text.trim()))
@@ -83,8 +83,8 @@ fun DiaryScreenSetup(
                     }
                 }
 
-                DiaryEvent.BackClicked -> onBackClick()
-                DiaryEvent.ErrorDismissed -> Unit
+                DiaryAction.BackClicked -> onBackClick()
+                DiaryAction.ErrorDismissed -> Unit
             }
         },
     )
@@ -93,7 +93,7 @@ fun DiaryScreenSetup(
 @Composable
 fun DiaryScreen(
     uiState: DiaryUiState,
-    onEvent: (DiaryEvent) -> Unit,
+    onAction: (DiaryAction) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -113,7 +113,7 @@ fun DiaryScreen(
         ) {
             Button(
                 enabled = uiState.canGoPrevious,
-                onClick = { onEvent(DiaryEvent.PreviousDayClicked) },
+                onClick = { onAction(DiaryAction.PreviousDayClicked) },
             ) {
                 Text("Dün")
             }
@@ -131,7 +131,7 @@ fun DiaryScreen(
             }
             Button(
                 enabled = uiState.canGoNext,
-                onClick = { onEvent(DiaryEvent.NextDayClicked) },
+                onClick = { onAction(DiaryAction.NextDayClicked) },
             ) {
                 Text("Yarın")
             }
@@ -140,7 +140,7 @@ fun DiaryScreen(
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = uiState.dayQuote,
-                onValueChange = { onEvent(DiaryEvent.QuoteChanged(it)) },
+                onValueChange = { onAction(DiaryAction.QuoteChanged(it)) },
                 label = { Text("Bugünün sözü") },
                 placeholder = { Text("Bugün için bir söz yaz") },
                 singleLine = true,
@@ -153,19 +153,19 @@ fun DiaryScreen(
             EntryEditor(
                 selectedArea = uiState.selectedArea,
                 text = uiState.text,
-                onAreaSelected = { onEvent(DiaryEvent.AreaSelected(it)) },
-                onTextChange = { onEvent(DiaryEvent.TextChanged(it)) },
-                onSave = { onEvent(DiaryEvent.SaveEntryClicked) },
+                onAreaSelected = { onAction(DiaryAction.AreaSelected(it)) },
+                onTextChange = { onAction(DiaryAction.TextChanged(it)) },
+                onSave = { onAction(DiaryAction.SaveEntryClicked) },
             )
         } else {
             Button(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { onEvent(DiaryEvent.AddEntryClicked) },
+                onClick = { onAction(DiaryAction.AddEntryClicked) },
             ) {
                 Text("+")
             }
         }
-        Button(onClick = { onEvent(DiaryEvent.BackClicked) }) {
+        Button(onClick = { onAction(DiaryAction.BackClicked) }) {
             Text("Geri")
         }
 
@@ -193,7 +193,7 @@ private fun DiaryScreenPreview() {
                 text = "",
                 dayQuote = "",
             ),
-            onEvent = {},
+            onAction = {},
         )
     }
 }
@@ -218,9 +218,9 @@ private fun DiaryEntryCard(entry: EntryEntity) {
 
 @Composable
 private fun EntryEditor(
-    selectedArea: Area?,
+    selectedArea: AreaEntry?,
     text: String,
-    onAreaSelected: (Area) -> Unit,
+    onAreaSelected: (AreaEntry) -> Unit,
     onTextChange: (String) -> Unit,
     onSave: () -> Unit,
 ) {
@@ -239,7 +239,7 @@ private fun EntryEditor(
                 style = MaterialTheme.typography.labelLarge,
                 color = AppColors.textSecondary,
             )
-            Area.entries.toList().chunked(4).forEach { rowAreas ->
+            AreaEntry.entries.toList().chunked(4).forEach { rowAreas ->
                 SingleChoiceSegmentedButtonRow(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
@@ -285,12 +285,12 @@ private fun LocalDate.toTurkishDate(): String {
     return "$day ${months[monthNumber - 1]} $year"
 }
 
-private fun Area.displayName(): String = when (this) {
-    Area.WORK -> "İş / İnşa"
-    Area.BODY -> "Beden"
-    Area.HEALTH -> "Sağlık"
-    Area.MIND -> "Zihin"
-    Area.CHARACTER -> "Karakter"
-    Area.PEOPLE -> "İnsanlar"
-    Area.LIFE -> "Hayat"
+private fun AreaEntry.displayName(): String = when (this) {
+    AreaEntry.WORK -> "İş / İnşa"
+    AreaEntry.BODY -> "Beden"
+    AreaEntry.HEALTH -> "Sağlık"
+    AreaEntry.MIND -> "Zihin"
+    AreaEntry.CHARACTER -> "Karakter"
+    AreaEntry.PEOPLE -> "İnsanlar"
+    AreaEntry.LIFE -> "Hayat"
 }

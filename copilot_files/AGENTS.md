@@ -108,6 +108,14 @@ Rules:
 - A KMP task changes only the KMP implementation unless the user explicitly asks for Android parity
   or shared migration.
 
+### KMP Action-State Pattern
+
+- KMP screen input models use `Action` names, not `Event` names (`HomeAction`, `DiaryAction`, etc.).
+- `State` represents the screen's current persistent UI and is passed into stateless composables.
+- `Action` represents user or system input and is handled by the screen setup/ViewModel boundary.
+- `Effect` is reserved for one-time operations such as navigation, messages, or external launches;
+  do not store one-time effects as persistent state.
+
 ---
 
 ## Android Rules
