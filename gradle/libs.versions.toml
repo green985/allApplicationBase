@@ -26,6 +26,7 @@ glide-compose = "1.0.0-beta01"
 kotlinx-collections-immutable = "0.4.0"
 kotlinx-serialization-json = "1.10.0"
 kotlinx-coroutines = "1.10.2"
+kotlinx-datetime = "0.7.1"
 exoplayer = "2.18.1"
 timber = "5.0.1"
 ksp = "2.3.6"
@@ -147,6 +148,7 @@ glide-compose = { module = "com.github.bumptech.glide:compose", version.ref = "g
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinx-collections-immutable" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }

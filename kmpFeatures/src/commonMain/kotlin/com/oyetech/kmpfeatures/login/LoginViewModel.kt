@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 
 data class LoginUiState(
     val isLoading: Boolean = false,
+    val isAuthenticated: Boolean = false,
     val username: String = "",
     val errorMessage: String = "",
 )
@@ -37,6 +38,7 @@ class LoginViewModel(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
+                            isAuthenticated = true,
                             username = user.username ?: "daha belli degil !",
                         )
                     }
@@ -49,6 +51,16 @@ class LoginViewModel(
                         )
                     }
                 },
+            )
+        }
+    }
+
+    fun loginAsLocalAdmin() {
+        _uiState.update {
+            it.copy(
+                isAuthenticated = true,
+                username = "Admin",
+                errorMessage = "",
             )
         }
     }

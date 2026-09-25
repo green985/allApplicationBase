@@ -9,6 +9,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -20,9 +21,16 @@ import org.koin.compose.koinInject
 @Composable
 fun LoginScreen(
     onBackClick: () -> Unit,
+    onLoginSuccess: () -> Unit,
     viewModel: LoginViewModel = koinInject(),
 ) {
     val state by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(state.isAuthenticated) {
+        if (state.isAuthenticated) {
+            onLoginSuccess()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -41,6 +49,12 @@ fun LoginScreen(
             } else {
                 Text("Google ile devam et")
             }
+        }
+        Button(
+            enabled = !state.isLoading,
+            onClick = viewModel::loginAsLocalAdmin,
+        ) {
+            Text("Admin giriş")
         }
         if (state.username.isNotBlank()) {
             Text("Kullanıcı: ${state.username}")
