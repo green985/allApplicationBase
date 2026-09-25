@@ -178,6 +178,11 @@ formatted
 text, `isVisible`, `isEnabled`, a filtered list, or an error label, add that value to `UiState` and
 compute it in the Operator.
 
+### Compose Preview Placement
+
+- Keep each feature file's `@Preview` composables at the end of the screen file, after all
+  production composables and private UI helpers.
+
 Existing Android-first Compose code keeps business logic in its ViewModel until that feature is
 explicitly migrated to an Operator. Do not perform a broad Android migration merely to satisfy this
 rule; however, never add new logic to an Android composable.

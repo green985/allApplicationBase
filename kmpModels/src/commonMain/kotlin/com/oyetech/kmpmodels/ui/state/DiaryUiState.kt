@@ -9,6 +9,9 @@ data class DiaryUiState(
     val dayOffset: Int = 0,
     val isTodaySelected: Boolean,
     val entries: List<EntryEntity>,
+    val selectedDateLabel: String = "",
+    val entryItems: List<DiaryEntryUiState> = emptyList(),
+    val areaOptions: List<DiaryAreaUiState> = emptyList(),
     val isEditorVisible: Boolean,
     val selectedArea: AreaEntry?,
     val text: String,
@@ -18,4 +21,17 @@ data class DiaryUiState(
     val isLoading: Boolean = false,
     val isError: Boolean = false,
     val errorMessage: String = "",
+)
+
+data class DiaryEntryUiState(
+    val id: String,
+    val areaLabel: String,
+    val createdBy: String,
+    val timeLabel: String,
+    val text: String,
+)
+
+data class DiaryAreaUiState(
+    val area: AreaEntry,
+    val label: String,
 )

@@ -28,13 +28,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.oyetech.kmpmodels.entity.AreaEntry
-import com.oyetech.kmpmodels.entity.EntryEntity
 import com.oyetech.kmpmodels.stringKeys.StringKeys
 import com.oyetech.kmpmodels.ui.event.DiaryAction
+import com.oyetech.kmpmodels.ui.state.DiaryAreaUiState
+import com.oyetech.kmpmodels.ui.state.DiaryEntryUiState
 import com.oyetech.kmpmodels.ui.state.DiaryUiState
 import com.oyetech.viewmodule.AppColors
 import com.oyetech.viewmodule.ViewModuleTheme
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import org.koin.compose.koinInject
@@ -94,7 +94,7 @@ fun DiaryScreen(
                 }
                 Column {
                     Text(
-                        text = uiState.selectedDate.toTurkishDate(),
+                        text = uiState.selectedDateLabel,
                         style = MaterialTheme.typography.titleLarge,
                         color = AppColors.textPrimary,
                     )
@@ -121,7 +121,7 @@ fun DiaryScreen(
                     singleLine = true,
                 )
             }
-            uiState.entries.forEach { entry ->
+            uiState.entryItems.forEach { entry ->
                 DiaryEntryCard(entry)
             }
             Button(onClick = { onAction(DiaryAction.BackClicked) }) {
@@ -136,6 +136,7 @@ fun DiaryScreen(
             EntryEditor(
                 selectedArea = uiState.selectedArea,
                 text = uiState.text,
+                areaOptions = uiState.areaOptions,
                 onAreaSelected = { onAction(DiaryAction.AreaSelected(it)) },
                 onTextChange = { onAction(DiaryAction.TextChanged(it)) },
                 onSave = { onAction(DiaryAction.SaveEntryClicked) },
@@ -144,46 +145,37 @@ fun DiaryScreen(
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-private fun DiaryScreenPreview() {
-    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-    ViewModuleTheme {
-        DiaryScreen(
-            uiState = DiaryUiState(
-                selectedDate = today,
-                isTodaySelected = true,
-                entries = listOf(
-                    EntryEntity(
-                        "1",
-                        StringKeys.mindArea,
-                        StringKeys.sampleMindEntry
-                    )
-                ),
-                isEditorVisible = true,
-                selectedArea = null,
-                text = "",
-                dayQuote = "",
-            ),
-            onAction = {},
-        )
-    }
-}
-
-@Composable
-private fun DiaryEntryCard(entry: EntryEntity) {
+private fun DiaryEntryCard(entry: DiaryEntryUiState) {
     Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = entry.areaId,
-                style = MaterialTheme.typography.labelLarge,
-                color = AppColors.textSecondary,
-            )
-            Text(
-                text = entry.text,
-                style = MaterialTheme.typography.bodyLarge,
-                color = AppColors.textPrimary,
-            )
+        Row(
+            modifier = Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Column {
+                Text(
+                    text = entry.areaLabel,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = AppColors.textSecondary,
+                )
+                Text(
+                    text = entry.timeLabel,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = AppColors.textSecondary,
+                )
+                Text(
+                    text = entry.createdBy,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = AppColors.textSecondary,
+                )
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = entry.text,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = AppColors.textPrimary,
+                )
+            }
         }
     }
 }
@@ -192,6 +184,7 @@ private fun DiaryEntryCard(entry: EntryEntity) {
 private fun EntryEditor(
     selectedArea: AreaEntry?,
     text: String,
+    areaOptions: List<DiaryAreaUiState>,
     onAreaSelected: (AreaEntry) -> Unit,
     onTextChange: (String) -> Unit,
     onSave: () -> Unit,
@@ -211,21 +204,21 @@ private fun EntryEditor(
                 style = MaterialTheme.typography.labelLarge,
                 color = AppColors.textSecondary,
             )
-            AreaEntry.entries.toList().chunked(4).forEach { rowAreas ->
+            areaOptions.chunked(4).forEach { rowAreas ->
                 SingleChoiceSegmentedButtonRow(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    rowAreas.forEachIndexed { index, area ->
+                    rowAreas.forEachIndexed { index, areaOption ->
                         SegmentedButton(
                             modifier = Modifier.weight(1f),
-                            selected = selectedArea == area,
-                            onClick = { onAreaSelected(area) },
+                            selected = selectedArea == areaOption.area,
+                            onClick = { onAreaSelected(areaOption.area) },
                             shape = SegmentedButtonDefaults.itemShape(
                                 index = index,
                                 count = rowAreas.size,
                             ),
                         ) {
-                            Text(area.displayName())
+                            Text(areaOption.label)
                         }
                     }
                 }
@@ -249,16 +242,33 @@ private fun EntryEditor(
     }
 }
 
-private fun LocalDate.toTurkishDate(): String {
-    return "$day ${StringKeys.turkishMonths[monthNumber - 1]} $year"
-}
-
-private fun AreaEntry.displayName(): String = when (this) {
-    AreaEntry.WORK -> StringKeys.workArea
-    AreaEntry.BODY -> StringKeys.bodyArea
-    AreaEntry.HEALTH -> StringKeys.healthArea
-    AreaEntry.MIND -> StringKeys.mindArea
-    AreaEntry.CHARACTER -> StringKeys.characterArea
-    AreaEntry.PEOPLE -> StringKeys.peopleArea
-    AreaEntry.LIFE -> StringKeys.lifeArea
+@Preview(showBackground = true)
+@Composable
+private fun DiaryScreenPreview() {
+    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+    ViewModuleTheme {
+        DiaryScreen(
+            uiState = DiaryUiState(
+                selectedDate = today,
+                isTodaySelected = true,
+                selectedDateLabel = "25 Eylül 2026",
+                entries = emptyList(),
+                entryItems = listOf(
+                    DiaryEntryUiState(
+                        id = "1",
+                        areaLabel = StringKeys.mindArea,
+                        createdBy = StringKeys.adminUsername,
+                        timeLabel = "21:00",
+                        text = StringKeys.sampleMindEntry,
+                    ),
+                ),
+                areaOptions = emptyList(),
+                isEditorVisible = false,
+                selectedArea = null,
+                text = "",
+                dayQuote = "",
+            ),
+            onAction = {},
+        )
+    }
 }
