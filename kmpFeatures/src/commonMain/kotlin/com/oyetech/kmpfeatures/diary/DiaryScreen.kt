@@ -10,10 +10,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -50,7 +48,6 @@ fun DiaryScreen(
     var area by remember { mutableStateOf("") }
     var text by remember { mutableStateOf("") }
     var dayQuote by remember { mutableStateOf("") }
-    val textColor = MaterialTheme.colorScheme.onBackground
 
     Column(
         modifier = Modifier
@@ -62,7 +59,6 @@ fun DiaryScreen(
         Text(
             text = "Günlük",
             style = MaterialTheme.typography.headlineMedium,
-            color = textColor,
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -78,12 +74,10 @@ fun DiaryScreen(
                 Text(
                     text = selectedDate.toTurkishDate(),
                     style = MaterialTheme.typography.titleLarge,
-                    color = textColor,
                 )
                 Text(
                     text = if (dayOffset == 0) "Bugün" else "Seçili gün",
                     style = MaterialTheme.typography.titleMedium,
-                    color = textColor,
                 )
             }
             Button(
@@ -100,12 +94,6 @@ fun DiaryScreen(
                 onValueChange = { dayQuote = it },
                 label = { Text("Bugünün sözü") },
                 placeholder = { Text("Bugün için bir söz yaz") },
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = textColor,
-                    unfocusedTextColor = textColor,
-                    focusedLabelColor = textColor,
-                    unfocusedLabelColor = textColor,
-                ),
                 singleLine = true,
             )
         }
@@ -143,24 +131,15 @@ fun DiaryScreen(
 
 @Composable
 private fun DiaryEntryCard(entry: DiaryEntry) {
-    val textColor = MaterialTheme.colorScheme.onBackground
-
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-        ),
-    ) {
+    Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = entry.area,
                 style = MaterialTheme.typography.labelLarge,
-                color = textColor,
             )
             Text(
                 text = entry.text,
                 style = MaterialTheme.typography.bodyLarge,
-                color = textColor,
             )
         }
     }

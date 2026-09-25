@@ -180,6 +180,10 @@ kotlin Color(...) TextStyle(...) 16.dp RoundedCornerShape(...)
 
 directly.
 
+For UI work, use Material 3's default colors and ready-made component styling.
+Do not add custom colors or override the default colors of Material 3 components
+unless the user explicitly requests a color change.
+
 ---
 
 ## Models
