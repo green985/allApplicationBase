@@ -1,6 +1,7 @@
 package com.oyetech.kmpfeatures.login
 
 import com.oyetech.kmpfeatures.auth.GoogleLoginOperation
+import com.oyetech.kmpmodels.ui.state.LoginUiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -10,14 +11,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
-data class LoginUiState(
-    val isLoading: Boolean = false,
-    val isError: Boolean = false,
-    val isAuthenticated: Boolean = false,
-    val username: String = "",
-    val errorMessage: String = "",
-)
 
 class LoginViewModel(
     private val googleLoginOperation: GoogleLoginOperation,

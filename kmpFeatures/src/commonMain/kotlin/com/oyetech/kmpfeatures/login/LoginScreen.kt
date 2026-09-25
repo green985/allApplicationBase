@@ -17,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oyetech.kmpfeatures.auth.googleWebClientId
+import com.oyetech.kmpmodels.ui.event.LoginEvent
+import com.oyetech.kmpmodels.ui.state.LoginUiState
 import com.oyetech.viewmodule.AppColors
 import com.oyetech.viewmodule.ViewModuleTheme
 import org.koin.compose.koinInject
@@ -46,13 +48,6 @@ fun LoginScreenSetup(
             }
         },
     )
-}
-
-sealed interface LoginEvent {
-    data object GoogleLoginClicked : LoginEvent
-    data object LocalAdminLoginClicked : LoginEvent
-    data object BackClicked : LoginEvent
-    data object ErrorDismissed : LoginEvent
 }
 
 @Composable

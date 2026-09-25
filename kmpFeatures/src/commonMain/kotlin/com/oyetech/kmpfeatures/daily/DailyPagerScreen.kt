@@ -18,28 +18,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oyetech.kmpmodels.ui.event.DailyPagerEvent
+import com.oyetech.kmpmodels.ui.state.DailyPagerUiState
 import com.oyetech.viewmodule.AppColors
 import com.oyetech.viewmodule.ViewModuleTheme
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import kotlin.time.Clock
-
-data class DailyPagerUiState(
-    val selectedDate: LocalDate,
-    val canGoPrevious: Boolean = true,
-    val canGoNext: Boolean = true,
-    val isLoading: Boolean = false,
-    val isError: Boolean = false,
-    val errorMessage: String = "",
-)
-
-sealed interface DailyPagerEvent {
-    data object PreviousDayClicked : DailyPagerEvent
-    data object NextDayClicked : DailyPagerEvent
-    data object BackClicked : DailyPagerEvent
-    data object ErrorDismissed : DailyPagerEvent
-}
 
 @Composable
 fun DailyPagerScreenSetup(

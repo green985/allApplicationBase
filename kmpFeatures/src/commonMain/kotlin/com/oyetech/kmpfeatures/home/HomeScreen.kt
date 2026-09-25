@@ -13,21 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oyetech.kmpfeatures.example.KmpFeaturesExampleOperation
+import com.oyetech.kmpmodels.ui.event.HomeEvent
+import com.oyetech.kmpmodels.ui.state.HomeUiState
 import com.oyetech.viewmodule.AppColors
 import com.oyetech.viewmodule.ViewModuleTheme
 import org.koin.compose.koinInject
-
-data class HomeUiState(
-    val welcomeMessage: String = "",
-    val isLoading: Boolean = false,
-    val isError: Boolean = false,
-    val errorMessage: String = "",
-)
-
-sealed interface HomeEvent {
-    data object LoginClicked : HomeEvent
-    data object ErrorDismissed : HomeEvent
-}
 
 @Composable
 fun HomeScreenSetup(

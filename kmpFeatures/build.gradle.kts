@@ -21,6 +21,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(project(":kmpModels"))
             implementation(project(":viewModule"))
             implementation(compose.runtime)
             implementation(compose.foundation)

@@ -22,17 +22,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oyetech.kmpmodels.entity.EntryEntity
+import com.oyetech.kmpmodels.ui.event.DiaryEvent
+import com.oyetech.kmpmodels.ui.state.DiaryUiState
 import com.oyetech.viewmodule.AppColors
 import com.oyetech.viewmodule.ViewModuleTheme
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import kotlin.time.Clock
-
-data class DiaryEntry(
-    val area: String,
-    val text: String,
-)
 
 @Composable
 fun DiaryScreenSetup(
@@ -43,8 +41,8 @@ fun DiaryScreenSetup(
     val selectedDate = LocalDate.fromEpochDays(today.toEpochDays() + dayOffset)
     val entries = remember {
         mutableStateListOf(
-            DiaryEntry("Zihin", "Bugün için küçük bir başlangıç yaptım."),
-            DiaryEntry("Beden", "Kısa bir yürüyüş iyi geldi."),
+            EntryEntity("1", "Zihin", "Bugün için küçük bir başlangıç yaptım."),
+            EntryEntity("2", "Beden", "Kısa bir yürüyüş iyi geldi."),
         )
     }
     var isEditorVisible by remember { mutableStateOf(false) }
@@ -72,7 +70,7 @@ fun DiaryScreenSetup(
                 DiaryEvent.AddEntryClicked -> isEditorVisible = true
                 DiaryEvent.SaveEntryClicked -> {
                     if (area.isNotBlank() && text.isNotBlank()) {
-                        entries.add(DiaryEntry(area.trim(), text.trim()))
+                        entries.add(EntryEntity(entries.size.toString(), area.trim(), text.trim()))
                         area = ""
                         text = ""
                         isEditorVisible = false
@@ -84,33 +82,6 @@ fun DiaryScreenSetup(
             }
         },
     )
-}
-
-data class DiaryUiState(
-    val selectedDate: LocalDate,
-    val isTodaySelected: Boolean,
-    val entries: List<DiaryEntry>,
-    val isEditorVisible: Boolean,
-    val area: String,
-    val text: String,
-    val dayQuote: String,
-    val canGoPrevious: Boolean = true,
-    val canGoNext: Boolean = true,
-    val isLoading: Boolean = false,
-    val isError: Boolean = false,
-    val errorMessage: String = "",
-)
-
-sealed interface DiaryEvent {
-    data object PreviousDayClicked : DiaryEvent
-    data object NextDayClicked : DiaryEvent
-    data class QuoteChanged(val value: String) : DiaryEvent
-    data class AreaChanged(val value: String) : DiaryEvent
-    data class TextChanged(val value: String) : DiaryEvent
-    data object AddEntryClicked : DiaryEvent
-    data object SaveEntryClicked : DiaryEvent
-    data object BackClicked : DiaryEvent
-    data object ErrorDismissed : DiaryEvent
 }
 
 @Composable
@@ -204,7 +175,13 @@ private fun DiaryScreenPreview() {
             uiState = DiaryUiState(
                 selectedDate = today,
                 isTodaySelected = true,
-                entries = listOf(DiaryEntry("Zihin", "Bugün için küçük bir başlangıç yaptım.")),
+                entries = listOf(
+                    EntryEntity(
+                        "1",
+                        "Zihin",
+                        "Bugün için küçük bir başlangıç yaptım."
+                    )
+                ),
                 isEditorVisible = false,
                 area = "",
                 text = "",
@@ -216,11 +193,11 @@ private fun DiaryScreenPreview() {
 }
 
 @Composable
-private fun DiaryEntryCard(entry: DiaryEntry) {
+private fun DiaryEntryCard(entry: EntryEntity) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = entry.area,
+                text = entry.areaId,
                 style = MaterialTheme.typography.labelLarge,
                 color = AppColors.textSecondary,
             )
