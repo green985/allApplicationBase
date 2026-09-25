@@ -67,7 +67,7 @@ fun ViewModuleTheme(
     val palette = if (darkTheme) kmpDarkPalette else kmpLightPalette
     CompositionLocalProvider(LocalKmpColors provides palette) {
         MaterialTheme(
-            colorScheme = if (false) {
+            colorScheme = if (darkTheme) {
                 buildDarkColorScheme(palette)
             } else {
                 buildLightColorScheme(palette)
