@@ -1,9 +1,9 @@
 package com.oyetech.kmpfeatures.home
 
 import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
-import com.oyetech.kmpfeatures.example.KmpFeaturesExampleOperation
 import com.oyetech.kmpfeatures.operator.BaseFeatureOperator
 import com.oyetech.kmpmodels.navigation.RouteKMP
+import com.oyetech.kmpmodels.stringKeys.StringKeys
 import com.oyetech.kmpmodels.ui.event.HomeAction
 import com.oyetech.kmpmodels.ui.state.HomeUiState
 import kotlinx.coroutines.CoroutineScope
@@ -11,10 +11,9 @@ import kotlinx.coroutines.CoroutineScope
 class HomeOperator(
     operatorScope: CoroutineScope,
     private val navigationUseCase: NavigationUseCase,
-    private val exampleOperation: KmpFeaturesExampleOperation,
 ) : BaseFeatureOperator<HomeUiState, HomeAction, Nothing>(
     initialState = HomeUiState(
-        welcomeMessage = exampleOperation.getWelcomeMessage(),
+        welcomeMessage = StringKeys.kmpFeaturesReady,
     ),
     operatorScope = operatorScope,
 ) {
