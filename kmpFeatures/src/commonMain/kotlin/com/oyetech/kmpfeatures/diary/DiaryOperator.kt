@@ -189,7 +189,9 @@ class DiaryOperator(
             area == null ||
             currentState.text.isBlank() ||
             currentState.entryIsSaving
-        ) return
+        ) {
+            return
+        }
 
         entryAutosaveJob.cancelPendingSave()
         val entryId = currentState.editingEntryId ?: currentState.entries.size.toString()

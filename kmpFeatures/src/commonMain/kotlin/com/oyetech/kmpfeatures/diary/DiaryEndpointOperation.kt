@@ -21,6 +21,7 @@ class DiaryEndpointOperation(
         date: String,
         quote: String,
     ): Result<DiaryQuoteResponse> = runCatching {
+        println("[DiaryEndpoint] PUT /v1/diary/days/$date/quote quote=\"$quote\"")
         httpClient.put("$baseUrl/v1/diary/days/$date/quote") {
             contentType(ContentType.Application.Json)
             setBody(DiaryQuotePutBody(quote = quote))
@@ -30,6 +31,10 @@ class DiaryEndpointOperation(
     suspend fun createEntry(
         request: EntryPostBody,
     ): Result<EntryResponse> = runCatching {
+        println(
+            "[DiaryEndpoint] POST /v1/diary/entries " +
+                    "areaId=\"${request.areaId}\" text=\"${request.text}\"",
+        )
         httpClient.post("$baseUrl/v1/diary/entries") {
             contentType(ContentType.Application.Json)
             setBody(request)
@@ -40,6 +45,10 @@ class DiaryEndpointOperation(
         entryId: String,
         request: EntryPatchBody,
     ): Result<EntryResponse> = runCatching {
+        println(
+            "[DiaryEndpoint] PATCH /v1/diary/entries/$entryId " +
+                    "areaId=\"${request.areaId}\" text=\"${request.text}\"",
+        )
         httpClient.patch("$baseUrl/v1/diary/entries/$entryId") {
             contentType(ContentType.Application.Json)
             setBody(request)
