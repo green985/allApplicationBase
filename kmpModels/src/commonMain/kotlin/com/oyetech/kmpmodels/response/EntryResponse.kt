@@ -7,6 +7,7 @@ data class EntryResponse(
     val id: String,
     val areaId: String,
     val text: String,
+    val createdBy: String? = null,
     val note: String? = null,
     val occurredAt: String? = null,
     val createdAt: String? = null,

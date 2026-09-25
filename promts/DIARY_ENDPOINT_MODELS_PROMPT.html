@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Diary Endpoint ve Model Taslağı Promptu</title>
+</head>
+<body>
+<main>
+    <h1>Diary Endpoint ve Data Model Taslağı</h1>
+
+    <p>
+        Mevcut projeyi ve <code>kmpModels</code> içindeki diary modellerini incele. Aşağıdaki üç
+        işlem
+        için yalnızca örnek API sözleşmesi ve ihtiyaç duyulan data modellerini hazırla:
+    </p>
+
+    <ol>
+        <li>Seçilen günün sözünü oluşturma veya güncelleme.</li>
+        <li>Yeni diary entry ekleme.</li>
+        <li>Mevcut diary entry güncelleme.</li>
+    </ol>
+
+    <h2>Önerilen endpointler</h2>
+
+    <pre><code>PUT   /v1/diary/days/{date}/quote
+POST  /v1/diary/entries
+PATCH /v1/diary/entries/{entryId}</code></pre>
+
+    <h2>Beklenen çıktı</h2>
+
+    <ul>
+        <li>Her endpoint için HTTP methodu, path, path parametreleri ve kısa açıklama.</li>
+        <li>Örnek request JSON.</li>
+        <li>Örnek başarılı response JSON.</li>
+        <li>Gerekli temel hata response örnekleri.</li>
+        <li>KMP uyumlu Kotlin request/post-body ve response data class taslakları.</li>
+        <li>Hangi modellerin mevcut olduğu, hangilerinin yeni oluşturulması gerektiği.</li>
+    </ul>
+
+    <h2>Model kuralları</h2>
+
+    <ul>
+        <li>Request modellerini <code>kmpModels/.../postbody</code> altında düşün.</li>
+        <li>Response modellerini <code>kmpModels/.../response</code> altında düşün.</li>
+        <li>Wire modellerinde <code>@Serializable data class</code> kullan.</li>
+        <li>Mevcut <code>EntryPostBody</code>, <code>EntryPatchBody</code> ve
+            <code>EntryResponse</code> yeterliyse duplicate model üretme.
+        </li>
+        <li>Tarih için <code>YYYY-MM-DD</code>, timestamp için ISO-8601 UTC string kullan.</li>
+        <li><code>createdAt</code> ve <code>updatedAt</code> backend tarafından üretilsin.</li>
+        <li><code>occurredAt</code> olayın gerçekleştiği zamanı temsil etsin.</li>
+        <li>PATCH body içinde yalnız değiştirilebilir alanlar nullable/opsiyonel olsun.</li>
+        <li>Alan isimlerini mevcut proje modelleriyle uyumlu tut.</li>
+    </ul>
+
+    <h2>Kapsam dışı</h2>
+
+    <p>
+        Endpoint implementasyonu, controller/route kodu, Supabase kurulumu, database migration,
+        repository, authentication, authorization, UI ve Operator bağlantısı yazma. Yeni endpoint
+        veya ürün özelliği ekleme. Bu çalışma yalnız API örneği ve data model kararlarını
+        netleştirsin.
+    </p>
+
+    <p>
+        Çıktıyı kısa bir teknik sözleşme halinde ver; belirsiz noktaları ayrıca “Karar Gerekiyor”
+        başlığı altında listele.
+    </p>
+</main>
+</body>
+</html>

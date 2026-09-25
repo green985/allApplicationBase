@@ -122,7 +122,10 @@ fun DiaryScreen(
                 )
             }
             uiState.entryItems.forEach { entry ->
-                DiaryEntryCard(entry)
+                DiaryEntryCard(
+                    entry = entry,
+                    onClick = { onAction(DiaryAction.EntryEditClicked(entry.id)) },
+                )
             }
             Button(onClick = { onAction(DiaryAction.BackClicked) }) {
                 Text(StringKeys.back)
@@ -146,8 +149,14 @@ fun DiaryScreen(
 }
 
 @Composable
-private fun DiaryEntryCard(entry: DiaryEntryUiState) {
-    Card(modifier = Modifier.fillMaxWidth()) {
+private fun DiaryEntryCard(
+    entry: DiaryEntryUiState,
+    onClick: () -> Unit,
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onClick,
+    ) {
         Row(
             modifier = Modifier.padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),

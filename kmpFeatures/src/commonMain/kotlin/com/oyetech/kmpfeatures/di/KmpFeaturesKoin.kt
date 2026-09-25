@@ -5,10 +5,12 @@ import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import com.oyetech.kmpfeatures.auth.GoogleIdentityProvider
 import com.oyetech.kmpfeatures.auth.GoogleLoginOperation
 import com.oyetech.kmpfeatures.daily.DailyPagerOperator
+import com.oyetech.kmpfeatures.diary.DiaryEndpointOperation
 import com.oyetech.kmpfeatures.diary.DiaryOperator
 import com.oyetech.kmpfeatures.example.OperatorExampleOperator
 import com.oyetech.kmpfeatures.home.HomeOperator
 import com.oyetech.kmpfeatures.login.LoginOperator
+import com.oyetech.kmpfeatures.network.KMPHeaderInterceptor
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
@@ -24,6 +26,7 @@ object KmpFeaturesKoin {
         singleOf(::SnackbarDelegate)
         single {
             HttpClient {
+                install(KMPHeaderInterceptor)
                 install(ContentNegotiation) {
                     json(Json { ignoreUnknownKeys = true })
                 }
@@ -31,6 +34,7 @@ object KmpFeaturesKoin {
         }
         singleOf(::GoogleIdentityProvider)
         singleOf(::GoogleLoginOperation)
+        singleOf(::DiaryEndpointOperation)
         factory { parameters ->
             LoginOperator(
                 operatorScope = parameters.get<CoroutineScope>(),
@@ -48,6 +52,7 @@ object KmpFeaturesKoin {
             DiaryOperator(
                 operatorScope = parameters.get<CoroutineScope>(),
                 navigationUseCase = get(),
+                diaryEndpointOperation = get(),
             )
         }
         factory { parameters ->

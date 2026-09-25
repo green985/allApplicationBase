@@ -13,6 +13,7 @@ data class DiaryUiState(
     val entryItems: List<DiaryEntryUiState> = emptyList(),
     val areaOptions: List<DiaryAreaUiState> = emptyList(),
     val isEditorVisible: Boolean,
+    val editingEntryId: String? = null,
     val selectedArea: AreaEntry?,
     val text: String,
     val dayQuote: String,

@@ -4,12 +4,15 @@ import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import com.oyetech.kmpfeatures.operator.BaseFeatureOperator
 import com.oyetech.kmpmodels.entity.AreaEntry
 import com.oyetech.kmpmodels.entity.EntryEntity
+import com.oyetech.kmpmodels.postbody.EntryPatchBody
+import com.oyetech.kmpmodels.postbody.EntryPostBody
 import com.oyetech.kmpmodels.stringKeys.StringKeys
 import com.oyetech.kmpmodels.ui.event.DiaryAction
 import com.oyetech.kmpmodels.ui.state.DiaryAreaUiState
 import com.oyetech.kmpmodels.ui.state.DiaryEntryUiState
 import com.oyetech.kmpmodels.ui.state.DiaryUiState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -19,6 +22,7 @@ import kotlin.time.Clock
 class DiaryOperator(
     operatorScope: CoroutineScope,
     private val navigationUseCase: NavigationUseCase,
+    private val diaryEndpointOperation: DiaryEndpointOperation,
 ) : BaseFeatureOperator<DiaryUiState, DiaryAction, Nothing>(
     initialState = initialState(),
     operatorScope = operatorScope,
@@ -35,6 +39,21 @@ class DiaryOperator(
 
             is DiaryAction.QuoteChanged -> {
                 updateState { copy(dayQuote = action.value) }
+                launch {
+                    delay(400)
+                    if (state.value.dayQuote != action.value) return@launch
+                    diaryEndpointOperation.updateQuote(
+                        date = state.value.selectedDate.toString(),
+                        quote = action.value,
+                    ).onFailure { error ->
+                        updateState {
+                            copy(
+                                isError = true,
+                                errorMessage = error.message.orEmpty(),
+                            )
+                        }
+                    }
+                }
             }
 
             is DiaryAction.AreaSelected -> {
@@ -45,8 +64,27 @@ class DiaryOperator(
                 updateState { copy(text = action.value) }
             }
 
+            is DiaryAction.EntryEditClicked -> {
+                val entry = state.value.entries.firstOrNull { it.id == action.entryId } ?: return
+                updateState {
+                    copy(
+                        isEditorVisible = true,
+                        editingEntryId = entry.id,
+                        selectedArea = AreaEntry.valueOf(entry.areaId),
+                        text = entry.text,
+                    )
+                }
+            }
+
             DiaryAction.AddEntryClicked -> {
-                updateState { copy(isEditorVisible = true) }
+                updateState {
+                    copy(
+                        isEditorVisible = true,
+                        editingEntryId = null,
+                        selectedArea = null,
+                        text = "",
+                    )
+                }
             }
 
             DiaryAction.EntryDialogDismissed -> {
@@ -68,21 +106,65 @@ class DiaryOperator(
         val area = currentState.selectedArea
         if (area == null || currentState.text.isBlank()) return
 
-        updateState {
-            val updatedEntries = entries + EntryEntity(
-                id = entries.size.toString(),
+        val updatedEntries = if (currentState.editingEntryId == null) {
+            currentState.entries + EntryEntity(
+                id = currentState.entries.size.toString(),
                 areaId = area.name,
                 text = currentState.text.trim(),
                 createdBy = StringKeys.adminUsername,
                 createdAt = Clock.System.now(),
             )
+        } else {
+            currentState.entries.map { entry ->
+                if (entry.id == currentState.editingEntryId) {
+                    entry.copy(
+                        areaId = area.name,
+                        text = currentState.text.trim(),
+                        updatedAt = Clock.System.now(),
+                    )
+                } else {
+                    entry
+                }
+            }
+        }
+        val editingEntryId = currentState.editingEntryId
+        updateState {
             copy(
                 entries = updatedEntries,
                 entryItems = renderEntryItems(updatedEntries),
                 isEditorVisible = false,
+                editingEntryId = null,
                 selectedArea = null,
                 text = "",
             )
+        }
+        launch {
+            val result = if (editingEntryId == null) {
+                diaryEndpointOperation.createEntry(
+                    EntryPostBody(
+                        areaId = area.name,
+                        text = currentState.text.trim(),
+                        occurredAt = currentState.selectedDate.toString(),
+                    ),
+                )
+            } else {
+                diaryEndpointOperation.updateEntry(
+                    entryId = editingEntryId,
+                    request = EntryPatchBody(
+                        areaId = area.name,
+                        text = currentState.text.trim(),
+                        occurredAt = currentState.selectedDate.toString(),
+                    ),
+                )
+            }
+            result.onFailure { error ->
+                updateState {
+                    copy(
+                        isError = true,
+                        errorMessage = error.message.orEmpty(),
+                    )
+                }
+            }
         }
     }
 
@@ -125,6 +207,7 @@ class DiaryOperator(
                 entryItems = renderEntryItems(entries),
                 areaOptions = areaOptions(),
                 isEditorVisible = false,
+                editingEntryId = null,
                 selectedArea = null,
                 text = "",
                 dayQuote = "",
