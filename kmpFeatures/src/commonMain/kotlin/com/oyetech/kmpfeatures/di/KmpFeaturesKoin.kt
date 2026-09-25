@@ -53,6 +53,7 @@ object KmpFeaturesKoin {
                 operatorScope = parameters.get<CoroutineScope>(),
                 navigationUseCase = get(),
                 diaryEndpointOperation = get(),
+                snackbarDelegate = get(),
             )
         }
         factory { parameters ->

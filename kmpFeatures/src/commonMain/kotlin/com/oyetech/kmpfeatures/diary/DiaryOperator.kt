@@ -1,7 +1,10 @@
 package com.oyetech.kmpfeatures.diary
 
+import com.oyetech.kmpdomain.delegate.snackbar.SnackbarDelegate
 import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import com.oyetech.kmpfeatures.operator.BaseFeatureOperator
+import com.oyetech.kmpfeatures.operator.cancelPendingSave
+import com.oyetech.kmpfeatures.operator.scheduleDebouncedSave
 import com.oyetech.kmpmodels.entity.AreaEntry
 import com.oyetech.kmpmodels.entity.EntryEntity
 import com.oyetech.kmpmodels.postbody.EntryPatchBody
@@ -12,7 +15,7 @@ import com.oyetech.kmpmodels.ui.state.DiaryAreaUiState
 import com.oyetech.kmpmodels.ui.state.DiaryEntryUiState
 import com.oyetech.kmpmodels.ui.state.DiaryUiState
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Job
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -23,10 +26,14 @@ class DiaryOperator(
     operatorScope: CoroutineScope,
     private val navigationUseCase: NavigationUseCase,
     private val diaryEndpointOperation: DiaryEndpointOperation,
+    private val snackbarDelegate: SnackbarDelegate,
 ) : BaseFeatureOperator<DiaryUiState, DiaryAction, Nothing>(
     initialState = initialState(),
     operatorScope = operatorScope,
 ) {
+    private var quoteAutosaveJob: Job? = null
+    private var entryAutosaveJob: Job? = null
+
     override fun handleAction(action: DiaryAction) {
         when (action) {
             DiaryAction.PreviousDayClicked -> {
@@ -38,30 +45,36 @@ class DiaryOperator(
             }
 
             is DiaryAction.QuoteChanged -> {
-                updateState { copy(dayQuote = action.value) }
-                launch {
-                    delay(400)
-                    if (state.value.dayQuote != action.value) return@launch
-                    diaryEndpointOperation.updateQuote(
-                        date = state.value.selectedDate.toString(),
-                        quote = action.value,
-                    ).onFailure { error ->
-                        updateState {
-                            copy(
-                                isError = true,
-                                errorMessage = error.message.orEmpty(),
-                            )
-                        }
-                    }
+                updateState {
+                    copy(
+                        dayQuote = action.value,
+                        quoteIsDirty = true,
+                        quoteRevision = quoteRevision + 1,
+                    )
                 }
+                scheduleQuoteSave()
             }
 
             is DiaryAction.AreaSelected -> {
-                updateState { copy(selectedArea = action.value) }
+                updateState {
+                    copy(
+                        selectedArea = action.value,
+                        entryIsDirty = true,
+                        entryRevision = entryRevision + 1,
+                    )
+                }
+                scheduleEntrySave()
             }
 
             is DiaryAction.TextChanged -> {
-                updateState { copy(text = action.value) }
+                updateState {
+                    copy(
+                        text = action.value,
+                        entryIsDirty = true,
+                        entryRevision = entryRevision + 1,
+                    )
+                }
+                scheduleEntrySave()
             }
 
             is DiaryAction.EntryEditClicked -> {
@@ -72,6 +85,7 @@ class DiaryOperator(
                         editingEntryId = entry.id,
                         selectedArea = AreaEntry.valueOf(entry.areaId),
                         text = entry.text,
+                        entryIsDirty = false,
                     )
                 }
             }
@@ -83,6 +97,7 @@ class DiaryOperator(
                         editingEntryId = null,
                         selectedArea = null,
                         text = "",
+                        entryIsDirty = false,
                     )
                 }
             }
@@ -91,26 +106,100 @@ class DiaryOperator(
                 if (state.value.selectedArea == null && state.value.text.isBlank()) {
                     updateState { copy(isEditorVisible = false) }
                 } else {
-                    saveEntry()
+                    saveEntry(closeEditor = true)
                 }
             }
 
-            DiaryAction.SaveEntryClicked -> saveEntry()
+            DiaryAction.SaveEntryClicked -> saveEntry(closeEditor = true)
+            DiaryAction.RetryQuoteSaveClicked -> scheduleQuoteSave()
+            DiaryAction.RetryEntrySaveClicked -> scheduleEntrySave()
             DiaryAction.BackClicked -> navigationUseCase.goBack()
-            DiaryAction.ErrorDismissed -> Unit
+            DiaryAction.ErrorDismissed -> updateState {
+                copy(isError = false, errorMessage = "")
+            }
         }
     }
 
-    private fun saveEntry() {
+    private fun scheduleQuoteSave() {
+        quoteAutosaveJob = operatorScope.scheduleDebouncedSave(
+            previousJob = quoteAutosaveJob,
+            canSave = {
+                val currentState = state.value
+                currentState.quoteIsDirty &&
+                        !currentState.quoteIsSaving &&
+                        currentState.dayQuote.isNotBlank()
+            },
+            onSave = { saveQuoteSnapshot() },
+        )
+    }
+
+    private fun saveQuoteSnapshot() {
+        quoteAutosaveJob.cancelPendingSave()
+        val snapshot = state.value
+        val revision = snapshot.quoteRevision
+        updateState { copy(quoteIsSaving = true) }
+        launch {
+            diaryEndpointOperation.updateQuote(
+                date = snapshot.selectedDate.toString(),
+                quote = snapshot.dayQuote,
+            ).onSuccess {
+                updateState {
+                    copy(
+                        quoteIsSaving = false,
+                        quoteIsDirty = quoteRevision != revision,
+                    )
+                }
+                if (state.value.quoteIsDirty) scheduleQuoteSave()
+            }.onFailure { error ->
+                updateState {
+                    copy(
+                        quoteIsSaving = false,
+                        quoteIsDirty = true,
+                        isError = true,
+                        errorMessage = error.message.orEmpty(),
+                    )
+                }
+                snackbarDelegate.triggerSnackbarState(
+                    message = error.message.orEmpty(),
+                    actionLabel = "Retry",
+                    onAction = { dispatch(DiaryAction.RetryQuoteSaveClicked) },
+                )
+            }
+        }
+    }
+
+    private fun scheduleEntrySave() {
+        entryAutosaveJob = operatorScope.scheduleDebouncedSave(
+            previousJob = entryAutosaveJob,
+            canSave = {
+                val currentState = state.value
+                currentState.entryIsDirty &&
+                        !currentState.entryIsSaving &&
+                        currentState.selectedArea != null &&
+                        currentState.text.isNotBlank()
+            },
+            onSave = { saveEntry(closeEditor = false) },
+        )
+    }
+
+    private fun saveEntry(closeEditor: Boolean) {
         val currentState = state.value
         val area = currentState.selectedArea
-        if (area == null || currentState.text.isBlank()) return
+        if (
+            area == null ||
+            currentState.text.isBlank() ||
+            currentState.entryIsSaving
+        ) return
 
+        entryAutosaveJob.cancelPendingSave()
+        val entryId = currentState.editingEntryId ?: currentState.entries.size.toString()
+        val text = currentState.text.trim()
+        val revision = currentState.entryRevision
         val updatedEntries = if (currentState.editingEntryId == null) {
             currentState.entries + EntryEntity(
-                id = currentState.entries.size.toString(),
+                id = entryId,
                 areaId = area.name,
-                text = currentState.text.trim(),
+                text = text,
                 createdBy = StringKeys.adminUsername,
                 createdAt = Clock.System.now(),
             )
@@ -119,7 +208,7 @@ class DiaryOperator(
                 if (entry.id == currentState.editingEntryId) {
                     entry.copy(
                         areaId = area.name,
-                        text = currentState.text.trim(),
+                        text = text,
                         updatedAt = Clock.System.now(),
                     )
                 } else {
@@ -132,10 +221,11 @@ class DiaryOperator(
             copy(
                 entries = updatedEntries,
                 entryItems = renderEntryItems(updatedEntries),
-                isEditorVisible = false,
-                editingEntryId = null,
-                selectedArea = null,
-                text = "",
+                isEditorVisible = if (closeEditor) false else currentState.isEditorVisible,
+                editingEntryId = if (closeEditor) null else entryId,
+                selectedArea = if (closeEditor) null else area,
+                text = if (closeEditor) "" else text,
+                entryIsSaving = true,
             )
         }
         launch {
@@ -143,7 +233,7 @@ class DiaryOperator(
                 diaryEndpointOperation.createEntry(
                     EntryPostBody(
                         areaId = area.name,
-                        text = currentState.text.trim(),
+                        text = text,
                         occurredAt = currentState.selectedDate.toString(),
                     ),
                 )
@@ -152,18 +242,33 @@ class DiaryOperator(
                     entryId = editingEntryId,
                     request = EntryPatchBody(
                         areaId = area.name,
-                        text = currentState.text.trim(),
+                        text = text,
                         occurredAt = currentState.selectedDate.toString(),
                     ),
                 )
             }
-            result.onFailure { error ->
+            result.onSuccess {
                 updateState {
                     copy(
+                        entryIsSaving = false,
+                        entryIsDirty = entryRevision != revision,
+                    )
+                }
+                if (state.value.entryIsDirty) scheduleEntrySave()
+            }.onFailure { error ->
+                updateState {
+                    copy(
+                        entryIsSaving = false,
+                        entryIsDirty = true,
                         isError = true,
                         errorMessage = error.message.orEmpty(),
                     )
                 }
+                snackbarDelegate.triggerSnackbarState(
+                    message = error.message.orEmpty(),
+                    actionLabel = "Retry",
+                    onAction = { dispatch(DiaryAction.RetryEntrySaveClicked) },
+                )
             }
         }
     }

@@ -22,6 +22,12 @@ data class DiaryUiState(
     val isLoading: Boolean = false,
     val isError: Boolean = false,
     val errorMessage: String = "",
+    val quoteIsDirty: Boolean = false,
+    val quoteIsSaving: Boolean = false,
+    val quoteRevision: Long = 0L,
+    val entryIsDirty: Boolean = false,
+    val entryIsSaving: Boolean = false,
+    val entryRevision: Long = 0L,
 )
 
 data class DiaryEntryUiState(

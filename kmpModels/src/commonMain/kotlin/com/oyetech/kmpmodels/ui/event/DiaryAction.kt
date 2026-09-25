@@ -12,6 +12,8 @@ sealed interface DiaryAction {
     data object AddEntryClicked : DiaryAction
     data object EntryDialogDismissed : DiaryAction
     data object SaveEntryClicked : DiaryAction
+    data object RetryQuoteSaveClicked : DiaryAction
+    data object RetryEntrySaveClicked : DiaryAction
     data object BackClicked : DiaryAction
     data object ErrorDismissed : DiaryAction
 }
