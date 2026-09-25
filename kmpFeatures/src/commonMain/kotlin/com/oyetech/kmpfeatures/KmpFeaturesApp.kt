@@ -14,7 +14,7 @@ fun KmpFeaturesApp() {
     KoinApplication(application = { modules(KmpFeaturesKoin.module) }) {
         val navController = rememberNavController()
 
-        ViewModuleTheme(darkTheme = true) {
+        ViewModuleTheme(darkTheme = false) {
             NavHost(
                 navController = navController,
                 startDestination = KmpFeaturesRoutes.Home,
