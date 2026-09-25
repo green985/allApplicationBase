@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.oyetech.kmpmodels.entity.AreaEntry
 import com.oyetech.kmpmodels.entity.EntryEntity
+import com.oyetech.kmpmodels.stringKeys.StringKeys
 import com.oyetech.kmpmodels.ui.event.DiaryAction
 import com.oyetech.kmpmodels.ui.state.DiaryUiState
 import com.oyetech.viewmodule.AppColors
@@ -64,7 +65,7 @@ fun DiaryScreen(
             FloatingActionButton(
                 onClick = { onAction(DiaryAction.AddEntryClicked) },
             ) {
-                Text("+")
+                Text(StringKeys.addEntry)
             }
         },
     ) { contentPadding ->
@@ -77,7 +78,7 @@ fun DiaryScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
-                text = "Günlük",
+                text = StringKeys.diary,
                 style = MaterialTheme.typography.headlineMedium,
                 color = AppColors.textPrimary,
             )
@@ -89,7 +90,7 @@ fun DiaryScreen(
                     enabled = uiState.canGoPrevious,
                     onClick = { onAction(DiaryAction.PreviousDayClicked) },
                 ) {
-                    Text("Dün")
+                    Text(StringKeys.yesterday)
                 }
                 Column {
                     Text(
@@ -98,7 +99,7 @@ fun DiaryScreen(
                         color = AppColors.textPrimary,
                     )
                     Text(
-                        text = if (uiState.isTodaySelected) "Bugün" else "Seçili gün",
+                        text = if (uiState.isTodaySelected) StringKeys.today else StringKeys.selectedDay,
                         style = MaterialTheme.typography.titleMedium,
                         color = AppColors.textSecondary,
                     )
@@ -107,7 +108,7 @@ fun DiaryScreen(
                     enabled = uiState.canGoNext,
                     onClick = { onAction(DiaryAction.NextDayClicked) },
                 ) {
-                    Text("Yarın")
+                    Text(StringKeys.tomorrow)
                 }
             }
             if (uiState.isTodaySelected) {
@@ -115,8 +116,8 @@ fun DiaryScreen(
                     modifier = Modifier.fillMaxWidth(),
                     value = uiState.dayQuote,
                     onValueChange = { onAction(DiaryAction.QuoteChanged(it)) },
-                    label = { Text("Bugünün sözü") },
-                    placeholder = { Text("Bugün için bir söz yaz") },
+                    label = { Text(StringKeys.todaysQuote) },
+                    placeholder = { Text(StringKeys.writeTodaysQuote) },
                     singleLine = true,
                 )
             }
@@ -124,7 +125,7 @@ fun DiaryScreen(
                 DiaryEntryCard(entry)
             }
             Button(onClick = { onAction(DiaryAction.BackClicked) }) {
-                Text("Geri")
+                Text(StringKeys.back)
             }
         }
     }
@@ -155,8 +156,8 @@ private fun DiaryScreenPreview() {
                 entries = listOf(
                     EntryEntity(
                         "1",
-                        "Zihin",
-                        "Bugün için küçük bir başlangıç yaptım."
+                        StringKeys.mindArea,
+                        StringKeys.sampleMindEntry
                     )
                 ),
                 isEditorVisible = true,
@@ -201,12 +202,12 @@ private fun EntryEditor(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                text = "Yeni kayıt",
+                text = StringKeys.newEntry,
                 style = MaterialTheme.typography.titleMedium,
                 color = AppColors.textPrimary,
             )
             Text(
-                text = "Alan",
+                text = StringKeys.area,
                 style = MaterialTheme.typography.labelLarge,
                 color = AppColors.textSecondary,
             )
@@ -233,7 +234,7 @@ private fun EntryEditor(
                 modifier = Modifier.fillMaxWidth(),
                 value = text,
                 onValueChange = onTextChange,
-                label = { Text("Not") },
+                label = { Text(StringKeys.note) },
                 minLines = 3,
             )
             Row(horizontalArrangement = Arrangement.End) {
@@ -241,7 +242,7 @@ private fun EntryEditor(
                     enabled = selectedArea != null && text.isNotBlank(),
                     onClick = onSave,
                 ) {
-                    Text("Save")
+                    Text(StringKeys.save)
                 }
             }
         }
@@ -249,19 +250,15 @@ private fun EntryEditor(
 }
 
 private fun LocalDate.toTurkishDate(): String {
-    val months = arrayOf(
-        "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
-        "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık",
-    )
-    return "$day ${months[monthNumber - 1]} $year"
+    return "$day ${StringKeys.turkishMonths[monthNumber - 1]} $year"
 }
 
 private fun AreaEntry.displayName(): String = when (this) {
-    AreaEntry.WORK -> "İş / İnşa"
-    AreaEntry.BODY -> "Beden"
-    AreaEntry.HEALTH -> "Sağlık"
-    AreaEntry.MIND -> "Zihin"
-    AreaEntry.CHARACTER -> "Karakter"
-    AreaEntry.PEOPLE -> "İnsanlar"
-    AreaEntry.LIFE -> "Hayat"
+    AreaEntry.WORK -> StringKeys.workArea
+    AreaEntry.BODY -> StringKeys.bodyArea
+    AreaEntry.HEALTH -> StringKeys.healthArea
+    AreaEntry.MIND -> StringKeys.mindArea
+    AreaEntry.CHARACTER -> StringKeys.characterArea
+    AreaEntry.PEOPLE -> StringKeys.peopleArea
+    AreaEntry.LIFE -> StringKeys.lifeArea
 }

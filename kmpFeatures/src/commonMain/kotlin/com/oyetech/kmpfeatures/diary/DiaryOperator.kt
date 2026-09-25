@@ -2,8 +2,8 @@ package com.oyetech.kmpfeatures.diary
 
 import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import com.oyetech.kmpfeatures.operator.BaseFeatureOperator
-import com.oyetech.kmpmodels.entity.AreaEntry
 import com.oyetech.kmpmodels.entity.EntryEntity
+import com.oyetech.kmpmodels.stringKeys.StringKeys
 import com.oyetech.kmpmodels.ui.event.DiaryAction
 import com.oyetech.kmpmodels.ui.state.DiaryUiState
 import kotlinx.coroutines.CoroutineScope
@@ -19,51 +19,34 @@ class DiaryOperator(
     initialState = initialState(),
     operatorScope = operatorScope,
 ) {
-    private var dayOffset = 0
-    private var selectedArea: AreaEntry? = null
-    private var text = ""
-    private var dayQuote = ""
-    private var isEditorVisible = false
-    private val entries = mutableListOf(
-        EntryEntity("1", "Zihin", "Bugün için küçük bir başlangıç yaptım."),
-        EntryEntity("2", "Beden", "Kısa bir yürüyüş iyi geldi."),
-    )
-
     override fun handleAction(action: DiaryAction) {
         when (action) {
             DiaryAction.PreviousDayClicked -> {
-                dayOffset--
-                updateState { stateFor(dayOffset) }
+                updateState { stateFor(dayOffset - 1) }
             }
 
             DiaryAction.NextDayClicked -> {
-                dayOffset++
-                updateState { stateFor(dayOffset) }
+                updateState { stateFor(dayOffset + 1) }
             }
 
             is DiaryAction.QuoteChanged -> {
-                dayQuote = action.value
-                updateState { copy(dayQuote = dayQuote) }
+                updateState { copy(dayQuote = action.value) }
             }
 
             is DiaryAction.AreaSelected -> {
-                selectedArea = action.value
-                updateState { copy(selectedArea = selectedArea) }
+                updateState { copy(selectedArea = action.value) }
             }
 
             is DiaryAction.TextChanged -> {
-                text = action.value
-                updateState { copy(text = text) }
+                updateState { copy(text = action.value) }
             }
 
             DiaryAction.AddEntryClicked -> {
-                isEditorVisible = true
                 updateState { copy(isEditorVisible = true) }
             }
 
             DiaryAction.EntryDialogDismissed -> {
-                if (selectedArea == null && text.isBlank()) {
-                    isEditorVisible = false
+                if (state.value.selectedArea == null && state.value.text.isBlank()) {
                     updateState { copy(isEditorVisible = false) }
                 } else {
                     saveEntry()
@@ -77,16 +60,17 @@ class DiaryOperator(
     }
 
     private fun saveEntry() {
-        val area = selectedArea
-        if (area == null || text.isBlank()) return
+        val currentState = state.value
+        val area = currentState.selectedArea
+        if (area == null || currentState.text.isBlank()) return
 
-        entries.add(EntryEntity(entries.size.toString(), area.name, text.trim()))
-        selectedArea = null
-        text = ""
-        isEditorVisible = false
         updateState {
             copy(
-                entries = entries.toList(),
+                entries = entries + EntryEntity(
+                    id = entries.size.toString(),
+                    areaId = area.name,
+                    text = currentState.text.trim(),
+                ),
                 isEditorVisible = false,
                 selectedArea = null,
                 text = "",
@@ -97,14 +81,10 @@ class DiaryOperator(
     private fun stateFor(offset: Int): DiaryUiState {
         val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
         val selectedDate = LocalDate.fromEpochDays(today.toEpochDays() + offset)
-        return DiaryUiState(
+        return state.value.copy(
             selectedDate = selectedDate,
+            dayOffset = offset,
             isTodaySelected = selectedDate == today,
-            entries = entries.toList(),
-            isEditorVisible = isEditorVisible,
-            selectedArea = selectedArea,
-            text = text,
-            dayQuote = dayQuote,
         )
     }
 
@@ -113,10 +93,11 @@ class DiaryOperator(
             val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
             return DiaryUiState(
                 selectedDate = today,
+                dayOffset = 0,
                 isTodaySelected = true,
                 entries = listOf(
-                    EntryEntity("1", "Zihin", "Bugün için küçük bir başlangıç yaptım."),
-                    EntryEntity("2", "Beden", "Kısa bir yürüyüş iyi geldi."),
+                    EntryEntity("1", StringKeys.mindArea, StringKeys.sampleMindEntry),
+                    EntryEntity("2", StringKeys.bodyArea, StringKeys.sampleBodyEntry),
                 ),
                 isEditorVisible = false,
                 selectedArea = null,

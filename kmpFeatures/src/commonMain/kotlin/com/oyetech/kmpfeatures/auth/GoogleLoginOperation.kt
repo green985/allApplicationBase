@@ -1,5 +1,7 @@
 package com.oyetech.kmpfeatures.auth
 
+import com.oyetech.kmpmodels.stringKeys.StringKeys
+
 import io.ktor.client.HttpClient
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -31,10 +33,10 @@ class GoogleLoginOperation(
                     nonce = googleCredential.nonce,
                 ),
             ).data
-                ?: error(
-                    existingUser?.message?.ifBlank { "Google login failed" }
-                        ?: "Google login failed",
-                )
+            ?: error(
+                existingUser?.message?.ifBlank { StringKeys.googleLoginFailed }
+                    ?: StringKeys.googleLoginFailed,
+            )
         }
     }
 
@@ -49,9 +51,9 @@ class GoogleLoginOperation(
         val rawBody = response.bodyAsText()
         println(
             "GoogleLogin response endpoint=$endpoint " +
-                "status=${response.status.value} " +
-                "headers=${response.headers.entries()} " +
-                "body=$rawBody",
+                    "status=${response.status.value} " +
+                    "headers=${response.headers.entries()} " +
+                    "body=$rawBody",
         )
         return json.decodeFromString(rawBody)
     }

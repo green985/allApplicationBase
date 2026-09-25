@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oyetech.kmpmodels.stringKeys.StringKeys
 import com.oyetech.kmpmodels.ui.event.LoginAction
 import com.oyetech.kmpmodels.ui.state.LoginUiState
 import com.oyetech.viewmodule.AppColors
@@ -50,7 +51,7 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = "Google ile giriş",
+            text = StringKeys.googleLogin,
             style = MaterialTheme.typography.headlineMedium,
             color = AppColors.textPrimary,
         )
@@ -61,18 +62,18 @@ fun LoginScreen(
             if (uiState.isLoading) {
                 CircularProgressIndicator()
             } else {
-                Text("Google ile devam et")
+                Text(StringKeys.continueWithGoogle)
             }
         }
         Button(
             enabled = !uiState.isLoading,
             onClick = { onAction(LoginAction.LocalAdminLoginClicked) },
         ) {
-            Text("Admin giriş")
+            Text(StringKeys.adminLogin)
         }
         if (uiState.username.isNotBlank()) {
             Text(
-                text = "Kullanıcı: ${uiState.username}",
+                text = StringKeys.username(uiState.username),
                 color = AppColors.textPrimary,
             )
         }
@@ -83,7 +84,7 @@ fun LoginScreen(
             )
         }
         Button(onClick = { onAction(LoginAction.BackClicked) }) {
-            Text("Geri")
+            Text(StringKeys.back)
         }
     }
 }
@@ -93,7 +94,7 @@ fun LoginScreen(
 private fun LoginScreenPreview() {
     ViewModuleTheme {
         LoginScreen(
-            uiState = LoginUiState(username = "Admin"),
+            uiState = LoginUiState(username = StringKeys.adminUsername),
             onAction = {},
         )
     }

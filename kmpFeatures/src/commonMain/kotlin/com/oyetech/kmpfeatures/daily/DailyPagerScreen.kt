@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oyetech.kmpmodels.stringKeys.StringKeys
 import com.oyetech.kmpmodels.ui.event.DailyPagerAction
 import com.oyetech.kmpmodels.ui.state.DailyPagerUiState
 import com.oyetech.viewmodule.AppColors
@@ -54,7 +55,7 @@ fun DailyPagerScreen(
         verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.Top),
     ) {
         Text(
-            text = "Günlük içerik",
+            text = StringKeys.dailyContent,
             style = MaterialTheme.typography.headlineMedium,
             color = AppColors.textPrimary,
         )
@@ -67,7 +68,7 @@ fun DailyPagerScreen(
                 enabled = uiState.canGoPrevious,
                 onClick = { onAction(DailyPagerAction.PreviousDayClicked) },
             ) {
-                Text("Dün")
+                Text(StringKeys.yesterday)
             }
             Text(
                 text = uiState.selectedDate.toTurkishDate(),
@@ -78,11 +79,11 @@ fun DailyPagerScreen(
                 enabled = uiState.canGoNext,
                 onClick = { onAction(DailyPagerAction.NextDayClicked) },
             ) {
-                Text("Yarın")
+                Text(StringKeys.tomorrow)
             }
         }
         Button(onClick = { onAction(DailyPagerAction.BackClicked) }) {
-            Text("Geri")
+            Text(StringKeys.back)
         }
     }
 }
@@ -100,19 +101,5 @@ private fun DailyPagerScreenPreview() {
 }
 
 private fun kotlinx.datetime.LocalDate.toTurkishDate(): String {
-    val months = arrayOf(
-        "Ocak",
-        "Şubat",
-        "Mart",
-        "Nisan",
-        "Mayıs",
-        "Haziran",
-        "Temmuz",
-        "Ağustos",
-        "Eylül",
-        "Ekim",
-        "Kasım",
-        "Aralık",
-    )
-    return "$day ${months[monthNumber - 1]} $year"
+    return "$day ${StringKeys.turkishMonths[monthNumber - 1]} $year"
 }

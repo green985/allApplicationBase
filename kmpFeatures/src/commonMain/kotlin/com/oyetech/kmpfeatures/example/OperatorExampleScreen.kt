@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oyetech.kmpfeatures.operator.FeatureOperator
+import com.oyetech.kmpmodels.stringKeys.StringKeys
 import com.oyetech.kmpmodels.ui.event.OperatorExampleAction
 import com.oyetech.kmpmodels.ui.state.OperatorExampleUiState
 import com.oyetech.viewmodule.AppColors
@@ -50,12 +51,12 @@ fun OperatorExampleScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
     ) {
         Text(
-            text = "Operator example",
+            text = StringKeys.operatorExample,
             style = MaterialTheme.typography.headlineMedium,
             color = AppColors.textPrimary,
         )
         Text(
-            text = "Completed operations: ${uiState.operationCount}",
+            text = StringKeys.completedOperations(uiState.operationCount),
             style = MaterialTheme.typography.bodyLarge,
             color = AppColors.textSecondary,
         )
@@ -68,13 +69,13 @@ fun OperatorExampleScreen(
             enabled = !uiState.isLoading,
             onClick = { onAction(OperatorExampleAction.RunOperationClicked) },
         ) {
-            Text("Run operation")
+            Text(StringKeys.runOperation)
         }
         OutlinedButton(onClick = { onAction(OperatorExampleAction.ResetClicked) }) {
-            Text("Reset")
+            Text(StringKeys.reset)
         }
         OutlinedButton(onClick = { onAction(OperatorExampleAction.BackClicked) }) {
-            Text("Back")
+            Text(StringKeys.back)
         }
     }
 }

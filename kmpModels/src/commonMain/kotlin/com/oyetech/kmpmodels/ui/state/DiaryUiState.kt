@@ -6,6 +6,7 @@ import kotlinx.datetime.LocalDate
 
 data class DiaryUiState(
     val selectedDate: LocalDate,
+    val dayOffset: Int = 0,
     val isTodaySelected: Boolean,
     val entries: List<EntryEntity>,
     val isEditorVisible: Boolean,

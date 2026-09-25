@@ -17,18 +17,14 @@ class DailyPagerOperator(
     initialState = initialState(),
     operatorScope = operatorScope,
 ) {
-    private var dayOffset = 0
-
     override fun handleAction(action: DailyPagerAction) {
         when (action) {
             DailyPagerAction.PreviousDayClicked -> {
-                dayOffset--
-                updateState { stateFor(dayOffset) }
+                updateState { stateFor(dayOffset - 1) }
             }
 
             DailyPagerAction.NextDayClicked -> {
-                dayOffset++
-                updateState { stateFor(dayOffset) }
+                updateState { stateFor(dayOffset + 1) }
             }
 
             DailyPagerAction.BackClicked -> navigationUseCase.goBack()
@@ -41,6 +37,7 @@ class DailyPagerOperator(
         val selectedDate = LocalDate.fromEpochDays(today.toEpochDays() + offset)
         return DailyPagerUiState(
             selectedDate = selectedDate,
+            dayOffset = offset,
             canGoPrevious = offset > -1,
             canGoNext = offset < 1,
         )

@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oyetech.kmpmodels.stringKeys.StringKeys
 import com.oyetech.kmpmodels.ui.event.HomeAction
 import com.oyetech.kmpmodels.ui.state.HomeUiState
 import com.oyetech.viewmodule.AppColors
@@ -49,7 +50,7 @@ fun HomeScreen(
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = "KMP Features",
+            text = StringKeys.kmpFeatures,
             style = MaterialTheme.typography.headlineMedium,
             color = AppColors.textPrimary,
         )
@@ -59,10 +60,10 @@ fun HomeScreen(
             color = AppColors.textSecondary,
         )
         Button(onClick = { onAction(HomeAction.AdminLoginClicked) }) {
-            Text("Admin giriş")
+            Text(StringKeys.adminLogin)
         }
         Button(onClick = { onAction(HomeAction.OperatorExampleClicked) }) {
-            Text("Operator örneğini aç")
+            Text(StringKeys.openOperatorExample)
         }
     }
 }
@@ -72,7 +73,7 @@ fun HomeScreen(
 private fun HomeScreenPreview() {
     ViewModuleTheme {
         HomeScreen(
-            uiState = HomeUiState(welcomeMessage = "KMP Features is ready"),
+            uiState = HomeUiState(welcomeMessage = StringKeys.kmpFeaturesReady),
             onAction = {},
         )
     }

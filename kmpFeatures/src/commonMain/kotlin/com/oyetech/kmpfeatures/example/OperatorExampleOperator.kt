@@ -3,6 +3,7 @@ package com.oyetech.kmpfeatures.example
 import com.oyetech.kmpdomain.delegate.snackbar.SnackbarDelegate
 import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import com.oyetech.kmpfeatures.operator.BaseFeatureOperator
+import com.oyetech.kmpmodels.stringKeys.StringKeys
 import com.oyetech.kmpmodels.ui.event.OperatorExampleAction
 import com.oyetech.kmpmodels.ui.state.OperatorExampleUiState
 import kotlinx.coroutines.CoroutineScope
@@ -36,7 +37,7 @@ class OperatorExampleOperator(
                     isLoading = false,
                 )
             }
-            snackbarDelegate.triggerSnackbarState("Operation completed")
+            snackbarDelegate.triggerSnackbarState(StringKeys.operationCompleted)
         }
     }
 

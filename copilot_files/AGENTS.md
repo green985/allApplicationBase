@@ -123,8 +123,7 @@ Rules:
 - Do not inject repositories, use cases, delegates, navigation, snackbar, API, or persistence
   dependencies in a feature `ScreenSetup`.
 - Koin must resolve those dependencies through the Operator constructor. The Operator itself must
-  not
-  call `koinInject`, `get()`, or another service-locator API.
+  not call `koinInject`, `get()`, or another service-locator API.
 - Keep the feature screen stateless: pass `UiState` and an action callback to it.
 - For a KMP-only feature, connect the Operator directly inside `ScreenSetup`: inject the Operator,
   collect its state, and pass `operator::dispatch` to the screen.
@@ -137,12 +136,51 @@ Rules:
 - Application-root infrastructure setup may inject global navigation and snackbar dependencies to
   connect them to `NavController` and `SnackbarHost`. This is the only exception to the feature
   `ScreenSetup` injection rule.
+- A feature `ScreenSetup` must not interpret actions, run feature operations, transform state, make
+  navigation/snackbar decisions, or contain feature-specific `LaunchedEffect` logic. It is only an
+  Operator lifecycle, injection, state collection, and action forwarding boundary.
 - The Operator effect type may be nullable because generic `Effect` has no non-null upper bound. Do
   not emit `null` merely to represent “no effect”; emit nothing instead. Prefer `Nothing` when a
   feature has no effects at all.
 - Do not add a reducer, middleware, store, or another Operator layer until a concrete feature
-  requires
-  it.
+  requires it.
+
+### Compose UI Purity — Mandatory
+
+Compose feature screens are render-only. They must contain no feature or business logic.
+
+Compose screens may only:
+
+- declare layout and Material/Compose components,
+- render values already prepared in `UiState`,
+- forward user interaction as a typed `Action`,
+- use UI-only ephemeral state when it is strictly visual and cannot affect feature behavior, data,
+  validation, navigation, or persistence.
+
+Compose screens and feature-level composables must not:
+
+- call repositories, use cases, delegates, APIs, storage, or persistence,
+- inject dependencies with `koinInject`, `get()`, or any other DI/service-locator API,
+- launch feature coroutines or use `LaunchedEffect`/`DisposableEffect` for feature operations,
+- mutate feature state or own a second source of truth with `remember`/`mutableStateOf`,
+- validate input or decide whether an operation is allowed,
+- sort, filter, group, map, normalize, parse, or otherwise transform feature data,
+- format domain values when the formatted display value can be prepared in `UiState`,
+- calculate derived feature values, counters, totals, labels, visibility, or enabled state,
+- call navigation or snackbar operations,
+- interpret an Action or decide which business operation it triggers,
+- contain error handling, retry policy, loading decisions, or success/failure branching.
+
+For KMP features, all of the operations above belong in the feature Operator. The Operator prepares
+a
+complete render-ready `UiState` and handles every `Action`. If the UI needs a value such as
+formatted
+text, `isVisible`, `isEnabled`, a filtered list, or an error label, add that value to `UiState` and
+compute it in the Operator.
+
+Existing Android-first Compose code keeps business logic in its ViewModel until that feature is
+explicitly migrated to an Operator. Do not perform a broad Android migration merely to satisfy this
+rule; however, never add new logic to an Android composable.
 
 ### KMP Navigation Routes
 
@@ -334,17 +372,25 @@ For KMP, use the navigation approach already configured in `kmpFeatures`; do not
 
 ## Compose Rules
 
-Prefer stateless composables.
+Composables must be stateless and render-only.
 
 Pass state through parameters.
 
 Pass events through callbacks.
 
-Do not place business logic inside composables.
+Do not place business logic, feature logic, state transformation, validation, formatting, filtering,
+sorting, derived-value calculation, coroutine operations, or dependency injection inside
+composables.
 
 Do not place repository calls inside composables.
 
 Do not place navigation logic inside composables.
+
+Do not use `remember`, `mutableStateOf`, `LaunchedEffect`, or `DisposableEffect` for feature
+behavior.
+They are allowed only for strictly visual Compose mechanics or application-root infrastructure
+adapters. KMP feature behavior belongs in the Operator; existing Android-first feature behavior
+belongs in its ViewModel until explicitly migrated.
 
 ---
 

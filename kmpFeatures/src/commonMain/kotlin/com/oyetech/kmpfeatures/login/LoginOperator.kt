@@ -5,6 +5,7 @@ import com.oyetech.kmpfeatures.auth.GoogleLoginOperation
 import com.oyetech.kmpfeatures.auth.googleWebClientId
 import com.oyetech.kmpfeatures.operator.BaseFeatureOperator
 import com.oyetech.kmpmodels.navigation.RouteKMP
+import com.oyetech.kmpmodels.stringKeys.StringKeys
 import com.oyetech.kmpmodels.ui.event.LoginAction
 import com.oyetech.kmpmodels.ui.state.LoginUiState
 import kotlinx.coroutines.CoroutineScope
@@ -32,7 +33,7 @@ class LoginOperator(
             updateState {
                 copy(
                     isError = true,
-                    errorMessage = "Google Web Client ID yapılandırılmamış",
+                    errorMessage = StringKeys.unconfiguredGoogleClientId,
                 )
             }
             return
@@ -46,7 +47,7 @@ class LoginOperator(
                         copy(
                             isLoading = false,
                             isAuthenticated = true,
-                            username = user.username ?: "daha belli degil !",
+                            username = user.username ?: StringKeys.unknownUser,
                         )
                     }
                     navigationUseCase.navigateTo(RouteKMP.Diary)
@@ -56,7 +57,7 @@ class LoginOperator(
                         copy(
                             isLoading = false,
                             isError = true,
-                            errorMessage = error.message ?: "Google login failed",
+                            errorMessage = error.message ?: StringKeys.googleLoginFailed,
                         )
                     }
                 },
@@ -69,7 +70,7 @@ class LoginOperator(
             copy(
                 isAuthenticated = true,
                 isError = false,
-                username = "Admin",
+                username = StringKeys.adminUsername,
                 errorMessage = "",
             )
         }
