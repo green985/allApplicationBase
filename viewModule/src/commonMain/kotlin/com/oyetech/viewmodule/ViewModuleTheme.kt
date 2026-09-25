@@ -5,6 +5,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 
 private fun buildLightColorScheme(palette: KmpColorPalette) = lightColorScheme(
     primary = palette.primary,
@@ -63,12 +64,15 @@ fun ViewModuleTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
-    MaterialTheme(
-        colorScheme = if (darkTheme) {
-            buildDarkColorScheme(kmpDarkPalette)
-        } else {
-            buildLightColorScheme(kmpLightPalette)
-        },
-        content = content,
-    )
+    val palette = if (darkTheme) kmpDarkPalette else kmpLightPalette
+    CompositionLocalProvider(LocalKmpColors provides palette) {
+        MaterialTheme(
+            colorScheme = if (false) {
+                buildDarkColorScheme(palette)
+            } else {
+                buildLightColorScheme(palette)
+            },
+            content = content,
+        )
+    }
 }
