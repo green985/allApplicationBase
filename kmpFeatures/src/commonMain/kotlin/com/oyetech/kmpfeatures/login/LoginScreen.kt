@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -16,8 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oyetech.kmpfeatures.auth.googleWebClientId
-import com.oyetech.kmpfeatures.theme.KmpFeaturesTheme
-import com.oyetech.viewmodule.ViewModuleButton
+import com.oyetech.viewmodule.AppColors
+import com.oyetech.viewmodule.ViewModuleTheme
 import org.koin.compose.koinInject
 
 @Composable
@@ -66,8 +67,12 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text("Google ile giriş", style = MaterialTheme.typography.headlineMedium)
-        ViewModuleButton(
+        Text(
+            text = "Google ile giriş",
+            style = MaterialTheme.typography.headlineMedium,
+            color = AppColors.textPrimary,
+        )
+        Button(
             enabled = !uiState.isLoading,
             onClick = { onEvent(LoginEvent.GoogleLoginClicked) },
         ) {
@@ -77,22 +82,25 @@ fun LoginScreen(
                 Text("Google ile devam et")
             }
         }
-        ViewModuleButton(
+        Button(
             enabled = !uiState.isLoading,
             onClick = { onEvent(LoginEvent.LocalAdminLoginClicked) },
         ) {
             Text("Admin giriş")
         }
         if (uiState.username.isNotBlank()) {
-            Text("Kullanıcı: ${uiState.username}")
+            Text(
+                text = "Kullanıcı: ${uiState.username}",
+                color = AppColors.textPrimary,
+            )
         }
         if (uiState.errorMessage.isNotBlank()) {
             Text(
                 text = uiState.errorMessage,
-                color = MaterialTheme.colorScheme.error,
+                color = AppColors.error,
             )
         }
-        ViewModuleButton(onClick = { onEvent(LoginEvent.BackClicked) }) {
+        Button(onClick = { onEvent(LoginEvent.BackClicked) }) {
             Text("Geri")
         }
     }
@@ -101,7 +109,7 @@ fun LoginScreen(
 @Preview(showBackground = true)
 @Composable
 private fun LoginScreenPreview() {
-    KmpFeaturesTheme {
+    ViewModuleTheme {
         LoginScreen(
             uiState = LoginUiState(username = "Admin"),
             onEvent = {},

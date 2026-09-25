@@ -1,4 +1,4 @@
-package com.oyetech.kmpfeatures.theme
+package com.oyetech.viewmodule
 
 import androidx.compose.ui.graphics.Color
 

@@ -8,7 +8,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,10 +22,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.oyetech.kmpfeatures.theme.KmpFeaturesTheme
-import com.oyetech.viewmodule.ViewModuleButton
-import com.oyetech.viewmodule.ViewModuleCard
-import com.oyetech.viewmodule.ViewModuleTextField
+import com.oyetech.viewmodule.AppColors
+import com.oyetech.viewmodule.ViewModuleTheme
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
@@ -127,12 +128,13 @@ fun DiaryScreen(
         Text(
             text = "Günlük",
             style = MaterialTheme.typography.headlineMedium,
+            color = AppColors.textPrimary,
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            ViewModuleButton(
+            Button(
                 enabled = uiState.canGoPrevious,
                 onClick = { onEvent(DiaryEvent.PreviousDayClicked) },
             ) {
@@ -142,13 +144,15 @@ fun DiaryScreen(
                 Text(
                     text = uiState.selectedDate.toTurkishDate(),
                     style = MaterialTheme.typography.titleLarge,
+                    color = AppColors.textPrimary,
                 )
                 Text(
                     text = if (uiState.isTodaySelected) "Bugün" else "Seçili gün",
                     style = MaterialTheme.typography.titleMedium,
+                    color = AppColors.textSecondary,
                 )
             }
-            ViewModuleButton(
+            Button(
                 enabled = uiState.canGoNext,
                 onClick = { onEvent(DiaryEvent.NextDayClicked) },
             ) {
@@ -156,7 +160,7 @@ fun DiaryScreen(
             }
         }
         if (uiState.isTodaySelected) {
-            ViewModuleTextField(
+            OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = uiState.dayQuote,
                 onValueChange = { onEvent(DiaryEvent.QuoteChanged(it)) },
@@ -177,14 +181,14 @@ fun DiaryScreen(
                 onSave = { onEvent(DiaryEvent.SaveEntryClicked) },
             )
         } else {
-            ViewModuleButton(
+            Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { onEvent(DiaryEvent.AddEntryClicked) },
             ) {
                 Text("+")
             }
         }
-        ViewModuleButton(onClick = { onEvent(DiaryEvent.BackClicked) }) {
+        Button(onClick = { onEvent(DiaryEvent.BackClicked) }) {
             Text("Geri")
         }
 
@@ -195,7 +199,7 @@ fun DiaryScreen(
 @Composable
 private fun DiaryScreenPreview() {
     val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-    KmpFeaturesTheme {
+    ViewModuleTheme {
         DiaryScreen(
             uiState = DiaryUiState(
                 selectedDate = today,
@@ -213,15 +217,17 @@ private fun DiaryScreenPreview() {
 
 @Composable
 private fun DiaryEntryCard(entry: DiaryEntry) {
-    ViewModuleCard(modifier = Modifier.fillMaxWidth()) {
+    Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = entry.area,
                 style = MaterialTheme.typography.labelLarge,
+                color = AppColors.textSecondary,
             )
             Text(
                 text = entry.text,
                 style = MaterialTheme.typography.bodyLarge,
+                color = AppColors.textPrimary,
             )
         }
     }
@@ -235,7 +241,7 @@ private fun EntryEditor(
     onTextChange: (String) -> Unit,
     onSave: () -> Unit,
 ) {
-    ViewModuleCard(modifier = Modifier.fillMaxWidth()) {
+    Card(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -243,15 +249,16 @@ private fun EntryEditor(
             Text(
                 text = "Yeni kayıt",
                 style = MaterialTheme.typography.titleMedium,
+                color = AppColors.textPrimary,
             )
-            ViewModuleTextField(
+            OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = area,
                 onValueChange = onAreaChange,
                 label = { Text("Area") },
                 singleLine = true,
             )
-            ViewModuleTextField(
+            OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = text,
                 onValueChange = onTextChange,
@@ -259,7 +266,7 @@ private fun EntryEditor(
                 minLines = 3,
             )
             Row(horizontalArrangement = Arrangement.End) {
-                ViewModuleButton(
+                Button(
                     enabled = area.isNotBlank() && text.isNotBlank(),
                     onClick = onSave,
                 ) {

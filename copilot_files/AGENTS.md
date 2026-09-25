@@ -45,6 +45,7 @@ This repository is adopting Kotlin Multiplatform incrementally.
   modules are Android-first legacy code.
 - `kmpFeatures` owns new KMP feature implementations and application flow.
 - `viewModule` owns reusable KMP Compose UI primitives and theming.
+- `kmpModels` owns platform-neutral models shared by KMP features and Android modules.
 - Put shared KMP code in `commonMain`.
 - Put Android-specific KMP integrations in `androidMain`.
 - Put Wasm-specific integrations in `wasmJsMain`.
@@ -52,6 +53,39 @@ This repository is adopting Kotlin Multiplatform incrementally.
 - KMP modules must not depend on Android-first modules merely to reuse an existing implementation.
 - Android-first modules must not be reorganized to depend on KMP modules unless explicitly
   requested.
+
+---
+
+## KMP Model Ownership
+
+Keep shared model types in `kmpModels/src/commonMain`. Organize them by responsibility:
+
+- `response`: remote/API response DTOs
+- `postbody`: request body DTOs used by POST, PATCH, or similar write operations
+- `entity`: application/domain entities and shared enums or value types
+- `ui/state`: feature UI state models
+- `ui/event`: feature UI event types
+
+Rules:
+
+- Package and directory names use lowercase Kotlin naming; use `postbody` even when the concept is
+  written as “post body”.
+- `kmpModels` must stay platform-neutral and must not depend on Android SDK, Compose UI, navigation,
+  ViewModels, repositories, or platform-specific resources.
+- Add `@Serializable` only to wire/request/response models that are actually serialized. Do not
+  add Android `@Keep` to `commonMain` models.
+- Entities must not double as response or post-body DTOs when their wire shapes differ.
+- UI state and event types may depend on shared entities, but entities and transport models must
+  never depend on UI types.
+- Once a KMP state or event is moved to `kmpModels`, remove its old declaration and update imports;
+  do not leave duplicate definitions.
+- Move only model declarations. Keep screens, composables, ViewModels, repositories, and behavior in
+  their current owning modules.
+- `kmpFeatures` may depend on `kmpModels`. Android modules may consume the Android target of
+  `kmpModels` when needed.
+- Do not migrate legacy Android models into `kmpModels` unless the task explicitly names them.
+- Model migration must be incremental and compilation-preserving; do not combine it with API,
+  persistence, navigation, or UI redesign.
 
 ---
 
@@ -271,6 +305,10 @@ unless the user explicitly requests a color change.
 
 For KMP UI, use the theme and tokens in `viewModule` or `kmpFeatures`. Do not depend on Android-only
 Compose resources or styling classes.
+
+- For KMP feature operations, use `com.oyetech.kmpfeatures.theme.AppColors` for all color values
+  in composables. Do not use `MaterialTheme.colorScheme` or define feature-local `Color` values
+  when an `AppColors` value provides the required color.
 
 ---
 
