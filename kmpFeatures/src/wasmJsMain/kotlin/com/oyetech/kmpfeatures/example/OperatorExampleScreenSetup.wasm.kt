@@ -7,7 +7,6 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 actual fun OperatorExampleScreenSetup(
-    onBackClick: () -> Unit,
 ) {
     val operatorScope = rememberCoroutineScope()
     val operator = koinInject<OperatorExampleOperator>(
@@ -16,6 +15,5 @@ actual fun OperatorExampleScreenSetup(
 
     OperatorExampleScreenConnection(
         operator = operator,
-        onBackClick = onBackClick,
     )
 }

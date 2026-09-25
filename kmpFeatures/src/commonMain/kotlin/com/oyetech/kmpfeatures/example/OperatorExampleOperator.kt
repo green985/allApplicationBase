@@ -1,15 +1,18 @@
 package com.oyetech.kmpfeatures.example
 
+import com.oyetech.kmpdomain.delegate.snackbar.SnackbarDelegate
+import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import com.oyetech.kmpfeatures.operator.BaseFeatureOperator
 import com.oyetech.kmpmodels.ui.event.OperatorExampleAction
-import com.oyetech.kmpmodels.ui.event.OperatorExampleEffect
 import com.oyetech.kmpmodels.ui.state.OperatorExampleUiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 
 class OperatorExampleOperator(
     operatorScope: CoroutineScope,
-) : BaseFeatureOperator<OperatorExampleUiState, OperatorExampleAction, OperatorExampleEffect>(
+    private val navigationUseCase: NavigationUseCase,
+    private val snackbarDelegate: SnackbarDelegate,
+) : BaseFeatureOperator<OperatorExampleUiState, OperatorExampleAction, Nothing>(
     initialState = OperatorExampleUiState(),
     operatorScope = operatorScope,
 ) {
@@ -17,7 +20,7 @@ class OperatorExampleOperator(
         when (action) {
             OperatorExampleAction.RunOperationClicked -> runOperation()
             OperatorExampleAction.ResetClicked -> reset()
-            OperatorExampleAction.BackClicked -> emitEffect(OperatorExampleEffect.NavigateBack)
+            OperatorExampleAction.BackClicked -> navigationUseCase.goBack()
         }
     }
 
@@ -33,7 +36,7 @@ class OperatorExampleOperator(
                     isLoading = false,
                 )
             }
-            emitEffect(OperatorExampleEffect.ShowMessage("Operation completed"))
+            snackbarDelegate.triggerSnackbarState("Operation completed")
         }
     }
 

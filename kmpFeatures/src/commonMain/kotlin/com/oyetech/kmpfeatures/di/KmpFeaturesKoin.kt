@@ -34,6 +34,8 @@ object KmpFeaturesKoin {
         factory { parameters ->
             OperatorExampleOperator(
                 operatorScope = parameters.get<CoroutineScope>(),
+                navigationUseCase = get(),
+                snackbarDelegate = get(),
             )
         }
     }

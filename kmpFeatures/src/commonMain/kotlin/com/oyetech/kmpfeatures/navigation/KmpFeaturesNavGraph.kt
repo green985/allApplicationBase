@@ -7,6 +7,7 @@ import com.oyetech.kmpfeatures.diary.DiaryScreenSetup
 import com.oyetech.kmpfeatures.example.OperatorExampleScreenSetup
 import com.oyetech.kmpfeatures.home.HomeScreenSetup
 import com.oyetech.kmpfeatures.login.LoginScreenSetup
+import com.oyetech.kmpfeatures.login.LoginViewModel
 import com.oyetech.kmpmodels.navigation.RouteKMP
 import org.koin.compose.koinInject
 
@@ -14,9 +15,11 @@ fun androidx.navigation.NavGraphBuilder.kmpFeaturesNavGraph(
 ) {
     composable(KmpFeaturesRoutes.path(RouteKMP.Home)) {
         val navigationUseCase = koinInject<NavigationUseCase>()
+        val loginViewModel = koinInject<LoginViewModel>()
         HomeScreenSetup(
-            onLoginClick = {
-                navigationUseCase.navigateTo(RouteKMP.Login)
+            onAdminLoginClick = {
+                loginViewModel.loginAsLocalAdmin()
+                navigationUseCase.navigateTo(RouteKMP.Diary)
             },
             onOperatorExampleClick = {
                 navigationUseCase.navigateTo(RouteKMP.OperatorExample)
@@ -45,9 +48,6 @@ fun androidx.navigation.NavGraphBuilder.kmpFeaturesNavGraph(
         )
     }
     composable(KmpFeaturesRoutes.path(RouteKMP.OperatorExample)) {
-        val navigationUseCase = koinInject<NavigationUseCase>()
-        OperatorExampleScreenSetup(
-            onBackClick = navigationUseCase::goBack,
-        )
+        OperatorExampleScreenSetup()
     }
 }
