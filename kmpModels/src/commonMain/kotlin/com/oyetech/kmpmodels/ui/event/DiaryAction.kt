@@ -9,6 +9,7 @@ sealed interface DiaryAction {
     data class AreaSelected(val value: AreaEntry) : DiaryAction
     data class TextChanged(val value: String) : DiaryAction
     data object AddEntryClicked : DiaryAction
+    data object EntryDialogDismissed : DiaryAction
     data object SaveEntryClicked : DiaryAction
     data object BackClicked : DiaryAction
     data object ErrorDismissed : DiaryAction

@@ -46,6 +46,7 @@ kotlin {
             implementation(libs.androides.ui.tooling)
             implementation(libs.androidx.lifecycle.viewmodel.ktx)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
+            implementation(libs.koin.androidx.compose)
         }
 
         wasmJsMain.dependencies {

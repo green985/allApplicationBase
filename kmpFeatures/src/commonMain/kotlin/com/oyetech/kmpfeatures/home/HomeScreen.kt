@@ -30,7 +30,7 @@ fun HomeScreenSetup(
         uiState = HomeUiState(welcomeMessage = exampleOperation.getWelcomeMessage()),
         onAction = { action ->
             when (action) {
-                HomeAction.LoginClicked -> onLoginClick()
+                HomeAction.AdminLoginClicked -> onLoginClick()
                 HomeAction.OperatorExampleClicked -> onOperatorExampleClick()
                 HomeAction.ErrorDismissed -> Unit
             }
@@ -60,8 +60,8 @@ fun HomeScreen(
             style = MaterialTheme.typography.bodyLarge,
             color = AppColors.textSecondary,
         )
-        Button(onClick = { onAction(HomeAction.LoginClicked) }) {
-            Text("Google ile giriş")
+        Button(onClick = { onAction(HomeAction.AdminLoginClicked) }) {
+            Text("Admin giriş")
         }
         Button(onClick = { onAction(HomeAction.OperatorExampleClicked) }) {
             Text("Operator örneğini aç")

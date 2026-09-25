@@ -1,13 +1,13 @@
 package com.oyetech.kmpfeatures.example
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 actual fun OperatorExampleScreenSetup(
     onBackClick: () -> Unit,
 ) {
-    val viewModel = viewModel<OperatorExampleViewModel>()
+    val viewModel = koinViewModel<OperatorExampleViewModel>()
 
     OperatorExampleScreenConnection(
         operator = viewModel,

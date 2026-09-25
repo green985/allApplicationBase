@@ -1,17 +1,18 @@
 package com.oyetech.kmpfeatures.example
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import org.koin.compose.koinInject
+import org.koin.core.parameter.parametersOf
 
 @Composable
 actual fun OperatorExampleScreenSetup(
     onBackClick: () -> Unit,
 ) {
     val operatorScope = rememberCoroutineScope()
-    val operator = remember(operatorScope) {
-        OperatorExampleOperator(operatorScope)
-    }
+    val operator = koinInject<OperatorExampleOperator>(
+        parameters = { parametersOf(operatorScope) },
+    )
 
     OperatorExampleScreenConnection(
         operator = operator,

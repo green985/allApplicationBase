@@ -10,9 +10,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -26,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.oyetech.kmpmodels.entity.AreaEntry
 import com.oyetech.kmpmodels.entity.EntryEntity
 import com.oyetech.kmpmodels.ui.event.DiaryAction
@@ -55,6 +58,16 @@ fun DiaryScreenSetup(
     var text by remember { mutableStateOf("") }
     var dayQuote by remember { mutableStateOf("") }
 
+    fun saveEntry() {
+        val area = selectedArea
+        if (area != null && text.isNotBlank()) {
+            entries.add(EntryEntity(entries.size.toString(), area.name, text.trim()))
+            selectedArea = null
+            text = ""
+            isEditorVisible = false
+        }
+    }
+
     DiaryScreen(
         uiState = DiaryUiState(
             selectedDate = selectedDate,
@@ -73,15 +86,15 @@ fun DiaryScreenSetup(
                 is DiaryAction.AreaSelected -> selectedArea = action.value
                 is DiaryAction.TextChanged -> text = action.value
                 DiaryAction.AddEntryClicked -> isEditorVisible = true
-                DiaryAction.SaveEntryClicked -> {
-                    val area = selectedArea
-                    if (area != null && text.isNotBlank()) {
-                        entries.add(EntryEntity(entries.size.toString(), area.name, text.trim()))
-                        selectedArea = null
-                        text = ""
+                DiaryAction.EntryDialogDismissed -> {
+                    if (selectedArea == null && text.isBlank()) {
                         isEditorVisible = false
+                    } else {
+                        saveEntry()
                     }
                 }
+
+                DiaryAction.SaveEntryClicked -> saveEntry()
 
                 DiaryAction.BackClicked -> onBackClick()
                 DiaryAction.ErrorDismissed -> Unit
@@ -95,61 +108,79 @@ fun DiaryScreen(
     uiState: DiaryUiState,
     onAction: (DiaryAction) -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Text(
-            text = "Günlük",
-            style = MaterialTheme.typography.headlineMedium,
-            color = AppColors.textPrimary,
-        )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { onAction(DiaryAction.AddEntryClicked) },
+            ) {
+                Text("+")
+            }
+        },
+    ) { contentPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(contentPadding)
+                .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Button(
-                enabled = uiState.canGoPrevious,
-                onClick = { onAction(DiaryAction.PreviousDayClicked) },
-            ) {
-                Text("Dün")
-            }
-            Column {
-                Text(
-                    text = uiState.selectedDate.toTurkishDate(),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = AppColors.textPrimary,
-                )
-                Text(
-                    text = if (uiState.isTodaySelected) "Bugün" else "Seçili gün",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = AppColors.textSecondary,
-                )
-            }
-            Button(
-                enabled = uiState.canGoNext,
-                onClick = { onAction(DiaryAction.NextDayClicked) },
-            ) {
-                Text("Yarın")
-            }
-        }
-        if (uiState.isTodaySelected) {
-            OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = uiState.dayQuote,
-                onValueChange = { onAction(DiaryAction.QuoteChanged(it)) },
-                label = { Text("Bugünün sözü") },
-                placeholder = { Text("Bugün için bir söz yaz") },
-                singleLine = true,
+            Text(
+                text = "Günlük",
+                style = MaterialTheme.typography.headlineMedium,
+                color = AppColors.textPrimary,
             )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Button(
+                    enabled = uiState.canGoPrevious,
+                    onClick = { onAction(DiaryAction.PreviousDayClicked) },
+                ) {
+                    Text("Dün")
+                }
+                Column {
+                    Text(
+                        text = uiState.selectedDate.toTurkishDate(),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = AppColors.textPrimary,
+                    )
+                    Text(
+                        text = if (uiState.isTodaySelected) "Bugün" else "Seçili gün",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = AppColors.textSecondary,
+                    )
+                }
+                Button(
+                    enabled = uiState.canGoNext,
+                    onClick = { onAction(DiaryAction.NextDayClicked) },
+                ) {
+                    Text("Yarın")
+                }
+            }
+            if (uiState.isTodaySelected) {
+                OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = uiState.dayQuote,
+                    onValueChange = { onAction(DiaryAction.QuoteChanged(it)) },
+                    label = { Text("Bugünün sözü") },
+                    placeholder = { Text("Bugün için bir söz yaz") },
+                    singleLine = true,
+                )
+            }
+            uiState.entries.forEach { entry ->
+                DiaryEntryCard(entry)
+            }
+            Button(onClick = { onAction(DiaryAction.BackClicked) }) {
+                Text("Geri")
+            }
         }
-        uiState.entries.forEach { entry ->
-            DiaryEntryCard(entry)
-        }
-        if (uiState.isEditorVisible) {
+    }
+    if (uiState.isEditorVisible) {
+        Dialog(
+            onDismissRequest = { onAction(DiaryAction.EntryDialogDismissed) },
+        ) {
             EntryEditor(
                 selectedArea = uiState.selectedArea,
                 text = uiState.text,
@@ -157,18 +188,7 @@ fun DiaryScreen(
                 onTextChange = { onAction(DiaryAction.TextChanged(it)) },
                 onSave = { onAction(DiaryAction.SaveEntryClicked) },
             )
-        } else {
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { onAction(DiaryAction.AddEntryClicked) },
-            ) {
-                Text("+")
-            }
         }
-        Button(onClick = { onAction(DiaryAction.BackClicked) }) {
-            Text("Geri")
-        }
-
     }
 }
 
