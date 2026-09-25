@@ -20,11 +20,9 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,68 +36,21 @@ import com.oyetech.viewmodule.ViewModuleTheme
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
+import org.koin.compose.koinInject
+import org.koin.core.parameter.parametersOf
 import kotlin.time.Clock
 
 @Composable
-fun DiaryScreenSetup(
-    onBackClick: () -> Unit,
-) {
-    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-    var dayOffset by remember { mutableStateOf(0) }
-    val selectedDate = LocalDate.fromEpochDays(today.toEpochDays() + dayOffset)
-    val entries = remember {
-        mutableStateListOf(
-            EntryEntity("1", "Zihin", "Bugün için küçük bir başlangıç yaptım."),
-            EntryEntity("2", "Beden", "Kısa bir yürüyüş iyi geldi."),
-        )
-    }
-    var isEditorVisible by remember { mutableStateOf(false) }
-    var selectedArea by remember { mutableStateOf<AreaEntry?>(null) }
-    var text by remember { mutableStateOf("") }
-    var dayQuote by remember { mutableStateOf("") }
-
-    fun saveEntry() {
-        val area = selectedArea
-        if (area != null && text.isNotBlank()) {
-            entries.add(EntryEntity(entries.size.toString(), area.name, text.trim()))
-            selectedArea = null
-            text = ""
-            isEditorVisible = false
-        }
-    }
+fun DiaryScreenSetup() {
+    val operatorScope = rememberCoroutineScope()
+    val operator = koinInject<DiaryOperator>(
+        parameters = { parametersOf(operatorScope) },
+    )
+    val uiState by operator.state.collectAsState()
 
     DiaryScreen(
-        uiState = DiaryUiState(
-            selectedDate = selectedDate,
-            isTodaySelected = selectedDate == today,
-            entries = entries.toList(),
-            isEditorVisible = isEditorVisible,
-            selectedArea = selectedArea,
-            text = text,
-            dayQuote = dayQuote,
-        ),
-        onAction = { action ->
-            when (action) {
-                DiaryAction.PreviousDayClicked -> dayOffset--
-                DiaryAction.NextDayClicked -> dayOffset++
-                is DiaryAction.QuoteChanged -> dayQuote = action.value
-                is DiaryAction.AreaSelected -> selectedArea = action.value
-                is DiaryAction.TextChanged -> text = action.value
-                DiaryAction.AddEntryClicked -> isEditorVisible = true
-                DiaryAction.EntryDialogDismissed -> {
-                    if (selectedArea == null && text.isBlank()) {
-                        isEditorVisible = false
-                    } else {
-                        saveEntry()
-                    }
-                }
-
-                DiaryAction.SaveEntryClicked -> saveEntry()
-
-                DiaryAction.BackClicked -> onBackClick()
-                DiaryAction.ErrorDismissed -> Unit
-            }
-        },
+        uiState = uiState,
+        onAction = operator::dispatch,
     )
 }
 

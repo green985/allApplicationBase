@@ -10,10 +10,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -22,33 +21,23 @@ import com.oyetech.kmpmodels.ui.event.DailyPagerAction
 import com.oyetech.kmpmodels.ui.state.DailyPagerUiState
 import com.oyetech.viewmodule.AppColors
 import com.oyetech.viewmodule.ViewModuleTheme
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
+import org.koin.compose.koinInject
+import org.koin.core.parameter.parametersOf
 import kotlin.time.Clock
 
 @Composable
-fun DailyPagerScreenSetup(
-    onBackClick: () -> Unit,
-) {
-    var dayOffset by remember { mutableIntStateOf(0) }
-    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-    val selectedDate = LocalDate.fromEpochDays(today.toEpochDays() + dayOffset)
+fun DailyPagerScreenSetup() {
+    val operatorScope = rememberCoroutineScope()
+    val operator = koinInject<DailyPagerOperator>(
+        parameters = { parametersOf(operatorScope) },
+    )
+    val uiState by operator.state.collectAsState()
 
     DailyPagerScreen(
-        uiState = DailyPagerUiState(
-            selectedDate = selectedDate,
-            canGoPrevious = dayOffset > -1,
-            canGoNext = dayOffset < 1,
-        ),
-        onAction = { action ->
-            when (action) {
-                DailyPagerAction.PreviousDayClicked -> dayOffset--
-                DailyPagerAction.NextDayClicked -> dayOffset++
-                DailyPagerAction.BackClicked -> onBackClick()
-                DailyPagerAction.ErrorDismissed -> Unit
-            }
-        },
+        uiState = uiState,
+        onAction = operator::dispatch,
     )
 }
 

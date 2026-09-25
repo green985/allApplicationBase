@@ -9,44 +9,31 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.oyetech.kmpfeatures.auth.googleWebClientId
 import com.oyetech.kmpmodels.ui.event.LoginAction
 import com.oyetech.kmpmodels.ui.state.LoginUiState
 import com.oyetech.viewmodule.AppColors
 import com.oyetech.viewmodule.ViewModuleTheme
 import org.koin.compose.koinInject
+import org.koin.core.parameter.parametersOf
 
 @Composable
-fun LoginScreenSetup(
-    onBackClick: () -> Unit,
-    onLoginSuccess: () -> Unit,
-    viewModel: LoginViewModel = koinInject(),
-) {
-    val state by viewModel.uiState.collectAsState()
-
-    LaunchedEffect(state.isAuthenticated) {
-        if (state.isAuthenticated) {
-            onLoginSuccess()
-        }
-    }
+fun LoginScreenSetup() {
+    val operatorScope = rememberCoroutineScope()
+    val operator = koinInject<LoginOperator>(
+        parameters = { parametersOf(operatorScope) },
+    )
+    val state by operator.state.collectAsState()
 
     LoginScreen(
         uiState = state,
-        onAction = { action ->
-            when (action) {
-                LoginAction.GoogleLoginClicked -> viewModel.login(googleWebClientId())
-                LoginAction.LocalAdminLoginClicked -> viewModel.loginAsLocalAdmin()
-                LoginAction.BackClicked -> onBackClick()
-                LoginAction.ErrorDismissed -> viewModel.clearError()
-            }
-        },
+        onAction = operator::dispatch,
     )
 }
 
