@@ -64,7 +64,7 @@ fun KmpFeaturesApp() {
                     navController = navController,
                     startDestination = KmpFeaturesRoutes.path(RouteKMP.Home),
                 ) {
-                    kmpFeaturesNavGraph(navController)
+                    kmpFeaturesNavGraph()
                 }
             }
         }

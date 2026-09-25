@@ -21,7 +21,7 @@ import org.koin.compose.koinInject
 
 @Composable
 fun HomeScreenSetup(
-    onLoginClick: () -> Unit,
+    onAdminLoginClick: () -> Unit,
     onOperatorExampleClick: () -> Unit,
 ) {
     val exampleOperation = koinInject<KmpFeaturesExampleOperation>()
@@ -30,7 +30,7 @@ fun HomeScreenSetup(
         uiState = HomeUiState(welcomeMessage = exampleOperation.getWelcomeMessage()),
         onAction = { action ->
             when (action) {
-                HomeAction.AdminLoginClicked -> onLoginClick()
+                HomeAction.AdminLoginClicked -> onAdminLoginClick()
                 HomeAction.OperatorExampleClicked -> onOperatorExampleClick()
                 HomeAction.ErrorDismissed -> Unit
             }

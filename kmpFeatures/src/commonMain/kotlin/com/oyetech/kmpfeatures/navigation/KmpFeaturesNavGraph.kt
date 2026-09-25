@@ -1,53 +1,53 @@
 package com.oyetech.kmpfeatures.navigation
 
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import com.oyetech.kmpfeatures.daily.DailyPagerScreenSetup
 import com.oyetech.kmpfeatures.diary.DiaryScreenSetup
 import com.oyetech.kmpfeatures.example.OperatorExampleScreenSetup
 import com.oyetech.kmpfeatures.home.HomeScreenSetup
 import com.oyetech.kmpfeatures.login.LoginScreenSetup
 import com.oyetech.kmpmodels.navigation.RouteKMP
+import org.koin.compose.koinInject
 
 fun androidx.navigation.NavGraphBuilder.kmpFeaturesNavGraph(
-    navController: NavHostController,
 ) {
     composable(KmpFeaturesRoutes.path(RouteKMP.Home)) {
+        val navigationUseCase = koinInject<NavigationUseCase>()
         HomeScreenSetup(
             onLoginClick = {
-                navController.navigate(KmpFeaturesRoutes.path(RouteKMP.Login))
+                navigationUseCase.navigateTo(RouteKMP.Login)
             },
             onOperatorExampleClick = {
-                navController.navigate(KmpFeaturesRoutes.path(RouteKMP.OperatorExample))
+                navigationUseCase.navigateTo(RouteKMP.OperatorExample)
             },
         )
     }
     composable(KmpFeaturesRoutes.path(RouteKMP.Login)) {
+        val navigationUseCase = koinInject<NavigationUseCase>()
         LoginScreenSetup(
-            onBackClick = navController::popBackStack,
+            onBackClick = navigationUseCase::goBack,
             onLoginSuccess = {
-                navController.navigate(KmpFeaturesRoutes.path(RouteKMP.Diary)) {
-                    popUpTo(KmpFeaturesRoutes.path(RouteKMP.Login)) {
-                        inclusive = true
-                    }
-                    launchSingleTop = true
-                }
+                navigationUseCase.navigateTo(RouteKMP.Diary)
             },
         )
     }
     composable(KmpFeaturesRoutes.path(RouteKMP.DailyPager)) {
+        val navigationUseCase = koinInject<NavigationUseCase>()
         DailyPagerScreenSetup(
-            onBackClick = navController::popBackStack,
+            onBackClick = navigationUseCase::goBack,
         )
     }
     composable(KmpFeaturesRoutes.path(RouteKMP.Diary)) {
+        val navigationUseCase = koinInject<NavigationUseCase>()
         DiaryScreenSetup(
-            onBackClick = navController::popBackStack,
+            onBackClick = navigationUseCase::goBack,
         )
     }
     composable(KmpFeaturesRoutes.path(RouteKMP.OperatorExample)) {
+        val navigationUseCase = koinInject<NavigationUseCase>()
         OperatorExampleScreenSetup(
-            onBackClick = navController::popBackStack,
+            onBackClick = navigationUseCase::goBack,
         )
     }
 }
