@@ -182,7 +182,7 @@ private fun DiaryScreenPreview() {
                         "Bugün için küçük bir başlangıç yaptım."
                     )
                 ),
-                isEditorVisible = false,
+                isEditorVisible = true,
                 area = "",
                 text = "",
                 dayQuote = "",
