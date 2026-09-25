@@ -112,9 +112,37 @@ Rules:
 
 - KMP screen input models use `Action` names, not `Event` names (`HomeAction`, `DiaryAction`, etc.).
 - `State` represents the screen's current persistent UI and is passed into stateless composables.
-- `Action` represents user or system input and is handled by the screen setup/ViewModel boundary.
+- `Action` represents user or system input and is handled by the feature Operator.
 - `Effect` is reserved for one-time operations such as navigation, messages, or external launches;
   do not store one-time effects as persistent state.
+
+### Operator and Screen Integration
+
+- A feature `ScreenSetup` injects only its Operator. When Android lifecycle integration is required,
+  the injected Android ViewModel wrapper counts as the Operator boundary.
+- Do not inject repositories, use cases, delegates, navigation, snackbar, API, or persistence
+  dependencies in a feature `ScreenSetup`.
+- Koin must resolve those dependencies through the Operator constructor. The Operator itself must
+  not
+  call `koinInject`, `get()`, or another service-locator API.
+- Keep the feature screen stateless: pass `UiState` and an action callback to it.
+- For a KMP-only feature, connect the Operator directly inside `ScreenSetup`: inject the Operator,
+  collect its state, and pass `operator::dispatch` to the screen.
+- Do not create a `FeatureScreenConnection` composable for a KMP-only screen.
+- Create a shared `FeatureScreenConnection` only when the same screen is connected through different
+  Android and KMP/Wasm setup implementations. Its only purpose is to deduplicate state/action/effect
+  wiring across platforms; it is not a mandatory architecture layer.
+- Platform setup files own lifecycle acquisition: Android uses the ViewModel wrapper and
+  `viewModelScope`; KMP/Wasm uses a composition-owned scope.
+- Application-root infrastructure setup may inject global navigation and snackbar dependencies to
+  connect them to `NavController` and `SnackbarHost`. This is the only exception to the feature
+  `ScreenSetup` injection rule.
+- The Operator effect type may be nullable because generic `Effect` has no non-null upper bound. Do
+  not emit `null` merely to represent “no effect”; emit nothing instead. Prefer `Nothing` when a
+  feature has no effects at all.
+- Do not add a reducer, middleware, store, or another Operator layer until a concrete feature
+  requires
+  it.
 
 ### KMP Navigation Routes
 

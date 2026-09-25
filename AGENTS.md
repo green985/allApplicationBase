@@ -11,5 +11,7 @@ The core migration constraint is incremental isolation:
 - Implement new KMP work separately in `kmpFeatures` and reusable KMP UI in `viewModule`.
 - Keep shared Android/KMP model types in `kmpModels`, using the ownership and package rules in the
   detailed instructions.
+- Feature setups inject only their Operator; create a separate ScreenConnection only for screens
+  shared through different Android and KMP platform setup implementations.
 - Prefer `commonMain`, with platform-specific code limited to the appropriate source set.
 - Do not trigger broad Android-to-KMP refactors as a side effect of feature work.
