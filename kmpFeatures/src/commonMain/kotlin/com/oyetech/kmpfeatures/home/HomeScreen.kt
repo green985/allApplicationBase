@@ -12,8 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oyetech.kmpfeatures.example.KmpFeaturesExampleOperation
+import com.oyetech.kmpfeatures.theme.KmpFeaturesTheme
 import com.oyetech.viewmodule.ViewModuleButton
-import com.oyetech.viewmodule.ViewModuleTheme
 import org.koin.compose.koinInject
 
 data class HomeUiState(
@@ -74,7 +74,7 @@ fun HomeScreen(
 @Preview(showBackground = true)
 @Composable
 private fun HomeScreenPreview() {
-    ViewModuleTheme {
+    KmpFeaturesTheme {
         HomeScreen(
             uiState = HomeUiState(welcomeMessage = "KMP Features is ready"),
             onEvent = {},

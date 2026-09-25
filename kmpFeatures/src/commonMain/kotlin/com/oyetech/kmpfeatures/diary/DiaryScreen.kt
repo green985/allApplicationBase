@@ -19,10 +19,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oyetech.kmpfeatures.theme.KmpFeaturesTheme
 import com.oyetech.viewmodule.ViewModuleButton
 import com.oyetech.viewmodule.ViewModuleCard
 import com.oyetech.viewmodule.ViewModuleTextField
-import com.oyetech.viewmodule.ViewModuleTheme
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
@@ -195,7 +195,7 @@ fun DiaryScreen(
 @Composable
 private fun DiaryScreenPreview() {
     val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-    ViewModuleTheme {
+    KmpFeaturesTheme {
         DiaryScreen(
             uiState = DiaryUiState(
                 selectedDate = today,

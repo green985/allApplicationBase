@@ -17,8 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oyetech.kmpfeatures.theme.KmpFeaturesTheme
 import com.oyetech.viewmodule.ViewModuleButton
-import com.oyetech.viewmodule.ViewModuleTheme
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
@@ -113,7 +113,7 @@ fun DailyPagerScreen(
 @Composable
 private fun DailyPagerScreenPreview() {
     val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-    ViewModuleTheme {
+    KmpFeaturesTheme {
         DailyPagerScreen(
             uiState = DailyPagerUiState(selectedDate = today),
             onEvent = {},
