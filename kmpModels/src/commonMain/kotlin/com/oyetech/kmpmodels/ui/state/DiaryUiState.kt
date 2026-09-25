@@ -1,5 +1,6 @@
 package com.oyetech.kmpmodels.ui.state
 
+import com.oyetech.kmpmodels.entity.Area
 import com.oyetech.kmpmodels.entity.EntryEntity
 import kotlinx.datetime.LocalDate
 
@@ -8,7 +9,7 @@ data class DiaryUiState(
     val isTodaySelected: Boolean,
     val entries: List<EntryEntity>,
     val isEditorVisible: Boolean,
-    val area: String,
+    val selectedArea: Area?,
     val text: String,
     val dayQuote: String,
     val canGoPrevious: Boolean = true,
