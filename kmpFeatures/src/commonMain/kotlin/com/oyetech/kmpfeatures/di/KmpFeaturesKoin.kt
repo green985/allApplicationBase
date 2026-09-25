@@ -6,6 +6,7 @@ import com.oyetech.kmpfeatures.auth.GoogleIdentityProvider
 import com.oyetech.kmpfeatures.auth.GoogleLoginOperation
 import com.oyetech.kmpfeatures.example.KmpFeaturesExampleOperation
 import com.oyetech.kmpfeatures.example.OperatorExampleOperator
+import com.oyetech.kmpfeatures.home.HomeOperator
 import com.oyetech.kmpfeatures.login.LoginViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -31,6 +32,14 @@ object KmpFeaturesKoin {
         singleOf(::GoogleLoginOperation)
         singleOf(::LoginViewModel)
         singleOf(::KmpFeaturesExampleOperation)
+        factory { parameters ->
+            HomeOperator(
+                operatorScope = parameters.get<CoroutineScope>(),
+                navigationUseCase = get(),
+                loginViewModel = get(),
+                exampleOperation = get(),
+            )
+        }
         factory { parameters ->
             OperatorExampleOperator(
                 operatorScope = parameters.get<CoroutineScope>(),

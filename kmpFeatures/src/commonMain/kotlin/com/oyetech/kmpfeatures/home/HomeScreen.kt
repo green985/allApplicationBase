@@ -8,33 +8,31 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.oyetech.kmpfeatures.example.KmpFeaturesExampleOperation
 import com.oyetech.kmpmodels.ui.event.HomeAction
 import com.oyetech.kmpmodels.ui.state.HomeUiState
 import com.oyetech.viewmodule.AppColors
 import com.oyetech.viewmodule.ViewModuleTheme
 import org.koin.compose.koinInject
+import org.koin.core.parameter.parametersOf
 
 @Composable
-fun HomeScreenSetup(
-    onAdminLoginClick: () -> Unit,
-    onOperatorExampleClick: () -> Unit,
-) {
-    val exampleOperation = koinInject<KmpFeaturesExampleOperation>()
+fun HomeScreenSetup() {
+    val operatorScope = rememberCoroutineScope()
+    val operator = koinInject<HomeOperator>(
+        parameters = { parametersOf(operatorScope) },
+    )
+    val uiState by operator.state.collectAsState()
 
     HomeScreen(
-        uiState = HomeUiState(welcomeMessage = exampleOperation.getWelcomeMessage()),
-        onAction = { action ->
-            when (action) {
-                HomeAction.AdminLoginClicked -> onAdminLoginClick()
-                HomeAction.OperatorExampleClicked -> onOperatorExampleClick()
-                HomeAction.ErrorDismissed -> Unit
-            }
-        },
+        uiState = uiState,
+        onAction = operator::dispatch,
     )
 }
 
