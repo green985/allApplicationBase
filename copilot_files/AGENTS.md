@@ -123,6 +123,24 @@ Rules:
   resolved only at the navigation adapter boundary.
 - Do not import Android-only `AppRoute`, `NavKey`, or Android `@Keep` into `commonMain`.
 
+### KMP Navigation and Snackbar Usage
+
+- KMP navigation operations use `com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase`.
+- The KMP root owns the `NavController` adapter and calls `setNavigator`; it must call
+  `clearNavigator()` when its lifecycle ends.
+- KMP screens and operators must not access `NavController` directly. They request navigation
+  through `NavigationUseCase`; route values remain typed `RouteKMP` until the root adapter.
+- KMP snackbar operations use `com.oyetech.kmpdomain.delegate.snackbar.SnackbarDelegate`.
+- `SnackbarDelegate` is platform- and Compose-independent. Consumers may read its
+  read-only `snackbarUiState`; only the root Scaffold owns the single `SnackbarHost` and renders it.
+- KMP operators trigger messages through `SnackbarDelegate` and use `NavigationUseCase.goBack()` for
+  back actions. Do not create screen-local snackbar hosts for shared KMP flows.
+
+### KMP Test Policy
+
+- Do not create KMP test source files or test dependencies in KMP modules unless the user explicitly
+  requests tests for that task.
+
 ---
 
 ## Android Rules
