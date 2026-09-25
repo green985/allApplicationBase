@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.oyetech.viewmodule.ViewModuleButton
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
@@ -46,7 +46,7 @@ fun DailyPagerScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Button(
+            ViewModuleButton(
                 enabled = dayOffset > -1,
                 onClick = { dayOffset-- },
             ) {
@@ -56,14 +56,14 @@ fun DailyPagerScreen(
                 text = selectedDate.toTurkishDate(),
                 style = MaterialTheme.typography.titleLarge,
             )
-            Button(
+            ViewModuleButton(
                 enabled = dayOffset < 1,
                 onClick = { dayOffset++ },
             ) {
                 Text("Yarın")
             }
         }
-        Button(onClick = onBackClick) {
+        ViewModuleButton(onClick = onBackClick) {
             Text("Geri")
         }
     }

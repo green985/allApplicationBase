@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -16,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.oyetech.kmpfeatures.auth.googleWebClientId
+import com.oyetech.viewmodule.ViewModuleButton
 import org.koin.compose.koinInject
 
 @Composable
@@ -40,7 +40,7 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center,
     ) {
         Text("Google ile giriş", style = MaterialTheme.typography.headlineMedium)
-        Button(
+        ViewModuleButton(
             enabled = !state.isLoading,
             onClick = { viewModel.login(googleWebClientId()) },
         ) {
@@ -50,7 +50,7 @@ fun LoginScreen(
                 Text("Google ile devam et")
             }
         }
-        Button(
+        ViewModuleButton(
             enabled = !state.isLoading,
             onClick = viewModel::loginAsLocalAdmin,
         ) {
@@ -65,7 +65,7 @@ fun LoginScreen(
                 color = MaterialTheme.colorScheme.error,
             )
         }
-        Button(onClick = onBackClick) {
+        ViewModuleButton(onClick = onBackClick) {
             Text("Geri")
         }
     }

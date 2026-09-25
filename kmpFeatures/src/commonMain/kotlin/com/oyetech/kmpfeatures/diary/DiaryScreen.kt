@@ -8,10 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,6 +18,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.oyetech.viewmodule.ViewModuleButton
+import com.oyetech.viewmodule.ViewModuleCard
+import com.oyetech.viewmodule.ViewModuleTextField
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
@@ -64,7 +64,7 @@ fun DiaryScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Button(
+            ViewModuleButton(
                 enabled = dayOffset > -1,
                 onClick = { dayOffset-- },
             ) {
@@ -80,7 +80,7 @@ fun DiaryScreen(
                     style = MaterialTheme.typography.titleMedium,
                 )
             }
-            Button(
+            ViewModuleButton(
                 enabled = dayOffset < 1,
                 onClick = { dayOffset++ },
             ) {
@@ -88,7 +88,7 @@ fun DiaryScreen(
             }
         }
         if (selectedDate == today) {
-            OutlinedTextField(
+            ViewModuleTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = dayQuote,
                 onValueChange = { dayQuote = it },
@@ -116,14 +116,14 @@ fun DiaryScreen(
                 },
             )
         } else {
-            Button(
+            ViewModuleButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { isEditorVisible = true },
             ) {
                 Text("+")
             }
         }
-        Button(onClick = onBackClick) {
+        ViewModuleButton(onClick = onBackClick) {
             Text("Geri")
         }
     }
@@ -131,7 +131,7 @@ fun DiaryScreen(
 
 @Composable
 private fun DiaryEntryCard(entry: DiaryEntry) {
-    Card(modifier = Modifier.fillMaxWidth()) {
+    ViewModuleCard(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = entry.area,
@@ -153,7 +153,7 @@ private fun EntryEditor(
     onTextChange: (String) -> Unit,
     onSave: () -> Unit,
 ) {
-    Card(modifier = Modifier.fillMaxWidth()) {
+    ViewModuleCard(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -162,14 +162,14 @@ private fun EntryEditor(
                 text = "Yeni kayıt",
                 style = MaterialTheme.typography.titleMedium,
             )
-            OutlinedTextField(
+            ViewModuleTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = area,
                 onValueChange = onAreaChange,
                 label = { Text("Area") },
                 singleLine = true,
             )
-            OutlinedTextField(
+            ViewModuleTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = text,
                 onValueChange = onTextChange,
@@ -177,7 +177,7 @@ private fun EntryEditor(
                 minLines = 3,
             )
             Row(horizontalArrangement = Arrangement.End) {
-                Button(
+                ViewModuleButton(
                     enabled = area.isNotBlank() && text.isNotBlank(),
                     onClick = onSave,
                 ) {

@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.oyetech.kmpfeatures.example.KmpFeaturesExampleOperation
+import com.oyetech.viewmodule.ViewModuleButton
 import org.koin.compose.koinInject
 
 @Composable
@@ -34,7 +35,7 @@ fun HomeScreen(
             text = exampleOperation.getWelcomeMessage(),
             style = MaterialTheme.typography.bodyLarge,
         )
-        androidx.compose.material3.Button(onClick = onLoginClick) {
+        ViewModuleButton(onClick = onLoginClick) {
             Text("Google ile giriş")
         }
     }
