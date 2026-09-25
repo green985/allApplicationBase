@@ -26,6 +26,7 @@ kotlin {
             implementation(compose.foundation)
             implementation(compose.material3)
             implementation(compose.ui)
+            implementation("org.jetbrains.compose.ui:ui-tooling-preview:1.10.3")
             implementation(compose.components.resources)
 
             implementation(libs.ktor.client.core)
@@ -41,6 +42,7 @@ kotlin {
 
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.androides.ui.tooling)
         }
 
         wasmJsMain.dependencies {

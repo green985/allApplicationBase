@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 
 data class LoginUiState(
     val isLoading: Boolean = false,
+    val isError: Boolean = false,
     val isAuthenticated: Boolean = false,
     val username: String = "",
     val errorMessage: String = "",
@@ -27,17 +28,23 @@ class LoginViewModel(
 
     fun login(clientId: String) {
         if (clientId.isBlank() || clientId.startsWith("REPLACE_")) {
-            _uiState.update { it.copy(errorMessage = "Google Web Client ID yapılandırılmamış") }
+            _uiState.update {
+                it.copy(
+                    isError = true,
+                    errorMessage = "Google Web Client ID yapılandırılmamış",
+                )
+            }
             return
         }
 
         scope.launch {
-            _uiState.update { it.copy(isLoading = true, errorMessage = "") }
+            _uiState.update { it.copy(isLoading = true, isError = false, errorMessage = "") }
             googleLoginOperation.login(clientId).fold(
                 onSuccess = { user ->
                     _uiState.update {
                         it.copy(
                             isLoading = false,
+                            isError = false,
                             isAuthenticated = true,
                             username = user.username ?: "daha belli degil !",
                         )
@@ -47,6 +54,7 @@ class LoginViewModel(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
+                            isError = true,
                             errorMessage = error.message ?: "Google login failed",
                         )
                     }
@@ -59,10 +67,15 @@ class LoginViewModel(
         _uiState.update {
             it.copy(
                 isAuthenticated = true,
+                isError = false,
                 username = "Admin",
                 errorMessage = "",
             )
         }
+    }
+
+    fun clearError() {
+        _uiState.update { it.copy(isError = false, errorMessage = "") }
     }
 
     fun clear() {

@@ -17,22 +17,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oyetech.viewmodule.ViewModuleButton
 import com.oyetech.viewmodule.ViewModuleCard
 import com.oyetech.viewmodule.ViewModuleTextField
+import com.oyetech.viewmodule.ViewModuleTheme
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import kotlin.time.Clock
 
-private data class DiaryEntry(
+data class DiaryEntry(
     val area: String,
     val text: String,
 )
 
 @Composable
-fun DiaryScreen(
+fun DiaryScreenSetup(
     onBackClick: () -> Unit,
 ) {
     val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
@@ -49,6 +51,72 @@ fun DiaryScreen(
     var text by remember { mutableStateOf("") }
     var dayQuote by remember { mutableStateOf("") }
 
+    DiaryScreen(
+        uiState = DiaryUiState(
+            selectedDate = selectedDate,
+            isTodaySelected = selectedDate == today,
+            entries = entries.toList(),
+            isEditorVisible = isEditorVisible,
+            area = area,
+            text = text,
+            dayQuote = dayQuote,
+        ),
+        onEvent = { event ->
+            when (event) {
+                DiaryEvent.PreviousDayClicked -> dayOffset--
+                DiaryEvent.NextDayClicked -> dayOffset++
+                is DiaryEvent.QuoteChanged -> dayQuote = event.value
+                is DiaryEvent.AreaChanged -> area = event.value
+                is DiaryEvent.TextChanged -> text = event.value
+                DiaryEvent.AddEntryClicked -> isEditorVisible = true
+                DiaryEvent.SaveEntryClicked -> {
+                    if (area.isNotBlank() && text.isNotBlank()) {
+                        entries.add(DiaryEntry(area.trim(), text.trim()))
+                        area = ""
+                        text = ""
+                        isEditorVisible = false
+                    }
+                }
+
+                DiaryEvent.BackClicked -> onBackClick()
+                DiaryEvent.ErrorDismissed -> Unit
+            }
+        },
+    )
+}
+
+data class DiaryUiState(
+    val selectedDate: LocalDate,
+    val isTodaySelected: Boolean,
+    val entries: List<DiaryEntry>,
+    val isEditorVisible: Boolean,
+    val area: String,
+    val text: String,
+    val dayQuote: String,
+    val canGoPrevious: Boolean = true,
+    val canGoNext: Boolean = true,
+    val isLoading: Boolean = false,
+    val isError: Boolean = false,
+    val errorMessage: String = "",
+)
+
+sealed interface DiaryEvent {
+    data object PreviousDayClicked : DiaryEvent
+    data object NextDayClicked : DiaryEvent
+    data class QuoteChanged(val value: String) : DiaryEvent
+    data class AreaChanged(val value: String) : DiaryEvent
+    data class TextChanged(val value: String) : DiaryEvent
+    data object AddEntryClicked : DiaryEvent
+    data object SaveEntryClicked : DiaryEvent
+    data object BackClicked : DiaryEvent
+    data object ErrorDismissed : DiaryEvent
+}
+
+@Composable
+fun DiaryScreen(
+    uiState: DiaryUiState,
+    onEvent: (DiaryEvent) -> Unit,
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -65,67 +133,81 @@ fun DiaryScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             ViewModuleButton(
-                enabled = dayOffset > -1,
-                onClick = { dayOffset-- },
+                enabled = uiState.canGoPrevious,
+                onClick = { onEvent(DiaryEvent.PreviousDayClicked) },
             ) {
                 Text("Dün")
             }
             Column {
                 Text(
-                    text = selectedDate.toTurkishDate(),
+                    text = uiState.selectedDate.toTurkishDate(),
                     style = MaterialTheme.typography.titleLarge,
                 )
                 Text(
-                    text = if (dayOffset == 0) "Bugün" else "Seçili gün",
+                    text = if (uiState.isTodaySelected) "Bugün" else "Seçili gün",
                     style = MaterialTheme.typography.titleMedium,
                 )
             }
             ViewModuleButton(
-                enabled = dayOffset < 1,
-                onClick = { dayOffset++ },
+                enabled = uiState.canGoNext,
+                onClick = { onEvent(DiaryEvent.NextDayClicked) },
             ) {
                 Text("Yarın")
             }
         }
-        if (selectedDate == today) {
+        if (uiState.isTodaySelected) {
             ViewModuleTextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = dayQuote,
-                onValueChange = { dayQuote = it },
+                value = uiState.dayQuote,
+                onValueChange = { onEvent(DiaryEvent.QuoteChanged(it)) },
                 label = { Text("Bugünün sözü") },
                 placeholder = { Text("Bugün için bir söz yaz") },
                 singleLine = true,
             )
         }
-        entries.forEach { entry ->
+        uiState.entries.forEach { entry ->
             DiaryEntryCard(entry)
         }
-        if (isEditorVisible) {
+        if (uiState.isEditorVisible) {
             EntryEditor(
-                area = area,
-                text = text,
-                onAreaChange = { area = it },
-                onTextChange = { text = it },
-                onSave = {
-                    if (area.isNotBlank() && text.isNotBlank()) {
-                        entries.add(DiaryEntry(area.trim(), text.trim()))
-                        area = ""
-                        text = ""
-                        isEditorVisible = false
-                    }
-                },
+                area = uiState.area,
+                text = uiState.text,
+                onAreaChange = { onEvent(DiaryEvent.AreaChanged(it)) },
+                onTextChange = { onEvent(DiaryEvent.TextChanged(it)) },
+                onSave = { onEvent(DiaryEvent.SaveEntryClicked) },
             )
         } else {
             ViewModuleButton(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { isEditorVisible = true },
+                onClick = { onEvent(DiaryEvent.AddEntryClicked) },
             ) {
                 Text("+")
             }
         }
-        ViewModuleButton(onClick = onBackClick) {
+        ViewModuleButton(onClick = { onEvent(DiaryEvent.BackClicked) }) {
             Text("Geri")
         }
+
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun DiaryScreenPreview() {
+    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+    ViewModuleTheme {
+        DiaryScreen(
+            uiState = DiaryUiState(
+                selectedDate = today,
+                isTodaySelected = true,
+                entries = listOf(DiaryEntry("Zihin", "Bugün için küçük bir başlangıç yaptım.")),
+                isEditorVisible = false,
+                area = "",
+                text = "",
+                dayQuote = "",
+            ),
+            onEvent = {},
+        )
     }
 }
 

@@ -2,23 +2,23 @@ package com.oyetech.kmpfeatures.navigation
 
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.oyetech.kmpfeatures.diary.DiaryScreen
-import com.oyetech.kmpfeatures.home.HomeScreen
-import com.oyetech.kmpfeatures.login.LoginScreen
-import com.oyetech.kmpfeatures.daily.DailyPagerScreen
+import com.oyetech.kmpfeatures.daily.DailyPagerScreenSetup
+import com.oyetech.kmpfeatures.diary.DiaryScreenSetup
+import com.oyetech.kmpfeatures.home.HomeScreenSetup
+import com.oyetech.kmpfeatures.login.LoginScreenSetup
 
 fun androidx.navigation.NavGraphBuilder.kmpFeaturesNavGraph(
     navController: NavHostController,
 ) {
     composable(KmpFeaturesRoutes.Home) {
-        HomeScreen(
+        HomeScreenSetup(
             onLoginClick = {
                 navController.navigate(KmpFeaturesRoutes.Login)
             },
         )
     }
     composable(KmpFeaturesRoutes.Login) {
-        LoginScreen(
+        LoginScreenSetup(
             onBackClick = navController::popBackStack,
             onLoginSuccess = {
                 navController.navigate(KmpFeaturesRoutes.Diary) {
@@ -31,12 +31,12 @@ fun androidx.navigation.NavGraphBuilder.kmpFeaturesNavGraph(
         )
     }
     composable(KmpFeaturesRoutes.DailyPager) {
-        DailyPagerScreen(
+        DailyPagerScreenSetup(
             onBackClick = navController::popBackStack,
         )
     }
     composable(KmpFeaturesRoutes.Diary) {
-        DiaryScreen(
+        DiaryScreenSetup(
             onBackClick = navController::popBackStack,
         )
     }

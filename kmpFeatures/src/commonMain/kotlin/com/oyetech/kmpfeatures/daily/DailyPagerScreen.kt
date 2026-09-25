@@ -15,21 +15,61 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oyetech.viewmodule.ViewModuleButton
+import com.oyetech.viewmodule.ViewModuleTheme
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import kotlin.time.Clock
 
+data class DailyPagerUiState(
+    val selectedDate: LocalDate,
+    val canGoPrevious: Boolean = true,
+    val canGoNext: Boolean = true,
+    val isLoading: Boolean = false,
+    val isError: Boolean = false,
+    val errorMessage: String = "",
+)
+
+sealed interface DailyPagerEvent {
+    data object PreviousDayClicked : DailyPagerEvent
+    data object NextDayClicked : DailyPagerEvent
+    data object BackClicked : DailyPagerEvent
+    data object ErrorDismissed : DailyPagerEvent
+}
+
 @Composable
-fun DailyPagerScreen(
+fun DailyPagerScreenSetup(
     onBackClick: () -> Unit,
 ) {
     var dayOffset by remember { mutableIntStateOf(0) }
     val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
     val selectedDate = LocalDate.fromEpochDays(today.toEpochDays() + dayOffset)
 
+    DailyPagerScreen(
+        uiState = DailyPagerUiState(
+            selectedDate = selectedDate,
+            canGoPrevious = dayOffset > -1,
+            canGoNext = dayOffset < 1,
+        ),
+        onEvent = { event ->
+            when (event) {
+                DailyPagerEvent.PreviousDayClicked -> dayOffset--
+                DailyPagerEvent.NextDayClicked -> dayOffset++
+                DailyPagerEvent.BackClicked -> onBackClick()
+                DailyPagerEvent.ErrorDismissed -> Unit
+            }
+        },
+    )
+}
+
+@Composable
+fun DailyPagerScreen(
+    uiState: DailyPagerUiState,
+    onEvent: (DailyPagerEvent) -> Unit,
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -47,25 +87,37 @@ fun DailyPagerScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             ViewModuleButton(
-                enabled = dayOffset > -1,
-                onClick = { dayOffset-- },
+                enabled = uiState.canGoPrevious,
+                onClick = { onEvent(DailyPagerEvent.PreviousDayClicked) },
             ) {
                 Text("Dün")
             }
             Text(
-                text = selectedDate.toTurkishDate(),
+                text = uiState.selectedDate.toTurkishDate(),
                 style = MaterialTheme.typography.titleLarge,
             )
             ViewModuleButton(
-                enabled = dayOffset < 1,
-                onClick = { dayOffset++ },
+                enabled = uiState.canGoNext,
+                onClick = { onEvent(DailyPagerEvent.NextDayClicked) },
             ) {
                 Text("Yarın")
             }
         }
-        ViewModuleButton(onClick = onBackClick) {
+        ViewModuleButton(onClick = { onEvent(DailyPagerEvent.BackClicked) }) {
             Text("Geri")
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun DailyPagerScreenPreview() {
+    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+    ViewModuleTheme {
+        DailyPagerScreen(
+            uiState = DailyPagerUiState(selectedDate = today),
+            onEvent = {},
+        )
     }
 }
 
