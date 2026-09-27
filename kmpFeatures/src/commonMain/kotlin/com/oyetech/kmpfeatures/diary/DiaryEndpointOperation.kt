@@ -1,13 +1,13 @@
 package com.oyetech.kmpfeatures.diary
 
 import com.oyetech.kmpfeatures.network.EndpointStrings
+import com.oyetech.kmpfeatures.network.bodyOrError
 import com.oyetech.kmpmodels.postbody.DiaryQuotePutBody
 import com.oyetech.kmpmodels.postbody.EntryPatchBody
 import com.oyetech.kmpmodels.postbody.EntryPostBody
 import com.oyetech.kmpmodels.response.DiaryQuoteResponse
 import com.oyetech.kmpmodels.response.EntryResponse
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.client.request.put
@@ -23,7 +23,7 @@ class DiaryEndpointOperation(
         println("[DiaryEndpoint] PUT /v1/diary/days/$date/quote quote=\"$quote\"")
         httpClient.put(EndpointStrings.diaryDayQuote(date)) {
             setBody(DiaryQuotePutBody(quote = quote))
-        }.body()
+        }.bodyOrError()
     }
 
     suspend fun createEntry(
@@ -35,7 +35,7 @@ class DiaryEndpointOperation(
         )
         httpClient.post(EndpointStrings.diaryEntries) {
             setBody(request)
-        }.body()
+        }.bodyOrError()
     }
 
     suspend fun updateEntry(
@@ -48,6 +48,6 @@ class DiaryEndpointOperation(
         )
         httpClient.patch(EndpointStrings.diaryEntry(entryId)) {
             setBody(request)
-        }.body()
+        }.bodyOrError()
     }
 }

@@ -15,13 +15,6 @@ data class UserWithTokenRequest(
 )
 
 @Serializable
-data class GoogleApiResponse<T>(
-    val data: T? = null,
-    val message: String = "",
-    val status: Boolean = false,
-)
-
-@Serializable
 data class AuthenticatedUser(
     val token: String = "",
     val accessToken: String = "",
