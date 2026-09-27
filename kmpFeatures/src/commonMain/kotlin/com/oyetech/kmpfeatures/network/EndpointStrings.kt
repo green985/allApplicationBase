@@ -8,7 +8,7 @@ object EndpointStrings {
     const val diaryEntries = "$baseUrl/v1/diary/entries"
 
     fun diaryDayQuote(date: String): String =
-        "$baseUrl/v1/diary/days/$date/quote"
+        "$baseUrl/v1/kmpFunctions/diary/days/$date/quote"
 
     fun diaryEntry(entryId: String): String =
         "$diaryEntries/$entryId"

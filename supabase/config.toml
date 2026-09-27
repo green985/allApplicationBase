@@ -1,0 +1,4 @@
+project_id = "uduwhuvgdcacvdhzheyi"
+
+[functions.kmpFunctions]
+verify_jwt = false
