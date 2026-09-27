@@ -110,14 +110,31 @@ class DiaryOperator(
             }
 
             DiaryAction.EntryDialogDismissed -> {
-                if (state.value.selectedArea == null && state.value.text.isBlank()) {
-                    updateState { copy(isEditorVisible = false) }
+                val currentState = state.value
+                if (currentState.selectedArea == null && currentState.text.isNotBlank()) {
+                    snackbarDelegate.triggerSnackbarState(
+                        message = StringKeys.selectAreaRequired,
+                    )
+                } else if (currentState.selectedArea != null) {
+                    saveEntry(closeEditor = true, allowIdleArea = false)
                 } else {
-                    saveEntry(closeEditor = true)
+                    updateState {
+                        copy(
+                            isEditorVisible = false,
+                            editingEntryId = null,
+                            selectedArea = null,
+                            text = "",
+                            entryIsDirty = false,
+                            entryOperation = OperationState.Idle,
+                        )
+                    }
                 }
             }
 
-            DiaryAction.SaveEntryClicked -> saveEntry(closeEditor = true)
+            DiaryAction.SaveEntryClicked -> saveEntry(
+                closeEditor = true,
+                allowIdleArea = false,
+            )
             DiaryAction.RetryQuoteSaveClicked -> scheduleQuoteSave()
             DiaryAction.RetryEntrySaveClicked -> scheduleEntrySave()
             DiaryAction.BackClicked -> navigationUseCase.goBack()
@@ -234,26 +251,34 @@ class DiaryOperator(
                 val currentState = state.value
                 currentState.entryIsDirty &&
                         currentState.entryOperation !is OperationState.Loading &&
-                        currentState.selectedArea != null &&
-                        currentState.text.isNotBlank()
+                        (currentState.selectedArea != null || currentState.text.isNotBlank())
             },
-            onSave = { saveEntry(closeEditor = false) },
+            onSave = { saveEntry(closeEditor = false, allowIdleArea = true) },
         )
     }
 
-    private fun saveEntry(closeEditor: Boolean) {
+    private fun saveEntry(
+        closeEditor: Boolean,
+        allowIdleArea: Boolean,
+    ) {
         val currentState = state.value
         val area = currentState.selectedArea
-        if (
-            area == null ||
-            currentState.text.isBlank() ||
-            currentState.entryOperation is OperationState.Loading
-        ) {
+        if (currentState.entryOperation is OperationState.Loading) {
             return
         }
 
         entryAutosaveJob.cancelPendingSave()
         val text = currentState.text.trim()
+        if (area == null && !allowIdleArea) {
+            snackbarDelegate.triggerSnackbarState(
+                message = StringKeys.selectAreaRequired,
+            )
+            return
+        }
+        if (area == null && text.isBlank()) {
+            return
+        }
+        val areaForRequest = area ?: AreaEntry.IDLE
         val revision = currentState.entryRevision
         val editingEntryId = currentState.editingEntryId
         val dateSnapshot = currentState.selectedDate
@@ -266,7 +291,7 @@ class DiaryOperator(
                 operation = {
                     diaryEndpointOperation.createEntry(
                         EntryPostBody(
-                            areaId = area.name,
+                            areaId = areaForRequest.name,
                             text = text,
                             entryDate = dateSnapshot.toString(),
                         ),
@@ -294,7 +319,7 @@ class DiaryOperator(
                             selectedArea = if (closeEditor && !hasNewInput) {
                                 null
                             } else {
-                                selectedArea
+                                areaForRequest
                             },
                             text = if (closeEditor && !hasNewInput) "" else text,
                         )
@@ -318,7 +343,7 @@ class DiaryOperator(
         val updatedEntries = currentState.entries.map { entry ->
             if (entry.id == editingEntryId) {
                 entry.copy(
-                    areaId = area.name,
+                    areaId = areaForRequest.name,
                     text = text,
                     updatedAt = Clock.System.now(),
                 )
@@ -345,7 +370,7 @@ class DiaryOperator(
                 diaryEndpointOperation.updateEntry(
                     entryId = editingEntryId,
                     request = EntryPatchBody(
-                        areaId = area.name,
+                        areaId = areaForRequest.name,
                         text = text,
                         occurredAt = dateSnapshot.toString(),
                     ),
@@ -459,6 +484,7 @@ class DiaryOperator(
         }
 
         private fun areaLabel(areaId: String): String = when (areaId) {
+            AreaEntry.IDLE.name -> StringKeys.idleArea
             AreaEntry.WORK.name -> StringKeys.workArea
             AreaEntry.BODY.name -> StringKeys.bodyArea
             AreaEntry.HEALTH.name -> StringKeys.healthArea

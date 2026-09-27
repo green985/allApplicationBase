@@ -236,7 +236,7 @@ private fun EntryEditor(
             )
             Row(horizontalArrangement = Arrangement.End) {
                 Button(
-                    enabled = selectedArea != null && text.isNotBlank(),
+                    enabled = selectedArea != null || text.isNotBlank(),
                     onClick = onSave,
                 ) {
                     Text(StringKeys.save)

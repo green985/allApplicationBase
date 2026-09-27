@@ -4,7 +4,7 @@ const fixedUserId = "02af726d-aa75-4301-a410-049d214841f9";
 const jsonHeaders = {
   "Content-Type": "application/json",
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, PUT, POST, OPTIONS",
+  "Access-Control-Allow-Methods": "GET, PUT, POST, PATCH, OPTIONS",
   "Access-Control-Allow-Headers": "authorization, apikey, content-type",
 };
 
@@ -65,6 +65,13 @@ function isQuoteRoute(segments: string[]): boolean {
 function isCreateEntryRoute(segments: string[]): boolean {
   const diaryIndex = segments.indexOf("diary");
   return diaryIndex >= 0 && segments[diaryIndex + 1] === "entries";
+}
+
+function entryIdFromRequest(request: Request): string | null {
+  const segments = pathSegments(request);
+  const diaryIndex = segments.indexOf("diary");
+  const entryId = diaryIndex >= 0 ? segments[diaryIndex + 2] : null;
+  return entryId ?? null;
 }
 
 function dateFromRequest(request: Request): string | null {
@@ -179,14 +186,15 @@ async function createEntry(request: Request): Promise<Response> {
     "CHARACTER",
     "PEOPLE",
     "LIFE",
+    "IDLE",
   ]);
 
   if (!validAreas.has(areaId)) {
     return response(null, "Geçerli bir areaId gerekli.", false, 400);
   }
 
-  if (!text || text.length > 2000) {
-    return response(null, "Text boş olamaz ve 2000 karakteri geçemez.", false, 400);
+  if (text.length > 2000) {
+    return response(null, "Text 2000 karakteri geçemez.", false, 400);
   }
 
   if (!isValidDate(entryDate)) {
@@ -216,6 +224,71 @@ async function createEntry(request: Request): Promise<Response> {
   );
 }
 
+async function updateEntry(request: Request, entryId: string): Promise<Response> {
+  const body = await request.json().catch(() => null) as Record<string, unknown> | null;
+  const areaId = typeof body?.areaId === "string" ? body.areaId.trim() : undefined;
+  const text = typeof body?.text === "string" ? body.text.trim() : undefined;
+  const entryDate = typeof body?.entryDate === "string" ? body.entryDate : undefined;
+  const validAreas = new Set([
+    "WORK",
+    "BODY",
+    "HEALTH",
+    "MIND",
+    "CHARACTER",
+    "PEOPLE",
+    "LIFE",
+    "IDLE",
+  ]);
+
+  if (
+    areaId === undefined &&
+    text === undefined &&
+    entryDate === undefined
+  ) {
+    return response(null, "Güncellenecek alan gerekli.", false, 400);
+  }
+
+  if (areaId !== undefined && !validAreas.has(areaId)) {
+    return response(null, "Geçerli bir areaId gerekli.", false, 400);
+  }
+
+  if (text !== undefined && text.length > 2000) {
+    return response(null, "Text 2000 karakteri geçemez.", false, 400);
+  }
+
+  if (entryDate !== undefined && !isValidDate(entryDate)) {
+    return response(null, "Geçerli bir entryDate gerekli.", false, 400);
+  }
+
+  const updates: Record<string, string> = {};
+  if (areaId !== undefined) updates.area_id = areaId;
+  if (text !== undefined) updates.text = text;
+  if (entryDate !== undefined) updates.entry_date = entryDate;
+  updates.updated_at = new Date().toISOString();
+
+  const { data, error } = await supabase
+    .from("diary_entries")
+    .update(updates)
+    .eq("id", entryId)
+    .eq("user_id", fixedUserId)
+    .select("id, area_id, text, entry_date, created_at, updated_at")
+    .maybeSingle();
+
+  if (error) {
+    return response(null, "Diary kaydı güncellenemedi.", false, 500);
+  }
+
+  if (!data) {
+    return response(null, "Diary kaydı bulunamadı.", false, 404);
+  }
+
+  return response(
+    mapEntry(data),
+    "Diary kaydı başarıyla güncellendi.",
+    true,
+  );
+}
+
 Deno.serve(async (request) => {
   if (request.method === "OPTIONS") {
     return new Response("ok", { headers: jsonHeaders });
@@ -240,6 +313,13 @@ Deno.serve(async (request) => {
 
     if (isCreateEntryRoute(segments) && request.method === "POST") {
       return createEntry(request);
+    }
+
+    if (isCreateEntryRoute(segments) && request.method === "PATCH") {
+      const entryId = entryIdFromRequest(request);
+      return entryId
+        ? updateEntry(request, entryId)
+        : response(null, "Diary kaydı bulunamadı.", false, 404);
     }
 
     if (!isQuoteRoute(segments) && !isCreateEntryRoute(segments)) {
