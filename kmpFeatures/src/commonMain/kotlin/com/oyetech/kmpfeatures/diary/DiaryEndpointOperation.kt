@@ -19,21 +19,21 @@ class DiaryEndpointOperation(
     suspend fun updateQuote(
         date: String,
         quote: String,
-    ): Result<DiaryQuoteResponse> = runCatching {
+    ): DiaryQuoteResponse {
         println("[DiaryEndpoint] PUT /v1/diary/days/$date/quote quote=\"$quote\"")
-        httpClient.put(EndpointStrings.diaryDayQuote(date)) {
+        return httpClient.put(EndpointStrings.diaryDayQuote(date)) {
             setBody(DiaryQuotePutBody(quote = quote))
         }.bodyOrError()
     }
 
     suspend fun createEntry(
         request: EntryPostBody,
-    ): Result<EntryResponse> = runCatching {
+    ): EntryResponse {
         println(
             "[DiaryEndpoint] POST /v1/diary/entries " +
                     "areaId=\"${request.areaId}\" text=\"${request.text}\"",
         )
-        httpClient.post(EndpointStrings.diaryEntries) {
+        return httpClient.post(EndpointStrings.diaryEntries) {
             setBody(request)
         }.bodyOrError()
     }
@@ -41,12 +41,12 @@ class DiaryEndpointOperation(
     suspend fun updateEntry(
         entryId: String,
         request: EntryPatchBody,
-    ): Result<EntryResponse> = runCatching {
+    ): EntryResponse {
         println(
             "[DiaryEndpoint] PATCH /v1/diary/entries/$entryId " +
                     "areaId=\"${request.areaId}\" text=\"${request.text}\"",
         )
-        httpClient.patch(EndpointStrings.diaryEntry(entryId)) {
+        return httpClient.patch(EndpointStrings.diaryEntry(entryId)) {
             setBody(request)
         }.bodyOrError()
     }

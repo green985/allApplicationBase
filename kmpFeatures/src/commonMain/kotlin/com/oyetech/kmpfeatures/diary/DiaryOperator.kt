@@ -14,6 +14,7 @@ import com.oyetech.kmpmodels.ui.event.DiaryAction
 import com.oyetech.kmpmodels.ui.state.DiaryAreaUiState
 import com.oyetech.kmpmodels.ui.state.DiaryEntryUiState
 import com.oyetech.kmpmodels.ui.state.DiaryUiState
+import com.oyetech.kmpmodels.ui.state.OperationState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.datetime.LocalDate
@@ -115,7 +116,10 @@ class DiaryOperator(
             DiaryAction.RetryEntrySaveClicked -> scheduleEntrySave()
             DiaryAction.BackClicked -> navigationUseCase.goBack()
             DiaryAction.ErrorDismissed -> updateState {
-                copy(isError = false, errorMessage = "")
+                copy(
+                    quoteOperation = OperationState.Idle,
+                    entryOperation = OperationState.Idle,
+                )
             }
         }
     }
@@ -126,7 +130,7 @@ class DiaryOperator(
             canSave = {
                 val currentState = state.value
                 currentState.quoteIsDirty &&
-                        !currentState.quoteIsSaving &&
+                        currentState.quoteOperation !is OperationState.Loading &&
                         currentState.dayQuote.isNotBlank()
             },
             onSave = { saveQuoteSnapshot() },
@@ -137,35 +141,44 @@ class DiaryOperator(
         quoteAutosaveJob.cancelPendingSave()
         val snapshot = state.value
         val revision = snapshot.quoteRevision
-        updateState { copy(quoteIsSaving = true) }
-        launch {
-            diaryEndpointOperation.updateQuote(
-                date = snapshot.selectedDate.toString(),
-                quote = snapshot.dayQuote,
-            ).onSuccess {
-                updateState {
+        val quoteSnapshot = snapshot.dayQuote
+        val dateSnapshot = snapshot.selectedDate
+
+        executeOperation(
+            onStart = {
+                copy(quoteOperation = OperationState.Loading)
+            },
+            operation = {
+                diaryEndpointOperation.updateQuote(
+                    date = dateSnapshot.toString(),
+                    quote = quoteSnapshot,
+                )
+            },
+            onSuccess = { response ->
+                val nextState = if (selectedDate != dateSnapshot) {
+                    copy(quoteOperation = OperationState.Idle)
+                } else {
                     copy(
-                        quoteIsSaving = false,
+                        dayQuote = if (dayQuote == quoteSnapshot) response.quote else dayQuote,
                         quoteIsDirty = quoteRevision != revision,
+                        quoteOperation = OperationState.Idle,
                     )
                 }
-                if (state.value.quoteIsDirty) scheduleQuoteSave()
-            }.onFailure { error ->
-                updateState {
-                    copy(
-                        quoteIsSaving = false,
-                        quoteIsDirty = true,
-                        isError = true,
-                        errorMessage = error.message.orEmpty(),
-                    )
-                }
+                if (quoteRevision != revision) scheduleQuoteSave()
+                nextState
+            },
+            onError = { error ->
                 snackbarDelegate.triggerSnackbarState(
-                    message = error.message.orEmpty(),
+                    message = error.message,
                     actionLabel = "Retry",
                     onAction = { dispatch(DiaryAction.RetryQuoteSaveClicked) },
                 )
-            }
-        }
+                copy(
+                    quoteIsDirty = true,
+                    quoteOperation = OperationState.Error(error),
+                )
+            },
+        )
     }
 
     private fun scheduleEntrySave() {
@@ -174,7 +187,7 @@ class DiaryOperator(
             canSave = {
                 val currentState = state.value
                 currentState.entryIsDirty &&
-                        !currentState.entryIsSaving &&
+                        currentState.entryOperation !is OperationState.Loading &&
                         currentState.selectedArea != null &&
                         currentState.text.isNotBlank()
             },
@@ -188,7 +201,7 @@ class DiaryOperator(
         if (
             area == null ||
             currentState.text.isBlank() ||
-            currentState.entryIsSaving
+            currentState.entryOperation is OperationState.Loading
         ) {
             return
         }
@@ -227,52 +240,53 @@ class DiaryOperator(
                 editingEntryId = if (closeEditor) null else entryId,
                 selectedArea = if (closeEditor) null else area,
                 text = if (closeEditor) "" else text,
-                entryIsSaving = true,
+                entryOperation = OperationState.Loading,
             )
         }
-        launch {
-            val result = if (editingEntryId == null) {
-                diaryEndpointOperation.createEntry(
-                    EntryPostBody(
-                        areaId = area.name,
-                        text = text,
-                        occurredAt = currentState.selectedDate.toString(),
-                    ),
-                )
-            } else {
-                diaryEndpointOperation.updateEntry(
-                    entryId = editingEntryId,
-                    request = EntryPatchBody(
-                        areaId = area.name,
-                        text = text,
-                        occurredAt = currentState.selectedDate.toString(),
-                    ),
-                )
-            }
-            result.onSuccess {
-                updateState {
-                    copy(
-                        entryIsSaving = false,
-                        entryIsDirty = entryRevision != revision,
+        val dateSnapshot = currentState.selectedDate
+        executeOperation(
+            onStart = {
+                copy(entryOperation = OperationState.Loading)
+            },
+            operation = {
+                if (editingEntryId == null) {
+                    diaryEndpointOperation.createEntry(
+                        EntryPostBody(
+                            areaId = area.name,
+                            text = text,
+                            occurredAt = dateSnapshot.toString(),
+                        ),
+                    )
+                } else {
+                    diaryEndpointOperation.updateEntry(
+                        entryId = editingEntryId,
+                        request = EntryPatchBody(
+                            areaId = area.name,
+                            text = text,
+                            occurredAt = dateSnapshot.toString(),
+                        ),
                     )
                 }
-                if (state.value.entryIsDirty) scheduleEntrySave()
-            }.onFailure { error ->
-                updateState {
-                    copy(
-                        entryIsSaving = false,
-                        entryIsDirty = true,
-                        isError = true,
-                        errorMessage = error.message.orEmpty(),
-                    )
-                }
+            },
+            onSuccess = {
+                if (entryRevision != revision) scheduleEntrySave()
+                copy(
+                    entryIsDirty = entryRevision != revision,
+                    entryOperation = OperationState.Idle,
+                )
+            },
+            onError = { error ->
                 snackbarDelegate.triggerSnackbarState(
-                    message = error.message.orEmpty(),
+                    message = error.message,
                     actionLabel = "Retry",
                     onAction = { dispatch(DiaryAction.RetryEntrySaveClicked) },
                 )
-            }
-        }
+                copy(
+                    entryIsDirty = true,
+                    entryOperation = OperationState.Error(error),
+                )
+            },
+        )
     }
 
     private fun stateFor(offset: Int): DiaryUiState {

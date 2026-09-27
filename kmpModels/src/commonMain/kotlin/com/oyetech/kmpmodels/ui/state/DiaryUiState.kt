@@ -19,14 +19,11 @@ data class DiaryUiState(
     val dayQuote: String,
     val canGoPrevious: Boolean = true,
     val canGoNext: Boolean = true,
-    val isLoading: Boolean = false,
-    val isError: Boolean = false,
-    val errorMessage: String = "",
+    val quoteOperation: OperationState = OperationState.Idle,
+    val entryOperation: OperationState = OperationState.Idle,
     val quoteIsDirty: Boolean = false,
-    val quoteIsSaving: Boolean = false,
     val quoteRevision: Long = 0L,
     val entryIsDirty: Boolean = false,
-    val entryIsSaving: Boolean = false,
     val entryRevision: Long = 0L,
 )
 
