@@ -17,7 +17,11 @@ Entry editor içinde kullanıcı sırasıyla şunları görsün:
 
 ```text
 Yapıldı
-5 sn
+5 dk 
+10 dk 
+15 dk 
+20 dk 
+custom ( sayi alan input alani, dk olarak giris
 ```
 
 Davranış:
