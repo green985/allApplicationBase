@@ -4,6 +4,8 @@ const fixedUserId = "02af726d-aa75-4301-a410-049d214841f9";
 const jsonHeaders = {
   "Content-Type": "application/json",
   "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, PUT, OPTIONS",
+  "Access-Control-Allow-Headers": "authorization, apikey, content-type",
 };
 
 type GenericResponse<T> = {

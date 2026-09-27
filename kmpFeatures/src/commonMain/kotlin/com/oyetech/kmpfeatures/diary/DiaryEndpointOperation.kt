@@ -8,6 +8,7 @@ import com.oyetech.kmpmodels.postbody.EntryPostBody
 import com.oyetech.kmpmodels.response.DiaryQuoteResponse
 import com.oyetech.kmpmodels.response.EntryResponse
 import io.ktor.client.HttpClient
+import io.ktor.client.request.get
 import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.client.request.put
@@ -16,6 +17,11 @@ import io.ktor.client.request.setBody
 class DiaryEndpointOperation(
     private val httpClient: HttpClient,
 ) {
+    suspend fun getQuote(date: String): DiaryQuoteResponse {
+        println("[DiaryEndpoint] GET /v1/diary/days/$date/quote")
+        return httpClient.get(EndpointStrings.diaryDayQuote(date)).bodyOrError()
+    }
+
     suspend fun updateQuote(
         date: String,
         quote: String,

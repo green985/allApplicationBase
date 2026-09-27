@@ -111,16 +111,14 @@ fun DiaryScreen(
                     Text(StringKeys.tomorrow)
                 }
             }
-            if (uiState.isTodaySelected) {
-                OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = uiState.dayQuote,
-                    onValueChange = { onAction(DiaryAction.QuoteChanged(it)) },
-                    label = { Text(StringKeys.todaysQuote) },
-                    placeholder = { Text(StringKeys.writeTodaysQuote) },
-                    singleLine = true,
-                )
-            }
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = uiState.dayQuote,
+                onValueChange = { onAction(DiaryAction.QuoteChanged(it)) },
+                label = { Text(StringKeys.todaysQuote) },
+                placeholder = { Text(StringKeys.writeTodaysQuote) },
+                singleLine = true,
+            )
             uiState.entryItems.forEach { entry ->
                 DiaryEntryCard(
                     entry = entry,

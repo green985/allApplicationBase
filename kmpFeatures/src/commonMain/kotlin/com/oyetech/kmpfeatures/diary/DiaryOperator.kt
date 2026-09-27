@@ -35,14 +35,18 @@ class DiaryOperator(
     private var quoteAutosaveJob: Job? = null
     private var entryAutosaveJob: Job? = null
 
+    init {
+        loadQuoteForSelectedDate()
+    }
+
     override fun handleAction(action: DiaryAction) {
         when (action) {
             DiaryAction.PreviousDayClicked -> {
-                updateState { stateFor(dayOffset - 1) }
+                selectDay(state.value.dayOffset - 1)
             }
 
             DiaryAction.NextDayClicked -> {
-                updateState { stateFor(dayOffset + 1) }
+                selectDay(state.value.dayOffset + 1)
             }
 
             is DiaryAction.QuoteChanged -> {
@@ -134,6 +138,46 @@ class DiaryOperator(
                         currentState.dayQuote.isNotBlank()
             },
             onSave = { saveQuoteSnapshot() },
+        )
+    }
+
+    private fun selectDay(offset: Int) {
+        quoteAutosaveJob.cancelPendingSave()
+        updateState {
+            stateFor(offset).copy(
+                dayQuote = "",
+                quoteIsDirty = false,
+                quoteOperation = OperationState.Idle,
+            )
+        }
+        loadQuoteForSelectedDate()
+    }
+
+    private fun loadQuoteForSelectedDate() {
+        val dateSnapshot = state.value.selectedDate
+        executeOperation(
+            onStart = {
+                copy(quoteOperation = OperationState.Loading)
+            },
+            operation = {
+                diaryEndpointOperation.getQuote(dateSnapshot.toString())
+            },
+            onSuccess = { response ->
+                if (selectedDate == dateSnapshot && !quoteIsDirty) {
+                    copy(
+                        dayQuote = response.quote,
+                        quoteOperation = OperationState.Idle,
+                    )
+                } else {
+                    copy(quoteOperation = OperationState.Idle)
+                }
+            },
+            onError = { error ->
+                copy(
+                    dayQuote = "",
+                    quoteOperation = OperationState.Error(error),
+                )
+            },
         )
     }
 
