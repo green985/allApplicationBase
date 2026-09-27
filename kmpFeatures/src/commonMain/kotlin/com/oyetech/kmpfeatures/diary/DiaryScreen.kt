@@ -164,17 +164,12 @@ private fun DiaryEntryCard(
             Column {
                 Text(
                     text = entry.areaLabel,
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.titleMedium,
                     color = AppColors.textSecondary,
                 )
                 Text(
                     text = entry.timeLabel,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = AppColors.textSecondary,
-                )
-                Text(
-                    text = entry.createdBy,
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = AppColors.textSecondary,
                 )
             }
