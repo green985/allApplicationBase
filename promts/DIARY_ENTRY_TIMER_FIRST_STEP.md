@@ -1,279 +1,439 @@
-# Diary Entry Timer — İlk Küçük KMP Adımı
+# Diary Entry Bazlı Timer — KMP, Supabase ve Deploy
 
-Mevcut Diary entry oluşturma akışına, alan seçiminin hemen altında basit bir zamanlama seçimi ekle.
-Bu görev küçük bir ilk sürüm olmalı; mevcut Android/Wear stopwatch sistemini KMP'ye taşımaya
-çalışma.
+Mevcut Diary entry akışını entry bazlı countdown destekleyecek şekilde küçük ve genişletilebilir bir
+yapıya refactor et. Timer dialogun geçici bir özelliği değil, backend'de saklanan entry'nin kendi
+durumu olmalıdır.
 
-## Ürün davranışı
+Mevcut Android/Wear stopwatch sistemini KMP'ye taşımaya çalışma. İlgisiz legacy Android koduna ve
+quote endpoint'ine dokunma.
 
-Entry editor içinde kullanıcı sırasıyla şunları görsün:
+## Temel ürün kararı
 
-1. Alan seçimi
-2. Zamanlama seçimi
-3. İsteğe bağlı not
-4. Kaydet veya Başlat butonu
+Kullanıcı aşağıdaki bilgilerden yalnız timer süresini seçerek bile entry oluşturabilmelidir:
 
-İlk sürümde yalnız iki seçenek olsun:
+- Alan: opsiyonel
+- Not: opsiyonel
+- Timer süresi: entry oluşturmak için tek başına yeterli
+
+Entry oluşturulduğunda backend gerçek bir `id` döndürür ve editor dialogu kapanmaz. Bundan sonraki
+alan, not ve timer güncellemeleri aynı entry id üzerinden yapılır.
+
+Dialog kapanırsa:
+
+- Timer henüz başlamadıysa entry `PENDING` durumunda listede kalır.
+- Timer çalışıyorsa çalışmaya devam eder ve listede countdown görünür.
+- Dialogu kapatmak timer job'unu iptal etmez.
+- Kullanıcı entry'yi daha sonra açıp alan/not/süre bilgilerini düzenleyebilir.
+
+## UI süre seçenekleri
+
+Alan seçiminin altında şu seçenekleri göster:
 
 ```text
-Yapıldı
-5 dk 
-10 dk 
-15 dk 
-20 dk 
-custom ( sayi alan input alani, dk olarak giris
+[ Yapıldı ] [ 5 dk ] [ 10 dk ] [ 15 dk ] [ 20 dk ] [ Özel ]
 ```
 
-Davranış:
+`Özel` seçilince dakika cinsinden sayısal input göster. Değer pozitif tam sayı olmalı ve makul üst
+sınır tek bir sabit üzerinden tanımlanmalıdır.
 
-- `Yapıldı`: Kullanıcı işi daha önce tamamlamıştır. Aktif sayaç çalıştırmadan entry kaydedilir.
-- `5 sn`: Kullanıcı şimdi çalışacaktır. Buton metni `Başlat` olur, 5 saniyelik countdown başlar.
-- Countdown sırasında kalan süre `00:05` ... `00:00` şeklinde gösterilir.
-- Sayaç tamamlandığında entry otomatik kaydedilir.
-- Sayaç tamamlanmadan entry tamamlanmış sayılmaz.
-- Sayaç sırasında `İptal` aksiyonu bulunur. İptal edilen sayaç entry oluşturmaz ve editor içeriğini
-  silmez.
-- Aynı anda yalnız bir Diary entry sayacı çalışabilir.
-- Bu ilk sürümde pause/resume, background service, notification, alarm, stopwatch-up counter ve özel
-  süre
-  girişi ekleme.
+Örnek dönüşümler:
 
-`5 sn` yalnız ilk entegrasyonu doğrulamak için demo süresidir. Süreyi dağınık magic number olarak
-yazma; tek bir sabit/preset modelinden gelsin ki sonra 5/10/25 dakika seçenekleri eklenebilsin.
+```text
+5 dk  -> 300 saniye
+10 dk -> 600 saniye
+15 dk -> 900 saniye
+20 dk -> 1200 saniye
+Özel 7 dk -> 420 saniye
+```
 
-## State-driven yapı
+Süre hesabı ve doğrulaması Compose içinde yapılmamalı; Action Operator'a gönderilmeli ve
+render-ready
+state hazırlanmalıdır.
 
-Bütün timer davranışı `DiaryOperator` içinde olmalıdır. Compose yalnız hazır state'i çizsin ve
-Action
-göndersin.
+## Entry lifecycle
 
-Platformdan bağımsız modelleri mevcut sahiplik kurallarına göre `kmpModels` içinde oluştur. Önerilen
-minimum modeller:
+Minimum durumlar:
 
 ```kotlin
-enum class EntryTimingMode {
-    ALREADY_DONE,
-    COUNTDOWN,
-}
-
 enum class EntryTimerStatus {
-    IDLE,
+    PENDING,
     RUNNING,
     FINISHED,
+    CANCELLED,
 }
 ```
 
-Mevcut `TimerTypeEntry` aynı amacı temiz biçimde karşılıyorsa duplicate enum üretme; ancak
-`ALREADY_DONE` durumunu `COUNTDOWN` veya `STOPWATCH` gibi göstermeye çalışma. Tamamlanma biçimi ile
-timer motoru farklı kavramlarsa ayrı tut.
+Anlamları:
 
-`DiaryUiState` render-ready alanlar taşısın. Mevcut isimlere göre uyarlayarak minimum olarak:
+- `PENDING`: Entry oluşturuldu, timer süresi atanmış olabilir fakat henüz başlamadı.
+- `RUNNING`: `startedAt` ve `endsAt` vardır; listede countdown gösterilir.
+- `FINISHED`: Süre tamamlandı veya kullanıcı `Yapıldı` seçti.
+- `CANCELLED`: Başlatılmış timer kullanıcı tarafından iptal edildi.
+
+`Yapıldı` seçimi aktif timer başlatmaz. Entry doğrudan `FINISHED` oluşturulur veya mevcut entry bu
+duruma güncellenir.
+
+Countdown akışı:
+
+```text
+Süre seç
+-> entry oluştur veya mevcut draft entry'yi güncelle
+-> backend gerçek entry id döndürür
+-> dialog açık kalır
+-> Başlat
+-> entry RUNNING olur
+-> dialog kapanabilir
+-> listede entry'ye ait countdown görünür
+-> süre bittiğinde entry FINISHED olur
+-> kullanıcıya bitiş uyarısı gösterilir
+```
+
+Timer tamamlandığında yeni entry oluşturma. Timer her zaman daha önce oluşturulmuş gerçek bir entry
+id üzerinde çalışmalıdır.
+
+## Kaydetme ve dialog davranışı
+
+- Timer preset veya geçerli özel süre seçilmişse alan/not boş olsa bile kayıt oluşturulabilmelidir.
+- İlk `Kaydet` işlemi POST ile entry oluşturur ve dialogu açık bırakır.
+- Create başarılı olunca `editingEntryId = response.id` yapılmalıdır.
+- Sonraki değişiklikler yeni POST değil aynı id üzerinde PATCH kullanmalıdır.
+- Timer seçimini değiştirmek yeni entry oluşturmamalıdır.
+- Create/PATCH devam ederken ikinci aynı istek başlamamalıdır.
+- Network hatasında seçilen süre, alan ve not korunmalıdır.
+- Kullanıcı create isteği sürerken dialogu kapatmak isterse `dismissRequested` benzeri state tut:
+    - istek bitmeden dialogu ve local veriyi yok etme,
+    - başarıdan sonra dialogu kapat ve entry'yi listede `PENDING` göster,
+    - hata olursa dialog açık kalsın ve retry mümkün olsun.
+- Başarılı kayıtta dialogun varsayılan olarak kapanmaması gerekir.
+
+Mevcut 700 ms autosave varsa gerçek server id oluşmadan PATCH çalıştırma. Timer seçimi ilk kaydı
+oluşturabilecek olsa da her seçim değişikliğinde yeni POST üretme.
+
+## State-driven KMP modelleri
+
+Mevcut modellere göre isimleri uyarlayarak platformdan bağımsız state oluştur. Duplicate model
+üretme.
+
+Editor için minimum render-ready alanlar:
 
 ```kotlin
-val selectedTimingMode: EntryTimingMode?
-val timerStatus: EntryTimerStatus
+val editingEntryId: String?
+val selectedTimerPreset: EntryTimerPreset?
+val customDurationMinutes: String
 val selectedDurationSeconds: Long?
-val remainingSeconds: Long
+val timerStatus: EntryTimerStatus
 val timerLabel: String
 val primaryButtonLabel: String
-val canSubmitEntry: Boolean
+val canCreateOrUpdateEntry: Boolean
+val dismissRequested: Boolean
 ```
 
-Gerekli `DiaryAction` değerleri:
+Liste item'ı timer bilgisini doğrudan çizilebilir biçimde taşımalıdır:
 
 ```kotlin
-data class TimingModeSelected(val mode: EntryTimingMode) : DiaryAction
-data object StartEntryTimerClicked : DiaryAction
-data object CancelEntryTimerClicked : DiaryAction
+val timerStatusLabel: String
+val countdownLabel: String?
+val isTimerRunning: Boolean
+val canStartTimer: Boolean
+val canCancelTimer: Boolean
 ```
 
-Mevcut `SaveEntryClicked` aksiyonunu `Yapıldı` akışında kullanabilir veya tek bir primary action'a
-dönüştürebilirsin. Gereksiz duplicate aksiyon oluşturma.
+Presetleri dağınık magic number olarak yazma. Örneğin:
 
-Kurallar:
-
-- `AddEntryClicked` yeni editor state'ini timer bakımından da sıfırlamalıdır.
-- `EntryDialogDismissed`, çalışan timer job'unu iptal etmelidir.
-- Operator yaşam döngüsü sona erdiğinde timer coroutine scope ile birlikte iptal olmalıdır.
-- Formatlama, buton label'ı, enabled kararı ve timer koşulları Compose içinde hesaplanmamalıdır.
-- Compose `delay`, coroutine timer veya feature `LaunchedEffect` kullanmamalıdır.
-
-## Timer uygulaması
-
-KMP `commonMain` uyumlu coroutine ve `kotlin.time.Clock` kullan. Android `System.currentTimeMillis`,
-`CountDownTimer`, Service veya AlarmManager kullanma.
-
-Countdown yalnız `delay(1000)` ile değeri eksiltmeye dayanmamalıdır. Başlangıç/bitiş anını sakla ve
-her tick'te kalan süreyi duvar saatinden hesapla. Böylece geciken coroutine tick'leri süreyi
-kaydırmaz.
-
-Önerilen akış:
-
-```text
-Start action
--> startedAt snapshot
--> targetEnd snapshot
--> timerStatus = RUNNING
--> wall clock üzerinden remainingSeconds güncelle
--> remainingSeconds = 0
--> timerStatus = FINISHED
--> createEntry()
+```kotlin
+enum class EntryTimerPreset(val durationSeconds: Long?) {
+    ALREADY_DONE(null),
+    FIVE_MINUTES(5 * 60L),
+    TEN_MINUTES(10 * 60L),
+    FIFTEEN_MINUTES(15 * 60L),
+    TWENTY_MINUTES(20 * 60L),
+    CUSTOM(null),
+}
 ```
 
-Timer job'u `DiaryOperator` içinde tutulmalı ve yeni timer başlamadan önce önceki job güvenli
-biçimde
-iptal edilmelidir. Bu küçük özellik için yeni timer framework, manager, middleware veya platform
-servisi oluşturma.
+Serialization gereken wire enumları ile yalnız UI seçimini temsil eden modelleri karıştırma.
 
-## Entry kaydetme koşulları
+Gerekli Action'ları mevcut `DiaryAction` içine ekle:
 
-Kullanıcının yalnız alan ve zamanlama seçerek entry tamamlayabilmesi isteniyor. Bu nedenle:
+```kotlin
+data class TimerPresetSelected(val preset: EntryTimerPreset) : DiaryAction
+data class CustomDurationChanged(val minutes: String) : DiaryAction
+data object SaveEntryWithoutClosingClicked : DiaryAction
+data class StartEntryTimerClicked(val entryId: String) : DiaryAction
+data class CancelEntryTimerClicked(val entryId: String) : DiaryAction
+data class FinishEntryTimerClicked(val entryId: String) : DiaryAction
+```
 
-- `selectedArea` zorunludur.
-- `selectedTimingMode` zorunludur.
-- Not opsiyoneldir.
-- Mevcut `text` alanı UI'da notu temsil ediyorsa boş olmasına izin ver.
-- Mevcut database `text_not_blank` constraint'i ve backend validation'ı bu davranışla çelişiyorsa
-  yeni ileri yönlü migration ile düzelt; eski migration dosyasını değiştirme.
-- Kolay uyumluluk için `text` kolonunu non-null ve default boş string bırakabilirsin; yalnız blank
-  constraint'i kaldır. Yeni `note`/`text` isim göçünü bu küçük görevde genişletme.
-- Save butonu için Compose içinde `selectedArea != null || text.isNotBlank()` benzeri karar yazma.
-  `canSubmitEntry` Operator tarafından hazırlanmalıdır.
+İsimleri mevcut action stiline göre uyarlayabilirsin. Compose yalnız Action göndermeli; timer, save,
+validation veya dialog kapatma kararı vermemelidir.
 
-## Backend ve migration
+## Entry listesinde countdown
 
-Mevcut `diary_entries` tablosunu yeni ileri yönlü migration ile genişlet. Eski migration'ı
-değiştirme.
+Countdown editor state'ine bağlı olmamalıdır. Entry listesi kapalı editorle de timerı göstermelidir.
 
-Minimum yeni alanlar:
+- Hesap kaynağı `endsAt - Clock.System.now()` olmalıdır.
+- Yalnız `delay(1000)` ile state'i bir azaltmaya güvenme; her tick'te wall-clock üzerinden yeniden
+  hesapla.
+- Dialog kapanınca çalışan timer job'u iptal etme.
+- Gün değiştirildiğinde veya Operator kapandığında gereksiz job'ları iptal et.
+- İlk sürümde aynı anda yalnız bir RUNNING Diary timer destekle. İkinci timer başlatılırsa
+  kullanıcıya
+  anlaşılır state/error göster.
+- Entry listesi backend'den tekrar yüklendiğinde `RUNNING` ve gelecekteki `endsAt` değeri varsa
+  countdown kaldığı yerden UI'da hesaplanabilmelidir.
+- `endsAt <= now` ise entry efektif olarak `FINISHED` gösterilmelidir; yalnız local job sonucuna
+  güvenme.
+
+Sayaç bittiğinde:
+
+- İlgili entry state'i `FINISHED` olarak güncellenir.
+- Backend finish endpoint'i çağrılır.
+- Liste item'ında `Tamamlandı` gösterilir.
+- Tek kullanımlık uyarı `Effect` veya mevcut ortak snackbar sistemi üzerinden üretilir.
+- Compose içinde bitiş kontrolü veya snackbar kararı yazılmaz.
+
+## Database migration
+
+Mevcut migration dosyalarını değiştirme. `diary_entries` için yeni ileri yönlü migration oluştur.
+
+Mevcut tabloyu en az şu alanlarla genişlet:
 
 ```text
-timing_mode text not null
+area_id text null
+text text not null default ''
+timer_status text not null default 'PENDING'
 duration_seconds bigint null
 started_at timestamptz null
-ended_at timestamptz null
+ends_at timestamptz null
+finished_at timestamptz null
 ```
 
-Sözleşme:
+Mevcut `area_id not null` ve `text_not_blank` kuralları yalnız timer ile kayıt oluşturma
+davranışıyla
+çelişiyorsa yeni migration içinde güvenli şekilde güncellenmelidir.
 
-- `ALREADY_DONE`: `durationSeconds`, `startedAt`, `endedAt` null olabilir.
-- `COUNTDOWN`: `durationSeconds > 0`, `startedAt` ve `endedAt` bulunmalıdır.
-- `endedAt >= startedAt` olmalıdır.
-- İlk sürümde countdown süresi 5 saniyedir.
-- Client'tan gelen enum/string değerleri backend tarafından doğrulanmalıdır.
-- `createdAt` ve `updatedAt` backend üretmeye devam etmelidir.
+Constraint kuralları:
 
-Uygun check constraint'leri ekle; fakat gelecekte başka countdown presetleri eklenmesini engelleyen
-`duration_seconds = 5` constraint'i yazma.
+- `timer_status` yalnız `PENDING`, `RUNNING`, `FINISHED`, `CANCELLED` kabul etsin.
+- `duration_seconds` null veya pozitif olsun.
+- `RUNNING` için duration/start/end bilgileri bulunmalıdır.
+- `ends_at >= started_at` olmalıdır.
+- `FINISHED` durumunda timer seçilmemiş `Yapıldı` kaydı için süre alanları null olabilir.
+- Constraint yalnız 5/10/15/20 dakikaya kilitlenmemeli; özel süreyi desteklemelidir.
 
-Mevcut `EntryPostBody`, `EntryResponse`, `EntryEntity` ve gerekliyse `EntryPatchBody` alanlarını
-gerçek
-sözleşmeyle uyumlu hale getir. Wire modelleri `@Serializable` kalmalı. Timestamp değerleri ISO-8601
-UTC string, entity değerleri mümkünse `Instant` olmalıdır.
+`EntryPostBody`, `EntryPatchBody`, `EntryResponse` ve `EntryEntity` modellerini bu sözleşmeyle
+uyumlu
+hale getir. Wire timestamp değerleri ISO-8601 UTC string, entity değerleri `Instant` olmalıdır.
 
-Örnek `ALREADY_DONE` request:
+## API route'ları
 
-```json
-{
-  "areaId": "WORK",
-  "text": "",
-  "entryDate": "2026-09-27",
-  "timingMode": "ALREADY_DONE"
-}
-```
+Quote ve entry işlemlerini birleştiren monolit response oluşturma. Entry route'ları ayrı çalışsın.
 
-Örnek countdown tamamlandıktan sonraki request:
-
-```json
-{
-  "areaId": "MIND",
-  "text": "Kısa odak çalışması",
-  "entryDate": "2026-09-27",
-  "timingMode": "COUNTDOWN",
-  "durationSeconds": 5,
-  "startedAt": "2026-09-27T13:43:22Z",
-  "endedAt": "2026-09-27T13:43:27Z"
-}
-```
-
-Create endpoint'in `GenericResponse<EntryResponse>` sözleşmesini koru. Ayrı bir timer endpoint'i
-oluşturma; timer sonucu entry oluşturma request'inin parçasıdır.
-
-## Create operasyonu ile entegrasyon
-
-Mevcut `executeOperation` ve `entryOperation` yapısını kullan:
-
-- `ALREADY_DONE` seçildiyse primary action doğrudan mevcut create operasyonunu çağırır.
-- `COUNTDOWN` seçildiyse primary action önce timer'ı başlatır; create yalnız timer başarıyla
-  tamamlandığında çağrılır.
-- Network çağrısı timer job'unun içinde dağınık şekilde yazılmamalı; timer tamamlandığında mevcut
-  ortak `saveEntry/createEntry` fonksiyonunu çağır.
-- Create devam ederken ikinci create başlatma.
-- Network hatasında alan, timing seçimi ve not korunmalı; retry mümkün olmalı.
-- Başarıda backend'in gerçek entry id'sini kullanmaya devam et.
-- Autosave, kullanıcı daha timing seçmeden veya countdown tamamlanmadan entry oluşturmamalıdır.
-- Countdown input değişikliklerinden bağımsızdır; her text değişiminde yeniden başlamamalıdır.
-
-## UI
-
-Alan seçeneklerinin hemen altına tek seçimli iki küçük seçenek ekle:
+Mevcut `kmpFunctions` Edge Function içinde küçük route handler'ları ekle/güncelle:
 
 ```text
-[ Yapıldı ] [ 5 sn ]
+GET   /diary/days/{date}/entries
+POST  /diary/entries
+PATCH /diary/entries/{entryId}
+POST  /diary/entries/{entryId}/timer/start
+POST  /diary/entries/{entryId}/timer/cancel
+POST  /diary/entries/{entryId}/timer/finish
 ```
 
-- Mevcut tasarım dili ve segmented button yaklaşımını kullan.
-- Running sırasında seçimleri ve not alanını değiştirmeyi engelle veya state tarafından belirlenen
-  açık bir davranış uygula.
-- Running durumda kalan süre ve `İptal` göster.
-- Compose içinde timer hesaplama, validation veya save kararı bulunmasın.
-- Preview'ları yeni state alanlarıyla güncelle.
+- POST, yalnız timer süresiyle `PENDING` entry oluşturabilmelidir.
+- PATCH alan, not/text ve henüz RUNNING olmayan timer süresini güncelleyebilmelidir.
+- Start backend saatini kullanarak `startedAt` ve `endsAt` üretmeli, status'u `RUNNING` yapmalı ve
+  güncel entry döndürmelidir.
+- Client'ın gönderdiği keyfi `startedAt/endsAt` değerlerine güvenme.
+- Cancel yalnız RUNNING entry'yi `CANCELLED` yapmalıdır.
+- Finish idempotent olmalı; zaten FINISHED entry tekrar çağrıldığında başarıyla güncel modeli
+  döndürebilmelidir.
+- GET yalnız seçilen günün entry listesini döndürmelidir; quote'u aynı response'a ekleme.
+- GET sırasında `RUNNING && endsAt <= now` entry'leri efektif `FINISHED` olarak döndür veya güvenli
+  biçimde finalize et. Uygulama kapalıyken timer bittiğinde yeniden açılış doğru görünmelidir.
+- Bütün cevaplar mevcut `GenericResponse<T>` sözleşmesini kullanmalıdır.
+- Raw database hata metnini kullanıcıya sızdırma.
+- Route path ve HTTP method birlikte kontrol edilmelidir.
+- OPTIONS ve CORS method/header listelerini yeni route'lara göre güncelle.
 
-## Mevcut stopwatch kodundan yararlanma sınırı
+İlk sürüm için ayrı Edge Function açma; mevcut `kmpFunctions` girişini kullan fakat handler'ları
+`getEntries`, `createEntry`, `updateEntry`, `startEntryTimer`, `cancelEntryTimer`,
+`finishEntryTimer` gibi küçük fonksiyonlarda ayır.
 
-Projede bulunan Android-first `StopwatchOperationUseCase`, `StopwatchVm`, Room stopwatch repository,
-Wear foreground service ve Tile/Alarm kodlarını KMP modüllerine bağlama. Bunlar Android, Timber,
-Room, Service veya legacy modül bağımlılıkları taşır.
+## Request örnekleri
 
-Yalnız şu fikirleri referans alabilirsin:
+Yalnız 10 dakikalık timer seçilerek draft entry oluşturma:
 
-- wall-clock tabanlı remaining time hesabı,
-- `StopwatchTickResult` benzeri sade tick state'i,
-- tek aktif job,
+```json
+{
+  "entryDate": "2026-09-27",
+  "areaId": null,
+  "text": "",
+  "timerStatus": "PENDING",
+  "durationSeconds": 600
+}
+```
+
+Alan ve 15 dakikalık timer ile entry oluşturma:
+
+```json
+{
+  "entryDate": "2026-09-27",
+  "areaId": "MIND",
+  "text": "Odak çalışması",
+  "timerStatus": "PENDING",
+  "durationSeconds": 900
+}
+```
+
+Özel 7 dakika seçimi:
+
+```json
+{
+  "entryDate": "2026-09-27",
+  "areaId": "WORK",
+  "text": "Kısa düzenleme",
+  "timerStatus": "PENDING",
+  "durationSeconds": 420
+}
+```
+
+Timer başlatma:
+
+```http
+POST /diary/entries/{entryId}/timer/start
+```
+
+```json
+{}
+```
+
+Başarılı start cevabı server tarafından üretilen zamanları içermelidir:
+
+```json
+{
+  "data": {
+    "id": "6b27d37a-b194-4f91-b624-657b9f4ec691",
+    "entryDate": "2026-09-27",
+    "areaId": "MIND",
+    "text": "Odak çalışması",
+    "timerStatus": "RUNNING",
+    "durationSeconds": 900,
+    "startedAt": "2026-09-27T15:00:00Z",
+    "endsAt": "2026-09-27T15:15:00Z",
+    "finishedAt": null,
+    "createdAt": "2026-09-27T14:58:00Z",
+    "updatedAt": "2026-09-27T15:00:00Z"
+  },
+  "message": "Timer başlatıldı.",
+  "status": true
+}
+```
+
+## Compose UI
+
+- Timer seçeneklerini alan seçiminin hemen altında göster.
+- Özel süre seçilince dakika input'u göster.
+- Entry ilk kez kaydedildiğinde dialog açık kalmalı ve buton `Başlat` durumuna geçebilmelidir.
+- Dialog kapanınca PENDING/RUNNING entry listede görünmelidir.
+- Liste item'ında uygun duruma göre `Bekliyor`, canlı `MM:SS`, `Tamamlandı` veya `İptal edildi`
+  göster.
+- Liste item'ındaki Start/Cancel/Edit aksiyonları yalnız Action göndermelidir.
+- Preview'ları 5, 10, 15, 20 ve özel dakika örnekleri ile değil; en az PENDING, RUNNING ve FINISHED
+  durumlarını temsil edecek kadar güncelle.
+- Compose içinde `delay`, coroutine, zaman hesabı, API, validation veya feature `LaunchedEffect`
+  bulunmamalıdır.
+
+## Mevcut stopwatch kodunu kullanma sınırı
+
+Android-first `StopwatchOperationUseCase`, `StopwatchVm`, Room stopwatch repository, Wear foreground
+service, Tile ve Alarm kodlarını KMP modüllerine bağlama. Bunlar Android/legacy bağımlılıkları
+taşır.
+
+Yalnız şu fikirleri platformdan bağımsız biçimde uygula:
+
+- wall-clock tabanlı remaining time,
+- tek aktif timer,
 - cancel/finish ayrımı,
-- `MM:SS` formatı.
+- `MM:SS` formatı,
+- başlangıç ve bitiş zamanlarından resume.
 
-Kod taşımak KMP modüllerinin Android legacy modüllerine bağımlı olmasını gerektiriyorsa kodu taşıma;
-küçük platformdan bağımsız karşılığını mevcut Operator içinde yaz.
+Yeni timer manager/framework oluşturma; küçük timer koordinasyonu `DiaryOperator` içinde kalsın.
+
+## Supabase uygulama, deploy ve URL güncellemesi
+
+Kod tamamlandıktan sonra yalnız ilgili Supabase değişikliklerini uygula:
+
+1. Yeni migration'ı oluştur ve SQL'i doğrula.
+2. Bağlı proje bilgisini `supabase/config.toml` ve mevcut local project-ref üzerinden doğrula; yeni
+   proje uydurma.
+3. Migration'ı bağlı Supabase projesine uygula:
+
+```bash
+supabase db push
+```
+
+4. Güncellenen function'ı deploy et:
+
+```bash
+supabase functions deploy kmpFunctions
+```
+
+5. Deploy sonucundaki gerçek function URL'ini doğrula. Bu projedeki mevcut project ref değişmediyse
+   base URL şu biçimdedir:
+
+```text
+https://uduwhuvgdcacvdhzheyi.supabase.co/functions/v1/kmpFunctions
+```
+
+6. KMP `EndpointStrings` içinde tek bir `kmpFunctions` base URL kullan ve route'ları buradan üret:
+
+```text
+GET  {base}/diary/days/{date}/entries
+POST {base}/diary/entries
+PATCH {base}/diary/entries/{entryId}
+POST {base}/diary/entries/{entryId}/timer/start
+POST {base}/diary/entries/{entryId}/timer/cancel
+POST {base}/diary/entries/{entryId}/timer/finish
+```
+
+7. Secret/service-role key'i kaynak koda, prompt çıktısına veya loglara yazma.
+8. Deploy yetkisi veya Supabase oturumu yoksa deploy edilmiş gibi davranma; kodu tamamla ve kalan
+   komutu açıkça raporla.
+9. Deploy sonrası en az OPTIONS ve yetkili bir create/get/start akışını güvenli test verisiyle
+   doğrula. Üretilen test entry'sini raporda belirt; kullanıcı verisini silme/değiştirme.
 
 ## Kapsam dışı
 
-- Android/Wear timer servislerini refactor etmek
-- Background timer garantisi
-- Notification ve alarm
+- Android/Wear stopwatch refactoru
+- Native foreground service, notification ve alarm
 - Pause/resume
+- Aynı anda birden fazla aktif timer
 - Stopwatch ileri sayım modu
-- Serbest süre girişi
-- Timer geçmiş ekranı
-- Offline sync
-- Ayrı timer endpoint'i
+- Offline sync/queue
+- Ayrı timer geçmiş ekranı
+- Quote ve entry'yi tek response'ta birleştirmek
 - Legacy Android migration
 
 ## Doğrulama
 
-En az şu durumları doğrula:
+En az şu senaryoları doğrula:
 
-1. Alan + `Yapıldı`, boş notla entry oluşturabilir.
-2. `5 sn` seçimi sayaç başlatır ve 0'da yalnız bir entry oluşturur.
-3. Countdown iptali entry oluşturmaz ve editor verisini korur.
-4. Aynı anda ikinci timer veya ikinci create başlamaz.
-5. Timer süresi geciken tick'lerden etkilenmez; wall-clock üzerinden hesaplanır.
-6. Countdown request'i duration/start/end alanlarını doğru gönderir.
-7. Network hatasında kullanıcı seçimi ve not kaybolmaz.
-8. Compose yalnız state çizer ve Action gönderir.
-9. Quote ve mevcut entry endpointleri bozulmaz.
-10. Etkilenen KMP Android ve Wasm hedefleri derlenir.
+1. Yalnız `5 dk` seçilerek alan ve not olmadan PENDING entry oluşturulur.
+2. `10 dk`, `15 dk`, `20 dk` doğru saniye değerlerine dönüşür.
+3. Özel `7 dk` değeri 420 saniye olarak kaydedilir.
+4. İlk create dialogu kapatmaz ve gerçek backend id'sini editor state'e yazar.
+5. Create sürerken dismiss istenirse veri kaybolmaz; başarıdan sonra PENDING entry listede kalır.
+6. Timer start aynı entry'yi RUNNING yapar; ikinci entry oluşturmaz.
+7. Dialog kapalıyken entry listesinde countdown görünür.
+8. Geciken tick süreyi kaydırmaz; kalan süre wall-clock üzerinden hesaplanır.
+9. Sayaç bitince entry FINISHED olur, listede tamamlandı görünür ve tek uyarı üretilir.
+10. Uygulama yeniden açıldığında geçmiş `endsAt` değeri FINISHED olarak yorumlanır.
+11. Cancel entry'yi CANCELLED yapar ve yeni entry oluşturmaz.
+12. Network hatasında seçimler korunur ve retry mümkündür.
+13. GET entries ile quote GET birbirinden bağımsız çalışır.
+14. Supabase migration ve function deploy sonucu doğrulanır.
+15. Etkilenen KMP Android ve Wasm hedefleri derlenir.
 
-Sonuçta değişen dosyaları, migration'ı ve background timer'ın neden sonraki aşamaya bırakıldığını
-kısa
-şekilde raporla.
+Sonuçta değişen dosyaları, migration sonucunu, deploy edilen function URL'ini, doğrulanan route'ları
+ve background notification'ın neden sonraki aşamaya bırakıldığını kısa şekilde raporla.
