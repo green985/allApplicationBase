@@ -21,6 +21,7 @@ data class DiaryUiState(
     val canGoNext: Boolean = true,
     val quoteOperation: OperationState = OperationState.Idle,
     val entryOperation: OperationState = OperationState.Idle,
+    val entriesOperation: OperationState = OperationState.Idle,
     val quoteIsDirty: Boolean = false,
     val quoteRevision: Long = 0L,
     val entryIsDirty: Boolean = false,

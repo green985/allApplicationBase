@@ -31,6 +31,8 @@ object StringKeys {
     const val selectAreaRequired = "Alan seçmelisiniz."
     const val note = "Not"
     const val save = "Save"
+    const val delete = "Sil"
+    const val retry = "Tekrar dene"
     const val workArea = "İş / İnşa"
     const val bodyArea = "Beden"
     const val healthArea = "Sağlık"
@@ -44,9 +46,6 @@ object StringKeys {
     const val runOperation = "Run operation"
     const val reset = "Reset"
     const val operationCompleted = "Operation completed"
-
-    const val sampleMindEntry = "Bugün için küçük bir başlangıç yaptım."
-    const val sampleBodyEntry = "Kısa bir yürüyüş iyi geldi."
 
     val turkishMonths = listOf(
         "Ocak",

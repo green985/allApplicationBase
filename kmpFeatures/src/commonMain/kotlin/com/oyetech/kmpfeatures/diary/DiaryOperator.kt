@@ -39,6 +39,7 @@ class DiaryOperator(
 
     init {
         loadQuoteForSelectedDate()
+        loadEntriesForSelectedDate()
     }
 
     override fun handleAction(action: DiaryAction) {
@@ -97,6 +98,8 @@ class DiaryOperator(
                 }
             }
 
+            is DiaryAction.EntryDeleteClicked -> deleteEntry(action.entryId)
+
             DiaryAction.AddEntryClicked -> {
                 updateState {
                     copy(
@@ -137,6 +140,7 @@ class DiaryOperator(
             )
             DiaryAction.RetryQuoteSaveClicked -> scheduleQuoteSave()
             DiaryAction.RetryEntrySaveClicked -> scheduleEntrySave()
+            DiaryAction.RetryEntriesLoadClicked -> loadEntriesForSelectedDate()
             DiaryAction.BackClicked -> navigationUseCase.goBack()
             DiaryAction.ErrorDismissed -> updateState {
                 copy(
@@ -167,9 +171,44 @@ class DiaryOperator(
                 dayQuote = "",
                 quoteIsDirty = false,
                 quoteOperation = OperationState.Idle,
+                entries = emptyList(),
+                entryItems = emptyList(),
+                entriesOperation = OperationState.Idle,
             )
         }
         loadQuoteForSelectedDate()
+        loadEntriesForSelectedDate()
+    }
+
+    private fun loadEntriesForSelectedDate() {
+        val dateSnapshot = state.value.selectedDate
+        executeOperation(
+            onStart = {
+                copy(entriesOperation = OperationState.Loading)
+            },
+            operation = {
+                diaryEndpointOperation.getEntries(dateSnapshot.toString())
+            },
+            onSuccess = { responses ->
+                if (selectedDate != dateSnapshot) {
+                    copy(entriesOperation = OperationState.Idle)
+                } else {
+                    val loadedEntries = responses.map(::entryEntity)
+                    copy(
+                        entries = loadedEntries,
+                        entryItems = renderEntryItems(loadedEntries),
+                        entriesOperation = OperationState.Idle,
+                    )
+                }
+            },
+            onError = { error ->
+                copy(
+                    entries = emptyList(),
+                    entryItems = emptyList(),
+                    entriesOperation = OperationState.Error(error),
+                )
+            },
+        )
     }
 
     private fun loadQuoteForSelectedDate() {
@@ -303,7 +342,8 @@ class DiaryOperator(
                         copy(entryOperation = OperationState.Idle)
                     } else {
                         val serverEntry = entryEntity(response)
-                        val nextEntries = entries + serverEntry
+                        val nextEntries = listOf(serverEntry) + entries
+                        val shouldCloseEditor = closeEditor && !hasNewInput
                         if (hasNewInput) scheduleEntrySave()
                         copy(
                             entries = nextEntries,
@@ -311,19 +351,12 @@ class DiaryOperator(
                             editingEntryId = response.id,
                             entryIsDirty = hasNewInput,
                             entryOperation = OperationState.Idle,
-                            isEditorVisible = if (closeEditor && !hasNewInput) {
-                                false
-                            } else {
-                                true
-                            },
-                            selectedArea = if (closeEditor && !hasNewInput) {
-                                null
-                            } else {
-                                areaForRequest
-                            },
-                            text = if (closeEditor && !hasNewInput) "" else text,
+                            isEditorVisible = !shouldCloseEditor,
+                            selectedArea = if (shouldCloseEditor) null else selectedArea,
+                            text = if (shouldCloseEditor) "" else this.text,
                         )
                     }
+
                 },
                 onError = { error ->
                     snackbarDelegate.triggerSnackbarState(
@@ -397,6 +430,39 @@ class DiaryOperator(
         )
     }
 
+    private fun deleteEntry(entryId: String) {
+        if (state.value.entryOperation is OperationState.Loading) {
+            return
+        }
+
+        executeOperation(
+            onStart = {
+                copy(entryOperation = OperationState.Loading)
+            },
+            operation = {
+                diaryEndpointOperation.deleteEntry(entryId)
+            },
+            onSuccess = {
+                val remainingEntries = entries.filterNot { it.id == entryId }
+                copy(
+                    entries = remainingEntries,
+                    entryItems = renderEntryItems(remainingEntries),
+                    isEditorVisible = if (editingEntryId == entryId) false else isEditorVisible,
+                    editingEntryId = if (editingEntryId == entryId) null else editingEntryId,
+                    selectedArea = if (editingEntryId == entryId) null else selectedArea,
+                    text = if (editingEntryId == entryId) "" else text,
+                    entryOperation = OperationState.Idle,
+                )
+            },
+            onError = { error ->
+                snackbarDelegate.triggerSnackbarState(
+                    message = error.message,
+                )
+                copy(entryOperation = OperationState.Error(error))
+            },
+        )
+    }
+
     private fun stateFor(offset: Int): DiaryUiState {
         val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
         val selectedDate = LocalDate.fromEpochDays(today.toEpochDays() + offset)
@@ -411,29 +477,13 @@ class DiaryOperator(
     companion object {
         private fun initialState(): DiaryUiState {
             val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-            val entries = listOf(
-                EntryEntity(
-                    id = "1",
-                    areaId = AreaEntry.MIND.name,
-                    text = StringKeys.sampleMindEntry,
-                    createdBy = StringKeys.adminUsername,
-                    createdAt = Clock.System.now(),
-                ),
-                EntryEntity(
-                    id = "2",
-                    areaId = AreaEntry.BODY.name,
-                    text = StringKeys.sampleBodyEntry,
-                    createdBy = StringKeys.adminUsername,
-                    createdAt = Clock.System.now(),
-                ),
-            )
             return DiaryUiState(
                 selectedDate = today,
                 dayOffset = 0,
                 isTodaySelected = true,
-                entries = entries,
+                entries = emptyList(),
                 selectedDateLabel = formatDate(today),
-                entryItems = renderEntryItems(entries),
+                entryItems = emptyList(),
                 areaOptions = areaOptions(),
                 isEditorVisible = false,
                 editingEntryId = null,

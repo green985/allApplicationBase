@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -35,6 +36,7 @@ import com.oyetech.kmpmodels.ui.event.DiaryAction
 import com.oyetech.kmpmodels.ui.state.DiaryAreaUiState
 import com.oyetech.kmpmodels.ui.state.DiaryEntryUiState
 import com.oyetech.kmpmodels.ui.state.DiaryUiState
+import com.oyetech.kmpmodels.ui.state.OperationState
 import com.oyetech.viewmodule.AppColors
 import com.oyetech.viewmodule.ViewModuleTheme
 import kotlinx.datetime.TimeZone
@@ -121,10 +123,26 @@ fun DiaryScreen(
                 placeholder = { Text(StringKeys.writeTodaysQuote) },
                 singleLine = true,
             )
+            when (val operation = uiState.entriesOperation) {
+                OperationState.Idle -> Unit
+                OperationState.Loading -> CircularProgressIndicator()
+                is OperationState.Error -> {
+                    Text(
+                        text = operation.error.message,
+                        color = AppColors.textSecondary,
+                    )
+                    Button(
+                        onClick = { onAction(DiaryAction.RetryEntriesLoadClicked) },
+                    ) {
+                        Text(StringKeys.retry)
+                    }
+                }
+            }
             uiState.entryItems.forEach { entry ->
                 DiaryEntryCard(
                     entry = entry,
                     onClick = { onAction(DiaryAction.EntryEditClicked(entry.id)) },
+                    onDelete = { onAction(DiaryAction.EntryDeleteClicked(entry.id)) },
                 )
             }
             Button(onClick = { onAction(DiaryAction.BackClicked) }) {
@@ -152,6 +170,7 @@ fun DiaryScreen(
 private fun DiaryEntryCard(
     entry: DiaryEntryUiState,
     onClick: () -> Unit,
+    onDelete: () -> Unit,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -179,6 +198,9 @@ private fun DiaryEntryCard(
                     style = MaterialTheme.typography.bodyLarge,
                     color = AppColors.textPrimary,
                 )
+            }
+            Button(onClick = onDelete) {
+                Text(StringKeys.delete)
             }
         }
     }
@@ -257,15 +279,7 @@ private fun DiaryScreenPreview() {
                 isTodaySelected = true,
                 selectedDateLabel = "25 Eylül 2026",
                 entries = emptyList(),
-                entryItems = listOf(
-                    DiaryEntryUiState(
-                        id = "1",
-                        areaLabel = StringKeys.mindArea,
-                        createdBy = StringKeys.adminUsername,
-                        timeLabel = "21:00",
-                        text = StringKeys.sampleMindEntry,
-                    ),
-                ),
+                entryItems = emptyList(),
                 areaOptions = emptyList(),
                 isEditorVisible = false,
                 selectedArea = null,

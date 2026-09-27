@@ -7,6 +7,9 @@ object EndpointStrings {
     const val registerGoogleUser = "$baseUrl/v1/registerGoogleUser"
     const val diaryEntries = "$baseUrl/v1/kmpFunctions/diary/entries"
 
+    fun diaryEntriesForDate(date: String): String =
+        "$diaryEntries?date=$date"
+
     fun diaryDayQuote(date: String): String =
         "$baseUrl/v1/kmpFunctions/diary/days/$date/quote"
 

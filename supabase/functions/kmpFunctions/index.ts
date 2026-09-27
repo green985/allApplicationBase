@@ -4,7 +4,7 @@ const fixedUserId = "02af726d-aa75-4301-a410-049d214841f9";
 const jsonHeaders = {
   "Content-Type": "application/json",
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, PUT, POST, PATCH, OPTIONS",
+  "Access-Control-Allow-Methods": "GET, PUT, POST, PATCH, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "authorization, apikey, content-type",
 };
 
@@ -62,7 +62,7 @@ function isQuoteRoute(segments: string[]): boolean {
   );
 }
 
-function isCreateEntryRoute(segments: string[]): boolean {
+function isEntryRoute(segments: string[]): boolean {
   const diaryIndex = segments.indexOf("diary");
   return diaryIndex >= 0 && segments[diaryIndex + 1] === "entries";
 }
@@ -78,6 +78,11 @@ function dateFromRequest(request: Request): string | null {
   const segments = pathSegments(request);
   const daysIndex = segments.indexOf("days");
   const date = daysIndex >= 0 ? segments[daysIndex + 1] : null;
+  return date && isValidDate(date) ? date : null;
+}
+
+function entryDateFromRequest(request: Request): string | null {
+  const date = new URL(request.url).searchParams.get("date");
   return date && isValidDate(date) ? date : null;
 }
 
@@ -171,6 +176,26 @@ async function updateQuote(request: Request, date: string): Promise<Response> {
   }
 
   return response(mapQuote(data), "Günün sözü başarıyla kaydedildi.", true);
+}
+
+async function getEntries(date: string): Promise<Response> {
+  const { data, error } = await supabase
+    .from("diary_entries")
+    .select("id, area_id, text, entry_date, created_at, updated_at")
+    .eq("user_id", fixedUserId)
+    .eq("entry_date", date)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error("getEntries failed", error);
+    return response(null, "Günün diary kayıtları getirilemedi.", false, 500);
+  }
+
+  return response(
+    (data ?? []).map(mapEntry),
+    "Günün diary kayıtları başarıyla getirildi.",
+    true,
+  );
 }
 
 async function createEntry(request: Request): Promise<Response> {
@@ -289,6 +314,30 @@ async function updateEntry(request: Request, entryId: string): Promise<Response>
   );
 }
 
+async function deleteEntry(entryId: string): Promise<Response> {
+  const { data, error } = await supabase
+    .from("diary_entries")
+    .delete()
+    .eq("id", entryId)
+    .eq("user_id", fixedUserId)
+    .select("id, area_id, text, entry_date, created_at, updated_at")
+    .maybeSingle();
+
+  if (error) {
+    return response(null, "Diary kaydı silinemedi.", false, 500);
+  }
+
+  if (!data) {
+    return response(null, "Diary kaydı bulunamadı.", false, 404);
+  }
+
+  return response(
+    mapEntry(data),
+    "Diary kaydı başarıyla silindi.",
+    true,
+  );
+}
+
 Deno.serve(async (request) => {
   if (request.method === "OPTIONS") {
     return new Response("ok", { headers: jsonHeaders });
@@ -311,18 +360,32 @@ Deno.serve(async (request) => {
       }
     }
 
-    if (isCreateEntryRoute(segments) && request.method === "POST") {
+    if (isEntryRoute(segments) && request.method === "GET") {
+      const date = entryDateFromRequest(request);
+      return date
+        ? getEntries(date)
+        : response(null, "Geçerli bir tarih gerekli.", false, 400);
+    }
+
+    if (isEntryRoute(segments) && request.method === "POST") {
       return createEntry(request);
     }
 
-    if (isCreateEntryRoute(segments) && request.method === "PATCH") {
+    if (isEntryRoute(segments) && request.method === "PATCH") {
       const entryId = entryIdFromRequest(request);
       return entryId
         ? updateEntry(request, entryId)
         : response(null, "Diary kaydı bulunamadı.", false, 404);
     }
 
-    if (!isQuoteRoute(segments) && !isCreateEntryRoute(segments)) {
+    if (isEntryRoute(segments) && request.method === "DELETE") {
+      const entryId = entryIdFromRequest(request);
+      return entryId
+        ? deleteEntry(entryId)
+        : response(null, "Diary kaydı bulunamadı.", false, 404);
+    }
+
+    if (!isQuoteRoute(segments) && !isEntryRoute(segments)) {
       return response(null, "Endpoint bulunamadı.", false, 404);
     }
 

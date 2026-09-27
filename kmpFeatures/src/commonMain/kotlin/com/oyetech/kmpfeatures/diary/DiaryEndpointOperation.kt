@@ -8,6 +8,7 @@ import com.oyetech.kmpmodels.postbody.EntryPostBody
 import com.oyetech.kmpmodels.response.DiaryQuoteResponse
 import com.oyetech.kmpmodels.response.EntryResponse
 import io.ktor.client.HttpClient
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.patch
 import io.ktor.client.request.post
@@ -17,6 +18,11 @@ import io.ktor.client.request.setBody
 class DiaryEndpointOperation(
     private val httpClient: HttpClient,
 ) {
+    suspend fun getEntries(date: String): List<EntryResponse> {
+        println("[DiaryEndpoint] GET /v1/kmpFunctions/diary/entries?date=$date")
+        return httpClient.get(EndpointStrings.diaryEntriesForDate(date)).bodyOrError()
+    }
+
     suspend fun getQuote(date: String): DiaryQuoteResponse {
         println("[DiaryEndpoint] GET /v1/diary/days/$date/quote")
         return httpClient.get(EndpointStrings.diaryDayQuote(date)).bodyOrError()
@@ -55,5 +61,10 @@ class DiaryEndpointOperation(
         return httpClient.patch(EndpointStrings.diaryEntry(entryId)) {
             setBody(request)
         }.bodyOrError()
+    }
+
+    suspend fun deleteEntry(entryId: String): EntryResponse {
+        println("[DiaryEndpoint] DELETE /v1/kmpFunctions/diary/entries/$entryId")
+        return httpClient.delete(EndpointStrings.diaryEntry(entryId)).bodyOrError()
     }
 }
