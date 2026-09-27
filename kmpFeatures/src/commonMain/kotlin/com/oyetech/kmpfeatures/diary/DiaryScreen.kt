@@ -162,7 +162,6 @@ private fun DiaryEntryCard(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Column {
-                asd
                 Text(
                     text = entry.areaLabel,
                     style = MaterialTheme.typography.titleMedium,
