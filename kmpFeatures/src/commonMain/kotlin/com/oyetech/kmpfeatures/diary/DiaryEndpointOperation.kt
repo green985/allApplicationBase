@@ -36,7 +36,7 @@ class DiaryEndpointOperation(
         request: EntryPostBody,
     ): EntryResponse {
         println(
-            "[DiaryEndpoint] POST /v1/diary/entries " +
+            "[DiaryEndpoint] POST /v1/kmpFunctions/diary/entries " +
                     "areaId=\"${request.areaId}\" text=\"${request.text}\"",
         )
         return httpClient.post(EndpointStrings.diaryEntries) {

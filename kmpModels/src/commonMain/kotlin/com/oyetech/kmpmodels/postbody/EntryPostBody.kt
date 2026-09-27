@@ -6,8 +6,8 @@ import kotlinx.serialization.Serializable
 data class EntryPostBody(
     val areaId: String,
     val text: String,
+    val entryDate: String,
     val note: String? = null,
-    val occurredAt: String? = null,
     val durationSeconds: Long? = null,
     val timerType: String? = null,
     val startedAt: String? = null,

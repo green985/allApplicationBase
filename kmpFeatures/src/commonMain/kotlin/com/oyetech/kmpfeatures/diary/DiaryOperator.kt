@@ -9,6 +9,7 @@ import com.oyetech.kmpmodels.entity.AreaEntry
 import com.oyetech.kmpmodels.entity.EntryEntity
 import com.oyetech.kmpmodels.postbody.EntryPatchBody
 import com.oyetech.kmpmodels.postbody.EntryPostBody
+import com.oyetech.kmpmodels.response.EntryResponse
 import com.oyetech.kmpmodels.stringKeys.StringKeys
 import com.oyetech.kmpmodels.ui.event.DiaryAction
 import com.oyetech.kmpmodels.ui.state.DiaryAreaUiState
@@ -22,6 +23,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 import kotlin.time.Clock
+import kotlin.time.Instant
 
 class DiaryOperator(
     operatorScope: CoroutineScope,
@@ -251,66 +253,103 @@ class DiaryOperator(
         }
 
         entryAutosaveJob.cancelPendingSave()
-        val entryId = currentState.editingEntryId ?: currentState.entries.size.toString()
         val text = currentState.text.trim()
         val revision = currentState.entryRevision
-        val updatedEntries = if (currentState.editingEntryId == null) {
-            currentState.entries + EntryEntity(
-                id = entryId,
-                areaId = area.name,
-                text = text,
-                createdBy = StringKeys.adminUsername,
-                createdAt = Clock.System.now(),
-            )
-        } else {
-            currentState.entries.map { entry ->
-                if (entry.id == currentState.editingEntryId) {
-                    entry.copy(
-                        areaId = area.name,
-                        text = text,
-                        updatedAt = Clock.System.now(),
+        val editingEntryId = currentState.editingEntryId
+        val dateSnapshot = currentState.selectedDate
+
+        if (editingEntryId == null) {
+            executeOperation(
+                onStart = {
+                    copy(entryOperation = OperationState.Loading)
+                },
+                operation = {
+                    diaryEndpointOperation.createEntry(
+                        EntryPostBody(
+                            areaId = area.name,
+                            text = text,
+                            entryDate = dateSnapshot.toString(),
+                        ),
                     )
-                } else {
-                    entry
-                }
+                },
+                onSuccess = { response ->
+                    val hasNewInput = entryRevision != revision
+                    if (selectedDate != dateSnapshot) {
+                        copy(entryOperation = OperationState.Idle)
+                    } else {
+                        val serverEntry = entryEntity(response)
+                        val nextEntries = entries + serverEntry
+                        if (hasNewInput) scheduleEntrySave()
+                        copy(
+                            entries = nextEntries,
+                            entryItems = renderEntryItems(nextEntries),
+                            editingEntryId = response.id,
+                            entryIsDirty = hasNewInput,
+                            entryOperation = OperationState.Idle,
+                            isEditorVisible = if (closeEditor && !hasNewInput) {
+                                false
+                            } else {
+                                true
+                            },
+                            selectedArea = if (closeEditor && !hasNewInput) {
+                                null
+                            } else {
+                                selectedArea
+                            },
+                            text = if (closeEditor && !hasNewInput) "" else text,
+                        )
+                    }
+                },
+                onError = { error ->
+                    snackbarDelegate.triggerSnackbarState(
+                        message = error.message,
+                        actionLabel = "Retry",
+                        onAction = { dispatch(DiaryAction.RetryEntrySaveClicked) },
+                    )
+                    copy(
+                        entryIsDirty = true,
+                        entryOperation = OperationState.Error(error),
+                    )
+                },
+            )
+            return
+        }
+
+        val updatedEntries = currentState.entries.map { entry ->
+            if (entry.id == editingEntryId) {
+                entry.copy(
+                    areaId = area.name,
+                    text = text,
+                    updatedAt = Clock.System.now(),
+                )
+            } else {
+                entry
             }
         }
-        val editingEntryId = currentState.editingEntryId
         updateState {
             copy(
                 entries = updatedEntries,
                 entryItems = renderEntryItems(updatedEntries),
                 isEditorVisible = if (closeEditor) false else currentState.isEditorVisible,
-                editingEntryId = if (closeEditor) null else entryId,
+                editingEntryId = if (closeEditor) null else editingEntryId,
                 selectedArea = if (closeEditor) null else area,
                 text = if (closeEditor) "" else text,
                 entryOperation = OperationState.Loading,
             )
         }
-        val dateSnapshot = currentState.selectedDate
         executeOperation(
             onStart = {
                 copy(entryOperation = OperationState.Loading)
             },
             operation = {
-                if (editingEntryId == null) {
-                    diaryEndpointOperation.createEntry(
-                        EntryPostBody(
-                            areaId = area.name,
-                            text = text,
-                            occurredAt = dateSnapshot.toString(),
-                        ),
-                    )
-                } else {
-                    diaryEndpointOperation.updateEntry(
-                        entryId = editingEntryId,
-                        request = EntryPatchBody(
-                            areaId = area.name,
-                            text = text,
-                            occurredAt = dateSnapshot.toString(),
-                        ),
-                    )
-                }
+                diaryEndpointOperation.updateEntry(
+                    entryId = editingEntryId,
+                    request = EntryPatchBody(
+                        areaId = area.name,
+                        text = text,
+                        occurredAt = dateSnapshot.toString(),
+                    ),
+                )
             },
             onSuccess = {
                 if (entryRevision != revision) scheduleEntrySave()
@@ -389,6 +428,17 @@ class DiaryOperator(
                     text = entry.text,
                 )
             }
+
+        private fun entryEntity(response: EntryResponse): EntryEntity =
+            EntryEntity(
+                id = response.id,
+                areaId = response.areaId,
+                text = response.text,
+                entryDate = response.entryDate,
+                createdBy = response.createdBy.orEmpty(),
+                createdAt = response.createdAt?.let(Instant::parse),
+                updatedAt = response.updatedAt?.let(Instant::parse),
+            )
 
         private fun areaOptions(): List<DiaryAreaUiState> =
             AreaEntry.entries.map { area ->
