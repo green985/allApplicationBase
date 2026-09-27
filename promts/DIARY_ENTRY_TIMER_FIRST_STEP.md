@@ -50,9 +50,10 @@ Süre hesabı ve doğrulaması Compose içinde yapılmamalı; Action Operator'a 
 render-ready
 state hazırlanmalıdır.
 
-## Entry lifecycle
+## Entry lifecycle ve türetilen durum
 
-Minimum durumlar:
+Timer status backend'de ayrı bir kolon olarak tutulmamalıdır. Aşağıdaki durumlar yalnız UI/domain
+modelidir ve saklanan zaman bilgilerinden Operator tarafından türetilmelidir:
 
 ```kotlin
 enum class EntryTimerStatus {
@@ -66,12 +67,41 @@ enum class EntryTimerStatus {
 Anlamları:
 
 - `PENDING`: Entry oluşturuldu, timer süresi atanmış olabilir fakat henüz başlamadı.
-- `RUNNING`: `startedAt` ve `endsAt` vardır; listede countdown gösterilir.
+- `RUNNING`: `timerStartedAt` ve `timerEndsAt` vardır; listede countdown gösterilir.
 - `FINISHED`: Süre tamamlandı veya kullanıcı `Yapıldı` seçti.
 - `CANCELLED`: Başlatılmış timer kullanıcı tarafından iptal edildi.
 
-`Yapıldı` seçimi aktif timer başlatmaz. Entry doğrudan `FINISHED` oluşturulur veya mevcut entry bu
-duruma güncellenir.
+Backend yalnız şu kalıcı gerçekleri saklar:
+
+```text
+durationSeconds
+timerStartedAt
+timerEndsAt
+timerCancelledAt
+completedAt
+```
+
+Durum şu kuralla türetilmelidir:
+
+```text
+timerCancelledAt != null                       -> CANCELLED
+completedAt != null                            -> FINISHED
+timerEndsAt != null && timerEndsAt <= now      -> FINISHED
+timerStartedAt != null && timerEndsAt != null  -> RUNNING
+durationSeconds != null                        -> PENDING
+```
+
+`Yapıldı` seçimi aktif timer başlatmaz; backend `completedAt` değerini server zamanı ile doldurur.
+Timer ile tamamlanan bir entry için planlanan tamamlanma anı `timerEndsAt` üzerinden bilinir. İlk
+sürümde ayrıca finish çağrısı veya backend job'u gerekmez.
+
+Backend saniyelik countdown çalıştırmamalı, tick üretmemeli, kalan süreyi güncellememeli ve timer
+bitince kendiliğinden request göndermemelidir. Backend'in görevi yalnız kalıcı zaman gerçeklerini
+doğrulamak ve saklamaktır. Canlı countdown ve türetilen status `DiaryOperator` sorumluluğudur.
+
+`durationSeconds` korunmalıdır çünkü timer başlamadan önce seçilmiş süreyi saklar ve kullanıcının
+orijinal 5/10/15/20/özel dakika tercihini temsil eder. Timer başladıktan sonra teknik olarak
+`timerEndsAt - timerStartedAt` ile hesaplanabilse bile PENDING aşamasında bu iki zaman henüz yoktur.
 
 Countdown akışı:
 
@@ -84,7 +114,7 @@ Süre seç
 -> entry RUNNING olur
 -> dialog kapanabilir
 -> listede entry'ye ait countdown görünür
--> süre bittiğinde entry FINISHED olur
+-> timerEndsAt <= now olduğunda Operator entry'yi FINISHED gösterir
 -> kullanıcıya bitiş uyarısı gösterilir
 ```
 
@@ -121,7 +151,7 @@ val editingEntryId: String?
 val selectedTimerPreset: EntryTimerPreset?
 val customDurationMinutes: String
 val selectedDurationSeconds: Long?
-val timerStatus: EntryTimerStatus
+val timerStatus: EntryTimerStatus // Operator tarafından zaman alanlarından türetilir
 val timerLabel: String
 val primaryButtonLabel: String
 val canCreateOrUpdateEntry: Boolean
@@ -161,7 +191,6 @@ data class CustomDurationChanged(val minutes: String) : DiaryAction
 data object SaveEntryWithoutClosingClicked : DiaryAction
 data class StartEntryTimerClicked(val entryId: String) : DiaryAction
 data class CancelEntryTimerClicked(val entryId: String) : DiaryAction
-data class FinishEntryTimerClicked(val entryId: String) : DiaryAction
 ```
 
 İsimleri mevcut action stiline göre uyarlayabilirsin. Compose yalnız Action göndermeli; timer, save,
@@ -171,7 +200,7 @@ validation veya dialog kapatma kararı vermemelidir.
 
 Countdown editor state'ine bağlı olmamalıdır. Entry listesi kapalı editorle de timerı göstermelidir.
 
-- Hesap kaynağı `endsAt - Clock.System.now()` olmalıdır.
+- Hesap kaynağı `timerEndsAt - Clock.System.now()` olmalıdır.
 - Yalnız `delay(1000)` ile state'i bir azaltmaya güvenme; her tick'te wall-clock üzerinden yeniden
   hesapla.
 - Dialog kapanınca çalışan timer job'u iptal etme.
@@ -179,15 +208,16 @@ Countdown editor state'ine bağlı olmamalıdır. Entry listesi kapalı editorle
 - İlk sürümde aynı anda yalnız bir RUNNING Diary timer destekle. İkinci timer başlatılırsa
   kullanıcıya
   anlaşılır state/error göster.
-- Entry listesi backend'den tekrar yüklendiğinde `RUNNING` ve gelecekteki `endsAt` değeri varsa
+- Entry listesi backend'den tekrar yüklendiğinde gelecekteki `timerEndsAt` değeri varsa
   countdown kaldığı yerden UI'da hesaplanabilmelidir.
-- `endsAt <= now` ise entry efektif olarak `FINISHED` gösterilmelidir; yalnız local job sonucuna
+- `timerEndsAt <= now` ise entry efektif olarak `FINISHED` gösterilmelidir; yalnız local job
+  sonucuna
   güvenme.
 
 Sayaç bittiğinde:
 
-- İlgili entry state'i `FINISHED` olarak güncellenir.
-- Backend finish endpoint'i çağrılır.
+- İlgili entry'nin render state'i `FINISHED` olarak güncellenir.
+- Backend finish endpoint'i çağrılmaz; bitiş `timerEndsAt <= now` kuralından türetilir.
 - Liste item'ında `Tamamlandı` gösterilir.
 - Tek kullanımlık uyarı `Effect` veya mevcut ortak snackbar sistemi üzerinden üretilir.
 - Compose içinde bitiş kontrolü veya snackbar kararı yazılmaz.
@@ -201,11 +231,11 @@ Mevcut tabloyu en az şu alanlarla genişlet:
 ```text
 area_id text null
 text text not null default ''
-timer_status text not null default 'PENDING'
 duration_seconds bigint null
-started_at timestamptz null
-ends_at timestamptz null
-finished_at timestamptz null
+timer_started_at timestamptz null
+timer_ends_at timestamptz null
+timer_cancelled_at timestamptz null
+completed_at timestamptz null
 ```
 
 Mevcut `area_id not null` ve `text_not_blank` kuralları yalnız timer ile kayıt oluşturma
@@ -214,12 +244,15 @@ davranışıyla
 
 Constraint kuralları:
 
-- `timer_status` yalnız `PENDING`, `RUNNING`, `FINISHED`, `CANCELLED` kabul etsin.
 - `duration_seconds` null veya pozitif olsun.
-- `RUNNING` için duration/start/end bilgileri bulunmalıdır.
-- `ends_at >= started_at` olmalıdır.
-- `FINISHED` durumunda timer seçilmemiş `Yapıldı` kaydı için süre alanları null olabilir.
+- `timer_ends_at >= timer_started_at` olmalıdır.
+- `timer_started_at` varsa `timer_ends_at` ve pozitif `duration_seconds` bulunmalıdır.
+- `timer_cancelled_at` yalnız başlatılmış timer için bulunmalıdır.
+- `Yapıldı` kaydı için `completed_at` bulunur; süre ve timer zamanları null olabilir.
 - Constraint yalnız 5/10/15/20 dakikaya kilitlenmemeli; özel süreyi desteklemelidir.
+
+`PENDING`, `RUNNING`, `FINISHED`, `CANCELLED` için database status kolonu ekleme. Ayrı status ile
+zaman alanlarının birbiriyle çelişebileceği ikinci bir doğruluk kaynağı oluşturma.
 
 `EntryPostBody`, `EntryPatchBody`, `EntryResponse` ve `EntryEntity` modellerini bu sözleşmeyle
 uyumlu
@@ -237,30 +270,45 @@ POST  /diary/entries
 PATCH /diary/entries/{entryId}
 POST  /diary/entries/{entryId}/timer/start
 POST  /diary/entries/{entryId}/timer/cancel
-POST  /diary/entries/{entryId}/timer/finish
 ```
 
-- POST, yalnız timer süresiyle `PENDING` entry oluşturabilmelidir.
+- POST, yalnız timer süresiyle entry oluşturabilmelidir; bu kayıt zaman alanlarından `PENDING`
+  olarak yorumlanır.
+- `Yapıldı` seçimi request içinde bir komut alanıyla (`markAsCompleted = true` gibi) belirtilmeli;
+  client doğrudan `completedAt` göndermemeli, backend bunu server zamanı ile üretmelidir. Mevcut API
+  isimlendirmesine daha uygun eşdeğer bir alan varsa onu kullan.
 - PATCH alan, not/text ve henüz RUNNING olmayan timer süresini güncelleyebilmelidir.
-- Start backend saatini kullanarak `startedAt` ve `endsAt` üretmeli, status'u `RUNNING` yapmalı ve
-  güncel entry döndürmelidir.
-- Client'ın gönderdiği keyfi `startedAt/endsAt` değerlerine güvenme.
-- Cancel yalnız RUNNING entry'yi `CANCELLED` yapmalıdır.
-- Finish idempotent olmalı; zaten FINISHED entry tekrar çağrıldığında başarıyla güncel modeli
-  döndürebilmelidir.
+- Start backend saatini kullanarak `timerStartedAt` ve `timerEndsAt` üretmeli ve güncel entry
+  döndürmelidir.
+- Client'ın gönderdiği keyfi `timerStartedAt/timerEndsAt` değerlerine güvenme.
+- Cancel yalnız aktif entry'nin `timerCancelledAt` değerini server zamanı ile doldurmalıdır ve
+  idempotent olmalıdır.
 - GET yalnız seçilen günün entry listesini döndürmelidir; quote'u aynı response'a ekleme.
-- GET sırasında `RUNNING && endsAt <= now` entry'leri efektif `FINISHED` olarak döndür veya güvenli
-  biçimde finalize et. Uygulama kapalıyken timer bittiğinde yeniden açılış doğru görünmelidir.
+- GET saklanan zaman alanlarını döndürmelidir. Client `timerEndsAt <= now` değerini `FINISHED`
+  yorumlamalıdır; GET sırasında database satırını finalize etmek için yan etki üretme.
 - Bütün cevaplar mevcut `GenericResponse<T>` sözleşmesini kullanmalıdır.
 - Raw database hata metnini kullanıcıya sızdırma.
 - Route path ve HTTP method birlikte kontrol edilmelidir.
 - OPTIONS ve CORS method/header listelerini yeni route'lara göre güncelle.
 
 İlk sürüm için ayrı Edge Function açma; mevcut `kmpFunctions` girişini kullan fakat handler'ları
-`getEntries`, `createEntry`, `updateEntry`, `startEntryTimer`, `cancelEntryTimer`,
-`finishEntryTimer` gibi küçük fonksiyonlarda ayır.
+`getEntries`, `createEntry`, `updateEntry`, `startEntryTimer` ve `cancelEntryTimer` gibi küçük
+fonksiyonlarda ayır.
 
 ## Request örnekleri
+
+Timer çalıştırmadan `Yapıldı` entry oluşturma:
+
+```json
+{
+  "entryDate": "2026-09-27",
+  "areaId": "BODY",
+  "text": "Yürüyüş tamamlandı",
+  "markAsCompleted": true
+}
+```
+
+Bu request sonucunda backend `completedAt` değerini kendi saatiyle üretmelidir.
 
 Yalnız 10 dakikalık timer seçilerek draft entry oluşturma:
 
@@ -269,7 +317,6 @@ Yalnız 10 dakikalık timer seçilerek draft entry oluşturma:
   "entryDate": "2026-09-27",
   "areaId": null,
   "text": "",
-  "timerStatus": "PENDING",
   "durationSeconds": 600
 }
 ```
@@ -281,7 +328,6 @@ Alan ve 15 dakikalık timer ile entry oluşturma:
   "entryDate": "2026-09-27",
   "areaId": "MIND",
   "text": "Odak çalışması",
-  "timerStatus": "PENDING",
   "durationSeconds": 900
 }
 ```
@@ -293,7 +339,6 @@ Alan ve 15 dakikalık timer ile entry oluşturma:
   "entryDate": "2026-09-27",
   "areaId": "WORK",
   "text": "Kısa düzenleme",
-  "timerStatus": "PENDING",
   "durationSeconds": 420
 }
 ```
@@ -317,11 +362,11 @@ Başarılı start cevabı server tarafından üretilen zamanları içermelidir:
     "entryDate": "2026-09-27",
     "areaId": "MIND",
     "text": "Odak çalışması",
-    "timerStatus": "RUNNING",
     "durationSeconds": 900,
-    "startedAt": "2026-09-27T15:00:00Z",
-    "endsAt": "2026-09-27T15:15:00Z",
-    "finishedAt": null,
+    "timerStartedAt": "2026-09-27T15:00:00Z",
+    "timerEndsAt": "2026-09-27T15:15:00Z",
+    "timerCancelledAt": null,
+    "completedAt": null,
     "createdAt": "2026-09-27T14:58:00Z",
     "updatedAt": "2026-09-27T15:00:00Z"
   },
@@ -394,7 +439,6 @@ POST {base}/diary/entries
 PATCH {base}/diary/entries/{entryId}
 POST {base}/diary/entries/{entryId}/timer/start
 POST {base}/diary/entries/{entryId}/timer/cancel
-POST {base}/diary/entries/{entryId}/timer/finish
 ```
 
 7. Secret/service-role key'i kaynak koda, prompt çıktısına veya loglara yazma.
@@ -427,7 +471,8 @@ En az şu senaryoları doğrula:
 6. Timer start aynı entry'yi RUNNING yapar; ikinci entry oluşturmaz.
 7. Dialog kapalıyken entry listesinde countdown görünür.
 8. Geciken tick süreyi kaydırmaz; kalan süre wall-clock üzerinden hesaplanır.
-9. Sayaç bitince entry FINISHED olur, listede tamamlandı görünür ve tek uyarı üretilir.
+9. Sayaç bitince Operator `timerEndsAt <= now` üzerinden FINISHED türetir, listede tamamlandı
+   görünür ve tek uyarı üretilir; finish endpoint çağrılmaz.
 10. Uygulama yeniden açıldığında geçmiş `endsAt` değeri FINISHED olarak yorumlanır.
 11. Cancel entry'yi CANCELLED yapar ve yeni entry oluşturmaz.
 12. Network hatasında seçimler korunur ve retry mümkündür.
