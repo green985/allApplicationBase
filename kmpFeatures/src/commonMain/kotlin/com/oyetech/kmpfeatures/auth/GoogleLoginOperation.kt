@@ -1,5 +1,6 @@
 package com.oyetech.kmpfeatures.auth
 
+import com.oyetech.kmpfeatures.network.EndpointStrings
 import com.oyetech.kmpmodels.stringKeys.StringKeys
 
 import io.ktor.client.HttpClient
@@ -20,13 +21,13 @@ class GoogleLoginOperation(
             val googleCredential = identityProvider.requestIdToken(clientId).getOrThrow()
             val existingUser = runCatching {
                 postAndLog<AuthenticatedUser>(
-                    endpoint = "$baseUrl/v1/getUserWithToken",
+                    endpoint = EndpointStrings.getUserWithToken,
                     request = UserWithTokenRequest(token = googleCredential.token),
                 )
             }.getOrNull()
 
             existingUser?.data ?: postAndLog<AuthenticatedUser>(
-                endpoint = "$baseUrl/v1/registerGoogleUser",
+                endpoint = EndpointStrings.registerGoogleUser,
                 request = GoogleUserRequest(
                     uid = googleCredential.uid,
                     token = googleCredential.token,
@@ -59,7 +60,6 @@ class GoogleLoginOperation(
     }
 
     private companion object {
-        const val baseUrl = "https://uduwhuvgdcacvdhzheyi.supabase.co/functions"
         val json = Json { ignoreUnknownKeys = true }
     }
 }
