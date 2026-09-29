@@ -473,6 +473,18 @@ class DiaryOperator(
         val dateSnapshot = currentState.selectedDate
 
         if (editingEntryId == null) {
+            if (closeEditor) {
+                updateState {
+                    copy(
+                        isEditorVisible = false,
+                        editingEntryId = null,
+                        selectedArea = null,
+                        text = "",
+                        selectedDurationSeconds = null,
+                        entryIsDirty = false,
+                    )
+                }
+            }
             executeOperation(
                 onStart = {
                     copy(entryOperation = OperationState.Loading)
@@ -494,7 +506,7 @@ class DiaryOperator(
                     } else {
                         val serverEntry = entryEntity(response)
                         val nextEntries = listOf(serverEntry) + entries
-                        val shouldCloseEditor = closeEditor && !hasNewInput
+                        val shouldCloseEditor = closeEditor
                         if (hasNewInput) scheduleEntrySave()
                         copy(
                             entries = nextEntries,
