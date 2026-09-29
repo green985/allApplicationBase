@@ -693,7 +693,7 @@ class DiaryOperator(
         }
 
         private fun renderEntryItems(entries: List<EntryEntity>): List<DiaryEntryUiState> =
-            entries.map { entry ->
+            entries.sortedByDescending { it.createdAt }.map { entry ->
                 DiaryEntryUiState(
                     id = entry.id,
                     areaLabel = areaLabel(entry.areaId),

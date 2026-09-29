@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.oyetech.kmpmodels.entity.AreaEntry
 import com.oyetech.kmpmodels.entity.EntryTimerPreset
 import com.oyetech.kmpmodels.stringKeys.StringKeys
@@ -157,6 +158,7 @@ fun DiaryScreen(
     if (uiState.isEditorVisible) {
         Dialog(
             onDismissRequest = { onAction(DiaryAction.EntryDialogDismissed) },
+            properties = DialogProperties(usePlatformDefaultWidth = false),
         ) {
             EntryEditor(
                 selectedArea = uiState.selectedArea,
@@ -234,7 +236,11 @@ private fun EntryEditor(
     onCustomDurationChanged: (String) -> Unit,
     onSave: () -> Unit,
 ) {
-    OutlinedCard(modifier = Modifier.fillMaxWidth()) {
+    OutlinedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp),
+    ) {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -268,6 +274,11 @@ private fun EntryEditor(
                     }
                 }
             }
+            Text(
+                text = StringKeys.duration,
+                style = MaterialTheme.typography.labelLarge,
+                color = AppColors.textSecondary,
+            )
             SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
                 listOf(
                     EntryTimerPreset.ALREADY_DONE to StringKeys.alreadyDone,
@@ -280,6 +291,10 @@ private fun EntryEditor(
                     SegmentedButton(
                         selected = selectedTimerPreset == preset,
                         onClick = { onTimerPresetSelected(preset) },
+                        colors = SegmentedButtonDefaults.colors(
+                            activeContainerColor = AppColors.primary,
+                            activeContentColor = AppColors.onPrimary,
+                        ),
                         shape = SegmentedButtonDefaults.itemShape(index, 6),
                     ) { Text(label) }
                 }
@@ -324,7 +339,7 @@ private fun DiaryScreenPreview() {
                 entries = emptyList(),
                 entryItems = emptyList(),
                 areaOptions = emptyList(),
-                isEditorVisible = false,
+                isEditorVisible = true,
                 selectedArea = null,
                 text = "",
                 dayQuote = "",

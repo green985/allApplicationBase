@@ -203,7 +203,7 @@ async function getEntries(date: string): Promise<Response> {
     .select(entrySelect)
     .eq("user_id", fixedUserId)
     .eq("entry_date", date)
-    .order("created_at", { ascending: true });
+    .order("created_at", { ascending: false });
 
   if (error) {
     console.error("getEntries failed", error);
