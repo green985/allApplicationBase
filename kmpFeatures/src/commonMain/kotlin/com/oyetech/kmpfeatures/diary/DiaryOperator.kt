@@ -283,6 +283,7 @@ class DiaryOperator(
                 closeEditor = true,
                 allowIdleArea = false,
             )
+
             DiaryAction.RetryQuoteSaveClicked -> scheduleQuoteSave()
             DiaryAction.RetryEntrySaveClicked -> scheduleEntrySave()
             DiaryAction.RetryEntriesLoadClicked -> loadEntriesForSelectedDate()
