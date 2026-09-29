@@ -340,6 +340,7 @@ class DiaryOperator(
                     copy(entriesOperation = OperationState.Idle)
                 } else {
                     val loadedEntries = responses.map(::entryEntity)
+                    startTimerTicker()
                     copy(
                         entries = loadedEntries,
                         entryItems = renderEntryItems(loadedEntries),
