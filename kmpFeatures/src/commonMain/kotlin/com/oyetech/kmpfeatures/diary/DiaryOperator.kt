@@ -223,7 +223,7 @@ class DiaryOperator(
                         isEditorVisible = true,
                         editingEntryId = entry.id,
                         selectedArea = entry.areaId
-                            ?.let { areaId -> AreaEntry.entries.firstOrNull { it.name == areaId } },
+                            ?.let { areaId -> AreaEntry.values().firstOrNull { it.name == areaId } },
                         text = entry.text,
                         selectedDurationSeconds = entry.durationSeconds,
                         selectedTimerPreset = presetFor(entry.durationSeconds),
@@ -716,7 +716,7 @@ class DiaryOperator(
             )
 
         private fun areaOptions(): List<DiaryAreaUiState> =
-            AreaEntry.entries.map { area ->
+            AreaEntry.values().map { area ->
                 DiaryAreaUiState(
                     area = area,
                     label = areaLabel(area.name),
