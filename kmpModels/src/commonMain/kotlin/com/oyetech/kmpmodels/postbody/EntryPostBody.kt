@@ -4,12 +4,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class EntryPostBody(
-    val areaId: String,
-    val text: String,
+    val areaId: String? = null,
+    val text: String = "",
     val entryDate: String,
     val note: String? = null,
     val durationSeconds: Long? = null,
-    val timerType: String? = null,
-    val startedAt: String? = null,
-    val endedAt: String? = null,
+    val markAsCompleted: Boolean = false,
 )

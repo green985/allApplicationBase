@@ -1,6 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const fixedUserId = "02af726d-aa75-4301-a410-049d214841f9";
+const entrySelect = "id, area_id, text, entry_date, created_at, updated_at, duration_seconds, timer_started_at, timer_ends_at, timer_cancelled_at, completed_at";
 const jsonHeaders = {
   "Content-Type": "application/json",
   "Access-Control-Allow-Origin": "*",
@@ -23,12 +24,17 @@ type DiaryQuote = {
 
 type DiaryEntry = {
   id: string;
-  areaId: string;
+  areaId: string | null;
   text: string;
   entryDate: string;
   createdBy: string | null;
   createdAt: string;
   updatedAt: string;
+  durationSeconds: number | null;
+  timerStartedAt: string | null;
+  timerEndsAt: string | null;
+  timerCancelledAt: string | null;
+  completedAt: string | null;
 };
 
 const supabase = createClient(
@@ -64,7 +70,10 @@ function isQuoteRoute(segments: string[]): boolean {
 
 function isEntryRoute(segments: string[]): boolean {
   const diaryIndex = segments.indexOf("diary");
-  return diaryIndex >= 0 && segments[diaryIndex + 1] === "entries";
+  return diaryIndex >= 0 && (
+    segments[diaryIndex + 1] === "entries" ||
+    (segments[diaryIndex + 1] === "days" && segments[diaryIndex + 3] === "entries")
+  );
 }
 
 function entryIdFromRequest(request: Request): string | null {
@@ -113,11 +122,16 @@ function mapQuote(row: {
 
 function mapEntry(row: {
   id: string;
-  area_id: string;
+  area_id: string | null;
   text: string;
   entry_date: string;
   created_at: string;
   updated_at: string;
+  duration_seconds: number | null;
+  timer_started_at: string | null;
+  timer_ends_at: string | null;
+  timer_cancelled_at: string | null;
+  completed_at: string | null;
 }): DiaryEntry {
   return {
     id: row.id,
@@ -127,6 +141,11 @@ function mapEntry(row: {
     createdBy: null,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    durationSeconds: row.duration_seconds,
+    timerStartedAt: row.timer_started_at,
+    timerEndsAt: row.timer_ends_at,
+    timerCancelledAt: row.timer_cancelled_at,
+    completedAt: row.completed_at,
   };
 }
 
@@ -181,7 +200,7 @@ async function updateQuote(request: Request, date: string): Promise<Response> {
 async function getEntries(date: string): Promise<Response> {
   const { data, error } = await supabase
     .from("diary_entries")
-    .select("id, area_id, text, entry_date, created_at, updated_at")
+    .select(entrySelect)
     .eq("user_id", fixedUserId)
     .eq("entry_date", date)
     .order("created_at", { ascending: true });
@@ -200,9 +219,11 @@ async function getEntries(date: string): Promise<Response> {
 
 async function createEntry(request: Request): Promise<Response> {
   const body = await request.json().catch(() => null) as Record<string, unknown> | null;
-  const areaId = typeof body?.areaId === "string" ? body.areaId.trim() : "";
+  const areaId = typeof body?.areaId === "string" ? body.areaId.trim() : null;
   const text = typeof body?.text === "string" ? body.text.trim() : "";
   const entryDate = typeof body?.entryDate === "string" ? body.entryDate : "";
+  const durationSeconds = typeof body?.durationSeconds === "number" ? body.durationSeconds : null;
+  const markAsCompleted = body?.markAsCompleted === true;
   const validAreas = new Set([
     "WORK",
     "BODY",
@@ -214,12 +235,19 @@ async function createEntry(request: Request): Promise<Response> {
     "IDLE",
   ]);
 
-  if (!validAreas.has(areaId)) {
+  if (areaId !== null && !validAreas.has(areaId)) {
     return response(null, "Geçerli bir areaId gerekli.", false, 400);
   }
 
   if (text.length > 2000) {
     return response(null, "Text 2000 karakteri geçemez.", false, 400);
+  }
+
+  if (durationSeconds !== null && (!Number.isInteger(durationSeconds) || durationSeconds <= 0)) {
+    return response(null, "Geçerli bir durationSeconds gerekli.", false, 400);
+  }
+  if (!areaId && !text && durationSeconds === null && !markAsCompleted) {
+    return response(null, "Entry için alan, not, süre veya tamamlandı seçimi gerekli.", false, 400);
   }
 
   if (!isValidDate(entryDate)) {
@@ -233,8 +261,10 @@ async function createEntry(request: Request): Promise<Response> {
       entry_date: entryDate,
       area_id: areaId,
       text,
+      duration_seconds: durationSeconds,
+      completed_at: markAsCompleted ? new Date().toISOString() : null,
     })
-    .select("id, area_id, text, entry_date, created_at, updated_at")
+    .select(entrySelect)
     .single();
 
   if (error || !data) {
@@ -254,6 +284,8 @@ async function updateEntry(request: Request, entryId: string): Promise<Response>
   const areaId = typeof body?.areaId === "string" ? body.areaId.trim() : undefined;
   const text = typeof body?.text === "string" ? body.text.trim() : undefined;
   const entryDate = typeof body?.entryDate === "string" ? body.entryDate : undefined;
+  const durationSeconds = typeof body?.durationSeconds === "number" ? body.durationSeconds : undefined;
+  const markAsCompleted = body?.markAsCompleted === true;
   const validAreas = new Set([
     "WORK",
     "BODY",
@@ -268,7 +300,9 @@ async function updateEntry(request: Request, entryId: string): Promise<Response>
   if (
     areaId === undefined &&
     text === undefined &&
-    entryDate === undefined
+    entryDate === undefined &&
+    durationSeconds === undefined &&
+    !markAsCompleted
   ) {
     return response(null, "Güncellenecek alan gerekli.", false, 400);
   }
@@ -285,10 +319,16 @@ async function updateEntry(request: Request, entryId: string): Promise<Response>
     return response(null, "Geçerli bir entryDate gerekli.", false, 400);
   }
 
-  const updates: Record<string, string> = {};
+  if (durationSeconds !== undefined && (!Number.isInteger(durationSeconds) || durationSeconds <= 0)) {
+    return response(null, "Geçerli bir durationSeconds gerekli.", false, 400);
+  }
+
+  const updates: Record<string, unknown> = {};
   if (areaId !== undefined) updates.area_id = areaId;
   if (text !== undefined) updates.text = text;
   if (entryDate !== undefined) updates.entry_date = entryDate;
+  if (durationSeconds !== undefined) updates.duration_seconds = String(durationSeconds);
+  if (markAsCompleted) updates.completed_at = new Date().toISOString();
   updates.updated_at = new Date().toISOString();
 
   const { data, error } = await supabase
@@ -296,7 +336,7 @@ async function updateEntry(request: Request, entryId: string): Promise<Response>
     .update(updates)
     .eq("id", entryId)
     .eq("user_id", fixedUserId)
-    .select("id, area_id, text, entry_date, created_at, updated_at")
+    .select(entrySelect)
     .maybeSingle();
 
   if (error) {
@@ -320,7 +360,7 @@ async function deleteEntry(entryId: string): Promise<Response> {
     .delete()
     .eq("id", entryId)
     .eq("user_id", fixedUserId)
-    .select("id, area_id, text, entry_date, created_at, updated_at")
+    .select(entrySelect)
     .maybeSingle();
 
   if (error) {
@@ -336,6 +376,54 @@ async function deleteEntry(entryId: string): Promise<Response> {
     "Diary kaydı başarıyla silindi.",
     true,
   );
+}
+
+async function startEntryTimer(entryId: string): Promise<Response> {
+  const { data: entry } = await supabase
+    .from("diary_entries")
+    .select("duration_seconds, timer_started_at, timer_ends_at, timer_cancelled_at, completed_at")
+    .eq("id", entryId)
+    .eq("user_id", fixedUserId)
+    .maybeSingle();
+
+  if (!entry) return response(null, "Diary kaydı bulunamadı.", false, 404);
+  if (!entry.duration_seconds || entry.timer_started_at || entry.completed_at || entry.timer_cancelled_at) {
+    return response(null, "Timer başlatılamadı.", false, 400);
+  }
+
+  const startedAt = new Date();
+  const endsAt = new Date(startedAt.getTime() + entry.duration_seconds * 1000);
+  const { data, error } = await supabase
+    .from("diary_entries")
+    .update({
+      timer_started_at: startedAt.toISOString(),
+      timer_ends_at: endsAt.toISOString(),
+      updated_at: startedAt.toISOString(),
+    })
+    .eq("id", entryId)
+    .eq("user_id", fixedUserId)
+    .select(entrySelect)
+    .single();
+
+  if (error || !data) return response(null, "Timer başlatılamadı.", false, 500);
+  return response(mapEntry(data), "Timer başlatıldı.", true);
+}
+
+async function cancelEntryTimer(entryId: string): Promise<Response> {
+  const cancelledAt = new Date().toISOString();
+  const { data, error } = await supabase
+    .from("diary_entries")
+    .update({ timer_cancelled_at: cancelledAt, updated_at: cancelledAt })
+    .eq("id", entryId)
+    .eq("user_id", fixedUserId)
+    .not("timer_started_at", "is", null)
+    .is("timer_cancelled_at", null)
+    .select(entrySelect)
+    .maybeSingle();
+
+  if (error) return response(null, "Timer iptal edilemedi.", false, 500);
+  if (!data) return response(null, "Aktif timer bulunamadı.", false, 404);
+  return response(mapEntry(data), "Timer iptal edildi.", true);
 }
 
 Deno.serve(async (request) => {
@@ -361,13 +449,17 @@ Deno.serve(async (request) => {
     }
 
     if (isEntryRoute(segments) && request.method === "GET") {
-      const date = entryDateFromRequest(request);
+      const date = dateFromRequest(request) ?? entryDateFromRequest(request);
       return date
         ? getEntries(date)
         : response(null, "Geçerli bir tarih gerekli.", false, 400);
     }
 
-    if (isEntryRoute(segments) && request.method === "POST") {
+    if (
+      isEntryRoute(segments) &&
+      request.method === "POST" &&
+      !segments.includes("timer")
+    ) {
       return createEntry(request);
     }
 
@@ -383,6 +475,16 @@ Deno.serve(async (request) => {
       return entryId
         ? deleteEntry(entryId)
         : response(null, "Diary kaydı bulunamadı.", false, 404);
+    }
+
+    if (isEntryRoute(segments) && request.method === "POST") {
+      const entryId = entryIdFromRequest(request);
+      if (segments.includes("timer") && segments.includes("start")) {
+        return entryId ? startEntryTimer(entryId) : response(null, "Diary kaydı bulunamadı.", false, 404);
+      }
+      if (segments.includes("timer") && segments.includes("cancel")) {
+        return entryId ? cancelEntryTimer(entryId) : response(null, "Diary kaydı bulunamadı.", false, 404);
+      }
     }
 
     if (!isQuoteRoute(segments) && !isEntryRoute(segments)) {

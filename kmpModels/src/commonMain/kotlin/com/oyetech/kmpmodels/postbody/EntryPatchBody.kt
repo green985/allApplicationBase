@@ -7,9 +7,7 @@ data class EntryPatchBody(
     val areaId: String? = null,
     val text: String? = null,
     val note: String? = null,
-    val occurredAt: String? = null,
+    val entryDate: String? = null,
     val durationSeconds: Long? = null,
-    val timerType: String? = null,
-    val startedAt: String? = null,
-    val endedAt: String? = null,
+    val markAsCompleted: Boolean = false,
 )
