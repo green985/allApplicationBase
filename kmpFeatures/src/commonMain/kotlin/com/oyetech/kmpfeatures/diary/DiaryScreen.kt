@@ -265,32 +265,32 @@ private fun EntryEditor(
                         ) {
                             Text(areaOption.label)
                         }
-                        SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-                            listOf(
-                                EntryTimerPreset.ALREADY_DONE to StringKeys.alreadyDone,
-                                EntryTimerPreset.FIVE_MINUTES to StringKeys.fiveMinutes,
-                                EntryTimerPreset.TEN_MINUTES to StringKeys.tenMinutes,
-                                EntryTimerPreset.FIFTEEN_MINUTES to StringKeys.fifteenMinutes,
-                                EntryTimerPreset.TWENTY_MINUTES to StringKeys.twentyMinutes,
-                                EntryTimerPreset.CUSTOM to StringKeys.custom,
-                            ).forEachIndexed { index, (preset, label) ->
-                                SegmentedButton(
-                                    selected = selectedTimerPreset == preset,
-                                    onClick = { onTimerPresetSelected(preset) },
-                                    shape = SegmentedButtonDefaults.itemShape(index, 6),
-                                ) { Text(label) }
-                            }
-                        }
-                        if (selectedTimerPreset == EntryTimerPreset.CUSTOM) {
-                            OutlinedTextField(
-                                value = customDurationMinutes,
-                                onValueChange = onCustomDurationChanged,
-                                label = { Text(StringKeys.custom) },
-                                singleLine = true,
-                            )
-                        }
                     }
                 }
+            }
+            SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+                listOf(
+                    EntryTimerPreset.ALREADY_DONE to StringKeys.alreadyDone,
+                    EntryTimerPreset.FIVE_MINUTES to StringKeys.fiveMinutes,
+                    EntryTimerPreset.TEN_MINUTES to StringKeys.tenMinutes,
+                    EntryTimerPreset.FIFTEEN_MINUTES to StringKeys.fifteenMinutes,
+                    EntryTimerPreset.TWENTY_MINUTES to StringKeys.twentyMinutes,
+                    EntryTimerPreset.CUSTOM to StringKeys.custom,
+                ).forEachIndexed { index, (preset, label) ->
+                    SegmentedButton(
+                        selected = selectedTimerPreset == preset,
+                        onClick = { onTimerPresetSelected(preset) },
+                        shape = SegmentedButtonDefaults.itemShape(index, 6),
+                    ) { Text(label) }
+                }
+            }
+            if (selectedTimerPreset == EntryTimerPreset.CUSTOM) {
+                OutlinedTextField(
+                    value = customDurationMinutes,
+                    onValueChange = onCustomDurationChanged,
+                    label = { Text(StringKeys.custom) },
+                    singleLine = true,
+                )
             }
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
