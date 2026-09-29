@@ -220,7 +220,7 @@ async function getEntries(date: string): Promise<Response> {
 async function createEntry(request: Request): Promise<Response> {
   const body = await request.json().catch(() => null) as Record<string, unknown> | null;
   const areaId = typeof body?.areaId === "string" ? body.areaId.trim() : null;
-  const text = typeof body?.text === "string" ? body.text.trim() : "";
+  const text = typeof body?.text === "string" ? body.text : "";
   const entryDate = typeof body?.entryDate === "string" ? body.entryDate : "";
   const durationSeconds = typeof body?.durationSeconds === "number" ? body.durationSeconds : null;
   const markAsCompleted = body?.markAsCompleted === true;
@@ -282,7 +282,7 @@ async function createEntry(request: Request): Promise<Response> {
 async function updateEntry(request: Request, entryId: string): Promise<Response> {
   const body = await request.json().catch(() => null) as Record<string, unknown> | null;
   const areaId = typeof body?.areaId === "string" ? body.areaId.trim() : undefined;
-  const text = typeof body?.text === "string" ? body.text.trim() : undefined;
+  const text = typeof body?.text === "string" ? body.text : undefined;
   const entryDate = typeof body?.entryDate === "string" ? body.entryDate : undefined;
   const durationSeconds = typeof body?.durationSeconds === "number" ? body.durationSeconds : undefined;
   const markAsCompleted = body?.markAsCompleted === true;

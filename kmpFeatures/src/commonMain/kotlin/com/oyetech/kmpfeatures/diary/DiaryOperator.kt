@@ -453,7 +453,7 @@ class DiaryOperator(
         }
 
         entryAutosaveJob.cancelPendingSave()
-        val text = currentState.text.trim()
+        val text = currentState.text
         if (area == null && !allowIdleArea) {
             snackbarDelegate.triggerSnackbarState(
                 message = StringKeys.selectAreaRequired,
