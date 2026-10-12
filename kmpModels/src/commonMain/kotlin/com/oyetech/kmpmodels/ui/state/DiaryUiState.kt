@@ -3,6 +3,7 @@ package com.oyetech.kmpmodels.ui.state
 import com.oyetech.kmpmodels.entity.AreaEntry
 import com.oyetech.kmpmodels.entity.EntryEntity
 import com.oyetech.kmpmodels.entity.EntryTimerPreset
+import com.oyetech.kmpmodels.entity.EntryTimerStatus
 import kotlinx.datetime.LocalDate
 
 data class DiaryUiState(
@@ -13,6 +14,8 @@ data class DiaryUiState(
     val selectedDateLabel: String = "",
     val entryItems: List<DiaryEntryUiState> = emptyList(),
     val areaOptions: List<DiaryAreaUiState> = emptyList(),
+    val areaOptionRows: List<List<DiaryAreaUiState>> = emptyList(),
+    val timerPresetOptions: List<DiaryTimerPresetUiState> = emptyList(),
     val isEditorVisible: Boolean,
     val editingEntryId: String? = null,
     val selectedArea: AreaEntry?,
@@ -30,11 +33,16 @@ data class DiaryUiState(
     val selectedTimerPreset: EntryTimerPreset? = null,
     val customDurationMinutes: String = "",
     val selectedDurationSeconds: Long? = null,
-    val timerStatus: String = "",
+    val timerStatus: EntryTimerStatus = EntryTimerStatus.PENDING,
     val timerLabel: String = "",
     val primaryButtonLabel: String = "",
     val canCreateOrUpdateEntry: Boolean = false,
     val dismissRequested: Boolean = false,
+    val isCustomDurationVisible: Boolean = false,
+    val customDurationError: String = "",
+    val hasCustomDurationError: Boolean = false,
+    val canChangeDuration: Boolean = true,
+    val canCancelEditorTimer: Boolean = false,
 )
 
 data class DiaryEntryUiState(
@@ -54,4 +62,10 @@ data class DiaryEntryUiState(
 data class DiaryAreaUiState(
     val area: AreaEntry,
     val label: String,
+)
+
+data class DiaryTimerPresetUiState(
+    val preset: EntryTimerPreset,
+    val label: String,
+    val isEnabled: Boolean = true,
 )

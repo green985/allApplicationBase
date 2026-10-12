@@ -482,3 +482,19 @@ En az şu senaryoları doğrula:
 
 Sonuçta değişen dosyaları, migration sonucunu, deploy edilen function URL'ini, doğrulanan route'ları
 ve background notification'ın neden sonraki aşamaya bırakıldığını kısa şekilde raporla.
+
+## Uygulama notları
+
+- `DiaryOperator`, alan/not olmadan timer seçimini kaydeder; gerçek id geldikten sonra aynı entry
+  üzerinde PATCH kullanır. İlk kayıt dialogu açık tutar; `Başlat` aynı entry'nin timerını başlatır.
+- Özel süre üst sınırı Operator'da `MAX_CUSTOM_DURATION_MINUTES = 1440` sabitidir. API de en fazla
+  86400 saniyelik pozitif tam sayı kabul eder.
+- `dismissRequested`, devam eden kayıt sırasında dialogun ve girişlerin korunmasını sağlar.
+  Network hatası seçimleri korur; başarılı kayıt veya sonraki PATCH sonrasında dialog kapatılabilir.
+- `20261012180000_complete_diary_entry_timer.sql`, boş not varsayılanını ve çalışan timer süre
+  korumasını ekler. Start/cancel RPC'leri veritabanı saatini kullanır; kullanıcı bazlı transaction
+  lock, farklı günlerden gelen eşzamanlı start isteklerinde de tek aktif timer kuralını korur.
+- Entry route'ları `https://uduwhuvgdcacvdhzheyi.supabase.co/functions/v1/kmpFunctions` altında
+  çalışır. Quote işlemleri ayrı kalır.
+- Sayaç tamamlanması yalnız Operator'da türetilir ve ortak snackbar ile bir kez bildirilir.
+  Native arka plan bildirimi, foreground service ve alarm bu ilk adımın kapsamı dışındadır.

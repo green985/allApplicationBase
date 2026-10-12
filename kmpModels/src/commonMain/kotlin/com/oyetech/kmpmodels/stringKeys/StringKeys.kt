@@ -45,6 +45,11 @@ object StringKeys {
     const val finished = "Tamamlandı"
     const val cancelled = "İptal edildi"
     const val timerFinished = "Timer tamamlandı."
+    const val cancelTimer = "İptal et"
+    const val singleTimerOnly = "Aynı anda yalnız bir timer çalışabilir."
+    const val entryInputRequired = "Alan, not, süre veya Yapıldı seçimi gerekli."
+    fun customDurationInvalid(maxMinutes: Long): String =
+        "Süre 1 ile $maxMinutes arasında tam sayı olmalıdır."
     const val workArea = "İş / İnşa"
     const val bodyArea = "Beden"
     const val healthArea = "Sağlık"

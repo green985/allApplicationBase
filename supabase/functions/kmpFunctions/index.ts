@@ -2,6 +2,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const fixedUserId = "02af726d-aa75-4301-a410-049d214841f9";
 const entrySelect = "id, area_id, text, entry_date, created_at, updated_at, duration_seconds, timer_started_at, timer_ends_at, timer_cancelled_at, completed_at";
+const maxDurationSeconds = 1440 * 60;
+const validAreas = new Set(["WORK", "BODY", "HEALTH", "MIND", "CHARACTER", "PEOPLE", "LIFE", "IDLE"]);
 const jsonHeaders = {
   "Content-Type": "application/json",
   "Access-Control-Allow-Origin": "*",
@@ -70,9 +72,14 @@ function isQuoteRoute(segments: string[]): boolean {
 
 function isEntryRoute(segments: string[]): boolean {
   const diaryIndex = segments.indexOf("diary");
-  return diaryIndex >= 0 && (
-    segments[diaryIndex + 1] === "entries" ||
-    (segments[diaryIndex + 1] === "days" && segments[diaryIndex + 3] === "entries")
+  if (diaryIndex < 0) return false;
+  const route = segments.slice(diaryIndex);
+  return (
+    (route[1] === "entries" && (
+      route.length === 2 || route.length === 3 ||
+      (route.length === 5 && route[3] === "timer" && ["start", "cancel"].includes(route[4]))
+    )) ||
+    (route.length === 4 && route[1] === "days" && route[3] === "entries")
   );
 }
 
@@ -101,9 +108,21 @@ function isValidDate(value: unknown): value is string {
   }
 
   const parsed = new Date(`${value}T00:00:00.000Z`);
-  return (
-    parsed.toISOString().slice(0, 10) === value
-  );
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
+}
+
+function isValidDuration(value: unknown): value is number {
+  return typeof value === "number" && Number.isSafeInteger(value) &&
+    value > 0 && value <= maxDurationSeconds;
+}
+
+function isEntryBody(body: unknown): body is Record<string, unknown> {
+  return body !== null && typeof body === "object" && !Array.isArray(body);
+}
+
+function hasClientTimerTimes(body: Record<string, unknown>): boolean {
+  return ["timerStartedAt", "timerEndsAt", "timerCancelledAt", "completedAt"]
+    .some((key) => key in body);
 }
 
 function mapQuote(row: {
@@ -218,22 +237,23 @@ async function getEntries(date: string): Promise<Response> {
 }
 
 async function createEntry(request: Request): Promise<Response> {
-  const body = await request.json().catch(() => null) as Record<string, unknown> | null;
+  const body: unknown = await request.json().catch(() => null);
+  if (!isEntryBody(body) || hasClientTimerTimes(body)) {
+    return response(null, "Geçerli bir entry isteği gerekli.", false, 400);
+  }
+  if (
+    (body.areaId != null && typeof body.areaId !== "string") ||
+    (body.text !== undefined && typeof body.text !== "string") ||
+    (body.durationSeconds != null && !isValidDuration(body.durationSeconds)) ||
+    (body.markAsCompleted !== undefined && typeof body.markAsCompleted !== "boolean")
+  ) {
+    return response(null, "Entry alanları geçersiz.", false, 400);
+  }
   const areaId = typeof body?.areaId === "string" ? body.areaId.trim() : null;
   const text = typeof body?.text === "string" ? body.text : "";
   const entryDate = typeof body?.entryDate === "string" ? body.entryDate : "";
   const durationSeconds = typeof body?.durationSeconds === "number" ? body.durationSeconds : null;
   const markAsCompleted = body?.markAsCompleted === true;
-  const validAreas = new Set([
-    "WORK",
-    "BODY",
-    "HEALTH",
-    "MIND",
-    "CHARACTER",
-    "PEOPLE",
-    "LIFE",
-    "IDLE",
-  ]);
 
   if (areaId !== null && !validAreas.has(areaId)) {
     return response(null, "Geçerli bir areaId gerekli.", false, 400);
@@ -243,10 +263,10 @@ async function createEntry(request: Request): Promise<Response> {
     return response(null, "Text 2000 karakteri geçemez.", false, 400);
   }
 
-  if (durationSeconds !== null && (!Number.isInteger(durationSeconds) || durationSeconds <= 0)) {
+  if (durationSeconds !== null && !isValidDuration(durationSeconds)) {
     return response(null, "Geçerli bir durationSeconds gerekli.", false, 400);
   }
-  if (!areaId && !text && durationSeconds === null && !markAsCompleted) {
+  if (!areaId && !text.trim() && durationSeconds === null && !markAsCompleted) {
     return response(null, "Entry için alan, not, süre veya tamamlandı seçimi gerekli.", false, 400);
   }
 
@@ -268,6 +288,7 @@ async function createEntry(request: Request): Promise<Response> {
     .single();
 
   if (error || !data) {
+    console.error("createEntry failed", error?.code);
     return response(null, "Diary kaydı oluşturulamadı.", false, 500);
   }
 
@@ -280,22 +301,26 @@ async function createEntry(request: Request): Promise<Response> {
 }
 
 async function updateEntry(request: Request, entryId: string): Promise<Response> {
-  const body = await request.json().catch(() => null) as Record<string, unknown> | null;
-  const areaId = typeof body?.areaId === "string" ? body.areaId.trim() : undefined;
+  const body: unknown = await request.json().catch(() => null);
+  if (!isEntryBody(body) || hasClientTimerTimes(body)) {
+    return response(null, "Geçerli bir entry isteği gerekli.", false, 400);
+  }
+  if (
+    (body.areaId !== undefined && body.areaId !== null && typeof body.areaId !== "string") ||
+    (body.text !== undefined && typeof body.text !== "string") ||
+    (body.entryDate !== undefined && !isValidDate(body.entryDate)) ||
+    (body.durationSeconds !== undefined && body.durationSeconds !== null && !isValidDuration(body.durationSeconds)) ||
+    (body.markAsCompleted !== undefined && typeof body.markAsCompleted !== "boolean")
+  ) {
+    return response(null, "Entry alanları geçersiz.", false, 400);
+  }
+  const areaId = body.areaId === null ? null :
+    typeof body.areaId === "string" ? body.areaId.trim() : undefined;
   const text = typeof body?.text === "string" ? body.text : undefined;
   const entryDate = typeof body?.entryDate === "string" ? body.entryDate : undefined;
-  const durationSeconds = typeof body?.durationSeconds === "number" ? body.durationSeconds : undefined;
+  const durationSeconds = body.durationSeconds === null ? null :
+    typeof body.durationSeconds === "number" ? body.durationSeconds : undefined;
   const markAsCompleted = body?.markAsCompleted === true;
-  const validAreas = new Set([
-    "WORK",
-    "BODY",
-    "HEALTH",
-    "MIND",
-    "CHARACTER",
-    "PEOPLE",
-    "LIFE",
-    "IDLE",
-  ]);
 
   if (
     areaId === undefined &&
@@ -307,7 +332,7 @@ async function updateEntry(request: Request, entryId: string): Promise<Response>
     return response(null, "Güncellenecek alan gerekli.", false, 400);
   }
 
-  if (areaId !== undefined && !validAreas.has(areaId)) {
+  if (areaId !== undefined && areaId !== null && !validAreas.has(areaId)) {
     return response(null, "Geçerli bir areaId gerekli.", false, 400);
   }
 
@@ -319,7 +344,7 @@ async function updateEntry(request: Request, entryId: string): Promise<Response>
     return response(null, "Geçerli bir entryDate gerekli.", false, 400);
   }
 
-  if (durationSeconds !== undefined && (!Number.isInteger(durationSeconds) || durationSeconds <= 0)) {
+  if (durationSeconds !== undefined && durationSeconds !== null && !isValidDuration(durationSeconds)) {
     return response(null, "Geçerli bir durationSeconds gerekli.", false, 400);
   }
 
@@ -327,7 +352,7 @@ async function updateEntry(request: Request, entryId: string): Promise<Response>
   if (areaId !== undefined) updates.area_id = areaId;
   if (text !== undefined) updates.text = text;
   if (entryDate !== undefined) updates.entry_date = entryDate;
-  if (durationSeconds !== undefined) updates.duration_seconds = String(durationSeconds);
+  if (durationSeconds !== undefined) updates.duration_seconds = durationSeconds;
   if (markAsCompleted) updates.completed_at = new Date().toISOString();
   updates.updated_at = new Date().toISOString();
 
@@ -340,6 +365,13 @@ async function updateEntry(request: Request, entryId: string): Promise<Response>
     .maybeSingle();
 
   if (error) {
+    console.error("updateEntry failed", error.code);
+    if (error.code === "22023") {
+      return response(null, "Çalışan timer süresi değiştirilemez.", false, 409);
+    }
+    if (error.code === "23514") {
+      return response(null, "Timer bilgileri bu güncellemeye izin vermiyor.", false, 400);
+    }
     return response(null, "Diary kaydı güncellenemedi.", false, 500);
   }
 
@@ -379,50 +411,41 @@ async function deleteEntry(entryId: string): Promise<Response> {
 }
 
 async function startEntryTimer(entryId: string): Promise<Response> {
-  const { data: entry } = await supabase
-    .from("diary_entries")
-    .select("duration_seconds, timer_started_at, timer_ends_at, timer_cancelled_at, completed_at")
-    .eq("id", entryId)
-    .eq("user_id", fixedUserId)
-    .maybeSingle();
-
-  if (!entry) return response(null, "Diary kaydı bulunamadı.", false, 404);
-  if (!entry.duration_seconds || entry.timer_started_at || entry.completed_at || entry.timer_cancelled_at) {
-    return response(null, "Timer başlatılamadı.", false, 400);
-  }
-
-  const startedAt = new Date();
-  const endsAt = new Date(startedAt.getTime() + entry.duration_seconds * 1000);
   const { data, error } = await supabase
-    .from("diary_entries")
-    .update({
-      timer_started_at: startedAt.toISOString(),
-      timer_ends_at: endsAt.toISOString(),
-      updated_at: startedAt.toISOString(),
+    .rpc("start_diary_entry_timer", {
+      p_entry_id: entryId,
+      p_user_id: fixedUserId,
     })
-    .eq("id", entryId)
-    .eq("user_id", fixedUserId)
-    .select(entrySelect)
+    .returns<Parameters<typeof mapEntry>[0][]>()
     .single();
 
-  if (error || !data) return response(null, "Timer başlatılamadı.", false, 500);
+  if (error || !data) {
+    console.error("startEntryTimer failed", error?.code);
+    if (error?.code === "P0002") return response(null, "Diary kaydı bulunamadı.", false, 404);
+    if (error?.code === "P0001") {
+      return response(null, "Aynı anda yalnız bir timer çalışabilir.", false, 409);
+    }
+    if (error?.code === "22023") return response(null, "Timer başlatılamadı.", false, 409);
+    return response(null, "Timer başlatılamadı.", false, 500);
+  }
   return response(mapEntry(data), "Timer başlatıldı.", true);
 }
 
 async function cancelEntryTimer(entryId: string): Promise<Response> {
-  const cancelledAt = new Date().toISOString();
   const { data, error } = await supabase
-    .from("diary_entries")
-    .update({ timer_cancelled_at: cancelledAt, updated_at: cancelledAt })
-    .eq("id", entryId)
-    .eq("user_id", fixedUserId)
-    .not("timer_started_at", "is", null)
-    .is("timer_cancelled_at", null)
-    .select(entrySelect)
-    .maybeSingle();
+    .rpc("cancel_diary_entry_timer", {
+      p_entry_id: entryId,
+      p_user_id: fixedUserId,
+    })
+    .returns<Parameters<typeof mapEntry>[0][]>()
+    .single();
 
-  if (error) return response(null, "Timer iptal edilemedi.", false, 500);
-  if (!data) return response(null, "Aktif timer bulunamadı.", false, 404);
+  if (error || !data) {
+    console.error("cancelEntryTimer failed", error?.code);
+    if (error?.code === "P0002") return response(null, "Diary kaydı bulunamadı.", false, 404);
+    if (error?.code === "22023") return response(null, "Aktif timer bulunamadı.", false, 409);
+    return response(null, "Timer iptal edilemedi.", false, 500);
+  }
   return response(mapEntry(data), "Timer iptal edildi.", true);
 }
 
@@ -448,42 +471,29 @@ Deno.serve(async (request) => {
       }
     }
 
-    if (isEntryRoute(segments) && request.method === "GET") {
-      const date = dateFromRequest(request) ?? entryDateFromRequest(request);
-      return date
-        ? getEntries(date)
-        : response(null, "Geçerli bir tarih gerekli.", false, 400);
-    }
-
-    if (
-      isEntryRoute(segments) &&
-      request.method === "POST" &&
-      !segments.includes("timer")
-    ) {
-      return createEntry(request);
-    }
-
-    if (isEntryRoute(segments) && request.method === "PATCH") {
-      const entryId = entryIdFromRequest(request);
-      return entryId
-        ? updateEntry(request, entryId)
-        : response(null, "Diary kaydı bulunamadı.", false, 404);
-    }
-
-    if (isEntryRoute(segments) && request.method === "DELETE") {
-      const entryId = entryIdFromRequest(request);
-      return entryId
-        ? deleteEntry(entryId)
-        : response(null, "Diary kaydı bulunamadı.", false, 404);
-    }
-
-    if (isEntryRoute(segments) && request.method === "POST") {
-      const entryId = entryIdFromRequest(request);
-      if (segments.includes("timer") && segments.includes("start")) {
-        return entryId ? startEntryTimer(entryId) : response(null, "Diary kaydı bulunamadı.", false, 404);
+    if (isEntryRoute(segments)) {
+      const route = segments.slice(segments.indexOf("diary"));
+      if (request.method === "GET" &&
+        ((route[1] === "days" && route.length === 4) || route.length === 2)) {
+        const date = route[1] === "days" ? dateFromRequest(request) : entryDateFromRequest(request);
+        return date
+          ? await getEntries(date)
+          : response(null, "Geçerli bir tarih gerekli.", false, 400);
       }
-      if (segments.includes("timer") && segments.includes("cancel")) {
-        return entryId ? cancelEntryTimer(entryId) : response(null, "Diary kaydı bulunamadı.", false, 404);
+      if (request.method === "POST" && route.length === 2) {
+        return await createEntry(request);
+      }
+      const isItemMethod = route.length === 3 && ["PATCH", "DELETE"].includes(request.method);
+      const isTimerMethod = route.length === 5 && request.method === "POST";
+      if (isItemMethod || isTimerMethod) {
+        const entryId = entryIdFromRequest(request);
+        if (!entryId || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(entryId)) {
+          return response(null, "Geçerli bir entry id gerekli.", false, 400);
+        }
+        if (request.method === "PATCH") return await updateEntry(request, entryId);
+        if (request.method === "DELETE") return await deleteEntry(entryId);
+        if (route[4] === "start") return await startEntryTimer(entryId);
+        if (route[4] === "cancel") return await cancelEntryTimer(entryId);
       }
     }
 
@@ -492,7 +502,8 @@ Deno.serve(async (request) => {
     }
 
     return response(null, "Method not allowed.", false, 405);
-  } catch {
+  } catch (error) {
+    console.error("kmpFunctions request failed", error instanceof Error ? error.name : "UnknownError");
     return response(null, "Beklenmeyen bir sunucu hatası oluştu.", false, 500);
   }
 });

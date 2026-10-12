@@ -19,7 +19,7 @@ class DiaryEndpointOperation(
     private val httpClient: HttpClient,
 ) {
     suspend fun getEntries(date: String): List<EntryResponse> {
-        println("[DiaryEndpoint] GET /v1/kmpFunctions/diary/entries?date=$date")
+        println("[DiaryEndpoint] GET /v1/kmpFunctions/diary/days/$date/entries")
         return httpClient.get(EndpointStrings.diaryEntriesForDate(date)).bodyOrError()
     }
 

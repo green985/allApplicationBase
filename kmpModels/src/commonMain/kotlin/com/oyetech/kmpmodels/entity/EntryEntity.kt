@@ -4,7 +4,7 @@ import kotlin.time.Instant
 
 data class EntryEntity(
     val id: String,
-    val areaId: String,
+    val areaId: String?,
     val text: String,
     val entryDate: String? = null,
     val durationSeconds: Long? = null,
