@@ -10,9 +10,18 @@ object EndpointStrings {
     fun diaryEntriesForDate(date: String): String =
         "$diaryEntries?date=$date"
 
+    fun diaryDayEntries(date: String): String =
+        "$baseUrl/v1/kmpFunctions/diary/days/$date/entries"
+
     fun diaryDayQuote(date: String): String =
         "$baseUrl/v1/kmpFunctions/diary/days/$date/quote"
 
     fun diaryEntry(entryId: String): String =
         "$diaryEntries/$entryId"
+
+    fun diaryEntryTimerStart(entryId: String): String =
+        "$diaryEntries/$entryId/timer/start"
+
+    fun diaryEntryTimerCancel(entryId: String): String =
+        "$diaryEntries/$entryId/timer/cancel"
 }

@@ -30,7 +30,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.oyetech.kmpmodels.entity.AreaEntry
+import com.oyetech.kmpmodels.entity.EntryTimerPreset
 import com.oyetech.kmpmodels.stringKeys.StringKeys
 import com.oyetech.kmpmodels.ui.event.DiaryAction
 import com.oyetech.kmpmodels.ui.state.DiaryAreaUiState
@@ -143,6 +145,9 @@ fun DiaryScreen(
                     entry = entry,
                     onClick = { onAction(DiaryAction.EntryEditClicked(entry.id)) },
                     onDelete = { onAction(DiaryAction.EntryDeleteClicked(entry.id)) },
+                    onStart = { onAction(DiaryAction.StartEntryTimerClicked(entry.id)) },
+                    onCancel = { onAction(DiaryAction.CancelEntryTimerClicked(entry.id)) },
+                    onComplete = { onAction(DiaryAction.EntryCompletedClicked(entry.id)) },
                 )
             }
             Button(onClick = { onAction(DiaryAction.BackClicked) }) {
@@ -153,13 +158,18 @@ fun DiaryScreen(
     if (uiState.isEditorVisible) {
         Dialog(
             onDismissRequest = { onAction(DiaryAction.EntryDialogDismissed) },
+            properties = DialogProperties(usePlatformDefaultWidth = false),
         ) {
             EntryEditor(
                 selectedArea = uiState.selectedArea,
                 text = uiState.text,
                 areaOptions = uiState.areaOptions,
+                selectedTimerPreset = uiState.selectedTimerPreset,
+                customDurationMinutes = uiState.customDurationMinutes,
                 onAreaSelected = { onAction(DiaryAction.AreaSelected(it)) },
                 onTextChange = { onAction(DiaryAction.TextChanged(it)) },
+                onTimerPresetSelected = { onAction(DiaryAction.TimerPresetSelected(it)) },
+                onCustomDurationChanged = { onAction(DiaryAction.CustomDurationChanged(it)) },
                 onSave = { onAction(DiaryAction.SaveEntryClicked) },
             )
         }
@@ -171,6 +181,9 @@ private fun DiaryEntryCard(
     entry: DiaryEntryUiState,
     onClick: () -> Unit,
     onDelete: () -> Unit,
+    onStart: () -> Unit,
+    onCancel: () -> Unit,
+    onComplete: () -> Unit,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -202,6 +215,10 @@ private fun DiaryEntryCard(
             Button(onClick = onDelete) {
                 Text(StringKeys.delete)
             }
+            Text(entry.timerStatusLabel, color = AppColors.textSecondary)
+            if (entry.canStartTimer) Button(onClick = onStart) { Text(StringKeys.start) }
+            if (entry.canCancelTimer) Button(onClick = onCancel) { Text(StringKeys.cancelled) }
+            if (entry.canMarkCompleted) Button(onClick = onComplete) { Text(StringKeys.alreadyDone) }
         }
     }
 }
@@ -211,11 +228,19 @@ private fun EntryEditor(
     selectedArea: AreaEntry?,
     text: String,
     areaOptions: List<DiaryAreaUiState>,
+    selectedTimerPreset: EntryTimerPreset?,
+    customDurationMinutes: String,
     onAreaSelected: (AreaEntry) -> Unit,
     onTextChange: (String) -> Unit,
+    onTimerPresetSelected: (EntryTimerPreset) -> Unit,
+    onCustomDurationChanged: (String) -> Unit,
     onSave: () -> Unit,
 ) {
-    OutlinedCard(modifier = Modifier.fillMaxWidth()) {
+    OutlinedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp),
+    ) {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -249,6 +274,39 @@ private fun EntryEditor(
                     }
                 }
             }
+            Text(
+                text = StringKeys.duration,
+                style = MaterialTheme.typography.labelLarge,
+                color = AppColors.textSecondary,
+            )
+            SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+                listOf(
+                    EntryTimerPreset.ALREADY_DONE to StringKeys.alreadyDone,
+                    EntryTimerPreset.FIVE_MINUTES to StringKeys.fiveMinutes,
+                    EntryTimerPreset.TEN_MINUTES to StringKeys.tenMinutes,
+                    EntryTimerPreset.FIFTEEN_MINUTES to StringKeys.fifteenMinutes,
+                    EntryTimerPreset.TWENTY_MINUTES to StringKeys.twentyMinutes,
+                    EntryTimerPreset.CUSTOM to StringKeys.custom,
+                ).forEachIndexed { index, (preset, label) ->
+                    SegmentedButton(
+                        selected = selectedTimerPreset == preset,
+                        onClick = { onTimerPresetSelected(preset) },
+                        colors = SegmentedButtonDefaults.colors(
+                            activeContainerColor = AppColors.primary,
+                            activeContentColor = AppColors.onPrimary,
+                        ),
+                        shape = SegmentedButtonDefaults.itemShape(index, 6),
+                    ) { Text(label) }
+                }
+            }
+            if (selectedTimerPreset == EntryTimerPreset.CUSTOM) {
+                OutlinedTextField(
+                    value = customDurationMinutes,
+                    onValueChange = onCustomDurationChanged,
+                    label = { Text(StringKeys.custom) },
+                    singleLine = true,
+                )
+            }
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = text,
@@ -281,7 +339,7 @@ private fun DiaryScreenPreview() {
                 entries = emptyList(),
                 entryItems = emptyList(),
                 areaOptions = emptyList(),
-                isEditorVisible = false,
+                isEditorVisible = true,
                 selectedArea = null,
                 text = "",
                 dayQuote = "",

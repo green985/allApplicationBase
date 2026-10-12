@@ -2,6 +2,7 @@ package com.oyetech.kmpmodels.ui.state
 
 import com.oyetech.kmpmodels.entity.AreaEntry
 import com.oyetech.kmpmodels.entity.EntryEntity
+import com.oyetech.kmpmodels.entity.EntryTimerPreset
 import kotlinx.datetime.LocalDate
 
 data class DiaryUiState(
@@ -26,6 +27,14 @@ data class DiaryUiState(
     val quoteRevision: Long = 0L,
     val entryIsDirty: Boolean = false,
     val entryRevision: Long = 0L,
+    val selectedTimerPreset: EntryTimerPreset? = null,
+    val customDurationMinutes: String = "",
+    val selectedDurationSeconds: Long? = null,
+    val timerStatus: String = "",
+    val timerLabel: String = "",
+    val primaryButtonLabel: String = "",
+    val canCreateOrUpdateEntry: Boolean = false,
+    val dismissRequested: Boolean = false,
 )
 
 data class DiaryEntryUiState(
@@ -34,6 +43,12 @@ data class DiaryEntryUiState(
     val createdBy: String,
     val timeLabel: String,
     val text: String,
+    val timerStatusLabel: String = "",
+    val countdownLabel: String? = null,
+    val isTimerRunning: Boolean = false,
+    val canStartTimer: Boolean = false,
+    val canCancelTimer: Boolean = false,
+    val canMarkCompleted: Boolean = false,
 )
 
 data class DiaryAreaUiState(

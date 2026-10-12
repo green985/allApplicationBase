@@ -23,6 +23,12 @@ class DiaryEndpointOperation(
         return httpClient.get(EndpointStrings.diaryEntriesForDate(date)).bodyOrError()
     }
 
+    suspend fun startEntryTimer(entryId: String): EntryResponse =
+        httpClient.post(EndpointStrings.diaryEntryTimerStart(entryId)).bodyOrError()
+
+    suspend fun cancelEntryTimer(entryId: String): EntryResponse =
+        httpClient.post(EndpointStrings.diaryEntryTimerCancel(entryId)).bodyOrError()
+
     suspend fun getQuote(date: String): DiaryQuoteResponse {
         println("[DiaryEndpoint] GET /v1/diary/days/$date/quote")
         return httpClient.get(EndpointStrings.diaryDayQuote(date)).bodyOrError()

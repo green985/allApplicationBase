@@ -3,6 +3,7 @@ name: Deploy KMP Features to GitHub Pages
 on:
   push:
     branches:
+      - feature/kmpRealStart
       - feature/kmpBegin
   workflow_dispatch:
 

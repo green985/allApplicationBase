@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class EntryResponse(
     val id: String,
-    val areaId: String,
+    val areaId: String? = null,
     val text: String,
     val entryDate: String,
     val createdBy: String? = null,
@@ -13,7 +13,8 @@ data class EntryResponse(
     val createdAt: String? = null,
     val updatedAt: String? = null,
     val durationSeconds: Long? = null,
-    val timerType: String? = null,
-    val startedAt: String? = null,
-    val endedAt: String? = null,
+    val timerStartedAt: String? = null,
+    val timerEndsAt: String? = null,
+    val timerCancelledAt: String? = null,
+    val completedAt: String? = null,
 )
