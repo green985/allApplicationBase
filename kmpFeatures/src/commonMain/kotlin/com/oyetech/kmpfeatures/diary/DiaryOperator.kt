@@ -9,7 +9,6 @@ import com.oyetech.kmpmodels.entity.AreaEntry
 import com.oyetech.kmpmodels.entity.EntryEntity
 import com.oyetech.kmpmodels.entity.EntryTimerPreset
 import com.oyetech.kmpmodels.entity.EntryTimerStatus
-import com.oyetech.kmpmodels.postbody.EntryPatchBody
 import com.oyetech.kmpmodels.postbody.EntryPostBody
 import com.oyetech.kmpmodels.response.EntryResponse
 import com.oyetech.kmpmodels.stringKeys.StringKeys
@@ -40,6 +39,7 @@ class DiaryOperator(
 ) {
     private var quoteAutosaveJob: Job? = null
     private var entryAutosaveJob: Job? = null
+    private var entrySaveJob: Job? = null
     private var timerJob: Job? = null
     private var timerStartRequested = false
 
@@ -55,7 +55,7 @@ class DiaryOperator(
             operation = {
                 diaryEndpointOperation.updateEntry(
                     entryId = entryId,
-                    request = EntryPatchBody(markAsCompleted = true),
+                    request = EntryPostBody(markAsCompleted = true),
                 )
             },
             onSuccess = { response ->
@@ -76,7 +76,12 @@ class DiaryOperator(
 
     private fun startEntryTimer(entryId: String) {
         val currentState = state.value
-        if (currentState.entryOperation is OperationState.Loading) return
+        if (currentState.entryOperation is OperationState.Loading) {
+            if (currentState.editingEntryId == entryId && entrySaveJob?.isActive == true) {
+                timerStartRequested = true
+            }
+            return
+        }
         if (currentState.editingEntryId == entryId && currentState.entryIsDirty) {
             saveEntry(startTimerAfterSave = true)
             return
@@ -111,7 +116,16 @@ class DiaryOperator(
     }
 
     private fun cancelEntryTimer(entryId: String) {
-        if (state.value.entryOperation is OperationState.Loading) return
+        if (state.value.entryOperation is OperationState.Loading) {
+            val saveJob = entrySaveJob
+            if (saveJob?.isActive == true) {
+                launch {
+                    saveJob.join()
+                    cancelEntryTimer(entryId)
+                }
+            }
+            return
+        }
         executeOperation(
             onStart = { copy(entryOperation = OperationState.Loading).withEditorState() },
             operation = { diaryEndpointOperation.cancelEntryTimer(entryId) },
@@ -164,25 +178,26 @@ class DiaryOperator(
         val isCustom = selectedTimerPreset == EntryTimerPreset.CUSTOM
         val validCustom = !isCustom || customDurationSeconds(customDurationMinutes) != null
         val hasContent = selectedArea != null || text.isNotBlank() ||
-                selectedDurationSeconds != null || selectedTimerPreset == EntryTimerPreset.ALREADY_DONE
+                selectedDurationSeconds != null || isEntryCompleted ||
+                (entry?.completedAt != null && !isEntryCompleted)
         val isSaving = entryOperation is OperationState.Loading
         val canChange = status != EntryTimerStatus.RUNNING
         return copy(
             timerStatus = status,
             timerLabel = entry?.let { timerLabel(it, now) }.orEmpty(),
             primaryButtonLabel = if (editingEntryId != null &&
-                status == EntryTimerStatus.PENDING && selectedDurationSeconds != null
+                status == EntryTimerStatus.PENDING && selectedDurationSeconds != null && !isEntryCompleted
             ) StringKeys.start else StringKeys.save,
-            canCreateOrUpdateEntry = hasContent && validCustom && !isSaving,
+            canCreateOrUpdateEntry = hasContent && validCustom,
             isCustomDurationVisible = isCustom,
             customDurationError = if (isCustom && !validCustom && customDurationMinutes.isNotEmpty()) {
                 StringKeys.customDurationInvalid(MAX_CUSTOM_DURATION_MINUTES)
             } else "",
             hasCustomDurationError = isCustom && !validCustom && customDurationMinutes.isNotEmpty(),
             canChangeDuration = canChange,
-            canCancelEditorTimer = status == EntryTimerStatus.RUNNING && !isSaving,
+            canCancelEditorTimer = status == EntryTimerStatus.RUNNING,
             timerPresetOptions = timerPresetOptions().map {
-                it.copy(isEnabled = canChange || it.preset == EntryTimerPreset.ALREADY_DONE)
+                it.copy(isEnabled = canChange)
             },
             canGoPrevious = !isSaving,
             canGoNext = !isSaving,
@@ -197,6 +212,7 @@ class DiaryOperator(
         selectedTimerPreset = null,
         customDurationMinutes = "",
         selectedDurationSeconds = null,
+        isEntryCompleted = false,
         entryIsDirty = false,
         dismissRequested = false,
     ).withEditorState()
@@ -246,14 +262,35 @@ class DiaryOperator(
             }
 
             is DiaryAction.TimerPresetSelected -> {
-                if (!state.value.canChangeDuration && action.preset != EntryTimerPreset.ALREADY_DONE) return
-                val seconds = if (action.preset == EntryTimerPreset.CUSTOM) {
+                if (action.preset == EntryTimerPreset.ALREADY_DONE) {
+                    dispatch(DiaryAction.EntryCompletionChanged(true))
+                    return
+                }
+                if (!state.value.canChangeDuration) return
+                val preset = action.preset.takeUnless {
+                    it == state.value.selectedTimerPreset && it != EntryTimerPreset.ALREADY_DONE
+                }
+                val seconds = if (preset == EntryTimerPreset.CUSTOM) {
                     customDurationSeconds(state.value.customDurationMinutes)
-                } else action.preset.durationSeconds
+                } else preset?.durationSeconds
+                if (preset == null) timerStartRequested = false
                 updateState {
                     copy(
-                        selectedTimerPreset = action.preset,
+                        selectedTimerPreset = preset,
+                        customDurationMinutes = if (preset == null) "" else customDurationMinutes,
                         selectedDurationSeconds = seconds,
+                        entryIsDirty = true,
+                        entryRevision = entryRevision + 1,
+                    ).withEditorState()
+                }
+                scheduleEntrySave()
+            }
+
+            is DiaryAction.EntryCompletionChanged -> {
+                timerStartRequested = false
+                updateState {
+                    copy(
+                        isEntryCompleted = action.checked,
                         entryIsDirty = true,
                         entryRevision = entryRevision + 1,
                     ).withEditorState()
@@ -281,6 +318,7 @@ class DiaryOperator(
             is DiaryAction.CancelEntryTimerClicked -> cancelEntryTimer(action.entryId)
             DiaryAction.CancelEditorTimerClicked ->
                 state.value.editingEntryId?.let(::cancelEntryTimer)
+
             is DiaryAction.EntryCompletedClicked -> completeEntry(action.entryId)
 
             is DiaryAction.EntryEditClicked -> {
@@ -295,9 +333,8 @@ class DiaryOperator(
                         selectedArea = AreaEntry.values().firstOrNull { it.name == entry.areaId },
                         text = entry.text,
                         selectedDurationSeconds = entry.durationSeconds,
-                        selectedTimerPreset = if (entry.completedAt != null) {
-                            EntryTimerPreset.ALREADY_DONE
-                        } else presetFor(entry.durationSeconds),
+                        selectedTimerPreset = presetFor(entry.durationSeconds),
+                        isEntryCompleted = entry.completedAt != null,
                         customDurationMinutes = if (presetFor(entry.durationSeconds) == EntryTimerPreset.CUSTOM) {
                             entry.durationSeconds?.div(60)?.toString().orEmpty()
                         } else "",
@@ -338,7 +375,7 @@ class DiaryOperator(
                 if (!currentState.canCreateOrUpdateEntry) return
                 val entryId = currentState.editingEntryId
                 if (entryId != null && currentState.timerStatus == EntryTimerStatus.PENDING &&
-                    currentState.selectedDurationSeconds != null
+                    currentState.selectedDurationSeconds != null && !currentState.isEntryCompleted
                 ) startEntryTimer(entryId)
                 else saveEntry()
             }
@@ -466,12 +503,11 @@ class DiaryOperator(
                     quote = quoteSnapshot,
                 )
             },
-            onSuccess = { response ->
+            onSuccess = {
                 val nextState = if (selectedDate != dateSnapshot) {
                     copy(quoteOperation = OperationState.Idle)
                 } else {
                     copy(
-                        dayQuote = if (dayQuote == quoteSnapshot) response.quote else dayQuote,
                         quoteIsDirty = quoteRevision != revision,
                         quoteOperation = OperationState.Idle,
                     )
@@ -531,7 +567,7 @@ class DiaryOperator(
         val revision = currentState.entryRevision
         val editingEntryId = currentState.editingEntryId
         val dateSnapshot = currentState.selectedDate
-        val markAsCompleted = currentState.selectedTimerPreset == EntryTimerPreset.ALREADY_DONE
+        val markAsCompleted = currentState.isEntryCompleted
         val existingEntry = currentState.entries.firstOrNull { it.id == editingEntryId }
         var savedEntryId: String? = null
         val saveJob = executeOperation(
@@ -553,17 +589,25 @@ class DiaryOperator(
                         ),
                     )
                 } else {
-                    diaryEndpointOperation.updateEntry(
+                    val updatedEntry = diaryEndpointOperation.updateEntry(
                         entryId = editingEntryId,
-                        request = EntryPatchBody(
+                        request = EntryPostBody(
                             areaId = currentState.selectedArea?.name,
                             text = currentState.text,
                             entryDate = dateSnapshot.toString(),
                             durationSeconds = currentState.selectedDurationSeconds
                                 .takeUnless { it == existingEntry?.durationSeconds },
-                            markAsCompleted = markAsCompleted,
+                            markAsCompleted = markAsCompleted.takeUnless {
+                                it == (existingEntry?.completedAt != null)
+                            },
                         ),
                     )
+                    if (currentState.selectedTimerPreset == null &&
+                        currentState.selectedDurationSeconds == null &&
+                        existingEntry?.durationSeconds != null
+                    ) {
+                        diaryEndpointOperation.clearEntryDuration(editingEntryId)
+                    } else updatedEntry
                 }
             },
             onSuccess = { response ->
@@ -600,6 +644,7 @@ class DiaryOperator(
                 ).withEditorState()
             },
         )
+        entrySaveJob = saveJob
         launch {
             saveJob.join()
             if (savedEntryId != null && state.value.selectedDate == dateSnapshot) {
@@ -763,7 +808,7 @@ class DiaryOperator(
             }
 
         private fun timerPresetOptions(): List<DiaryTimerPresetUiState> =
-            EntryTimerPreset.values().map { preset ->
+            EntryTimerPreset.values().filter { it != EntryTimerPreset.ALREADY_DONE }.map { preset ->
                 DiaryTimerPresetUiState(
                     preset = preset,
                     label = when (preset) {

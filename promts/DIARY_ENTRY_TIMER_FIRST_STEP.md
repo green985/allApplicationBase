@@ -30,11 +30,25 @@ Dialog kapanırsa:
 Alan seçiminin altında şu seçenekleri göster:
 
 ```text
-[ Yapıldı ] [ 5 dk ] [ 10 dk ] [ 15 dk ] [ 20 dk ] [ Özel ]
+[ ] Yapıldı
+[ 5 dk ] [ 10 dk ] [ 15 dk ] [ 20 dk ] [ Özel ]
 ```
+
+Entry editoründeki `Yapıldı` checkbox'ı süre seçiminden bağımsızdır. Tamamlanmış entry
+açıldığında süre seçimi korunur ve görünür. Checkbox kaldırıldığında tamamlanma geri alınır;
+seçilen süre korunur, timer'ın başlangıç/bitiş/iptal zamanları temizlenir ve timer başlamadan
+bekler.
+PATCH'te `markAsCompleted` gönderilmemesi tamamlanmayı değiştirmez; `false` geri alır.
+Kart üzerindeki dış butonlar değişmez.
 
 `Özel` seçilince dakika cinsinden sayısal input göster. Değer pozitif tam sayı olmalı ve makul üst
 sınır tek bir sabit üzerinden tanımlanmalıdır.
+
+Seçili süre seçeneğine tekrar basılınca seçim ve özel süre inputu temizlenir; entry timersız
+kaydedilebilir. Kaydedilmiş bir sürenin kaldırılması `clearEntryDuration` fonksiyonu ve
+`EntryDurationClearPostBody` ile ayrı PATCH isteğinde açık `durationSeconds: null` gönderir.
+Normal güncelleme `EntryPostBody` kullanır; ek bir `clearDuration` parametresi almaz.
+Çalışan timer için süre değiştirme kısıtı korunur.
 
 Örnek dönüşümler:
 
@@ -254,7 +268,10 @@ Constraint kuralları:
 `PENDING`, `RUNNING`, `FINISHED`, `CANCELLED` için database status kolonu ekleme. Ayrı status ile
 zaman alanlarının birbiriyle çelişebileceği ikinci bir doğruluk kaynağı oluşturma.
 
-`EntryPostBody`, `EntryPatchBody`, `EntryResponse` ve `EntryEntity` modellerini bu sözleşmeyle
+POST ve PATCH ortak `EntryPostBody` modelini kullanır; PATCH'te gönderilmeyen alanlar değişmez.
+Create çağrısı `entryDate` ve içerik alanlarını açıkça doldurur; zorunlu alan doğrulaması korunur.
+
+`EntryPostBody`, `EntryResponse` ve `EntryEntity` modellerini bu sözleşmeyle
 uyumlu
 hale getir. Wire timestamp değerleri ISO-8601 UTC string, entity değerleri `Instant` olmalıdır.
 
@@ -491,6 +508,9 @@ ve background notification'ın neden sonraki aşamaya bırakıldığını kısa 
   86400 saniyelik pozitif tam sayı kabul eder.
 - `dismissRequested`, devam eden kayıt sırasında dialogun ve girişlerin korunmasını sağlar.
   Network hatası seçimleri korur; başarılı kayıt veya sonraki PATCH sonrasında dialog kapatılabilir.
+- Entry kaydı arka planda çalışır; editörde loading göstergesi yoktur ve kayıt sırasında form
+  veya ana buton devre dışı bırakılmaz. Aynı kayıt için paralel istek koruması Operator'da kalır;
+  kayıt sırasında istenen timer başlangıcı kayıt tamamlandıktan sonra uygulanır.
 - `20261012180000_complete_diary_entry_timer.sql`, boş not varsayılanını ve çalışan timer süre
   korumasını ekler. Start/cancel RPC'leri veritabanı saatini kullanır; kullanıcı bazlı transaction
   lock, farklı günlerden gelen eşzamanlı start isteklerinde de tek aktif timer kuralını korur.

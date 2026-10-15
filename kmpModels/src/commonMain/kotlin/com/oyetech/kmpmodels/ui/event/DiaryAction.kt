@@ -13,6 +13,7 @@ sealed interface DiaryAction {
     data class EntryDeleteClicked(val entryId: String) : DiaryAction
     data class TimerPresetSelected(val preset: EntryTimerPreset) : DiaryAction
     data class CustomDurationChanged(val minutes: String) : DiaryAction
+    data class EntryCompletionChanged(val checked: Boolean) : DiaryAction
     data object SaveEntryWithoutClosingClicked : DiaryAction
     data class StartEntryTimerClicked(val entryId: String) : DiaryAction
     data class CancelEntryTimerClicked(val entryId: String) : DiaryAction

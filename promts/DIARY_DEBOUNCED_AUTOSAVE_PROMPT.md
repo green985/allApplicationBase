@@ -47,6 +47,8 @@ Input değişir
    snapshot’a aitse dirty state temizlensin; işlem sırasında state tekrar değiştiyse dirty kalmaya
    devam
    etsin ve yeni autosave planlansın.
+   Backend response'u trim edilmiş olsa bile aktif input değerini response ile değiştirme;
+   kullanıcının yazdığı baştaki/sondaki boşluklar autosave sonrasında korunmalıdır.
 10. Hata halinde input değerini eski haline döndürme. Local state korunmalı ve retry mümkün olmalı.
 11. Aynı anda duplicate save isteği gönderme.
 12. Ekran kapanırken zorunlu flush davranışı ekleme; bunun ürün kararı olduğunu kısa bir notla

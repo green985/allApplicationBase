@@ -33,6 +33,7 @@ data class DiaryUiState(
     val selectedTimerPreset: EntryTimerPreset? = null,
     val customDurationMinutes: String = "",
     val selectedDurationSeconds: Long? = null,
+    val isEntryCompleted: Boolean = false,
     val timerStatus: EntryTimerStatus = EntryTimerStatus.PENDING,
     val timerLabel: String = "",
     val primaryButtonLabel: String = "",

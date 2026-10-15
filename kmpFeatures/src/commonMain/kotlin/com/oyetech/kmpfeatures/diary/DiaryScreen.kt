@@ -12,6 +12,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
@@ -262,6 +263,13 @@ private fun EntryEditor(
                 style = MaterialTheme.typography.labelLarge,
                 color = AppColors.textSecondary,
             )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(
+                    checked = uiState.isEntryCompleted,
+                    onCheckedChange = { onAction(DiaryAction.EntryCompletionChanged(it)) },
+                )
+                Text(StringKeys.alreadyDone)
+            }
             SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
                 uiState.timerPresetOptions.forEachIndexed { index, option ->
                     SegmentedButton(
@@ -297,7 +305,7 @@ private fun EntryEditor(
             Text(uiState.timerLabel, color = AppColors.textSecondary)
             when (val operation = uiState.entryOperation) {
                 OperationState.Idle -> Unit
-                OperationState.Loading -> CircularProgressIndicator()
+                OperationState.Loading -> Unit
                 is OperationState.Error -> {
                     Text(operation.error.message, color = AppColors.textSecondary)
                     Button(onClick = { onAction(DiaryAction.RetryEntrySaveClicked) }) {
@@ -305,7 +313,10 @@ private fun EntryEditor(
                     }
                 }
             }
-            Row(horizontalArrangement = Arrangement.End) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
                 Button(
                     enabled = uiState.canCreateOrUpdateEntry,
                     onClick = { onAction(DiaryAction.SaveEntryClicked) },

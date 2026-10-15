@@ -3,7 +3,7 @@ package com.oyetech.kmpfeatures.diary
 import com.oyetech.kmpfeatures.network.EndpointStrings
 import com.oyetech.kmpfeatures.network.bodyOrError
 import com.oyetech.kmpmodels.postbody.DiaryQuotePutBody
-import com.oyetech.kmpmodels.postbody.EntryPatchBody
+import com.oyetech.kmpmodels.postbody.EntryDurationClearPostBody
 import com.oyetech.kmpmodels.postbody.EntryPostBody
 import com.oyetech.kmpmodels.response.DiaryQuoteResponse
 import com.oyetech.kmpmodels.response.EntryResponse
@@ -58,7 +58,7 @@ class DiaryEndpointOperation(
 
     suspend fun updateEntry(
         entryId: String,
-        request: EntryPatchBody,
+        request: EntryPostBody,
     ): EntryResponse {
         println(
             "[DiaryEndpoint] PATCH /v1/diary/entries/$entryId " +
@@ -66,6 +66,13 @@ class DiaryEndpointOperation(
         )
         return httpClient.patch(EndpointStrings.diaryEntry(entryId)) {
             setBody(request)
+        }.bodyOrError()
+    }
+
+    suspend fun clearEntryDuration(entryId: String): EntryResponse {
+        println("[DiaryEndpoint] PATCH /v1/diary/entries/$entryId durationSeconds=null")
+        return httpClient.patch(EndpointStrings.diaryEntry(entryId)) {
+            setBody(EntryDurationClearPostBody(durationSeconds = null))
         }.bodyOrError()
     }
 

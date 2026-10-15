@@ -327,7 +327,7 @@ async function updateEntry(request: Request, entryId: string): Promise<Response>
     text === undefined &&
     entryDate === undefined &&
     durationSeconds === undefined &&
-    !markAsCompleted
+    body.markAsCompleted === undefined
   ) {
     return response(null, "Güncellenecek alan gerekli.", false, 400);
   }
@@ -353,7 +353,14 @@ async function updateEntry(request: Request, entryId: string): Promise<Response>
   if (text !== undefined) updates.text = text;
   if (entryDate !== undefined) updates.entry_date = entryDate;
   if (durationSeconds !== undefined) updates.duration_seconds = durationSeconds;
-  if (markAsCompleted) updates.completed_at = new Date().toISOString();
+  if (body.markAsCompleted !== undefined) {
+    updates.completed_at = markAsCompleted ? new Date().toISOString() : null;
+    if (!markAsCompleted) {
+      updates.timer_started_at = null;
+      updates.timer_ends_at = null;
+      updates.timer_cancelled_at = null;
+    }
+  }
   updates.updated_at = new Date().toISOString();
 
   const { data, error } = await supabase
