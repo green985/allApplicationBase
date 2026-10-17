@@ -23,6 +23,7 @@ sealed interface DiaryAction {
     data object ExportDiaryHtmlClicked : DiaryAction
     data object ExportDiaryArchiveClicked : DiaryAction
     data object EntryDialogDismissed : DiaryAction
+    data object EntryDialogCancelled : DiaryAction
     data object SaveEntryClicked : DiaryAction
     data object RetryQuoteSaveClicked : DiaryAction
     data object RetryEntrySaveClicked : DiaryAction

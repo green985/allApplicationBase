@@ -20,6 +20,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
@@ -48,6 +49,8 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
@@ -305,11 +308,28 @@ private fun EntryEditor(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(
-                text = StringKeys.newEntry,
-                style = MaterialTheme.typography.titleMedium,
-                color = AppColors.textPrimary,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = StringKeys.newEntry,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = AppColors.textPrimary,
+                )
+                IconButton(
+                    onClick = { onAction(DiaryAction.EntryDialogCancelled) },
+                ) {
+                    Text(
+                        modifier = Modifier.semantics {
+                            contentDescription = StringKeys.cancelEntry
+                        },
+                        text = "\u00D7",
+                        style = MaterialTheme.typography.headlineSmall,
+                    )
+                }
+            }
             Text(
                 text = StringKeys.optionalArea,
                 style = MaterialTheme.typography.labelLarge,

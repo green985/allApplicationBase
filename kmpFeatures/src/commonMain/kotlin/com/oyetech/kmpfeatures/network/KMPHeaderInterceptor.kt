@@ -11,6 +11,14 @@ import kotlinx.coroutines.CancellationException
 
 fun KMPHeaderInterceptor(sessionOperation: () -> GoogleLoginOperation) =
     createClientPlugin("KMPHeaderInterceptor") {
+        onRequest { request, _ ->
+            val url = request.url.build()
+            if (url.host == "uduwhuvgdcacvdhzheyi.supabase.co" &&
+                url.protocol.name == "https" && url.port == 443
+            ) {
+                request.headers[HttpHeaders.ContentType] = "application/json"
+            }
+        }
         on(Send) { request ->
             val url = request.url.build()
             if (url.host != "uduwhuvgdcacvdhzheyi.supabase.co" ||
@@ -19,7 +27,6 @@ fun KMPHeaderInterceptor(sessionOperation: () -> GoogleLoginOperation) =
                 return@on proceed(request)
             }
             val operation = sessionOperation()
-            request.headers[HttpHeaders.ContentType] = "application/json"
             request.headers["apikey"] = KMPAuthConfig.anonToken
             if (!operation.supportsSessions) {
                 request.headers[HttpHeaders.Authorization] = "Bearer ${KMPAuthConfig.anonToken}"

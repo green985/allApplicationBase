@@ -404,6 +404,11 @@ class DiaryOperator(
         isEntryCompleted = false,
         entryIsDirty = false,
         dismissRequested = false,
+        entryOperation = if (entryOperation is OperationState.Loading) {
+            entryOperation
+        } else {
+            OperationState.Idle
+        },
     ).withEditorState()
 
     override fun handleAction(action: DiaryAction) {
@@ -556,12 +561,20 @@ class DiaryOperator(
                 val currentState = state.value
                 if (currentState.entryOperation is OperationState.Loading) {
                     updateState { copy(dismissRequested = true) }
+                } else if (currentState.entryOperation is OperationState.Error) {
+                    dispatch(DiaryAction.EntryDialogCancelled)
                 } else if (currentState.entryIsDirty) {
                     saveEntry(closeEditor = true)
                 } else {
                     entryAutosaveJob.cancelPendingSave()
                     updateState { closeEditor() }
                 }
+            }
+
+            DiaryAction.EntryDialogCancelled -> {
+                timerStartRequested = false
+                entryAutosaveJob.cancelPendingSave()
+                updateState { closeEditor() }
             }
 
             DiaryAction.SaveEntryClicked -> {
@@ -839,7 +852,7 @@ class DiaryOperator(
                         entryIsDirty = hasNewInput,
                         entryOperation = OperationState.Idle,
                     )
-                    if (dismissRequested && !hasNewInput) {
+                    if (!isEditorVisible || (dismissRequested && !hasNewInput)) {
                         nextState.closeEditor()
                     } else {
                         nextState.withEditorState()
@@ -847,16 +860,21 @@ class DiaryOperator(
                 }
             },
             onError = { error ->
-                snackbarDelegate.triggerSnackbarState(
-                    message = error.message,
-                    actionLabel = "Retry",
-                    onAction = { dispatch(DiaryAction.RetryEntrySaveClicked) },
-                )
-                copy(
-                    entryIsDirty = true,
-                    entryOperation = OperationState.Error(error),
-                    dismissRequested = false,
-                ).withEditorState()
+                if (!isEditorVisible) {
+                    snackbarDelegate.triggerSnackbarState(message = error.message)
+                    copy(entryOperation = OperationState.Idle).closeEditor()
+                } else {
+                    snackbarDelegate.triggerSnackbarState(
+                        message = error.message,
+                        actionLabel = "Retry",
+                        onAction = { dispatch(DiaryAction.RetryEntrySaveClicked) },
+                    )
+                    copy(
+                        entryIsDirty = true,
+                        entryOperation = OperationState.Error(error),
+                        dismissRequested = false,
+                    ).withEditorState()
+                }
             },
         )
         entrySaveJob = saveJob

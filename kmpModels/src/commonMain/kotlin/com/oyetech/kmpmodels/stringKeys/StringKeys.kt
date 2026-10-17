@@ -41,6 +41,7 @@ object StringKeys {
     const val todaysQuote = "Bugünün sözü"
     const val writeTodaysQuote = "Bugün için bir söz yaz"
     const val newEntry = "Yeni kayıt"
+    const val cancelEntry = "Kaydı iptal et"
     const val area = "Alan"
     const val optionalArea = "Alan (isteğe bağlı)"
     const val duration = "Süre"
