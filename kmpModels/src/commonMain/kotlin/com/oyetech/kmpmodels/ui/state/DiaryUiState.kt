@@ -44,6 +44,8 @@ data class DiaryUiState(
     val hasCustomDurationError: Boolean = false,
     val canChangeDuration: Boolean = true,
     val canCancelEditorTimer: Boolean = false,
+    val isHtmlExportAvailable: Boolean = false,
+    val canExportArchive: Boolean = true,
 )
 
 data class DiaryEntryUiState(

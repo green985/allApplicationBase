@@ -7,6 +7,28 @@ import kotlin.coroutines.resumeWithException
 
 actual val platformKoinModule = module {}
 
+internal actual val diaryHtmlDownloader: ((String, String) -> Unit)? = ::downloadDiaryHtml
+
+@OptIn(kotlin.js.ExperimentalWasmJsInterop::class)
+private fun downloadDiaryHtml(fileName: String, html: String): Unit = js(
+    """
+    {
+        const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        try {
+            link.href = url;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+        } finally {
+            link.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+    }
+    """,
+)
+
 internal actual suspend fun playTimerFinishedSound() {
     suspendCancellableCoroutine { continuation ->
         playTimerSound { error ->

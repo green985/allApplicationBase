@@ -20,6 +20,17 @@ object StringKeys {
     const val tomorrow = "Yarın"
 
     const val diary = "Günlük"
+    const val downloadDiaryHtml = "Günlüğü HTML indir"
+    const val downloadDiaryArchive = "Tüm günleri tek HTML indir"
+    const val diaryArchive = "Günlük arşivi"
+    const val diaryArchiveNotReady =
+        "Arşiv indirmeden önce açık kaydı kapatın ve kaydın tamamlanmasını bekleyin."
+    const val diaryArchiveEmpty = "Arşivlenecek günlük kaydı veya söz bulunamadı."
+    const val diaryExportNotReady = "Günlük verileri yüklenirken veya kaydedilirken tekrar deneyin."
+    const val entryCreatedAt = "Oluşturulma zamanı"
+    const val timerStartedAt = "Timer başlangıcı"
+    const val noDiaryEntries = "Bu güne ait kayıt yok."
+    fun diaryExportDuration(seconds: Long): String = "${seconds / 60} dk ${seconds % 60} sn"
     const val addEntry = "+"
     const val today = "Bugün"
     const val selectedDay = "Seçili gün"

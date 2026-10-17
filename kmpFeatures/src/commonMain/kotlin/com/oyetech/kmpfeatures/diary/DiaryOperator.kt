@@ -2,6 +2,7 @@ package com.oyetech.kmpfeatures.diary
 
 import com.oyetech.kmpdomain.delegate.snackbar.SnackbarDelegate
 import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
+import com.oyetech.kmpfeatures.di.diaryHtmlDownloader
 import com.oyetech.kmpfeatures.di.playTimerFinishedSound
 import com.oyetech.kmpfeatures.operator.BaseFeatureOperator
 import com.oyetech.kmpfeatures.operator.cancelPendingSave
@@ -11,6 +12,7 @@ import com.oyetech.kmpmodels.entity.EntryEntity
 import com.oyetech.kmpmodels.entity.EntryTimerPreset
 import com.oyetech.kmpmodels.entity.EntryTimerStatus
 import com.oyetech.kmpmodels.postbody.EntryPostBody
+import com.oyetech.kmpmodels.response.DiaryArchiveResponse
 import com.oyetech.kmpmodels.response.EntryResponse
 import com.oyetech.kmpmodels.stringKeys.StringKeys
 import com.oyetech.kmpmodels.ui.event.DiaryAction
@@ -26,6 +28,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
+import kotlinx.serialization.json.Json
 import kotlin.time.Clock
 import kotlin.time.Instant
 
@@ -48,6 +51,152 @@ class DiaryOperator(
         loadQuoteForSelectedDate()
         loadEntriesForSelectedDate()
     }
+
+    private fun exportDiaryHtml() {
+        val snapshot = state.value
+        if (snapshot.entriesOperation != OperationState.Idle ||
+            snapshot.quoteOperation is OperationState.Loading ||
+            (snapshot.quoteOperation is OperationState.Error && !snapshot.quoteIsDirty) ||
+            snapshot.entryOperation is OperationState.Loading
+        ) {
+            snackbarDelegate.triggerSnackbarState(message = StringKeys.diaryExportNotReady)
+            return
+        }
+        executeOperation(
+            onStart = { this },
+            operation = {
+                checkNotNull(diaryHtmlDownloader) {
+                    "HTML download is not supported on this platform"
+                }.invoke(
+                    "diary-${snapshot.selectedDate}.html",
+                    diaryHtml(
+                        listOf(snapshot),
+                        "${StringKeys.diary} - ${snapshot.selectedDateLabel}"
+                    ),
+                )
+            },
+            onSuccess = { this },
+            onError = { error ->
+                snackbarDelegate.triggerSnackbarState(message = error.message)
+                this
+            },
+        )
+    }
+
+    private fun exportDiaryArchive() {
+        val snapshot = state.value
+        if (!snapshot.canExportArchive) return
+        if (snapshot.isEditorVisible || snapshot.entryIsDirty || snapshot.quoteIsDirty ||
+            snapshot.entryOperation is OperationState.Loading ||
+            snapshot.quoteOperation is OperationState.Loading
+        ) {
+            snackbarDelegate.triggerSnackbarState(message = StringKeys.diaryArchiveNotReady)
+            return
+        }
+        executeOperation(
+            onStart = { copy(canExportArchive = false) },
+            operation = {
+                val download = checkNotNull(diaryHtmlDownloader) {
+                    "HTML download is not supported on this platform"
+                }
+                val archive = diaryEndpointOperation.getDiaryArchive()
+                val entriesByDate = archive.entries.groupBy { LocalDate.parse(it.entryDate) }
+                val quotesByDate = archive.quotes.associateBy { LocalDate.parse(it.date) }
+                val dates = (entriesByDate.keys + quotesByDate.keys).sorted()
+                check(dates.isNotEmpty()) { StringKeys.diaryArchiveEmpty }
+                val days = dates.map { date ->
+                    snapshot.copy(
+                        selectedDate = date,
+                        selectedDateLabel = formatDate(date),
+                        entries = entriesByDate[date].orEmpty().map(::entryEntity),
+                        dayQuote = quotesByDate[date]?.quote.orEmpty(),
+                    )
+                }
+                download(
+                    "diary-archive-${Clock.System.todayIn(TimeZone.currentSystemDefault())}.html",
+                    diaryHtml(days, StringKeys.diaryArchive, archive),
+                )
+            },
+            onSuccess = { copy(canExportArchive = true) },
+            onError = { error ->
+                snackbarDelegate.triggerSnackbarState(message = error.message)
+                copy(canExportArchive = true)
+            },
+        )
+    }
+
+    private fun diaryHtml(
+        days: List<DiaryUiState>,
+        title: String,
+        archive: DiaryArchiveResponse? = null,
+    ): String = buildString {
+        append("<!doctype html><html lang=\"tr\"><head><meta charset=\"UTF-8\">")
+        append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">")
+        append("<title>${title.escapeHtml()}</title>")
+        append(
+            """<style>
+                body { font-family: sans-serif; max-width: 1100px; margin: auto; padding: 24px; }
+                blockquote { margin: 16px 0; padding: 12px; border-left: 3px solid; white-space: pre-wrap; overflow-wrap: anywhere; }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { border: 1px solid #ccc; padding: 10px; text-align: left; vertical-align: top; }
+                td { white-space: pre-wrap; overflow-wrap: anywhere; }
+                .entries { overflow-x: auto; }
+                section { margin-bottom: 40px; }
+            </style></head><body>""".trimIndent(),
+        )
+        append("<h1>${title.escapeHtml()}</h1>")
+        days.forEach { day ->
+            append("<section><h2>${day.selectedDateLabel.escapeHtml()}</h2>")
+            appendDiaryDay(day)
+            append("</section>")
+        }
+        if (archive != null) {
+            val json = Json.encodeToString(archive).replace("<", "\\u003c")
+            append("<script type=\"application/json\" id=\"diary-archive-data\">$json</script>")
+        }
+        append("</body></html>")
+    }
+
+    private fun StringBuilder.appendDiaryDay(snapshot: DiaryUiState) {
+        append("<h3>${StringKeys.todaysQuote}</h3>")
+        append("<blockquote>${snapshot.dayQuote.escapeHtml()}</blockquote>")
+        if (snapshot.entries.isEmpty()) {
+            append("<p>${StringKeys.noDiaryEntries}</p>")
+        } else {
+            append("<div class=\"entries\"><table><thead><tr>")
+            listOf(
+                StringKeys.entryCreatedAt,
+                StringKeys.timerStartedAt,
+                StringKeys.area,
+                StringKeys.note,
+                StringKeys.duration,
+            ).forEach { append("<th scope=\"col\">${it.escapeHtml()}</th>") }
+            append("</tr></thead><tbody>")
+            snapshot.entries.sortedBy { it.createdAt }.forEach { entry ->
+                append("<tr>")
+                listOf(
+                    entry.createdAt?.let(::exportTimestamp) ?: "-",
+                    entry.timerStartedAt?.let(::exportTimestamp) ?: "-",
+                    areaLabel(entry.areaId),
+                    entry.text,
+                    entry.durationSeconds?.let(StringKeys::diaryExportDuration) ?: "-",
+                ).forEach { append("<td>${it.escapeHtml()}</td>") }
+                append("</tr>")
+            }
+            append("</tbody></table></div>")
+        }
+    }
+
+    private fun exportTimestamp(instant: Instant): String {
+        val local = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+        return "${local.date} ${formatTime(instant)}"
+    }
+
+    private fun String.escapeHtml(): String = replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace("\"", "&quot;")
+        .replace("'", "&#39;")
 
     private fun completeEntry(entryId: String) {
         if (state.value.entryOperation is OperationState.Loading) return
@@ -160,7 +309,7 @@ class DiaryOperator(
                 val now = Clock.System.now()
                 val finished = state.value.entries.filter {
                     it.id in runningIds && it.completedAt == null && it.timerCancelledAt == null &&
-                        it.timerEndsAt?.let { end -> end <= now } == true
+                            it.timerEndsAt?.let { end -> end <= now } == true
                 }
                 updateState {
                     copy(entryItems = renderEntryItems(entries, now)).withEditorState(now)
@@ -191,8 +340,8 @@ class DiaryOperator(
         val isCustom = selectedTimerPreset == EntryTimerPreset.CUSTOM
         val validCustom = !isCustom || customDurationSeconds(customDurationMinutes) != null
         val hasContent = selectedArea != null || text.isNotBlank() ||
-            selectedDurationSeconds != null || isEntryCompleted ||
-            (entry?.completedAt != null && !isEntryCompleted)
+                selectedDurationSeconds != null || isEntryCompleted ||
+                (entry?.completedAt != null && !isEntryCompleted)
         val isSaving = entryOperation is OperationState.Loading
         val canChange = status != EntryTimerStatus.RUNNING
         return copy(
@@ -333,6 +482,8 @@ class DiaryOperator(
             }
 
             DiaryAction.SaveEntryWithoutClosingClicked -> saveEntry()
+            DiaryAction.ExportDiaryHtmlClicked -> exportDiaryHtml()
+            DiaryAction.ExportDiaryArchiveClicked -> exportDiaryArchive()
 
             is DiaryAction.StartEntryTimerClicked -> startEntryTimer(action.entryId)
             is DiaryAction.CancelEntryTimerClicked -> cancelEntryTimer(action.entryId)
@@ -424,8 +575,8 @@ class DiaryOperator(
             canSave = {
                 val currentState = state.value
                 currentState.quoteIsDirty &&
-                    currentState.quoteOperation !is OperationState.Loading &&
-                    currentState.dayQuote.isNotBlank()
+                        currentState.quoteOperation !is OperationState.Loading &&
+                        currentState.dayQuote.isNotBlank()
             },
             onSave = { saveQuoteSnapshot() },
         )
@@ -560,9 +711,9 @@ class DiaryOperator(
             canSave = {
                 val currentState = state.value
                 currentState.entryIsDirty &&
-                    currentState.entryOperation !is OperationState.Loading &&
-                    currentState.isEditorVisible &&
-                    currentState.canCreateOrUpdateEntry
+                        currentState.entryOperation !is OperationState.Loading &&
+                        currentState.isEditorVisible &&
+                        currentState.canCreateOrUpdateEntry
             },
             onSave = { saveEntry() },
         )
@@ -583,11 +734,11 @@ class DiaryOperator(
         if (!currentState.canCreateOrUpdateEntry) {
             snackbarDelegate.triggerSnackbarState(
                 message =
-                if (currentState.selectedTimerPreset == EntryTimerPreset.CUSTOM) {
-                    StringKeys.customDurationInvalid(MAX_CUSTOM_DURATION_MINUTES)
-                } else {
-                    StringKeys.entryInputRequired
-                },
+                    if (currentState.selectedTimerPreset == EntryTimerPreset.CUSTOM) {
+                        StringKeys.customDurationInvalid(MAX_CUSTOM_DURATION_MINUTES)
+                    } else {
+                        StringKeys.entryInputRequired
+                    },
             )
             return
         }
@@ -799,6 +950,7 @@ class DiaryOperator(
                 selectedArea = null,
                 text = "",
                 dayQuote = "",
+                isHtmlExportAvailable = diaryHtmlDownloader != null,
             )
         }
 

@@ -20,6 +20,8 @@ sealed interface DiaryAction {
     data object CancelEditorTimerClicked : DiaryAction
     data class EntryCompletedClicked(val entryId: String) : DiaryAction
     data object AddEntryClicked : DiaryAction
+    data object ExportDiaryHtmlClicked : DiaryAction
+    data object ExportDiaryArchiveClicked : DiaryAction
     data object EntryDialogDismissed : DiaryAction
     data object SaveEntryClicked : DiaryAction
     data object RetryQuoteSaveClicked : DiaryAction

@@ -236,6 +236,50 @@ async function getEntries(date: string): Promise<Response> {
   );
 }
 
+async function exportDiaryArchive(): Promise<Response> {
+  const entries: DiaryEntry[] = [];
+  const quotes: DiaryQuote[] = [];
+  const pageSize = 500;
+  const exportedAt = new Date().toISOString();
+
+  for (let offset = 0; ; offset += pageSize) {
+    const { data, error } = await supabase
+      .from("diary_entries")
+      .select(entrySelect)
+      .eq("user_id", fixedUserId)
+      .lte("created_at", exportedAt)
+      .order("entry_date")
+      .order("created_at")
+      .order("id")
+      .range(offset, offset + pageSize - 1);
+    if (error || !data) {
+      console.error("exportDiaryArchive entries failed", error?.code);
+      return response(null, "Günlük arşiv kayıtları getirilemedi.", false, 500);
+    }
+    entries.push(...data.map(mapEntry));
+    if (data.length < pageSize) break;
+  }
+
+  for (let offset = 0; ; offset += pageSize) {
+    const { data, error } = await supabase
+      .from("diary_quotes")
+      .select("quote_date, quote, created_at, updated_at")
+      .eq("user_id", fixedUserId)
+      .lte("created_at", exportedAt)
+      .order("quote_date")
+      .order("id")
+      .range(offset, offset + pageSize - 1);
+    if (error || !data) {
+      console.error("exportDiaryArchive quotes failed", error?.code);
+      return response(null, "Günlük arşiv sözleri getirilemedi.", false, 500);
+    }
+    quotes.push(...data.map(mapQuote));
+    if (data.length < pageSize) break;
+  }
+
+  return response({ entries, quotes }, "Günlük arşivi getirildi.", true);
+}
+
 async function createEntry(request: Request): Promise<Response> {
   const body: unknown = await request.json().catch(() => null);
   if (!isEntryBody(body) || hasClientTimerTimes(body)) {
@@ -492,6 +536,13 @@ Deno.serve(async (request) => {
 
   const segments = pathSegments(request);
   try {
+    const diaryRoute = segments.slice(segments.indexOf("diary"));
+    if (diaryRoute.length === 2 && diaryRoute[0] === "diary" && diaryRoute[1] === "export") {
+      return request.method === "GET"
+        ? await exportDiaryArchive()
+        : response(null, "Method not allowed.", false, 405);
+    }
+
     if (isQuoteRoute(segments)) {
       const date = dateFromRequest(request);
       if (!date) {

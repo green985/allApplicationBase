@@ -134,6 +134,17 @@ fun DiaryScreen(
                 placeholder = { Text(StringKeys.writeTodaysQuote) },
                 singleLine = true,
             )
+            if (uiState.isHtmlExportAvailable) {
+                Button(onClick = { onAction(DiaryAction.ExportDiaryHtmlClicked) }) {
+                    Text(StringKeys.downloadDiaryHtml)
+                }
+                Button(
+                    enabled = uiState.canExportArchive,
+                    onClick = { onAction(DiaryAction.ExportDiaryArchiveClicked) },
+                ) {
+                    Text(StringKeys.downloadDiaryArchive)
+                }
+            }
             when (val operation = uiState.entriesOperation) {
                 OperationState.Idle -> Unit
                 OperationState.Loading -> CircularProgressIndicator()

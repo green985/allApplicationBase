@@ -9,3 +9,9 @@ data class DiaryQuoteResponse(
     val createdAt: String? = null,
     val updatedAt: String? = null,
 )
+
+@Serializable
+data class DiaryArchiveResponse(
+    val entries: List<EntryResponse>,
+    val quotes: List<DiaryQuoteResponse>,
+)

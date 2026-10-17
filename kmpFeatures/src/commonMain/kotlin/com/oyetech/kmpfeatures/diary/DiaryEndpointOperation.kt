@@ -5,6 +5,7 @@ import com.oyetech.kmpfeatures.network.bodyOrError
 import com.oyetech.kmpmodels.postbody.DiaryQuotePutBody
 import com.oyetech.kmpmodels.postbody.EntryDurationClearPostBody
 import com.oyetech.kmpmodels.postbody.EntryPostBody
+import com.oyetech.kmpmodels.response.DiaryArchiveResponse
 import com.oyetech.kmpmodels.response.DiaryQuoteResponse
 import com.oyetech.kmpmodels.response.EntryResponse
 import io.ktor.client.HttpClient
@@ -18,6 +19,9 @@ import io.ktor.client.request.setBody
 class DiaryEndpointOperation(
     private val httpClient: HttpClient,
 ) {
+    suspend fun getDiaryArchive(): DiaryArchiveResponse =
+        httpClient.get(EndpointStrings.diaryArchive).bodyOrError()
+
     suspend fun getEntries(date: String): List<EntryResponse> {
         println("[DiaryEndpoint] GET /v1/kmpFunctions/diary/days/$date/entries")
         return httpClient.get(EndpointStrings.diaryEntriesForDate(date)).bodyOrError()
