@@ -24,11 +24,20 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -220,8 +229,24 @@ private fun EntryEditor(
     uiState: DiaryUiState,
     onAction: (DiaryAction) -> Unit,
 ) {
+    val noteFocusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        noteFocusRequester.requestFocus()
+    }
+
     OutlinedCard(
         modifier = Modifier
+            .onPreviewKeyEvent { event ->
+                if (event.key == Key.Escape) {
+                    if (event.type == KeyEventType.KeyDown) {
+                        onAction(DiaryAction.EntryDialogDismissed)
+                    }
+                    true
+                } else {
+                    false
+                }
+            }
             .fillMaxWidth()
             .padding(horizontal = 24.dp),
     ) {
@@ -296,7 +321,9 @@ private fun EntryEditor(
                 )
             }
             OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(noteFocusRequester),
                 value = uiState.text,
                 onValueChange = { onAction(DiaryAction.TextChanged(it)) },
                 label = { Text(StringKeys.note) },

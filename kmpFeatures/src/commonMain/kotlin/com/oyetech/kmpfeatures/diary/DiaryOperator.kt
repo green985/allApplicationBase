@@ -2,6 +2,7 @@ package com.oyetech.kmpfeatures.diary
 
 import com.oyetech.kmpdomain.delegate.snackbar.SnackbarDelegate
 import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
+import com.oyetech.kmpfeatures.di.playTimerFinishedSound
 import com.oyetech.kmpfeatures.operator.BaseFeatureOperator
 import com.oyetech.kmpfeatures.operator.cancelPendingSave
 import com.oyetech.kmpfeatures.operator.scheduleDebouncedSave
@@ -105,8 +106,11 @@ class DiaryOperator(
                     entryItems = renderEntryItems(next),
                     entryOperation = OperationState.Idle,
                 )
-                if (editingEntryId == entryId) nextState.closeEditor()
-                else nextState.withEditorState()
+                if (editingEntryId == entryId) {
+                    nextState.closeEditor()
+                } else {
+                    nextState.withEditorState()
+                }
             },
             onError = { error ->
                 snackbarDelegate.triggerSnackbarState(message = error.message)
@@ -156,13 +160,22 @@ class DiaryOperator(
                 val now = Clock.System.now()
                 val finished = state.value.entries.filter {
                     it.id in runningIds && it.completedAt == null && it.timerCancelledAt == null &&
-                            it.timerEndsAt?.let { end -> end <= now } == true
+                        it.timerEndsAt?.let { end -> end <= now } == true
                 }
                 updateState {
                     copy(entryItems = renderEntryItems(entries, now)).withEditorState(now)
                 }
                 finished.forEach {
                     snackbarDelegate.triggerSnackbarState(message = StringKeys.timerFinished)
+                    executeOperation(
+                        onStart = { this },
+                        operation = { playTimerFinishedSound() },
+                        onSuccess = { this },
+                        onError = { error ->
+                            snackbarDelegate.triggerSnackbarState(message = error.message)
+                            this
+                        },
+                    )
                 }
                 runningIds.retainAll(
                     state.value.entries.filter { timerStatus(it, now) == EntryTimerStatus.RUNNING }
@@ -178,8 +191,8 @@ class DiaryOperator(
         val isCustom = selectedTimerPreset == EntryTimerPreset.CUSTOM
         val validCustom = !isCustom || customDurationSeconds(customDurationMinutes) != null
         val hasContent = selectedArea != null || text.isNotBlank() ||
-                selectedDurationSeconds != null || isEntryCompleted ||
-                (entry?.completedAt != null && !isEntryCompleted)
+            selectedDurationSeconds != null || isEntryCompleted ||
+            (entry?.completedAt != null && !isEntryCompleted)
         val isSaving = entryOperation is OperationState.Loading
         val canChange = status != EntryTimerStatus.RUNNING
         return copy(
@@ -187,12 +200,18 @@ class DiaryOperator(
             timerLabel = entry?.let { timerLabel(it, now) }.orEmpty(),
             primaryButtonLabel = if (editingEntryId != null &&
                 status == EntryTimerStatus.PENDING && selectedDurationSeconds != null && !isEntryCompleted
-            ) StringKeys.start else StringKeys.save,
+            ) {
+                StringKeys.start
+            } else {
+                StringKeys.save
+            },
             canCreateOrUpdateEntry = hasContent && validCustom,
             isCustomDurationVisible = isCustom,
             customDurationError = if (isCustom && !validCustom && customDurationMinutes.isNotEmpty()) {
                 StringKeys.customDurationInvalid(MAX_CUSTOM_DURATION_MINUTES)
-            } else "",
+            } else {
+                ""
+            },
             hasCustomDurationError = isCustom && !validCustom && customDurationMinutes.isNotEmpty(),
             canChangeDuration = canChange,
             canCancelEditorTimer = status == EntryTimerStatus.RUNNING,
@@ -234,7 +253,6 @@ class DiaryOperator(
                         quoteIsDirty = true,
                         quoteRevision = quoteRevision + 1,
                     )
-
                 }
                 scheduleQuoteSave()
             }
@@ -272,7 +290,9 @@ class DiaryOperator(
                 }
                 val seconds = if (preset == EntryTimerPreset.CUSTOM) {
                     customDurationSeconds(state.value.customDurationMinutes)
-                } else preset?.durationSeconds
+                } else {
+                    preset?.durationSeconds
+                }
                 if (preset == null) timerStartRequested = false
                 updateState {
                     copy(
@@ -337,7 +357,9 @@ class DiaryOperator(
                         isEntryCompleted = entry.completedAt != null,
                         customDurationMinutes = if (presetFor(entry.durationSeconds) == EntryTimerPreset.CUSTOM) {
                             entry.durationSeconds?.div(60)?.toString().orEmpty()
-                        } else "",
+                        } else {
+                            ""
+                        },
                         entryIsDirty = false,
                         dismissRequested = false,
                         entryOperation = OperationState.Idle,
@@ -376,8 +398,11 @@ class DiaryOperator(
                 val entryId = currentState.editingEntryId
                 if (entryId != null && currentState.timerStatus == EntryTimerStatus.PENDING &&
                     currentState.selectedDurationSeconds != null && !currentState.isEntryCompleted
-                ) startEntryTimer(entryId)
-                else saveEntry()
+                ) {
+                    startEntryTimer(entryId)
+                } else {
+                    saveEntry(closeEditor = true)
+                }
             }
 
             DiaryAction.RetryQuoteSaveClicked -> scheduleQuoteSave()
@@ -399,8 +424,8 @@ class DiaryOperator(
             canSave = {
                 val currentState = state.value
                 currentState.quoteIsDirty &&
-                        currentState.quoteOperation !is OperationState.Loading &&
-                        currentState.dayQuote.isNotBlank()
+                    currentState.quoteOperation !is OperationState.Loading &&
+                    currentState.dayQuote.isNotBlank()
             },
             onSave = { saveQuoteSnapshot() },
         )
@@ -535,9 +560,9 @@ class DiaryOperator(
             canSave = {
                 val currentState = state.value
                 currentState.entryIsDirty &&
-                        currentState.entryOperation !is OperationState.Loading &&
-                        currentState.isEditorVisible &&
-                        currentState.canCreateOrUpdateEntry
+                    currentState.entryOperation !is OperationState.Loading &&
+                    currentState.isEditorVisible &&
+                    currentState.canCreateOrUpdateEntry
             },
             onSave = { saveEntry() },
         )
@@ -558,9 +583,11 @@ class DiaryOperator(
         if (!currentState.canCreateOrUpdateEntry) {
             snackbarDelegate.triggerSnackbarState(
                 message =
-                    if (currentState.selectedTimerPreset == EntryTimerPreset.CUSTOM) {
-                        StringKeys.customDurationInvalid(MAX_CUSTOM_DURATION_MINUTES)
-                    } else StringKeys.entryInputRequired,
+                if (currentState.selectedTimerPreset == EntryTimerPreset.CUSTOM) {
+                    StringKeys.customDurationInvalid(MAX_CUSTOM_DURATION_MINUTES)
+                } else {
+                    StringKeys.entryInputRequired
+                },
             )
             return
         }
@@ -607,7 +634,9 @@ class DiaryOperator(
                         existingEntry?.durationSeconds != null
                     ) {
                         diaryEndpointOperation.clearEntryDuration(editingEntryId)
-                    } else updatedEntry
+                    } else {
+                        updatedEntry
+                    }
                 }
             },
             onSuccess = { response ->
@@ -619,7 +648,9 @@ class DiaryOperator(
                     val hasNewInput = entryRevision != revision
                     val nextEntries = if (editingEntryId == null) {
                         listOf(serverEntry) + entries.filterNot { it.id == serverEntry.id }
-                    } else entries.map { if (it.id == serverEntry.id) serverEntry else it }
+                    } else {
+                        entries.map { if (it.id == serverEntry.id) serverEntry else it }
+                    }
                     val nextState = copy(
                         entries = nextEntries,
                         entryItems = renderEntryItems(nextEntries),
@@ -627,8 +658,11 @@ class DiaryOperator(
                         entryIsDirty = hasNewInput,
                         entryOperation = OperationState.Idle,
                     )
-                    if (dismissRequested && !hasNewInput) nextState.closeEditor()
-                    else nextState.withEditorState()
+                    if (dismissRequested && !hasNewInput) {
+                        nextState.closeEditor()
+                    } else {
+                        nextState.withEditorState()
+                    }
                 }
             },
             onError = { error ->
@@ -648,8 +682,9 @@ class DiaryOperator(
         launch {
             saveJob.join()
             if (savedEntryId != null && state.value.selectedDate == dateSnapshot) {
-                if (state.value.entryIsDirty) scheduleEntrySave()
-                else if (timerStartRequested) {
+                if (state.value.entryIsDirty) {
+                    scheduleEntrySave()
+                } else if (timerStartRequested) {
                     timerStartRequested = false
                     savedEntryId?.let(::startEntryTimer)
                 }
@@ -674,8 +709,11 @@ class DiaryOperator(
                     entryItems = renderEntryItems(remainingEntries),
                     entryOperation = OperationState.Idle,
                 )
-                if (editingEntryId == entryId) nextState.closeEditor()
-                else nextState.withEditorState()
+                if (editingEntryId == entryId) {
+                    nextState.closeEditor()
+                } else {
+                    nextState.withEditorState()
+                }
             },
             onError = { error ->
                 snackbarDelegate.triggerSnackbarState(
@@ -705,8 +743,12 @@ class DiaryOperator(
                 ?.toLongOrNull()?.takeIf { it in 1..MAX_CUSTOM_DURATION_MINUTES }?.times(60)
 
         private fun presetFor(seconds: Long?): EntryTimerPreset? =
-            if (seconds == null) null else EntryTimerPreset.values()
-                .firstOrNull { it.durationSeconds == seconds } ?: EntryTimerPreset.CUSTOM
+            if (seconds == null) {
+                null
+            } else {
+                EntryTimerPreset.values()
+                    .firstOrNull { it.durationSeconds == seconds } ?: EntryTimerPreset.CUSTOM
+            }
 
         private fun timerStatus(
             entry: EntryEntity,

@@ -18,6 +18,43 @@
 <script>
     window.KMP_GOOGLE_CLIENT_ID =
         "652520712669-dbhqp25e9uibtlsm2tt2kg6gfhhgtmb5.apps.googleusercontent.com";
+
+    let timerAudioContext;
+    const unlockTimerAudio = () => {
+        try {
+            timerAudioContext ??= new AudioContext();
+            if (timerAudioContext.state === "suspended") {
+                timerAudioContext.resume().catch((error) => {
+                    console.error("Timer audio could not be enabled", error);
+                });
+            }
+        } catch (error) {
+            console.error("Timer audio could not be initialized", error);
+        }
+    };
+    document.addEventListener("pointerdown", unlockTimerAudio, { capture: true });
+    document.addEventListener("keydown", unlockTimerAudio, { capture: true });
+
+    window.KMP_PLAY_TIMER_FINISHED_SOUND = async () => {
+        timerAudioContext ??= new AudioContext();
+        await timerAudioContext.resume();
+        const oscillator = timerAudioContext.createOscillator();
+        const gain = timerAudioContext.createGain();
+        const start = timerAudioContext.currentTime;
+        oscillator.frequency.value = 880;
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(0.2, start + 0.03);
+        gain.gain.setValueAtTime(0.2, start + 2.9);
+        gain.gain.linearRampToValueAtTime(0, start + 3);
+        oscillator.connect(gain);
+        gain.connect(timerAudioContext.destination);
+        oscillator.onended = () => {
+            oscillator.disconnect();
+            gain.disconnect();
+        };
+        oscillator.start(start);
+        oscillator.stop(start + 3);
+    };
 </script>
 <script async defer src="https://accounts.google.com/gsi/client"></script>
 <script src="kmpFeatures.js?v=view-module-20260925"></script>
