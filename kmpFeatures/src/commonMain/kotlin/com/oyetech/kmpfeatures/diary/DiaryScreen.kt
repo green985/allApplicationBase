@@ -6,6 +6,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +21,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -30,6 +32,7 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
@@ -250,6 +253,15 @@ private fun DiaryEntryCard(
                         color = AppColors.textSecondary,
                     )
                 }
+                entry.tagLabel?.let { label ->
+                    Text(
+                        text = label,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = AppColors.textSecondary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
                 Text(
                     text = entry.timeLabel,
                     style = MaterialTheme.typography.bodyMedium,
@@ -305,7 +317,7 @@ private fun EntryEditor(
             .padding(horizontal = 24.dp),
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(16.dp).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Row(
@@ -384,6 +396,60 @@ private fun EntryEditor(
                                 }
                             }
                         }
+                    }
+                }
+            }
+            if (uiState.isTagInputVisible) {
+                Text(
+                    text = StringKeys.optionalTag,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = AppColors.textSecondary,
+                )
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    uiState.tagSuggestions.forEach { tag ->
+                        FilterChip(
+                            selected = tag.isSelected,
+                            onClick = { onAction(DiaryAction.TagSelected(tag.id)) },
+                            label = { Text(tag.displayLabel) },
+                        )
+                    }
+                }
+                if (uiState.canClearTag) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(uiState.selectedTagLabel, color = AppColors.textSecondary)
+                        TextButton(onClick = { onAction(DiaryAction.TagCleared) }) {
+                            Text(StringKeys.clearTag)
+                        }
+                    }
+                }
+                OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = uiState.tagQuery,
+                    onValueChange = { onAction(DiaryAction.TagQueryChanged(it)) },
+                    label = { Text(StringKeys.tagSearchPlaceholder) },
+                    singleLine = true,
+                    isError = uiState.hasTagQueryError,
+                    supportingText = { Text(uiState.tagQueryError) },
+                )
+                when (val operation = uiState.tagOperation) {
+                    OperationState.Idle -> Unit
+                    OperationState.Loading -> CircularProgressIndicator()
+                    is OperationState.Error -> {
+                        Text(operation.error.message, color = AppColors.textSecondary)
+                        TextButton(onClick = { onAction(DiaryAction.RetryTagsLoadClicked) }) {
+                            Text(StringKeys.retry)
+                        }
+                    }
+                }
+                when (val operation = uiState.tagCreateOperation) {
+                    OperationState.Idle -> Unit
+                    OperationState.Loading -> CircularProgressIndicator()
+                    is OperationState.Error ->
+                        Text(operation.error.message, color = AppColors.textSecondary)
+                }
+                if (uiState.canCreateTag) {
+                    TextButton(onClick = { onAction(DiaryAction.CreateTagClicked) }) {
+                        Text(uiState.createTagLabel)
                     }
                 }
             }

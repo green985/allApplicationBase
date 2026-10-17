@@ -11,16 +11,20 @@ import com.oyetech.kmpmodels.entity.AreaEntry
 import com.oyetech.kmpmodels.entity.EntryEntity
 import com.oyetech.kmpmodels.entity.EntryTimerPreset
 import com.oyetech.kmpmodels.entity.EntryTimerStatus
+import com.oyetech.kmpmodels.entity.TagEntry
 import com.oyetech.kmpmodels.postbody.DiaryQuotePutBody
 import com.oyetech.kmpmodels.postbody.EntryDurationClearPostBody
 import com.oyetech.kmpmodels.postbody.EntryPostBody
+import com.oyetech.kmpmodels.postbody.TagPostBody
 import com.oyetech.kmpmodels.response.DiaryArchiveResponse
 import com.oyetech.kmpmodels.response.EntryResponse
+import com.oyetech.kmpmodels.response.TagResponse
 import com.oyetech.kmpmodels.stringKeys.StringKeys
 import com.oyetech.kmpmodels.ui.event.DiaryAction
 import com.oyetech.kmpmodels.ui.state.DiaryAreaUiState
 import com.oyetech.kmpmodels.ui.state.DiaryEntryUiState
 import com.oyetech.kmpmodels.ui.state.DiaryTimerPresetUiState
+import com.oyetech.kmpmodels.ui.state.DiaryTagUiState
 import com.oyetech.kmpmodels.ui.state.DiaryUiState
 import com.oyetech.kmpmodels.ui.state.ErrorCode
 import com.oyetech.kmpmodels.ui.state.OperationState
@@ -50,6 +54,10 @@ class DiaryOperator(
     private var entrySaveJob: Job? = null
     private var timerJob: Job? = null
     private var timerStartRequested = false
+    private var tagSearchDebounceJob: Job? = null
+    private var tagSearchJob: Job? = null
+    private var tagCreateJob: Job? = null
+    private var tagContext = 0L
 
     init {
         loadQuoteForSelectedDate()
@@ -173,6 +181,7 @@ class DiaryOperator(
                 StringKeys.entryCreatedAt,
                 StringKeys.timerStartedAt,
                 StringKeys.area,
+                StringKeys.tag,
                 StringKeys.note,
                 StringKeys.duration,
             ).forEach { append("<th scope=\"col\">${it.escapeHtml()}</th>") }
@@ -183,6 +192,7 @@ class DiaryOperator(
                     entry.createdAt?.let(::exportTimestamp) ?: "-",
                     entry.timerStartedAt?.let(::exportTimestamp) ?: "-",
                     areaLabel(entry.areaId),
+                    entry.tag?.name.orEmpty(),
                     entry.text,
                     entry.durationSeconds?.let(StringKeys::diaryExportDuration) ?: "-",
                 ).forEach { append("<td>${it.escapeHtml()}</td>") }
@@ -213,6 +223,7 @@ class DiaryOperator(
                     entryId = entryId,
                     request = EntryPostBody(
                         areaId = entry.areaId,
+                        tagId = entry.tag?.id,
                         markAsCompleted = true,
                     ),
                 )
@@ -357,7 +368,21 @@ class DiaryOperator(
         val validText = text.length <= MAX_ENTRY_TEXT_LENGTH
         val isSaving = entryOperation is OperationState.Loading
         val canChange = status != EntryTimerStatus.RUNNING
+        val tagName = normalizeTagName(tagQuery)
+        val tagNameTooLong = tagName.count { it !in '\uDC00'..'\uDFFF' } > 40
         return copy(
+            isTagInputVisible = selectedArea != null,
+            selectedTagLabel = selectedTag?.let { "#${it.name}" }.orEmpty(),
+            canClearTag = selectedTag != null,
+            hasTagQueryError = tagNameTooLong,
+            tagQueryError = if (tagNameTooLong) StringKeys.tagNameTooLong else "",
+            canCreateTag = isEditorVisible && selectedArea != null &&
+                tagName.isNotEmpty() && !tagNameTooLong &&
+                tagOperation !is OperationState.Loading &&
+                tagCreateOperation !is OperationState.Loading &&
+                tagSuggestions.none { normalizeTagName(it.name).equals(tagName, ignoreCase = true) } &&
+                selectedTag?.name?.let { normalizeTagName(it).equals(tagName, ignoreCase = true) } != true,
+            createTagLabel = StringKeys.createTag(tagName),
             timerStatus = status,
             timerLabel = entry?.let { timerLabel(it, now) }.orEmpty(),
             primaryButtonLabel = if (editingEntryId != null &&
@@ -397,6 +422,11 @@ class DiaryOperator(
         isEditorVisible = false,
         editingEntryId = null,
         selectedArea = null,
+        selectedTag = null,
+        tagQuery = "",
+        tagSuggestions = emptyList(),
+        tagOperation = OperationState.Idle,
+        tagCreateOperation = OperationState.Idle,
         text = "",
         selectedTimerPreset = null,
         customDurationMinutes = "",
@@ -433,15 +463,63 @@ class DiaryOperator(
             }
 
             is DiaryAction.AreaSelected -> {
+                cancelTagRequests()
                 updateState {
                     copy(
                         selectedArea = action.value.takeUnless { it == selectedArea },
+                        selectedTag = null,
+                        tagQuery = "",
+                        tagSuggestions = emptyList(),
                         entryIsDirty = true,
                         entryRevision = entryRevision + 1,
                     ).withEditorState()
                 }
                 scheduleEntrySave()
+                loadTagSuggestions()
             }
+
+            is DiaryAction.TagQueryChanged -> {
+                cancelTagRequests()
+                updateState {
+                    val next = copy(
+                        tagQuery = action.value,
+                        tagSuggestions = emptyList(),
+                        tagOperation = OperationState.Loading,
+                    ).withEditorState()
+                    if (next.hasTagQueryError) next.copy(tagOperation = OperationState.Idle) else next
+                }
+                if (!state.value.hasTagQueryError) {
+                    tagSearchDebounceJob = launch {
+                        delay(300)
+                        loadTagSuggestions()
+                    }
+                }
+            }
+
+            is DiaryAction.TagSelected -> {
+                val snapshot = state.value
+                val area = snapshot.selectedArea ?: return
+                val tag = snapshot.tagSuggestions.firstOrNull { it.id == action.tagId } ?: return
+                selectTag(TagEntry(tag.id, tag.name, area.name))
+            }
+
+            DiaryAction.TagCleared -> {
+                cancelTagRequests()
+                updateState {
+                    copy(
+                        selectedTag = null,
+                        tagQuery = "",
+                        tagSuggestions = tagSuggestions.map { it.copy(isSelected = false) },
+                        entryIsDirty = true,
+                        entryRevision = entryRevision + 1,
+                    ).withEditorState()
+                }
+                scheduleEntrySave()
+                loadTagSuggestions()
+            }
+
+            DiaryAction.CreateTagClicked -> createTag()
+            DiaryAction.RetryTagsLoadClicked -> loadTagSuggestions()
 
             is DiaryAction.TextChanged -> {
                 updateState {
@@ -520,6 +598,7 @@ class DiaryOperator(
 
             is DiaryAction.EntryEditClicked -> {
                 if (state.value.entryOperation is OperationState.Loading) return
+                cancelTagRequests()
                 timerStartRequested = false
                 entryAutosaveJob.cancelPendingSave()
                 val entry = state.value.entries.firstOrNull { it.id == action.entryId } ?: return
@@ -528,6 +607,9 @@ class DiaryOperator(
                         isEditorVisible = true,
                         editingEntryId = entry.id,
                         selectedArea = AreaEntry.values().firstOrNull { it.name == entry.areaId },
+                        selectedTag = entry.tag,
+                        tagQuery = "",
+                        tagSuggestions = emptyList(),
                         text = entry.text,
                         selectedDurationSeconds = entry.durationSeconds,
                         selectedTimerPreset = presetFor(entry.durationSeconds),
@@ -542,12 +624,14 @@ class DiaryOperator(
                         entryOperation = OperationState.Idle,
                     ).withEditorState()
                 }
+                loadTagSuggestions()
             }
 
             is DiaryAction.EntryDeleteClicked -> deleteEntry(action.entryId)
 
             DiaryAction.AddEntryClicked -> {
                 if (state.value.entryOperation is OperationState.Loading) return
+                cancelTagRequests()
                 timerStartRequested = false
                 entryAutosaveJob.cancelPendingSave()
                 updateState {
@@ -557,6 +641,7 @@ class DiaryOperator(
             }
 
             DiaryAction.EntryDialogDismissed -> {
+                cancelTagRequests()
                 timerStartRequested = false
                 val currentState = state.value
                 if (currentState.entryOperation is OperationState.Loading) {
@@ -572,6 +657,7 @@ class DiaryOperator(
             }
 
             DiaryAction.EntryDialogCancelled -> {
+                cancelTagRequests()
                 timerStartRequested = false
                 entryAutosaveJob.cancelPendingSave()
                 updateState { closeEditor() }
@@ -603,6 +689,97 @@ class DiaryOperator(
         }
     }
 
+    private fun cancelTagRequests() {
+        tagContext++
+        tagSearchDebounceJob?.cancel()
+        tagSearchJob?.cancel()
+        tagCreateJob?.cancel()
+        updateState {
+            copy(tagOperation = OperationState.Idle, tagCreateOperation = OperationState.Idle)
+                .withEditorState()
+        }
+    }
+
+    private fun DiaryUiState.matchesTagRequest(context: Long, area: AreaEntry, query: String): Boolean =
+        tagContext == context && isEditorVisible && selectedArea == area && tagQuery == query
+
+    private fun loadTagSuggestions() {
+        tagSearchJob?.cancel()
+        val snapshot = state.value
+        val area = snapshot.selectedArea ?: return
+        if (!snapshot.isEditorVisible || snapshot.hasTagQueryError) return
+        val query = snapshot.tagQuery
+        val context = tagContext
+        tagSearchJob = executeOperation(
+            onStart = { copy(tagOperation = OperationState.Loading).withEditorState() },
+            operation = { diaryEndpointOperation.getAreaTags(area.name, normalizeTagName(query)) },
+            onSuccess = { tags ->
+                if (!matchesTagRequest(context, area, query)) this else copy(
+                    tagSuggestions = tags.map {
+                        DiaryTagUiState(it.id, it.name, "#${it.name}", selectedTag?.id == it.id)
+                    },
+                    tagOperation = OperationState.Idle,
+                ).withEditorState()
+            },
+            onError = { error ->
+                if (!matchesTagRequest(context, area, query)) this else copy(
+                    tagOperation = OperationState.Error(error),
+                ).withEditorState()
+            },
+        )
+    }
+
+    private fun DiaryUiState.withSelectedTag(tag: TagEntry): DiaryUiState = copy(
+        selectedTag = tag,
+        tagQuery = "",
+        tagSuggestions = tagSuggestions.map { it.copy(isSelected = it.id == tag.id) },
+        entryIsDirty = true,
+        entryRevision = entryRevision + 1,
+        tagOperation = OperationState.Idle,
+        tagCreateOperation = OperationState.Idle,
+    ).withEditorState()
+
+    private fun selectTag(tag: TagEntry) {
+        cancelTagRequests()
+        updateState { withSelectedTag(tag) }
+        scheduleEntrySave()
+    }
+
+    private fun createTag() {
+        val snapshot = state.value
+        val area = snapshot.selectedArea ?: return
+        val name = normalizeTagName(snapshot.tagQuery)
+        val existing = snapshot.tagSuggestions.firstOrNull {
+            normalizeTagName(it.name).equals(name, ignoreCase = true)
+        }
+        if (existing != null) {
+            selectTag(TagEntry(existing.id, existing.name, area.name))
+            return
+        }
+        if (!snapshot.canCreateTag || tagCreateJob?.isActive == true) return
+        val query = snapshot.tagQuery
+        val context = tagContext
+        tagCreateJob = executeOperation(
+            onStart = { copy(tagCreateOperation = OperationState.Loading).withEditorState() },
+            operation = { diaryEndpointOperation.createTag(TagPostBody(area.name, name)) },
+            onSuccess = { response ->
+                if (!matchesTagRequest(context, area, query)) this else {
+                    scheduleEntrySave()
+                    copy(tagSuggestions = (
+                        listOf(DiaryTagUiState(response.id, response.name, "#${response.name}", true)) +
+                            tagSuggestions.filterNot { it.id == response.id }
+                        ).take(6),
+                    ).withSelectedTag(tagEntity(response))
+                }
+            },
+            onError = { error ->
+                if (!matchesTagRequest(context, area, query)) this else copy(
+                    tagCreateOperation = OperationState.Error(error),
+                ).withEditorState()
+            },
+        )
+    }
+
     private fun scheduleQuoteSave() {
         quoteAutosaveJob = operatorScope.scheduleDebouncedSave(
             previousJob = quoteAutosaveJob,
@@ -618,6 +795,7 @@ class DiaryOperator(
 
     private fun selectDay(offset: Int) {
         if (state.value.entryOperation is OperationState.Loading) return
+        cancelTagRequests()
         timerStartRequested = false
         quoteAutosaveJob.cancelPendingSave()
         entryAutosaveJob.cancelPendingSave()
@@ -800,6 +978,7 @@ class DiaryOperator(
                     diaryEndpointOperation.createEntry(
                         EntryPostBody(
                             areaId = currentState.selectedArea?.name,
+                            tagId = currentState.selectedTag?.id,
                             text = currentState.text,
                             entryDate = dateSnapshot.toString(),
                             durationSeconds = currentState.selectedDurationSeconds,
@@ -811,6 +990,7 @@ class DiaryOperator(
                         entryId = editingEntryId,
                         request = EntryPostBody(
                             areaId = currentState.selectedArea?.name,
+                            tagId = currentState.selectedTag?.id,
                             text = currentState.text,
                             entryDate = dateSnapshot.toString(),
                             durationSeconds = currentState.selectedDurationSeconds
@@ -1032,6 +1212,7 @@ class DiaryOperator(
                     canMarkCompleted = status == EntryTimerStatus.NONE ||
                             status == EntryTimerStatus.PENDING || status == EntryTimerStatus.RUNNING,
                     isAreaVisible = entry.areaId != null,
+                    tagLabel = entry.tag?.let { "#${it.name}" },
                     isTimerStatusVisible = status != EntryTimerStatus.NONE,
                 )
             }
@@ -1040,6 +1221,7 @@ class DiaryOperator(
             EntryEntity(
                 id = response.id,
                 areaId = response.areaId,
+                tag = response.tag?.let(::tagEntity),
                 text = response.text,
                 entryDate = response.entryDate,
                 durationSeconds = response.durationSeconds,
@@ -1052,6 +1234,12 @@ class DiaryOperator(
                 createdAt = response.createdAt?.let(Instant::parse),
                 updatedAt = response.updatedAt?.let(Instant::parse),
             )
+
+        private fun tagEntity(response: TagResponse): TagEntry =
+            TagEntry(response.id, response.name, response.areaId)
+
+        private fun normalizeTagName(value: String): String =
+            value.trim().replace(Regex("\\s+"), " ")
 
         private fun areaOptions(): List<DiaryAreaUiState> =
             diaryAreas.map { area ->

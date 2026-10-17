@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const fixedUserId = "02af726d-aa75-4301-a410-049d214841f9";
-const entrySelect = "id, user_id, area_id, text, entry_date, created_at, updated_at, duration_seconds, timer_started_at, timer_ends_at, timer_cancelled_at, completed_at";
+const entrySelect = "id, user_id, area_id, text, entry_date, created_at, updated_at, duration_seconds, timer_started_at, timer_ends_at, timer_cancelled_at, completed_at, tag:diary_tags(id, name, area_id)";
 const maxDurationSeconds = 1440 * 60;
 const maxTextLength = 3000;
 const validAreas = new Set(["WORK", "BODY", "MIND", "CHARACTER", "LIFE"]);
@@ -38,7 +38,11 @@ type DiaryEntry = {
   timerEndsAt: string | null;
   timerCancelledAt: string | null;
   completedAt: string | null;
+  tag: DiaryTag | null;
 };
+
+type DiaryTag = { id: string; name: string; areaId: string };
+type TagRow = { id: string; name: string; area_id: string };
 
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL")!,
@@ -119,7 +123,68 @@ function isValidDuration(value: unknown): value is number {
 }
 
 function isEntryBody(body: unknown): body is Record<string, unknown> {
-  return body !== null && typeof body === "object" && !Array.isArray(body);
+  return body !== null && typeof body === "object" && !Array.isArray(body) &&
+    !("userId" in body) && !("user_id" in body);
+}
+
+function isUuid(value: unknown): value is string {
+  return typeof value === "string" &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+}
+
+function normalizeTagName(value: string): string {
+  return value.trim().replace(/\s+/gu, " ");
+}
+
+function mapTag(row: TagRow): DiaryTag {
+  return { id: row.id, name: row.name, areaId: row.area_id };
+}
+
+async function getAreaTags(request: Request, areaId: string, userId: string): Promise<Response> {
+  const params = new URL(request.url).searchParams;
+  const limitValue = params.get("limit") ?? "6";
+  if (!validAreas.has(areaId) || !/^\d+$/.test(limitValue)) {
+    return response(null, "Geçerli bir alan ve limit gerekli.", false, 400);
+  }
+  const limit = Math.min(20, Math.max(1, Number(limitValue)));
+  const query = normalizeTagName(params.get("query") ?? "");
+  if ([...query].length > 40) {
+    return response(null, "Etiket araması en fazla 40 karakter olabilir.", false, 400);
+  }
+  let tags = supabase.from("diary_tags").select("id, name, area_id")
+    .eq("user_id", userId).eq("area_id", areaId);
+  if (query) {
+    tags = tags.ilike("normalized_name", `${query.replace(/[\\%_]/g, "\\$&")}%`);
+  }
+  const { data, error } = await tags
+    .order("last_used_at", { ascending: false, nullsFirst: false })
+    .order("usage_count", { ascending: false })
+    .order("name", { ascending: true }).limit(limit);
+  if (error) {
+    console.error("getAreaTags failed", error.code);
+    return response(null, "Etiket önerileri yüklenemedi.", false, 500);
+  }
+  return response((data ?? []).map(mapTag), "Etiketler getirildi.", true);
+}
+
+async function createTag(request: Request, userId: string): Promise<Response> {
+  const body: unknown = await request.json().catch(() => null);
+  if (!isEntryBody(body) || typeof body.areaId !== "string" ||
+    !validAreas.has(body.areaId) || typeof body.name !== "string") {
+    return response(null, "Geçerli bir alan ve etiket adı gerekli.", false, 400);
+  }
+  const name = normalizeTagName(body.name);
+  if (!name || [...name].length > 40) {
+    return response(null, "Etiket adı 1–40 karakter olmalıdır.", false, 400);
+  }
+  const { data, error } = await supabase.rpc("get_or_create_diary_tag", {
+    p_user_id: userId, p_area_id: body.areaId, p_name: name,
+  }).select("id, name, area_id").single();
+  if (error || !data) {
+    console.error("createTag failed", error?.code);
+    return response(null, "Etiket oluşturulamadı.", false, 500);
+  }
+  return response(mapTag(data), "Etiket hazır.", true);
 }
 
 function hasClientTimerTimes(body: Record<string, unknown>): boolean {
@@ -154,6 +219,7 @@ function mapEntry(row: {
   timer_ends_at: string | null;
   timer_cancelled_at: string | null;
   completed_at: string | null;
+  tag?: TagRow | null;
 }): DiaryEntry {
   return {
     id: row.id,
@@ -168,6 +234,7 @@ function mapEntry(row: {
     timerEndsAt: row.timer_ends_at,
     timerCancelledAt: row.timer_cancelled_at,
     completedAt: row.completed_at,
+    tag: row.tag ? mapTag(row.tag) : null,
   };
 }
 
@@ -225,7 +292,8 @@ async function getEntries(date: string, userId: string): Promise<Response> {
     .select(entrySelect)
     .eq("user_id", userId)
     .eq("entry_date", date)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .returns<Parameters<typeof mapEntry>[0][]>();
 
   if (error) {
     console.error("getEntries failed", error);
@@ -254,7 +322,8 @@ async function exportDiaryArchive(userId: string): Promise<Response> {
       .order("entry_date")
       .order("created_at")
       .order("id")
-      .range(offset, offset + pageSize - 1);
+      .range(offset, offset + pageSize - 1)
+      .returns<Parameters<typeof mapEntry>[0][]>();
     if (error || !data) {
       console.error("exportDiaryArchive entries failed", error?.code);
       return response(null, "Günlük arşiv kayıtları getirilemedi.", false, 500);
@@ -290,6 +359,7 @@ async function createEntry(request: Request, userId: string): Promise<Response> 
   }
   if (
     (body.areaId != null && typeof body.areaId !== "string") ||
+    (body.tagId != null && !isUuid(body.tagId)) ||
     (body.text !== undefined && typeof body.text !== "string") ||
     (body.durationSeconds != null && !isValidDuration(body.durationSeconds)) ||
     (body.markAsCompleted !== undefined && typeof body.markAsCompleted !== "boolean")
@@ -327,17 +397,19 @@ async function createEntry(request: Request, userId: string): Promise<Response> 
       user_id: userId,
       entry_date: entryDate,
       area_id: areaId,
+      tag_id: body.tagId ?? null,
       text,
       duration_seconds: durationSeconds,
       completed_at: markAsCompleted ? new Date().toISOString() : null,
     })
     .select(entrySelect)
+    .returns<Parameters<typeof mapEntry>[0][]>()
     .single();
 
   if (error || !data) {
     console.error("createEntry failed", error?.code);
     if (error?.code === "23514" || error?.code === "22023") {
-      return response(null, "Entry alanları geçersiz.", false, 400);
+      return response(null, "Entry alanları veya seçilen etiket geçersiz.", false, 400);
     }
     return response(null, "Diary kaydı oluşturulamadı.", false, 500);
   }
@@ -357,6 +429,7 @@ async function updateEntry(request: Request, entryId: string, userId: string): P
   }
   if (
     (body.areaId !== undefined && body.areaId !== null && typeof body.areaId !== "string") ||
+    (body.tagId != null && !isUuid(body.tagId)) ||
     (body.text !== undefined && typeof body.text !== "string") ||
     (body.entryDate !== undefined && !isValidDate(body.entryDate)) ||
     (body.durationSeconds !== undefined && body.durationSeconds !== null && !isValidDuration(body.durationSeconds)) ||
@@ -374,6 +447,7 @@ async function updateEntry(request: Request, entryId: string, userId: string): P
 
   if (
     areaId === undefined &&
+    body.tagId === undefined &&
     text === undefined &&
     entryDate === undefined &&
     durationSeconds === undefined &&
@@ -400,6 +474,7 @@ async function updateEntry(request: Request, entryId: string, userId: string): P
 
   const updates: Record<string, unknown> = {};
   if (areaId !== undefined) updates.area_id = areaId;
+  if (body.tagId !== undefined) updates.tag_id = body.tagId;
   if (text !== undefined) updates.text = text;
   if (entryDate !== undefined) updates.entry_date = entryDate;
   if (durationSeconds !== undefined) updates.duration_seconds = durationSeconds;
@@ -414,12 +489,15 @@ async function updateEntry(request: Request, entryId: string, userId: string): P
     .eq("id", entryId)
     .eq("user_id", userId)
     .select(entrySelect)
+    .returns<Parameters<typeof mapEntry>[0][]>()
     .maybeSingle();
 
   if (error) {
     console.error("updateEntry failed", error.code);
     if (error.code === "22023") {
-      return response(null, "Çalışan timer süresi değiştirilemez.", false, 409);
+      return error.message === "Tag must belong to the entry user and area"
+        ? response(null, "Etiket bu kullanıcıya ve alana ait olmalıdır.", false, 400)
+        : response(null, "Çalışan timer süresi değiştirilemez.", false, 409);
     }
     if (error.code === "23514") {
       return response(null, "Entry veya timer bilgileri bu güncellemeye izin vermiyor.", false, 400);
@@ -450,6 +528,7 @@ async function clearEntryDuration(request: Request, entryId: string, userId: str
     .eq("id", entryId)
     .eq("user_id", userId)
     .select(entrySelect)
+    .returns<Parameters<typeof mapEntry>[0][]>()
     .maybeSingle();
 
   if (error) {
@@ -474,6 +553,7 @@ async function deleteEntry(entryId: string, userId: string): Promise<Response> {
     .eq("id", entryId)
     .eq("user_id", userId)
     .select(entrySelect)
+    .returns<Parameters<typeof mapEntry>[0][]>()
     .maybeSingle();
 
   if (error) {
@@ -497,6 +577,7 @@ async function startEntryTimer(entryId: string, userId: string): Promise<Respons
       p_entry_id: entryId,
       p_user_id: userId,
     })
+    .select(entrySelect)
     .returns<Parameters<typeof mapEntry>[0][]>()
     .single();
 
@@ -518,6 +599,7 @@ async function cancelEntryTimer(entryId: string, userId: string): Promise<Respon
       p_entry_id: entryId,
       p_user_id: userId,
     })
+    .select(entrySelect)
     .returns<Parameters<typeof mapEntry>[0][]>()
     .single();
 
@@ -565,6 +647,21 @@ Deno.serve(async (request) => {
       userId = data.user.id;
     }
     const diaryRoute = segments.slice(segments.indexOf("diary"));
+    const params = new URL(request.url).searchParams;
+    if (params.has("userId") || params.has("user_id")) {
+      return response(null, "Kullanıcı kimliği oturumdan belirlenir.", false, 400);
+    }
+    if (diaryRoute.length === 4 && diaryRoute[0] === "diary" &&
+      diaryRoute[1] === "areas" && diaryRoute[3] === "tags") {
+      return request.method === "GET"
+        ? await getAreaTags(request, diaryRoute[2], userId)
+        : response(null, "Method not allowed.", false, 405);
+    }
+    if (diaryRoute.length === 2 && diaryRoute[0] === "diary" && diaryRoute[1] === "tags") {
+      return request.method === "POST"
+        ? await createTag(request, userId)
+        : response(null, "Method not allowed.", false, 405);
+    }
     if (diaryRoute.length === 2 && diaryRoute[0] === "diary" && diaryRoute[1] === "export") {
       return request.method === "GET"
         ? await exportDiaryArchive(userId)

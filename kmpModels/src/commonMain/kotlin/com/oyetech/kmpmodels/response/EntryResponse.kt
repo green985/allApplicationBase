@@ -17,4 +17,5 @@ data class EntryResponse(
     val timerEndsAt: String? = null,
     val timerCancelledAt: String? = null,
     val completedAt: String? = null,
+    val tag: TagResponse? = null,
 )

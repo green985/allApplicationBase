@@ -16,4 +16,5 @@ data class EntryEntity(
     val note: String? = null,
     val createdAt: Instant? = null,
     val updatedAt: Instant? = null,
+    val tag: TagEntry? = null,
 )

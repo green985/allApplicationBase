@@ -5,6 +5,8 @@ import com.oyetech.kmpfeatures.network.bodyOrError
 import com.oyetech.kmpmodels.postbody.DiaryQuotePutBody
 import com.oyetech.kmpmodels.postbody.EntryDurationClearPostBody
 import com.oyetech.kmpmodels.postbody.EntryPostBody
+import com.oyetech.kmpmodels.postbody.TagPostBody
+import com.oyetech.kmpmodels.response.TagResponse
 import com.oyetech.kmpmodels.response.DiaryArchiveResponse
 import com.oyetech.kmpmodels.response.DiaryQuoteResponse
 import com.oyetech.kmpmodels.response.EntryResponse
@@ -12,6 +14,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.patch
+import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
@@ -19,6 +22,21 @@ import io.ktor.client.request.setBody
 class DiaryEndpointOperation(
     private val httpClient: HttpClient,
 ) {
+    suspend fun getAreaTags(
+        areaId: String,
+        query: String? = null,
+        limit: Int = 6,
+    ): List<TagResponse> =
+        httpClient.get(EndpointStrings.diaryAreaTags(areaId)) {
+            parameter("limit", limit)
+            if (query != null) parameter("query", query)
+        }.bodyOrError()
+
+    suspend fun createTag(request: TagPostBody): TagResponse =
+        httpClient.post(EndpointStrings.diaryTags) {
+            setBody(request)
+        }.bodyOrError()
+
     suspend fun getDiaryArchive(): DiaryArchiveResponse =
         httpClient.get(EndpointStrings.diaryArchive).bodyOrError()
 

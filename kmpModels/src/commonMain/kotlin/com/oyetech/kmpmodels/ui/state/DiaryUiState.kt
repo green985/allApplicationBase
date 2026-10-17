@@ -4,6 +4,7 @@ import com.oyetech.kmpmodels.entity.AreaEntry
 import com.oyetech.kmpmodels.entity.EntryEntity
 import com.oyetech.kmpmodels.entity.EntryTimerPreset
 import com.oyetech.kmpmodels.entity.EntryTimerStatus
+import com.oyetech.kmpmodels.entity.TagEntry
 import kotlinx.datetime.LocalDate
 
 data class DiaryUiState(
@@ -48,6 +49,18 @@ data class DiaryUiState(
     val canExportArchive: Boolean = true,
     val hasEntryTextError: Boolean = false,
     val entryTextError: String = "",
+    val selectedTag: TagEntry? = null,
+    val selectedTagLabel: String = "",
+    val tagQuery: String = "",
+    val tagSuggestions: List<DiaryTagUiState> = emptyList(),
+    val isTagInputVisible: Boolean = false,
+    val canCreateTag: Boolean = false,
+    val createTagLabel: String = "",
+    val canClearTag: Boolean = false,
+    val tagQueryError: String = "",
+    val hasTagQueryError: Boolean = false,
+    val tagOperation: OperationState = OperationState.Idle,
+    val tagCreateOperation: OperationState = OperationState.Idle,
 )
 
 data class DiaryEntryUiState(
@@ -64,6 +77,14 @@ data class DiaryEntryUiState(
     val canMarkCompleted: Boolean = false,
     val isAreaVisible: Boolean = false,
     val isTimerStatusVisible: Boolean = false,
+    val tagLabel: String? = null,
+)
+
+data class DiaryTagUiState(
+    val id: String,
+    val name: String,
+    val displayLabel: String,
+    val isSelected: Boolean,
 )
 
 data class DiaryAreaUiState(

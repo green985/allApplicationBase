@@ -8,6 +8,11 @@ sealed interface DiaryAction {
     data object NextDayClicked : DiaryAction
     data class QuoteChanged(val value: String) : DiaryAction
     data class AreaSelected(val value: AreaEntry) : DiaryAction
+    data class TagQueryChanged(val value: String) : DiaryAction
+    data class TagSelected(val tagId: String) : DiaryAction
+    data object TagCleared : DiaryAction
+    data object CreateTagClicked : DiaryAction
+    data object RetryTagsLoadClicked : DiaryAction
     data class TextChanged(val value: String) : DiaryAction
     data class EntryEditClicked(val entryId: String) : DiaryAction
     data class EntryDeleteClicked(val entryId: String) : DiaryAction

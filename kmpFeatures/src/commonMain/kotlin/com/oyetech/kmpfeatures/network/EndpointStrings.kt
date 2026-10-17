@@ -8,6 +8,10 @@ object EndpointStrings {
     private const val kmpFunctionsBaseUrl = "$baseUrl/v1/kmpFunctions"
     const val diaryEntries = "$kmpFunctionsBaseUrl/diary/entries"
     const val diaryArchive = "$kmpFunctionsBaseUrl/diary/export"
+    const val diaryTags = "$kmpFunctionsBaseUrl/diary/tags"
+
+    fun diaryAreaTags(areaId: String): String =
+        "$kmpFunctionsBaseUrl/diary/areas/$areaId/tags"
 
     fun diaryEntriesForDate(date: String): String =
         diaryDayEntries(date)
