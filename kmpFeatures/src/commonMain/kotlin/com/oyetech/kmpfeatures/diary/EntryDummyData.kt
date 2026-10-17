@@ -2,7 +2,6 @@ package com.oyetech.kmpfeatures.diary
 
 import com.oyetech.kmpmodels.entity.AreaEntry
 import com.oyetech.kmpmodels.entity.EntryEntity
-import com.oyetech.kmpmodels.entity.TimerTypeEntry
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
@@ -22,7 +21,6 @@ class EntryDummyData {
             createdBy = "Demo",
             createdAt = now - 2.minutes,
             updatedAt = now - 2.minutes,
-            timerType = TimerTypeEntry.COUNTDOWN,
         )
         return listOf(
             entry,
@@ -49,7 +47,7 @@ class EntryDummyData {
             ),
             entry.copy(
                 id = "entry-cancelled",
-                areaId = AreaEntry.HEALTH.name,
+                areaId = AreaEntry.CHARACTER.name,
                 text = "Meditasyon",
                 timerStartedAt = now - 45.minutes,
                 timerEndsAt = now - 35.minutes,
@@ -67,7 +65,16 @@ class EntryDummyData {
                 completedAt = now - 60.minutes,
                 createdAt = now - 60.minutes,
                 updatedAt = now - 60.minutes,
-                timerType = null,
+            ),
+            entry.copy(
+                id = "entry-note-only",
+                areaId = null,
+                text = "Alansiz not",
+                durationSeconds = null,
+                timerStartedAt = null,
+                timerEndsAt = null,
+                createdAt = now - 90.minutes,
+                updatedAt = now - 90.minutes,
             ),
         )
     }

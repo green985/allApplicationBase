@@ -15,6 +15,11 @@ import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.json.jsonObject
 
 class DiaryEndpointOperation(
     private val httpClient: HttpClient,
@@ -63,13 +68,21 @@ class DiaryEndpointOperation(
     suspend fun updateEntry(
         entryId: String,
         request: EntryPostBody,
+        clearArea: Boolean = false,
     ): EntryResponse {
         println(
             "[DiaryEndpoint] PATCH /v1/diary/entries/$entryId " +
                     "areaId=\"${request.areaId}\" text=\"${request.text}\"",
         )
         return httpClient.patch(EndpointStrings.diaryEntry(entryId)) {
-            setBody(request)
+            setBody(
+                buildJsonObject {
+                    Json.encodeToJsonElement(request).jsonObject.forEach { (key, value) ->
+                        put(key, value)
+                    }
+                    if (clearArea) put("areaId", JsonNull)
+                },
+            )
         }.bodyOrError()
     }
 

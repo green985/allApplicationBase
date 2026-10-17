@@ -16,7 +16,4 @@ data class EntryEntity(
     val note: String? = null,
     val createdAt: Instant? = null,
     val updatedAt: Instant? = null,
-    val timerType: TimerTypeEntry? = null,
-    val startedAt: Instant? = null,
-    val endedAt: Instant? = null,
 )

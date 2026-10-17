@@ -10,6 +10,7 @@ enum class EntryTimerPreset(val durationSeconds: Long?) {
 }
 
 enum class EntryTimerStatus {
+    NONE,
     PENDING,
     RUNNING,
     FINISHED,

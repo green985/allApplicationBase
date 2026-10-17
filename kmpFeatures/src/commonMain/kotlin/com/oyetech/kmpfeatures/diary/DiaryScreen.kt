@@ -50,11 +50,8 @@ import com.oyetech.kmpmodels.ui.state.DiaryUiState
 import com.oyetech.kmpmodels.ui.state.OperationState
 import com.oyetech.viewmodule.AppColors
 import com.oyetech.viewmodule.ViewModuleTheme
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.todayIn
 import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
-import kotlin.time.Clock
 
 @Composable
 fun DiaryScreenSetup() {
@@ -206,11 +203,13 @@ private fun DiaryEntryCard(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Column {
-                Text(
-                    text = entry.areaLabel,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = AppColors.textSecondary,
-                )
+                if (entry.isAreaVisible) {
+                    Text(
+                        text = entry.areaLabel,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = AppColors.textSecondary,
+                    )
+                }
                 Text(
                     text = entry.timeLabel,
                     style = MaterialTheme.typography.bodyMedium,
@@ -226,7 +225,9 @@ private fun DiaryEntryCard(
             }
             Column {
                 Button(onClick = onDelete) { Text(StringKeys.delete) }
-                Text(entry.timerStatusLabel, color = AppColors.textSecondary)
+                if (entry.isTimerStatusVisible) {
+                    Text(entry.timerStatusLabel, color = AppColors.textSecondary)
+                }
                 if (entry.canStartTimer) Button(onClick = onStart) { Text(StringKeys.start) }
                 if (entry.canCancelTimer) Button(onClick = onCancel) { Text(StringKeys.cancelTimer) }
                 if (entry.canMarkCompleted) Button(onClick = onComplete) { Text(StringKeys.alreadyDone) }
@@ -271,7 +272,7 @@ private fun EntryEditor(
                 color = AppColors.textPrimary,
             )
             Text(
-                text = StringKeys.area,
+                text = StringKeys.optionalArea,
                 style = MaterialTheme.typography.labelLarge,
                 color = AppColors.textSecondary,
             )
@@ -339,6 +340,8 @@ private fun EntryEditor(
                 onValueChange = { onAction(DiaryAction.TextChanged(it)) },
                 label = { Text(StringKeys.note) },
                 minLines = 3,
+                isError = uiState.hasEntryTextError,
+                supportingText = { Text(uiState.entryTextError) },
             )
             Text(uiState.timerLabel, color = AppColors.textSecondary)
             when (val operation = uiState.entryOperation) {
@@ -374,21 +377,13 @@ private fun EntryEditor(
 @Preview(showBackground = true)
 @Composable
 private fun DiaryScreenPreview() {
-    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
     val entries = EntryDummyData().generate()
     ViewModuleTheme {
         DiaryScreen(
-            uiState = DiaryUiState(
-                selectedDate = today,
-                isTodaySelected = true,
-                selectedDateLabel = today.toString(),
+            uiState = DiaryOperator.initialState().copy(
                 entries = entries,
                 entryItems = DiaryOperator.renderEntryItems(entries),
-                areaOptions = emptyList(),
-                isEditorVisible = false,
-                selectedArea = null,
-                text = "",
-                dayQuote = "",
+                isEditorVisible = true,
             ),
             onAction = {},
         )

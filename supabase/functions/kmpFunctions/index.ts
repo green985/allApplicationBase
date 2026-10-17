@@ -1,9 +1,10 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const fixedUserId = "02af726d-aa75-4301-a410-049d214841f9";
-const entrySelect = "id, area_id, text, entry_date, created_at, updated_at, duration_seconds, timer_started_at, timer_ends_at, timer_cancelled_at, completed_at";
+const entrySelect = "id, user_id, area_id, text, entry_date, created_at, updated_at, duration_seconds, timer_started_at, timer_ends_at, timer_cancelled_at, completed_at";
 const maxDurationSeconds = 1440 * 60;
-const validAreas = new Set(["WORK", "BODY", "HEALTH", "MIND", "CHARACTER", "PEOPLE", "LIFE", "IDLE"]);
+const maxTextLength = 3000;
+const validAreas = new Set(["WORK", "BODY", "MIND", "CHARACTER", "LIFE"]);
 const jsonHeaders = {
   "Content-Type": "application/json",
   "Access-Control-Allow-Origin": "*",
@@ -141,6 +142,7 @@ function mapQuote(row: {
 
 function mapEntry(row: {
   id: string;
+  user_id: string;
   area_id: string | null;
   text: string;
   entry_date: string;
@@ -157,7 +159,7 @@ function mapEntry(row: {
     areaId: row.area_id,
     text: row.text,
     entryDate: row.entry_date,
-    createdBy: null,
+    createdBy: row.user_id,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     durationSeconds: row.duration_seconds,
@@ -293,7 +295,7 @@ async function createEntry(request: Request): Promise<Response> {
   ) {
     return response(null, "Entry alanları geçersiz.", false, 400);
   }
-  const areaId = typeof body?.areaId === "string" ? body.areaId.trim() : null;
+  const areaId = typeof body?.areaId === "string" ? body.areaId : null;
   const text = typeof body?.text === "string" ? body.text : "";
   const entryDate = typeof body?.entryDate === "string" ? body.entryDate : "";
   const durationSeconds = typeof body?.durationSeconds === "number" ? body.durationSeconds : null;
@@ -303,8 +305,8 @@ async function createEntry(request: Request): Promise<Response> {
     return response(null, "Geçerli bir areaId gerekli.", false, 400);
   }
 
-  if (text.length > 2000) {
-    return response(null, "Text 2000 karakteri geçemez.", false, 400);
+  if (text.length > maxTextLength) {
+    return response(null, `Text ${maxTextLength} karakteri geçemez.`, false, 400);
   }
 
   if (durationSeconds !== null && !isValidDuration(durationSeconds)) {
@@ -333,6 +335,9 @@ async function createEntry(request: Request): Promise<Response> {
 
   if (error || !data) {
     console.error("createEntry failed", error?.code);
+    if (error?.code === "23514" || error?.code === "22023") {
+      return response(null, "Entry alanları geçersiz.", false, 400);
+    }
     return response(null, "Diary kaydı oluşturulamadı.", false, 500);
   }
 
@@ -359,7 +364,7 @@ async function updateEntry(request: Request, entryId: string): Promise<Response>
     return response(null, "Entry alanları geçersiz.", false, 400);
   }
   const areaId = body.areaId === null ? null :
-    typeof body.areaId === "string" ? body.areaId.trim() : undefined;
+    typeof body.areaId === "string" ? body.areaId : undefined;
   const text = typeof body?.text === "string" ? body.text : undefined;
   const entryDate = typeof body?.entryDate === "string" ? body.entryDate : undefined;
   const durationSeconds = body.durationSeconds === null ? null :
@@ -380,8 +385,8 @@ async function updateEntry(request: Request, entryId: string): Promise<Response>
     return response(null, "Geçerli bir areaId gerekli.", false, 400);
   }
 
-  if (text !== undefined && text.length > 2000) {
-    return response(null, "Text 2000 karakteri geçemez.", false, 400);
+  if (text !== undefined && text.length > maxTextLength) {
+    return response(null, `Text ${maxTextLength} karakteri geçemez.`, false, 400);
   }
 
   if (entryDate !== undefined && !isValidDate(entryDate)) {
@@ -399,11 +404,6 @@ async function updateEntry(request: Request, entryId: string): Promise<Response>
   if (durationSeconds !== undefined) updates.duration_seconds = durationSeconds;
   if (body.markAsCompleted !== undefined) {
     updates.completed_at = markAsCompleted ? new Date().toISOString() : null;
-    if (!markAsCompleted) {
-      updates.timer_started_at = null;
-      updates.timer_ends_at = null;
-      updates.timer_cancelled_at = null;
-    }
   }
   updates.updated_at = new Date().toISOString();
 
@@ -421,7 +421,7 @@ async function updateEntry(request: Request, entryId: string): Promise<Response>
       return response(null, "Çalışan timer süresi değiştirilemez.", false, 409);
     }
     if (error.code === "23514") {
-      return response(null, "Timer bilgileri bu güncellemeye izin vermiyor.", false, 400);
+      return response(null, "Entry veya timer bilgileri bu güncellemeye izin vermiyor.", false, 400);
     }
     return response(null, "Diary kaydı güncellenemedi.", false, 500);
   }

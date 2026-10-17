@@ -34,7 +34,7 @@ data class DiaryUiState(
     val customDurationMinutes: String = "",
     val selectedDurationSeconds: Long? = null,
     val isEntryCompleted: Boolean = false,
-    val timerStatus: EntryTimerStatus = EntryTimerStatus.PENDING,
+    val timerStatus: EntryTimerStatus = EntryTimerStatus.NONE,
     val timerLabel: String = "",
     val primaryButtonLabel: String = "",
     val canCreateOrUpdateEntry: Boolean = false,
@@ -46,6 +46,8 @@ data class DiaryUiState(
     val canCancelEditorTimer: Boolean = false,
     val isHtmlExportAvailable: Boolean = false,
     val canExportArchive: Boolean = true,
+    val hasEntryTextError: Boolean = false,
+    val entryTextError: String = "",
 )
 
 data class DiaryEntryUiState(
@@ -60,6 +62,8 @@ data class DiaryEntryUiState(
     val canStartTimer: Boolean = false,
     val canCancelTimer: Boolean = false,
     val canMarkCompleted: Boolean = false,
+    val isAreaVisible: Boolean = false,
+    val isTimerStatusVisible: Boolean = false,
 )
 
 data class DiaryAreaUiState(

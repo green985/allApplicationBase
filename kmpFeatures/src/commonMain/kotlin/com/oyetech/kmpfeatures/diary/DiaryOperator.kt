@@ -336,12 +336,16 @@ class DiaryOperator(
 
     private fun DiaryUiState.withEditorState(now: Instant = Clock.System.now()): DiaryUiState {
         val entry = entries.firstOrNull { it.id == editingEntryId }
-        val status = entry?.let { timerStatus(it, now) } ?: EntryTimerStatus.PENDING
+        val status = entry?.let { timerStatus(it, now) } ?: when {
+            isEntryCompleted -> EntryTimerStatus.FINISHED
+            selectedDurationSeconds != null -> EntryTimerStatus.PENDING
+            else -> EntryTimerStatus.NONE
+        }
         val isCustom = selectedTimerPreset == EntryTimerPreset.CUSTOM
         val validCustom = !isCustom || customDurationSeconds(customDurationMinutes) != null
         val hasContent = selectedArea != null || text.isNotBlank() ||
-                selectedDurationSeconds != null || isEntryCompleted ||
-                (entry?.completedAt != null && !isEntryCompleted)
+                selectedDurationSeconds != null || isEntryCompleted
+        val validText = text.length <= MAX_ENTRY_TEXT_LENGTH
         val isSaving = entryOperation is OperationState.Loading
         val canChange = status != EntryTimerStatus.RUNNING
         return copy(
@@ -354,7 +358,11 @@ class DiaryOperator(
             } else {
                 StringKeys.save
             },
-            canCreateOrUpdateEntry = hasContent && validCustom,
+            canCreateOrUpdateEntry = hasContent && validCustom && validText,
+            hasEntryTextError = !validText,
+            entryTextError = if (validText) "" else StringKeys.entryTextTooLong(
+                MAX_ENTRY_TEXT_LENGTH
+            ),
             isCustomDurationVisible = isCustom,
             customDurationError = if (isCustom && !validCustom && customDurationMinutes.isNotEmpty()) {
                 StringKeys.customDurationInvalid(MAX_CUSTOM_DURATION_MINUTES)
@@ -409,7 +417,7 @@ class DiaryOperator(
             is DiaryAction.AreaSelected -> {
                 updateState {
                     copy(
-                        selectedArea = action.value,
+                        selectedArea = action.value.takeUnless { it == selectedArea },
                         entryIsDirty = true,
                         entryRevision = entryRevision + 1,
                     ).withEditorState()
@@ -734,7 +742,9 @@ class DiaryOperator(
         if (!currentState.canCreateOrUpdateEntry) {
             snackbarDelegate.triggerSnackbarState(
                 message =
-                    if (currentState.selectedTimerPreset == EntryTimerPreset.CUSTOM) {
+                    if (currentState.hasEntryTextError) {
+                        currentState.entryTextError
+                    } else if (currentState.selectedTimerPreset == EntryTimerPreset.CUSTOM) {
                         StringKeys.customDurationInvalid(MAX_CUSTOM_DURATION_MINUTES)
                     } else {
                         StringKeys.entryInputRequired
@@ -779,6 +789,7 @@ class DiaryOperator(
                                 it == (existingEntry?.completedAt != null)
                             },
                         ),
+                        clearArea = currentState.selectedArea == null && existingEntry?.areaId != null,
                     )
                     if (currentState.selectedTimerPreset == null &&
                         currentState.selectedDurationSeconds == null &&
@@ -888,6 +899,14 @@ class DiaryOperator(
 
     companion object {
         private const val MAX_CUSTOM_DURATION_MINUTES = 1440L
+        private const val MAX_ENTRY_TEXT_LENGTH = 3000
+        private val diaryAreas = listOf(
+            AreaEntry.WORK,
+            AreaEntry.BODY,
+            AreaEntry.MIND,
+            AreaEntry.CHARACTER,
+            AreaEntry.LIFE,
+        )
 
         private fun customDurationSeconds(minutes: String): Long? =
             minutes.takeIf { it.isNotEmpty() && it.all { char -> char in '0'..'9' } }
@@ -910,13 +929,14 @@ class DiaryOperator(
             entry.timerEndsAt?.let { it <= now } == true -> EntryTimerStatus.FINISHED
             entry.timerStartedAt != null && entry.timerEndsAt != null -> EntryTimerStatus.RUNNING
             entry.durationSeconds != null -> EntryTimerStatus.PENDING
-            else -> EntryTimerStatus.PENDING
+            else -> EntryTimerStatus.NONE
         }
 
         private fun timerLabel(
             entry: EntryEntity,
             now: Instant = Clock.System.now(),
         ): String = when (timerStatus(entry, now)) {
+            EntryTimerStatus.NONE -> ""
             EntryTimerStatus.PENDING -> StringKeys.pending
             EntryTimerStatus.RUNNING -> entry.timerEndsAt?.let { remainingLabel(it, now) }
                 ?: StringKeys.pending
@@ -932,7 +952,7 @@ class DiaryOperator(
             }"
         }
 
-        private fun initialState(): DiaryUiState {
+        internal fun initialState(): DiaryUiState {
             val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
             return DiaryUiState(
                 selectedDate = today,
@@ -942,7 +962,7 @@ class DiaryOperator(
                 selectedDateLabel = formatDate(today),
                 entryItems = emptyList(),
                 areaOptions = areaOptions(),
-                areaOptionRows = areaOptions().chunked(4),
+                areaOptionRows = areaOptions().chunked(3),
                 timerPresetOptions = timerPresetOptions(),
                 primaryButtonLabel = StringKeys.save,
                 isEditorVisible = false,
@@ -972,7 +992,10 @@ class DiaryOperator(
                     isTimerRunning = status == EntryTimerStatus.RUNNING,
                     canStartTimer = status == EntryTimerStatus.PENDING && entry.durationSeconds != null,
                     canCancelTimer = status == EntryTimerStatus.RUNNING,
-                    canMarkCompleted = status == EntryTimerStatus.PENDING || status == EntryTimerStatus.RUNNING,
+                    canMarkCompleted = status == EntryTimerStatus.NONE ||
+                            status == EntryTimerStatus.PENDING || status == EntryTimerStatus.RUNNING,
+                    isAreaVisible = entry.areaId != null,
+                    isTimerStatusVisible = status != EntryTimerStatus.NONE,
                 )
             }
 
@@ -994,7 +1017,7 @@ class DiaryOperator(
             )
 
         private fun areaOptions(): List<DiaryAreaUiState> =
-            AreaEntry.values().map { area ->
+            diaryAreas.map { area ->
                 DiaryAreaUiState(
                     area = area,
                     label = areaLabel(area.name),
@@ -1027,14 +1050,11 @@ class DiaryOperator(
         }
 
         private fun areaLabel(areaId: String?): String = when (areaId) {
-            null -> StringKeys.idleArea
-            AreaEntry.IDLE.name -> StringKeys.idleArea
+            null -> ""
             AreaEntry.WORK.name -> StringKeys.workArea
             AreaEntry.BODY.name -> StringKeys.bodyArea
-            AreaEntry.HEALTH.name -> StringKeys.healthArea
             AreaEntry.MIND.name -> StringKeys.mindArea
             AreaEntry.CHARACTER.name -> StringKeys.characterArea
-            AreaEntry.PEOPLE.name -> StringKeys.peopleArea
             AreaEntry.LIFE.name -> StringKeys.lifeArea
             else -> areaId
         }
