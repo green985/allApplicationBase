@@ -69,6 +69,8 @@ data class DiaryEntryUiState(
 data class DiaryAreaUiState(
     val area: AreaEntry,
     val label: String,
+    val emoji: String,
+    val description: String,
 )
 
 data class DiaryTimerPresetUiState(

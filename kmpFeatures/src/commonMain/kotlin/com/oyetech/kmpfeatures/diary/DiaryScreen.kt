@@ -1,5 +1,7 @@
 package com.oyetech.kmpfeatures.diary
 
+import allapplicationbase.kmpfeatures.generated.resources.Res
+import allapplicationbase.kmpfeatures.generated.resources.diary_area_emoji
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,15 +18,21 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -40,11 +48,15 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.oyetech.kmpmodels.entity.AreaEntry
 import com.oyetech.kmpmodels.stringKeys.StringKeys
 import com.oyetech.kmpmodels.ui.event.DiaryAction
 import com.oyetech.kmpmodels.ui.state.DiaryEntryUiState
@@ -52,6 +64,7 @@ import com.oyetech.kmpmodels.ui.state.DiaryUiState
 import com.oyetech.kmpmodels.ui.state.OperationState
 import com.oyetech.viewmodule.AppColors
 import com.oyetech.viewmodule.ViewModuleTheme
+import org.jetbrains.compose.resources.Font
 import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
 
@@ -261,11 +274,13 @@ private fun DiaryEntryCard(
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun EntryEditor(
     uiState: DiaryUiState,
     onAction: (DiaryAction) -> Unit,
 ) {
     val noteFocusRequester = remember { FocusRequester() }
+    val areaEmojiFont = FontFamily(Font(Res.font.diary_area_emoji))
 
     LaunchedEffect(Unit) {
         noteFocusRequester.requestFocus()
@@ -305,16 +320,49 @@ private fun EntryEditor(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     rowAreas.forEachIndexed { index, areaOption ->
-                        SegmentedButton(
-                            modifier = Modifier.weight(1f),
-                            selected = uiState.selectedArea == areaOption.area,
-                            onClick = { onAction(DiaryAction.AreaSelected(areaOption.area)) },
-                            shape = SegmentedButtonDefaults.itemShape(
-                                index = index,
-                                count = rowAreas.size,
-                            ),
-                        ) {
-                            Text(areaOption.label)
+                        Box(modifier = Modifier.weight(1f)) {
+                            TooltipBox(
+                                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                                    TooltipAnchorPosition.Above
+                                ),
+                                tooltip = {
+                                    PlainTooltip {
+                                        Text(
+                                            text = areaOption.description,
+                                            maxLines = 2,
+                                            overflow = TextOverflow.Ellipsis,
+                                        )
+                                    }
+                                },
+                                state = rememberTooltipState(),
+                            ) {
+                                this@SingleChoiceSegmentedButtonRow.SegmentedButton(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    selected = uiState.selectedArea == areaOption.area,
+                                    onClick = { onAction(DiaryAction.AreaSelected(areaOption.area)) },
+                                    shape = SegmentedButtonDefaults.itemShape(
+                                        index = index,
+                                        count = rowAreas.size,
+                                    ),
+                                ) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        Text(
+                                            text = areaOption.emoji,
+                                            fontSize = 16.sp,
+                                            fontFamily = areaEmojiFont,
+                                        )
+                                        Text(
+                                            text = areaOption.label,
+                                            maxLines = 1,
+                                            softWrap = false,
+                                            overflow = TextOverflow.Ellipsis,
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -409,6 +457,20 @@ private fun DiaryScreenPreview() {
                 entryItems = DiaryOperator.renderEntryItems(entries),
                 isEditorVisible = false,
                 isHtmlExportAvailable = true
+            ),
+            onAction = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, widthDp = 360)
+@Composable
+private fun DiaryEntryEditorPreview() {
+    ViewModuleTheme {
+        EntryEditor(
+            uiState = DiaryOperator.initialState().copy(
+                isEditorVisible = true,
+                selectedArea = AreaEntry.WORK,
             ),
             onAction = {},
         )

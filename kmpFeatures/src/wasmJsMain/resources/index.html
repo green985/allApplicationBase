@@ -17,7 +17,7 @@
 <body>
 <script>
     window.KMP_GOOGLE_CLIENT_ID =
-        "652520712669-dbhqp25e9uibtlsm2tt2kg6gfhhgtmb5.apps.googleusercontent.com";
+        "652520712669-5sudspef6cq60j7drtgr06rm567r0qa2.apps.googleusercontent.com";
 
     let timerAudioContext;
     const unlockTimerAudio = () => {
@@ -57,6 +57,273 @@
     };
 </script>
 <script async defer src="https://accounts.google.com/gsi/client"></script>
+<script>
+    window.KMP_AUTH = (() => {
+        const adminKey = "kmp-access-mode";
+        const listeners = new Map();
+        const requests = new Map();
+        const credentials = new Map();
+        let nextId = 0;
+        let client;
+        let authSubscription;
+        let refreshInFlight;
+        let lastSession = null;
+        let sdkReady;
+
+        const isAdmin = () => sessionStorage.getItem(adminKey) === "admin";
+        const userFor = (session) => {
+            if (isAdmin()) {
+                return { userId: "admin", username: "Admin", isAdmin: true };
+            }
+            if (!session) return null;
+            return {
+                userId: session.user.id,
+                username: session.user.user_metadata?.full_name || session.user.email || "",
+                accessToken: session.access_token,
+            };
+        };
+        const publish = (session, error = "", requiresLogin = false) => {
+            lastSession = session;
+            const payload = JSON.stringify({
+                user: userFor(session), error, requiresLogin: requiresLogin && !isAdmin(),
+            });
+            for (const callback of listeners.values()) callback(payload);
+        };
+        const errorCode = (error) => {
+            if (error.message === "login_cancelled") return "login_cancelled";
+            if (error.message === "session_expired") return "session_expired";
+            console.error("Web authentication failed", error.name, error.code || error.status || "");
+            return "session_unavailable";
+        };
+        const loadSdk = () => {
+            if (window.supabase) return Promise.resolve();
+            if (!sdkReady) {
+                sdkReady = new Promise((resolve, reject) => {
+                    const script = document.createElement("script");
+                    const timer = setTimeout(() => {
+                        script.remove();
+                        reject(new Error("Supabase SDK load timed out"));
+                    }, 10000);
+                    script.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js";
+                    script.onload = () => { clearTimeout(timer); resolve(); };
+                    script.onerror = () => {
+                        clearTimeout(timer);
+                        script.remove();
+                        reject(new Error("Supabase SDK could not be loaded"));
+                    };
+                    document.head.appendChild(script);
+                }).catch((error) => { sdkReady = null; throw error; });
+            }
+            return sdkReady;
+        };
+        const initialize = async (url, key) => {
+            if (client) return client;
+            await loadSdk();
+            if (client) return client;
+            if (!window.supabase) throw new Error("Supabase SDK could not be loaded");
+            const storageProbe = "kmp-auth-storage-check";
+            localStorage.setItem(storageProbe, "1");
+            localStorage.removeItem(storageProbe);
+            sessionStorage.getItem(adminKey);
+            client = window.supabase.createClient(url, key, {
+                auth: {
+                    persistSession: true,
+                    autoRefreshToken: true,
+                    detectSessionInUrl: true,
+                    flowType: "pkce",
+                },
+            });
+            return client;
+        };
+        const observe = () => {
+            if (authSubscription || !listeners.size || !client) return;
+            authSubscription = client.auth.onAuthStateChange((_event, session) => {
+                if (_event === "INITIAL_SESSION") return;
+                // Supabase holds an auth lock while invoking this callback.
+                setTimeout(() => {
+                    if (listeners.size) publish(session, "", _event === "SIGNED_OUT");
+                }, 0);
+            }).data.subscription;
+        };
+        const getSession = async () => {
+            const { data, error } = await client.auth.getSession();
+            if (error) throw error;
+            lastSession = data.session;
+            return data.session;
+        };
+        const refresh = async (rejectedToken) => {
+            if (!refreshInFlight) {
+                refreshInFlight = (async () => {
+                    const session = await getSession();
+                    if (!session) throw new Error("session_expired");
+                    if (session.access_token !== rejectedToken) return session;
+                    const { data, error } = await client.auth.refreshSession();
+                    if (error) throw error;
+                    if (!data.session) throw new Error("session_expired");
+                    return data.session;
+                })().finally(() => { refreshInFlight = null; });
+            }
+            return refreshInFlight;
+        };
+        const cancelGoogleCredential = (id) => {
+            const cancel = credentials.get(id);
+            if (cancel) cancel();
+        };
+        const googleCredential = (clientId, callback) => {
+            const id = ++nextId;
+            let completed = false;
+            let timer;
+            const finish = (uid, token, nonce, error) => {
+                if (completed) return;
+                completed = true;
+                clearTimeout(timer);
+                credentials.delete(id);
+                window.google?.accounts?.id?.cancel();
+                callback(uid, token, nonce, error);
+            };
+            credentials.set(id, () => finish("", "", "", "login_cancelled"));
+            timer = setTimeout(() => finish("", "", "", "google_unavailable"), 8000);
+            Promise.resolve().then(async () => {
+                if (!window.google?.accounts?.id) {
+                    finish("", "", "", "google_unavailable");
+                    return;
+                }
+                const nonce = crypto.randomUUID();
+                const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(nonce));
+                if (completed) return;
+                const hashedNonce = Array.from(new Uint8Array(digest))
+                    .map((byte) => byte.toString(16).padStart(2, "0")).join("");
+                window.google.accounts.id.initialize({
+                    client_id: clientId,
+                    nonce: hashedNonce,
+                    callback: (response) => {
+                        if (!response.credential) {
+                            finish("", "", "", "google_unavailable");
+                            return;
+                        }
+                        finish("", response.credential, nonce, "");
+                    },
+                });
+                window.google.accounts.id.prompt((notification) => {
+                    if (notification.isNotDisplayed()) {
+                        finish("", "", "", "google_unavailable");
+                    } else if (notification.isSkippedMoment()) {
+                        const reason = notification.getSkippedReason();
+                        finish("", "", "", reason === "user_cancel" ? "login_cancelled" : "google_unavailable");
+                    } else if (notification.isDismissedMoment() &&
+                        notification.getDismissedReason() !== "credential_returned") {
+                        finish("", "", "", "login_cancelled");
+                    }
+                });
+            }).catch(() => finish("", "", "", "google_unavailable"));
+            return id;
+        };
+        const login = async (clientId, request) => {
+            const credential = await new Promise((resolve) => {
+                request.cancel = () => cancelGoogleCredential(request.credentialId);
+                request.credentialId = googleCredential(clientId, (_uid, token, nonce, error) => {
+                    resolve({ token, nonce, error });
+                });
+            });
+            if (request.cancelled) throw new Error("login_cancelled");
+            if (credential.error === "login_cancelled") throw new Error("login_cancelled");
+            if (credential.token) {
+                const { data, error } = await client.auth.signInWithIdToken({
+                    provider: "google",
+                    token: credential.token,
+                    nonce: credential.nonce,
+                });
+                if (error) throw error;
+                sessionStorage.removeItem(adminKey);
+                return data.session;
+            }
+            const { data, error } = await client.auth.signInWithOAuth({
+                provider: "google",
+                options: {
+                    redirectTo: window.location.origin + window.location.pathname,
+                    skipBrowserRedirect: true,
+                },
+            });
+            if (error) throw error;
+            if (!data.url) throw new Error("Google redirect URL is missing");
+            if (request.cancelled) throw new Error("login_cancelled");
+            sessionStorage.removeItem(adminKey);
+            window.location.assign(data.url);
+            return new Promise(() => {});
+        };
+        return {
+            googleCredential,
+            cancelGoogleCredential,
+            subscribe(callback) {
+                const id = ++nextId;
+                listeners.set(id, callback);
+                observe();
+                return id;
+            },
+            unsubscribe(id) {
+                listeners.delete(id);
+                if (!listeners.size && authSubscription) {
+                    authSubscription.unsubscribe();
+                    authSubscription = null;
+                }
+            },
+            cancelRequest(id) {
+                const request = requests.get(id);
+                if (request) {
+                    request.cancelled = true;
+                    request.cancel?.();
+                    requests.delete(id);
+                }
+            },
+            request(action, clientId, rejectedToken, url, key, callback) {
+                const id = ++nextId;
+                const request = { cancelled: false };
+                requests.set(id, request);
+                Promise.resolve().then(async () => {
+                    if (request.cancelled) return;
+                    // Public admin access remains usable if the auth CDN is unavailable.
+                    if (action === "Admin") {
+                        sessionStorage.setItem(adminKey, "admin");
+                        publish(lastSession);
+                        return userFor(null);
+                    }
+                    if ((action === "Restore" || action === "Token") && isAdmin()) return userFor(null);
+                    await initialize(url, key);
+                    observe();
+                    let session;
+                    if (action === "Login") {
+                        session = await login(clientId, request);
+                    } else if (action === "Refresh") {
+                        session = await refresh(rejectedToken);
+                    } else if (action === "Expire") {
+                        const current = await getSession();
+                        if (rejectedToken && current?.access_token !== rejectedToken) {
+                            return userFor(current);
+                        }
+                        const { error } = await client.auth.signOut({ scope: "local" });
+                        if (error) throw error;
+                        session = null;
+                    } else {
+                        if (isAdmin()) return userFor(null);
+                        session = await getSession();
+                    }
+                    if (request.cancelled) return;
+                    if (!session && (action === "Token" || action === "Refresh")) {
+                        publish(null, "", true);
+                        throw new Error("session_expired");
+                    }
+                    publish(session);
+                    return userFor(session);
+                }).then((user) => {
+                    if (!request.cancelled) callback(JSON.stringify({ user }));
+                }).catch((error) => {
+                    if (!request.cancelled) callback(JSON.stringify({ error: errorCode(error) }));
+                }).finally(() => requests.delete(id));
+                return id;
+            },
+        };
+    })();
+</script>
 <script src="kmpFeatures.js?v=view-module-20260925"></script>
 </body>
 </html>

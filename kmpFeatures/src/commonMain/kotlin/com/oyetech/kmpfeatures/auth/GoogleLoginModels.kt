@@ -20,4 +20,16 @@ data class AuthenticatedUser(
     val accessToken: String = "",
     val userId: String = "",
     val username: String? = "",
+    val isAdmin: Boolean = false,
+)
+
+enum class GoogleSessionAction {
+    Restore, Login, Admin, Token, Refresh, Expire,
+}
+
+@Serializable
+internal data class GoogleSessionResponse(
+    val user: AuthenticatedUser? = null,
+    val error: String = "",
+    val requiresLogin: Boolean = false,
 )

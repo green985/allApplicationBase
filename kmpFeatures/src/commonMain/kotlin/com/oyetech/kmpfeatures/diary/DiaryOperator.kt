@@ -22,6 +22,7 @@ import com.oyetech.kmpmodels.ui.state.DiaryAreaUiState
 import com.oyetech.kmpmodels.ui.state.DiaryEntryUiState
 import com.oyetech.kmpmodels.ui.state.DiaryTimerPresetUiState
 import com.oyetech.kmpmodels.ui.state.DiaryUiState
+import com.oyetech.kmpmodels.ui.state.ErrorCode
 import com.oyetech.kmpmodels.ui.state.OperationState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -676,7 +677,11 @@ class DiaryOperator(
             onError = { error ->
                 copy(
                     dayQuote = "",
-                    quoteOperation = OperationState.Error(error),
+                    quoteOperation = if (error.code == ErrorCode.NotFound) {
+                        OperationState.Idle
+                    } else {
+                        OperationState.Error(error)
+                    },
                 )
             },
         )
@@ -1032,9 +1037,18 @@ class DiaryOperator(
 
         private fun areaOptions(): List<DiaryAreaUiState> =
             diaryAreas.map { area ->
+                val (emoji, description) = when (area) {
+                    AreaEntry.WORK -> "🏗️" to StringKeys.workAreaDescription
+                    AreaEntry.BODY -> "💪" to StringKeys.bodyAreaDescription
+                    AreaEntry.MIND -> "🧠" to StringKeys.mindAreaDescription
+                    AreaEntry.CHARACTER -> "🧭" to StringKeys.characterAreaDescription
+                    AreaEntry.LIFE -> "🌍" to StringKeys.lifeAreaDescription
+                }
                 DiaryAreaUiState(
                     area = area,
                     label = areaLabel(area.name),
+                    emoji = emoji,
+                    description = description,
                 )
             }
 

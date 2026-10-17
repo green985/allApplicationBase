@@ -9,7 +9,7 @@ const jsonHeaders = {
   "Content-Type": "application/json",
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, PUT, POST, PATCH, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "authorization, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-kmp-access-mode",
 };
 
 type GenericResponse<T> = {
@@ -43,6 +43,7 @@ type DiaryEntry = {
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL")!,
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  { auth: { persistSession: false, autoRefreshToken: false } },
 );
 
 function response<T>(
@@ -170,11 +171,11 @@ function mapEntry(row: {
   };
 }
 
-async function getQuote(date: string): Promise<Response> {
+async function getQuote(date: string, userId: string): Promise<Response> {
   const { data, error } = await supabase
     .from("diary_quotes")
     .select("quote_date, quote, created_at, updated_at")
-    .eq("user_id", fixedUserId)
+    .eq("user_id", userId)
     .eq("quote_date", date)
     .maybeSingle();
 
@@ -189,7 +190,7 @@ async function getQuote(date: string): Promise<Response> {
   return response(mapQuote(data), "Günün sözü başarıyla getirildi.", true);
 }
 
-async function updateQuote(request: Request, date: string): Promise<Response> {
+async function updateQuote(request: Request, date: string, userId: string): Promise<Response> {
   const body = await request.json().catch(() => null) as Record<string, unknown> | null;
   const quote = typeof body?.quote === "string" ? body.quote.trim() : "";
 
@@ -201,7 +202,7 @@ async function updateQuote(request: Request, date: string): Promise<Response> {
     .from("diary_quotes")
     .upsert(
       {
-        user_id: fixedUserId,
+        user_id: userId,
         quote_date: date,
         quote,
         updated_at: new Date().toISOString(),
@@ -218,11 +219,11 @@ async function updateQuote(request: Request, date: string): Promise<Response> {
   return response(mapQuote(data), "Günün sözü başarıyla kaydedildi.", true);
 }
 
-async function getEntries(date: string): Promise<Response> {
+async function getEntries(date: string, userId: string): Promise<Response> {
   const { data, error } = await supabase
     .from("diary_entries")
     .select(entrySelect)
-    .eq("user_id", fixedUserId)
+    .eq("user_id", userId)
     .eq("entry_date", date)
     .order("created_at", { ascending: false });
 
@@ -238,7 +239,7 @@ async function getEntries(date: string): Promise<Response> {
   );
 }
 
-async function exportDiaryArchive(): Promise<Response> {
+async function exportDiaryArchive(userId: string): Promise<Response> {
   const entries: DiaryEntry[] = [];
   const quotes: DiaryQuote[] = [];
   const pageSize = 500;
@@ -248,7 +249,7 @@ async function exportDiaryArchive(): Promise<Response> {
     const { data, error } = await supabase
       .from("diary_entries")
       .select(entrySelect)
-      .eq("user_id", fixedUserId)
+      .eq("user_id", userId)
       .lte("created_at", exportedAt)
       .order("entry_date")
       .order("created_at")
@@ -266,7 +267,7 @@ async function exportDiaryArchive(): Promise<Response> {
     const { data, error } = await supabase
       .from("diary_quotes")
       .select("quote_date, quote, created_at, updated_at")
-      .eq("user_id", fixedUserId)
+      .eq("user_id", userId)
       .lte("created_at", exportedAt)
       .order("quote_date")
       .order("id")
@@ -282,7 +283,7 @@ async function exportDiaryArchive(): Promise<Response> {
   return response({ entries, quotes }, "Günlük arşivi getirildi.", true);
 }
 
-async function createEntry(request: Request): Promise<Response> {
+async function createEntry(request: Request, userId: string): Promise<Response> {
   const body: unknown = await request.json().catch(() => null);
   if (!isEntryBody(body) || hasClientTimerTimes(body)) {
     return response(null, "Geçerli bir entry isteği gerekli.", false, 400);
@@ -323,7 +324,7 @@ async function createEntry(request: Request): Promise<Response> {
   const { data, error } = await supabase
     .from("diary_entries")
     .insert({
-      user_id: fixedUserId,
+      user_id: userId,
       entry_date: entryDate,
       area_id: areaId,
       text,
@@ -349,7 +350,7 @@ async function createEntry(request: Request): Promise<Response> {
   );
 }
 
-async function updateEntry(request: Request, entryId: string): Promise<Response> {
+async function updateEntry(request: Request, entryId: string, userId: string): Promise<Response> {
   const body: unknown = await request.json().catch(() => null);
   if (!isEntryBody(body) || hasClientTimerTimes(body)) {
     return response(null, "Geçerli bir entry isteği gerekli.", false, 400);
@@ -411,7 +412,7 @@ async function updateEntry(request: Request, entryId: string): Promise<Response>
     .from("diary_entries")
     .update(updates)
     .eq("id", entryId)
-    .eq("user_id", fixedUserId)
+    .eq("user_id", userId)
     .select(entrySelect)
     .maybeSingle();
 
@@ -437,7 +438,7 @@ async function updateEntry(request: Request, entryId: string): Promise<Response>
   );
 }
 
-async function clearEntryDuration(request: Request, entryId: string): Promise<Response> {
+async function clearEntryDuration(request: Request, entryId: string, userId: string): Promise<Response> {
   const body: unknown = await request.json().catch(() => null);
   if (!isEntryBody(body) || body.durationSeconds !== null || Object.keys(body).length !== 1) {
     return response(null, "Süre kaldırmak için yalnız durationSeconds: null gerekli.", false, 400);
@@ -447,7 +448,7 @@ async function clearEntryDuration(request: Request, entryId: string): Promise<Re
     .from("diary_entries")
     .update({ duration_seconds: null, updated_at: new Date().toISOString() })
     .eq("id", entryId)
-    .eq("user_id", fixedUserId)
+    .eq("user_id", userId)
     .select(entrySelect)
     .maybeSingle();
 
@@ -466,12 +467,12 @@ async function clearEntryDuration(request: Request, entryId: string): Promise<Re
   return response(mapEntry(data), "Diary kaydının süresi kaldırıldı.", true);
 }
 
-async function deleteEntry(entryId: string): Promise<Response> {
+async function deleteEntry(entryId: string, userId: string): Promise<Response> {
   const { data, error } = await supabase
     .from("diary_entries")
     .delete()
     .eq("id", entryId)
-    .eq("user_id", fixedUserId)
+    .eq("user_id", userId)
     .select(entrySelect)
     .maybeSingle();
 
@@ -490,11 +491,11 @@ async function deleteEntry(entryId: string): Promise<Response> {
   );
 }
 
-async function startEntryTimer(entryId: string): Promise<Response> {
+async function startEntryTimer(entryId: string, userId: string): Promise<Response> {
   const { data, error } = await supabase
     .rpc("start_diary_entry_timer", {
       p_entry_id: entryId,
-      p_user_id: fixedUserId,
+      p_user_id: userId,
     })
     .returns<Parameters<typeof mapEntry>[0][]>()
     .single();
@@ -511,11 +512,11 @@ async function startEntryTimer(entryId: string): Promise<Response> {
   return response(mapEntry(data), "Timer başlatıldı.", true);
 }
 
-async function cancelEntryTimer(entryId: string): Promise<Response> {
+async function cancelEntryTimer(entryId: string, userId: string): Promise<Response> {
   const { data, error } = await supabase
     .rpc("cancel_diary_entry_timer", {
       p_entry_id: entryId,
-      p_user_id: fixedUserId,
+      p_user_id: userId,
     })
     .returns<Parameters<typeof mapEntry>[0][]>()
     .single();
@@ -536,10 +537,37 @@ Deno.serve(async (request) => {
 
   const segments = pathSegments(request);
   try {
+    const accessMode = request.headers.get("X-KMP-Access-Mode");
+    let userId: string;
+    if (accessMode === "admin") {
+      // Intentionally public legacy data; this mode never selects a Google user's ID.
+      userId = fixedUserId;
+    } else {
+      if (accessMode !== null) {
+        return response(null, "Geçersiz erişim modu.", false, 400);
+      }
+      const authorization = request.headers.get("Authorization") ?? "";
+      const token = /^Bearer\s+(\S+)$/i.exec(authorization)?.[1];
+      if (!token) {
+        return response(null, "Google ile giriş gerekli.", false, 401);
+      }
+      const { data, error } = await supabase.auth.getUser(token);
+      if (error) {
+        if (!error.status || error.status >= 500 || error.status === 429) {
+          console.error("User verification unavailable", error.name, error.status);
+          return response(null, "Oturum doğrulama servisine ulaşılamadı.", false, 503);
+        }
+        return response(null, "Oturum geçersiz veya sona ermiş.", false, 401);
+      }
+      if (!data.user) {
+        return response(null, "Google ile giriş gerekli.", false, 401);
+      }
+      userId = data.user.id;
+    }
     const diaryRoute = segments.slice(segments.indexOf("diary"));
     if (diaryRoute.length === 2 && diaryRoute[0] === "diary" && diaryRoute[1] === "export") {
       return request.method === "GET"
-        ? await exportDiaryArchive()
+        ? await exportDiaryArchive(userId)
         : response(null, "Method not allowed.", false, 405);
     }
 
@@ -550,11 +578,11 @@ Deno.serve(async (request) => {
       }
 
       if (request.method === "GET") {
-        return getQuote(date);
+        return getQuote(date, userId);
       }
 
       if (request.method === "PUT") {
-        return updateQuote(request, date);
+        return updateQuote(request, date, userId);
       }
     }
 
@@ -564,11 +592,11 @@ Deno.serve(async (request) => {
         ((route[1] === "days" && route.length === 4) || route.length === 2)) {
         const date = route[1] === "days" ? dateFromRequest(request) : entryDateFromRequest(request);
         return date
-          ? await getEntries(date)
+          ? await getEntries(date, userId)
           : response(null, "Geçerli bir tarih gerekli.", false, 400);
       }
       if (request.method === "POST" && route.length === 2) {
-        return await createEntry(request);
+        return await createEntry(request, userId);
       }
       const isItemMethod = route.length === 3 && ["PATCH", "DELETE"].includes(request.method);
       const isTimerMethod = route.length === 5 && request.method === "POST";
@@ -577,11 +605,11 @@ Deno.serve(async (request) => {
         if (!entryId || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(entryId)) {
           return response(null, "Geçerli bir entry id gerekli.", false, 400);
         }
-        if (request.method === "PATCH") return await updateEntry(request, entryId);
-        if (request.method === "DELETE") return await deleteEntry(entryId);
-        if (route[4] === "start") return await startEntryTimer(entryId);
-        if (route[4] === "cancel") return await cancelEntryTimer(entryId);
-        if (route[4] === "clear-duration") return await clearEntryDuration(request, entryId);
+        if (request.method === "PATCH") return await updateEntry(request, entryId, userId);
+        if (request.method === "DELETE") return await deleteEntry(entryId, userId);
+        if (route[4] === "start") return await startEntryTimer(entryId, userId);
+        if (route[4] === "cancel") return await cancelEntryTimer(entryId, userId);
+        if (route[4] === "clear-duration") return await clearEntryDuration(request, entryId, userId);
       }
     }
 

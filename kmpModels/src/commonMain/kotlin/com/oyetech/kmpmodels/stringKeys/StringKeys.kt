@@ -11,6 +11,10 @@ object StringKeys {
     const val back = "Geri"
     const val unconfiguredGoogleClientId = "Google Web Client ID yapılandırılmamış"
     const val googleLoginFailed = "Google login failed"
+    const val sessionExpired = "Oturumunuz sona erdi. Google ile tekrar giriş yapın."
+    const val sessionUnavailable =
+        "Oturum kontrol edilemedi. Bağlantınızı kontrol edip tekrar deneyin."
+    const val googleLoginCancelled = "Google girişi iptal edildi."
     const val unknownUser = "daha belli degil !"
     const val adminUsername = "Admin"
     fun username(username: String): String = "Kullanıcı: $username"
@@ -68,6 +72,11 @@ object StringKeys {
     const val mindArea = "Zihin"
     const val characterArea = "Karakter"
     const val lifeArea = "Yaşam"
+    const val workAreaDescription = "Bir şey üretmek, proje ve hedef geliştirmek"
+    const val bodyAreaDescription = "Spor, fiziksel sağlık ve bakım"
+    const val mindAreaDescription = "Öğrenme, düşünme ve araştırma"
+    const val characterAreaDescription = "Değerler, disiplin ve kişisel yön"
+    const val lifeAreaDescription = "İnsanlar, seyahat ve deneyimler"
 
     const val operatorExample = "Operator example"
     fun completedOperations(count: Int): String = "Completed operations: $count"

@@ -24,16 +24,17 @@ object KmpFeaturesKoin {
     val module: Module = module {
         singleOf(::NavigationUseCase)
         singleOf(::SnackbarDelegate)
+        singleOf(::GoogleIdentityProvider)
+        singleOf(::GoogleLoginOperation)
         single {
+            val sessionOperation = { get<GoogleLoginOperation>() }
             HttpClient {
-                install(KMPHeaderInterceptor)
+                install(KMPHeaderInterceptor(sessionOperation))
                 install(ContentNegotiation) {
                     json(Json { ignoreUnknownKeys = true })
                 }
             }
         }
-        singleOf(::GoogleIdentityProvider)
-        singleOf(::GoogleLoginOperation)
         singleOf(::DiaryEndpointOperation)
         factory { parameters ->
             LoginOperator(
@@ -60,6 +61,7 @@ object KmpFeaturesKoin {
             HomeOperator(
                 operatorScope = parameters.get<CoroutineScope>(),
                 navigationUseCase = get(),
+                googleLoginOperation = get(),
             )
         }
         factory { parameters ->

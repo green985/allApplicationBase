@@ -62,6 +62,19 @@ fun HomeScreen(
         Button(onClick = { onAction(HomeAction.AdminLoginClicked) }) {
             Text(StringKeys.adminLogin)
         }
+        if (uiState.showGoogleLogin) {
+            Button(onClick = { onAction(HomeAction.GoogleLoginClicked) }) {
+                Text(StringKeys.continueWithGoogle)
+            }
+        }
+        if (uiState.errorMessage.isNotBlank()) {
+            Text(text = uiState.errorMessage, color = AppColors.error)
+        }
+        if (uiState.canRetrySession) {
+            Button(onClick = { onAction(HomeAction.RetrySessionClicked) }) {
+                Text(StringKeys.retry)
+            }
+        }
         Button(onClick = { onAction(HomeAction.OperatorExampleClicked) }) {
             Text(StringKeys.openOperatorExample)
         }

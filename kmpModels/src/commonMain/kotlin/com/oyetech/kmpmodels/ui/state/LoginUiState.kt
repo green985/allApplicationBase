@@ -6,4 +6,7 @@ data class LoginUiState(
     val isAuthenticated: Boolean = false,
     val username: String = "",
     val errorMessage: String = "",
+    val userId: String = "",
+    val isAdmin: Boolean = false,
+    val requiresLogin: Boolean = false,
 )

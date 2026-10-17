@@ -28,6 +28,8 @@ class LoginOperator(
     }
 
     private fun loginWithGoogle() {
+        if (state.value.isLoading) return
+        val previousSessionKey = googleLoginOperation.sessionKey
         val clientId = googleWebClientId()
         if (clientId.isBlank() || clientId.startsWith("REPLACE_")) {
             updateState {
@@ -50,7 +52,11 @@ class LoginOperator(
                             username = user.username ?: StringKeys.unknownUser,
                         )
                     }
-                    navigationUseCase.navigateTo(RouteKMP.Diary)
+                    if (!googleLoginOperation.supportsSessions ||
+                        googleLoginOperation.sessionKey == previousSessionKey
+                    ) {
+                        navigationUseCase.navigateTo(RouteKMP.Diary)
+                    }
                 },
                 onFailure = { error ->
                     updateState {
@@ -66,6 +72,31 @@ class LoginOperator(
     }
 
     private fun loginAsLocalAdmin() {
+        if (state.value.isLoading) return
+        if (googleLoginOperation.supportsSessions) {
+            val previousSessionKey = googleLoginOperation.sessionKey
+            updateState { copy(isLoading = true, isError = false, errorMessage = "") }
+            launch {
+                googleLoginOperation.selectAdmin().fold(
+                    onSuccess = {
+                        updateState { copy(isLoading = false) }
+                        if (googleLoginOperation.sessionKey == previousSessionKey) {
+                            navigationUseCase.navigateTo(RouteKMP.Diary)
+                        }
+                    },
+                    onFailure = {
+                        updateState {
+                            copy(
+                                isLoading = false,
+                                isError = true,
+                                errorMessage = StringKeys.sessionUnavailable
+                            )
+                        }
+                    },
+                )
+            }
+            return
+        }
         updateState {
             copy(
                 isAuthenticated = true,
