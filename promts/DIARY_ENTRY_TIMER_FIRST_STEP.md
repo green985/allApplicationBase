@@ -15,7 +15,8 @@ Kullanıcı aşağıdaki bilgilerden yalnız timer süresini seçerek bile entry
 - Not: opsiyonel
 - Timer süresi: entry oluşturmak için tek başına yeterli
 
-Entry oluşturulduğunda backend gerçek bir `id` döndürür ve editor dialogu kapanmaz. Bundan sonraki
+Entry oluşturulduğunda backend gerçek bir `id` döndürür. Autosave editorü açık tutar;
+kullanıcının `Kaydet` butonu başarılı kayıttan sonra dialogu kapatır. Bundan sonraki
 alan, not ve timer güncellemeleri aynı entry id üzerinden yapılır.
 
 Dialog kapanırsa:
@@ -140,7 +141,7 @@ id üzerinde çalışmalıdır.
 ## Kaydetme ve dialog davranışı
 
 - Timer preset veya geçerli özel süre seçilmişse alan/not boş olsa bile kayıt oluşturulabilmelidir.
-- İlk `Kaydet` işlemi POST ile entry oluşturur ve dialogu açık bırakır.
+- İlk `Kaydet` işlemi POST ile entry oluşturur ve başarılı kayıttan sonra dialogu kapatır.
 - Create başarılı olunca `editingEntryId = response.id` yapılmalıdır.
 - Sonraki değişiklikler yeni POST değil aynı id üzerinde PATCH kullanmalıdır.
 - Timer seçimini değiştirmek yeni entry oluşturmamalıdır.
@@ -150,7 +151,8 @@ id üzerinde çalışmalıdır.
     - istek bitmeden dialogu ve local veriyi yok etme,
     - başarıdan sonra dialogu kapat ve entry'yi listede `PENDING` göster,
     - hata olursa dialog açık kalsın ve retry mümkün olsun.
-- Başarılı kayıtta dialogun varsayılan olarak kapanmaması gerekir.
+- Autosave dialogu kapatmaz. `Kaydet`, devam eden autosave sırasında da kapatma isteğini
+  saklar; en son girişler kaydedilince başka tıklama gerektirmeden kapatır.
 
 Mevcut 700 ms autosave varsa gerçek server id oluşmadan PATCH çalıştırma. Timer seçimi ilk kaydı
 oluşturabilecek olsa da her seçim değişikliğinde yeni POST üretme.
@@ -399,7 +401,7 @@ Başarılı start cevabı server tarafından üretilen zamanları içermelidir:
 
 - Timer seçeneklerini alan seçiminin hemen altında göster.
 - Özel süre seçilince dakika input'u göster.
-- Entry ilk kez kaydedildiğinde dialog açık kalmalı ve buton `Başlat` durumuna geçebilmelidir.
+- Entry autosave ile kaydedildiğinde dialog açık kalmalı ve buton `Başlat` durumuna geçebilmelidir.
 - Dialog kapanınca PENDING/RUNNING entry listede görünmelidir.
 - Liste item'ında uygun duruma göre `Bekliyor`, canlı `MM:SS`, `Tamamlandı` veya `İptal edildi`
   göster.
@@ -487,7 +489,8 @@ En az şu senaryoları doğrula:
 1. Yalnız `5 dk` seçilerek alan ve not olmadan PENDING entry oluşturulur.
 2. `10 dk`, `15 dk`, `20 dk` doğru saniye değerlerine dönüşür.
 3. Özel `7 dk` değeri 420 saniye olarak kaydedilir.
-4. İlk create dialogu kapatmaz ve gerçek backend id'sini editor state'e yazar.
+4. Autosave create dialogu kapatmaz ve gerçek backend id'sini editor state'e yazar; açık `Kaydet`
+   kapatır.
 5. Create sürerken dismiss istenirse veri kaybolmaz; başarıdan sonra PENDING entry listede kalır.
 6. Timer start aynı entry'yi RUNNING yapar; ikinci entry oluşturmaz.
 7. Dialog kapalıyken entry listesinde countdown görünür.
@@ -507,7 +510,8 @@ ve background notification'ın neden sonraki aşamaya bırakıldığını kısa 
 ## Uygulama notları
 
 - `DiaryOperator`, alan/not olmadan timer seçimini kaydeder; gerçek id geldikten sonra aynı entry
-  üzerinde PATCH kullanır. İlk kayıt dialogu açık tutar; `Başlat` aynı entry'nin timerını başlatır.
+  üzerinde PATCH kullanır. Autosave dialogu açık tutar; `Kaydet` kapatır, `Başlat` aynı entry'nin
+  timerını başlatır.
 - Özel süre üst sınırı Operator'da `MAX_CUSTOM_DURATION_MINUTES = 1440` sabitidir. API de en fazla
   86400 saniyelik pozitif tam sayı kabul eder.
 - `dismissRequested`, devam eden kayıt sırasında dialogun ve girişlerin korunmasını sağlar.
