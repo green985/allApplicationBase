@@ -25,4 +25,7 @@ object EndpointStrings {
 
     fun diaryEntryTimerCancel(entryId: String): String =
         "$diaryEntries/$entryId/timer/cancel"
+
+    fun diaryEntryDurationClear(entryId: String): String =
+        "$diaryEntries/$entryId/timer/clear-duration"
 }

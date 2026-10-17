@@ -77,7 +77,7 @@ function isEntryRoute(segments: string[]): boolean {
   return (
     (route[1] === "entries" && (
       route.length === 2 || route.length === 3 ||
-      (route.length === 5 && route[3] === "timer" && ["start", "cancel"].includes(route[4]))
+      (route.length === 5 && route[3] === "timer" && ["start", "cancel", "clear-duration"].includes(route[4]))
     )) ||
     (route.length === 4 && route[1] === "days" && route[3] === "entries")
   );
@@ -393,6 +393,35 @@ async function updateEntry(request: Request, entryId: string): Promise<Response>
   );
 }
 
+async function clearEntryDuration(request: Request, entryId: string): Promise<Response> {
+  const body: unknown = await request.json().catch(() => null);
+  if (!isEntryBody(body) || body.durationSeconds !== null || Object.keys(body).length !== 1) {
+    return response(null, "Süre kaldırmak için yalnız durationSeconds: null gerekli.", false, 400);
+  }
+
+  const { data, error } = await supabase
+    .from("diary_entries")
+    .update({ duration_seconds: null, updated_at: new Date().toISOString() })
+    .eq("id", entryId)
+    .eq("user_id", fixedUserId)
+    .select(entrySelect)
+    .maybeSingle();
+
+  if (error) {
+    console.error("clearEntryDuration failed", error.code);
+    if (error.code === "22023") {
+      return response(null, "Çalışan timer süresi kaldırılamaz.", false, 409);
+    }
+    if (error.code === "23514") {
+      return response(null, "Timer bilgileri sürenin kaldırılmasına izin vermiyor.", false, 400);
+    }
+    return response(null, "Diary kaydının süresi kaldırılamadı.", false, 500);
+  }
+  if (!data) return response(null, "Diary kaydı bulunamadı.", false, 404);
+
+  return response(mapEntry(data), "Diary kaydının süresi kaldırıldı.", true);
+}
+
 async function deleteEntry(entryId: string): Promise<Response> {
   const { data, error } = await supabase
     .from("diary_entries")
@@ -501,6 +530,7 @@ Deno.serve(async (request) => {
         if (request.method === "DELETE") return await deleteEntry(entryId);
         if (route[4] === "start") return await startEntryTimer(entryId);
         if (route[4] === "cancel") return await cancelEntryTimer(entryId);
+        if (route[4] === "clear-duration") return await clearEntryDuration(request, entryId);
       }
     }
 

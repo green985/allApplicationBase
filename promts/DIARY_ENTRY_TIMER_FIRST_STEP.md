@@ -46,7 +46,9 @@ sınır tek bir sabit üzerinden tanımlanmalıdır.
 
 Seçili süre seçeneğine tekrar basılınca seçim ve özel süre inputu temizlenir; entry timersız
 kaydedilebilir. Kaydedilmiş bir sürenin kaldırılması `clearEntryDuration` fonksiyonu ve
-`EntryDurationClearPostBody` ile ayrı PATCH isteğinde açık `durationSeconds: null` gönderir.
+`EntryDurationClearPostBody` ile `POST /diary/entries/{entryId}/timer/clear-duration` isteğinde
+açık `durationSeconds: null` gönderir. Endpoint yalnız bu alanı kabul eder, entry'nin diğer
+alanlarını korur ve çalışan timer için 409 döndürür.
 Normal güncelleme `EntryPostBody` kullanır; ek bir `clearDuration` parametresi almaz.
 Çalışan timer için süre değiştirme kısıtı korunur.
 
@@ -287,6 +289,7 @@ POST  /diary/entries
 PATCH /diary/entries/{entryId}
 POST  /diary/entries/{entryId}/timer/start
 POST  /diary/entries/{entryId}/timer/cancel
+POST  /diary/entries/{entryId}/timer/clear-duration
 ```
 
 - POST, yalnız timer süresiyle entry oluşturabilmelidir; bu kayıt zaman alanlarından `PENDING`
@@ -456,6 +459,7 @@ POST {base}/diary/entries
 PATCH {base}/diary/entries/{entryId}
 POST {base}/diary/entries/{entryId}/timer/start
 POST {base}/diary/entries/{entryId}/timer/cancel
+POST {base}/diary/entries/{entryId}/timer/clear-duration
 ```
 
 7. Secret/service-role key'i kaynak koda, prompt çıktısına veya loglara yazma.

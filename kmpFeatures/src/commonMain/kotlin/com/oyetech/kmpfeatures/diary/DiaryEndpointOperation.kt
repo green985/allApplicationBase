@@ -70,8 +70,8 @@ class DiaryEndpointOperation(
     }
 
     suspend fun clearEntryDuration(entryId: String): EntryResponse {
-        println("[DiaryEndpoint] PATCH /v1/diary/entries/$entryId durationSeconds=null")
-        return httpClient.patch(EndpointStrings.diaryEntry(entryId)) {
+        println("[DiaryEndpoint] POST /v1/kmpFunctions/diary/entries/$entryId/timer/clear-duration")
+        return httpClient.post(EndpointStrings.diaryEntryDurationClear(entryId)) {
             setBody(EntryDurationClearPostBody(durationSeconds = null))
         }.bodyOrError()
     }
