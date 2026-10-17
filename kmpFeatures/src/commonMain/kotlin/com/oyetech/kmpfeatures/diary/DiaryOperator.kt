@@ -32,6 +32,7 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 import kotlinx.serialization.json.Json
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Instant
 
 class DiaryOperator(
@@ -144,7 +145,8 @@ class DiaryOperator(
                 td { white-space: pre-wrap; overflow-wrap: anywhere; }
                 .entries { overflow-x: auto; }
                 section { margin-bottom: 40px; }
-            </style></head><body>""".trimIndent(),
+            </style></head><body>
+            """.trimIndent(),
         )
         append("<h1>${title.escapeHtml()}</h1>")
         days.forEach { day ->
@@ -311,7 +313,7 @@ class DiaryOperator(
         if (runningIds.isEmpty()) return
         timerJob = launch {
             while (runningIds.isNotEmpty()) {
-                delay(1000)
+                delay(1000.milliseconds)
                 val now = Clock.System.now()
                 val finished = state.value.entries.filter {
                     it.id in runningIds && it.completedAt == null && it.timerCancelledAt == null &&
@@ -366,9 +368,13 @@ class DiaryOperator(
             },
             canCreateOrUpdateEntry = hasContent && validCustom && validText,
             hasEntryTextError = !validText,
-            entryTextError = if (validText) "" else StringKeys.entryTextTooLong(
-                MAX_ENTRY_TEXT_LENGTH
-            ),
+            entryTextError = if (validText) {
+                ""
+            } else {
+                StringKeys.entryTextTooLong(
+                    MAX_ENTRY_TEXT_LENGTH
+                )
+            },
             isCustomDurationVisible = isCustom,
             customDurationError = if (isCustom && !validCustom && customDurationMinutes.isNotEmpty()) {
                 StringKeys.customDurationInvalid(MAX_CUSTOM_DURATION_MINUTES)

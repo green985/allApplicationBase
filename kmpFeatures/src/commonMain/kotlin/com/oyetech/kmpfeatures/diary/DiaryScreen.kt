@@ -1,9 +1,11 @@
 package com.oyetech.kmpfeatures.diary
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -115,12 +117,45 @@ fun DiaryScreen(
                     Text(StringKeys.tomorrow)
                 }
             }
-            Box(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
                 FloatingActionButton(
-                    modifier = Modifier.align(Alignment.Center),
                     onClick = { onAction(DiaryAction.AddEntryClicked) },
                 ) {
                     Text(StringKeys.addEntry)
+                }
+                Box(modifier = Modifier.weight(1f)) {
+                    if (uiState.isHtmlExportAvailable) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 16.dp)
+                                .horizontalScroll(rememberScrollState()),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Button(onClick = { onAction(DiaryAction.ExportDiaryHtmlClicked) }) {
+                                Text(
+                                    text = StringKeys.downloadDiaryHtml,
+                                    maxLines = 1,
+                                    softWrap = false,
+                                )
+                            }
+                            Button(
+                                enabled = uiState.canExportArchive,
+                                onClick = { onAction(DiaryAction.ExportDiaryArchiveClicked) },
+                            ) {
+                                Text(
+                                    text = StringKeys.downloadDiaryArchive,
+                                    maxLines = 1,
+                                    softWrap = false,
+                                )
+                            }
+                        }
+                    }
                 }
             }
             OutlinedTextField(
@@ -131,17 +166,6 @@ fun DiaryScreen(
                 placeholder = { Text(StringKeys.writeTodaysQuote) },
                 singleLine = true,
             )
-            if (uiState.isHtmlExportAvailable) {
-                Button(onClick = { onAction(DiaryAction.ExportDiaryHtmlClicked) }) {
-                    Text(StringKeys.downloadDiaryHtml)
-                }
-                Button(
-                    enabled = uiState.canExportArchive,
-                    onClick = { onAction(DiaryAction.ExportDiaryArchiveClicked) },
-                ) {
-                    Text(StringKeys.downloadDiaryArchive)
-                }
-            }
             when (val operation = uiState.entriesOperation) {
                 OperationState.Idle -> Unit
                 OperationState.Loading -> CircularProgressIndicator()
@@ -383,7 +407,8 @@ private fun DiaryScreenPreview() {
             uiState = DiaryOperator.initialState().copy(
                 entries = entries,
                 entryItems = DiaryOperator.renderEntryItems(entries),
-                isEditorVisible = true,
+                isEditorVisible = false,
+                isHtmlExportAvailable = true
             ),
             onAction = {},
         )
