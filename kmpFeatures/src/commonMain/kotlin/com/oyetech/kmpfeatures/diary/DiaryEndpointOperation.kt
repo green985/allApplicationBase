@@ -15,11 +15,6 @@ import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.encodeToJsonElement
-import kotlinx.serialization.json.jsonObject
 
 class DiaryEndpointOperation(
     private val httpClient: HttpClient,
@@ -45,11 +40,11 @@ class DiaryEndpointOperation(
 
     suspend fun updateQuote(
         date: String,
-        quote: String,
+        request: DiaryQuotePutBody,
     ): DiaryQuoteResponse {
-        println("[DiaryEndpoint] PUT /v1/diary/days/$date/quote quote=\"$quote\"")
+        println("[DiaryEndpoint] PUT /v1/diary/days/$date/quote quote=\"${request.quote}\"")
         return httpClient.put(EndpointStrings.diaryDayQuote(date)) {
-            setBody(DiaryQuotePutBody(quote = quote))
+            setBody(request)
         }.bodyOrError()
     }
 
@@ -68,28 +63,23 @@ class DiaryEndpointOperation(
     suspend fun updateEntry(
         entryId: String,
         request: EntryPostBody,
-        clearArea: Boolean = false,
     ): EntryResponse {
         println(
             "[DiaryEndpoint] PATCH /v1/diary/entries/$entryId " +
                     "areaId=\"${request.areaId}\" text=\"${request.text}\"",
         )
         return httpClient.patch(EndpointStrings.diaryEntry(entryId)) {
-            setBody(
-                buildJsonObject {
-                    Json.encodeToJsonElement(request).jsonObject.forEach { (key, value) ->
-                        put(key, value)
-                    }
-                    if (clearArea) put("areaId", JsonNull)
-                },
-            )
+            setBody(request)
         }.bodyOrError()
     }
 
-    suspend fun clearEntryDuration(entryId: String): EntryResponse {
+    suspend fun clearEntryDuration(
+        entryId: String,
+        request: EntryDurationClearPostBody,
+    ): EntryResponse {
         println("[DiaryEndpoint] POST /v1/kmpFunctions/diary/entries/$entryId/timer/clear-duration")
         return httpClient.post(EndpointStrings.diaryEntryDurationClear(entryId)) {
-            setBody(EntryDurationClearPostBody(durationSeconds = null))
+            setBody(request)
         }.bodyOrError()
     }
 

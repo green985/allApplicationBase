@@ -11,6 +11,8 @@ import com.oyetech.kmpmodels.entity.AreaEntry
 import com.oyetech.kmpmodels.entity.EntryEntity
 import com.oyetech.kmpmodels.entity.EntryTimerPreset
 import com.oyetech.kmpmodels.entity.EntryTimerStatus
+import com.oyetech.kmpmodels.postbody.DiaryQuotePutBody
+import com.oyetech.kmpmodels.postbody.EntryDurationClearPostBody
 import com.oyetech.kmpmodels.postbody.EntryPostBody
 import com.oyetech.kmpmodels.response.DiaryArchiveResponse
 import com.oyetech.kmpmodels.response.EntryResponse
@@ -200,12 +202,16 @@ class DiaryOperator(
 
     private fun completeEntry(entryId: String) {
         if (state.value.entryOperation is OperationState.Loading) return
+        val entry = state.value.entries.firstOrNull { it.id == entryId } ?: return
         executeOperation(
             onStart = { copy(entryOperation = OperationState.Loading).withEditorState() },
             operation = {
                 diaryEndpointOperation.updateEntry(
                     entryId = entryId,
-                    request = EntryPostBody(markAsCompleted = true),
+                    request = EntryPostBody(
+                        areaId = entry.areaId,
+                        markAsCompleted = true,
+                    ),
                 )
             },
             onSuccess = { response ->
@@ -684,7 +690,7 @@ class DiaryOperator(
             operation = {
                 diaryEndpointOperation.updateQuote(
                     date = dateSnapshot.toString(),
-                    quote = quoteSnapshot,
+                    request = DiaryQuotePutBody(quote = quoteSnapshot),
                 )
             },
             onSuccess = {
@@ -789,13 +795,15 @@ class DiaryOperator(
                                 it == (existingEntry?.completedAt != null)
                             },
                         ),
-                        clearArea = currentState.selectedArea == null && existingEntry?.areaId != null,
                     )
                     if (currentState.selectedTimerPreset == null &&
                         currentState.selectedDurationSeconds == null &&
                         existingEntry?.durationSeconds != null
                     ) {
-                        diaryEndpointOperation.clearEntryDuration(editingEntryId)
+                        diaryEndpointOperation.clearEntryDuration(
+                            entryId = editingEntryId,
+                            request = EntryDurationClearPostBody(durationSeconds = null),
+                        )
                     } else {
                         updatedEntry
                     }

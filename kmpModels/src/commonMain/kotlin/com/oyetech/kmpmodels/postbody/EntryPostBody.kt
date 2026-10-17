@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class EntryPostBody(
-    val areaId: String? = null,
+    val areaId: String?,
     val text: String? = null,
     val entryDate: String? = null,
     val note: String? = null,
