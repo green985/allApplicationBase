@@ -78,6 +78,7 @@ data class DiaryEntryUiState(
     val isAreaVisible: Boolean = false,
     val isTimerStatusVisible: Boolean = false,
     val tagLabel: String? = null,
+    val areaEmoji: String = "",
 )
 
 data class DiaryTagUiState(

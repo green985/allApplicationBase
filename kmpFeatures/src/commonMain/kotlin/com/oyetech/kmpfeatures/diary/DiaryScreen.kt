@@ -20,8 +20,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -102,11 +102,6 @@ fun DiaryScreen(
                 .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Text(
-                text = StringKeys.diary,
-                style = MaterialTheme.typography.headlineMedium,
-                color = AppColors.textPrimary,
-            )
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -237,53 +232,70 @@ private fun DiaryEntryCard(
     onCancel: () -> Unit,
     onComplete: () -> Unit,
 ) {
+    val areaEmojiFont = FontFamily(Font(Res.font.diary_area_emoji))
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         onClick = onClick,
     ) {
-        Row(
+        Column(
             modifier = Modifier.padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Column {
-                if (entry.isAreaVisible) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    if (entry.isAreaVisible) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = entry.areaEmoji,
+                                style = MaterialTheme.typography.titleLarge,
+                                fontFamily = areaEmojiFont,
+                            )
+                            Text(
+                                text = entry.areaLabel,
+                                style = MaterialTheme.typography.titleLarge,
+                                color = AppColors.textSecondary,
+                            )
+                        }
+                    }
+                    entry.tagLabel?.let { label ->
+                        Text(
+                            text = label,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = AppColors.textSecondary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                }
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = entry.areaLabel,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = AppColors.textSecondary,
+                        text = entry.text,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = AppColors.textPrimary,
                     )
                 }
-                entry.tagLabel?.let { label ->
-                    Text(
-                        text = label,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = AppColors.textSecondary,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
+                Column {
+                    Button(onClick = onDelete) { Text(StringKeys.delete) }
+                    if (entry.isTimerStatusVisible) {
+                        Text(entry.timerStatusLabel, color = AppColors.textSecondary)
+                    }
+                    if (entry.canStartTimer) Button(onClick = onStart) { Text(StringKeys.start) }
+                    if (entry.canCancelTimer) Button(onClick = onCancel) { Text(StringKeys.cancelTimer) }
+                    if (entry.canMarkCompleted) Button(onClick = onComplete) { Text(StringKeys.alreadyDone) }
                 }
-                Text(
-                    text = entry.timeLabel,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = AppColors.textSecondary,
-                )
             }
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = entry.text,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = AppColors.textPrimary,
-                )
-            }
-            Column {
-                Button(onClick = onDelete) { Text(StringKeys.delete) }
-                if (entry.isTimerStatusVisible) {
-                    Text(entry.timerStatusLabel, color = AppColors.textSecondary)
-                }
-                if (entry.canStartTimer) Button(onClick = onStart) { Text(StringKeys.start) }
-                if (entry.canCancelTimer) Button(onClick = onCancel) { Text(StringKeys.cancelTimer) }
-                if (entry.canMarkCompleted) Button(onClick = onComplete) { Text(StringKeys.alreadyDone) }
-            }
+            Text(
+                text = entry.timeLabel,
+                style = MaterialTheme.typography.bodyMedium,
+                color = AppColors.textSecondary,
+            )
         }
     }
 }

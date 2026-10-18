@@ -23,8 +23,8 @@ import com.oyetech.kmpmodels.stringKeys.StringKeys
 import com.oyetech.kmpmodels.ui.event.DiaryAction
 import com.oyetech.kmpmodels.ui.state.DiaryAreaUiState
 import com.oyetech.kmpmodels.ui.state.DiaryEntryUiState
-import com.oyetech.kmpmodels.ui.state.DiaryTimerPresetUiState
 import com.oyetech.kmpmodels.ui.state.DiaryTagUiState
+import com.oyetech.kmpmodels.ui.state.DiaryTimerPresetUiState
 import com.oyetech.kmpmodels.ui.state.DiaryUiState
 import com.oyetech.kmpmodels.ui.state.ErrorCode
 import com.oyetech.kmpmodels.ui.state.OperationState
@@ -1194,8 +1194,9 @@ class DiaryOperator(
         internal fun renderEntryItems(
             entries: List<EntryEntity>,
             now: Instant = Clock.System.now(),
-        ): List<DiaryEntryUiState> =
-            entries.sortedByDescending { it.createdAt }.map { entry ->
+        ): List<DiaryEntryUiState> {
+            val areas = areaOptions()
+            return entries.sortedByDescending { it.createdAt }.map { entry ->
                 val status = timerStatus(entry, now)
                 val label = timerLabel(entry, now)
                 DiaryEntryUiState(
@@ -1213,9 +1214,11 @@ class DiaryOperator(
                             status == EntryTimerStatus.PENDING || status == EntryTimerStatus.RUNNING,
                     isAreaVisible = entry.areaId != null,
                     tagLabel = entry.tag?.let { "#${it.name}" },
+                    areaEmoji = areas.firstOrNull { it.area.name == entry.areaId }?.emoji.orEmpty(),
                     isTimerStatusVisible = status != EntryTimerStatus.NONE,
                 )
             }
+        }
 
         private fun entryEntity(response: EntryResponse): EntryEntity =
             EntryEntity(
