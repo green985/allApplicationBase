@@ -25,6 +25,8 @@ object StringKeys {
     const val areas = "Arealar"
     const val returnToToday = "Bugüne dön"
     const val noAreaEntries = "Bu alana ait kayıt yok."
+    const val allTags = "Tümü"
+    const val noAreaTagEntries = "Bu alan ve etikete ait kayıt yok."
     fun areaEntriesTitle(area: String): String = "$area · Tüm tarihler"
 
     const val diary = "Günlük"

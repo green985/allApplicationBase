@@ -10,6 +10,8 @@ sealed interface DiaryAction {
     data object AreaMenuClicked : DiaryAction
     data object AreaMenuDismissed : DiaryAction
     data class AreaFilterSelected(val area: AreaEntry) : DiaryAction
+    data class ListTagFilterSelected(val tagId: String?) : DiaryAction
+    data object RetryListTagsLoadClicked : DiaryAction
     data class QuoteChanged(val value: String) : DiaryAction
     data class AreaSelected(val value: AreaEntry) : DiaryAction
     data class TagQueryChanged(val value: String) : DiaryAction

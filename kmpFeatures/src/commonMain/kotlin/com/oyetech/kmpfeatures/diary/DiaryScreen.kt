@@ -302,10 +302,46 @@ fun DiaryScreen(
                     style = MaterialTheme.typography.titleMedium,
                     color = AppColors.textPrimary,
                 )
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    FilterChip(
+                        selected = uiState.isAllListTagsSelected,
+                        onClick = { onAction(DiaryAction.ListTagFilterSelected(null)) },
+                        label = { Text(StringKeys.allTags) },
+                    )
+                    uiState.listTagOptions.forEach { tag ->
+                        FilterChip(
+                            selected = tag.isSelected,
+                            onClick = { onAction(DiaryAction.ListTagFilterSelected(tag.id)) },
+                            label = { Text(tag.displayLabel) },
+                        )
+                    }
+                }
+                when (val operation = uiState.listTagsOperation) {
+                    OperationState.Idle -> Unit
+                    OperationState.Loading -> Unit
+                    is OperationState.Error -> {
+                        Text(operation.error.message, color = AppColors.textSecondary)
+                        TextButton(
+                            onClick = { onAction(DiaryAction.RetryListTagsLoadClicked) },
+                        ) {
+                            Text(StringKeys.retry)
+                        }
+                    }
+                }
             }
             when (val operation = uiState.entriesOperation) {
                 OperationState.Idle -> Unit
-                OperationState.Loading -> CircularProgressIndicator()
+                OperationState.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
                 is OperationState.Error -> {
                     Text(
                         text = operation.error.message,
@@ -319,7 +355,7 @@ fun DiaryScreen(
                 }
             }
             if (uiState.isAreaEntriesEmpty) {
-                Text(StringKeys.noAreaEntries, color = AppColors.textSecondary)
+                Text(uiState.areaEntriesEmptyMessage, color = AppColors.textSecondary)
             }
             uiState.entryItems.forEach { entry ->
                 DiaryEntryCard(
@@ -577,9 +613,6 @@ private fun EntryEditor(
                                 onClick = { onAction(DiaryAction.TagSelected(tag.id)) },
                                 label = { Text(tag.displayLabel) },
                             )
-                        }
-                        if (uiState.tagOperation is OperationState.Loading) {
-                            CircularProgressIndicator()
                         }
                         if (uiState.tagCreateOperation is OperationState.Loading) {
                             CircularProgressIndicator()

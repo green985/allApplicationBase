@@ -26,11 +26,23 @@ class DiaryEndpointOperation(
         areaId: String,
         query: String? = null,
         limit: Int = 6,
+        offset: Int = 0,
     ): List<TagResponse> =
         httpClient.get(EndpointStrings.diaryAreaTags(areaId)) {
             parameter("limit", limit)
+            parameter("offset", offset)
             if (query != null) parameter("query", query)
         }.bodyOrError()
+
+    suspend fun getAllAreaTags(areaId: String): List<TagResponse> {
+        val tags = mutableListOf<TagResponse>()
+        val pageSize = 20
+        while (true) {
+            val page = getAreaTags(areaId, limit = pageSize, offset = tags.size)
+            tags.addAll(page)
+            if (page.size < pageSize) return tags
+        }
+    }
 
     suspend fun createTag(request: TagPostBody): TagResponse =
         httpClient.post(EndpointStrings.diaryTags) {
