@@ -307,6 +307,35 @@ async function getEntries(date: string, userId: string): Promise<Response> {
   );
 }
 
+async function getAreaEntries(areaId: string, userId: string): Promise<Response> {
+  if (!validAreas.has(areaId)) {
+    return response(null, "Geçerli bir alan gerekli.", false, 400);
+  }
+  const entries: DiaryEntry[] = [];
+  const pageSize = 500;
+  const requestedAt = new Date().toISOString();
+  for (let offset = 0; ; offset += pageSize) {
+    const { data, error } = await supabase
+      .from("diary_entries")
+      .select(entrySelect)
+      .eq("user_id", userId)
+      .eq("area_id", areaId)
+      .lte("created_at", requestedAt)
+      .order("entry_date", { ascending: false })
+      .order("created_at", { ascending: false })
+      .order("id", { ascending: false })
+      .range(offset, offset + pageSize - 1)
+      .returns<Parameters<typeof mapEntry>[0][]>();
+    if (error || !data) {
+      console.error("getAreaEntries failed", error?.code);
+      return response(null, "Alanın kayıtları getirilemedi.", false, 500);
+    }
+    entries.push(...data.map(mapEntry));
+    if (data.length < pageSize) break;
+  }
+  return response(entries, "Alanın kayıtları getirildi.", true);
+}
+
 async function exportDiaryArchive(userId: string): Promise<Response> {
   const entries: DiaryEntry[] = [];
   const quotes: DiaryQuote[] = [];
@@ -650,6 +679,12 @@ Deno.serve(async (request) => {
     const params = new URL(request.url).searchParams;
     if (params.has("userId") || params.has("user_id")) {
       return response(null, "Kullanıcı kimliği oturumdan belirlenir.", false, 400);
+    }
+    if (diaryRoute.length === 4 && diaryRoute[0] === "diary" &&
+      diaryRoute[1] === "areas" && diaryRoute[3] === "entries") {
+      return request.method === "GET"
+        ? await getAreaEntries(diaryRoute[2], userId)
+        : response(null, "Method not allowed.", false, 405);
     }
     if (diaryRoute.length === 4 && diaryRoute[0] === "diary" &&
       diaryRoute[1] === "areas" && diaryRoute[3] === "tags") {

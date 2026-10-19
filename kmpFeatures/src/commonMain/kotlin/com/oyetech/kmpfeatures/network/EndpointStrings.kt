@@ -13,6 +13,9 @@ object EndpointStrings {
     fun diaryAreaTags(areaId: String): String =
         "$kmpFunctionsBaseUrl/diary/areas/$areaId/tags"
 
+    fun diaryAreaEntries(areaId: String): String =
+        "$kmpFunctionsBaseUrl/diary/areas/$areaId/entries"
+
     fun diaryEntriesForDate(date: String): String =
         diaryDayEntries(date)
 

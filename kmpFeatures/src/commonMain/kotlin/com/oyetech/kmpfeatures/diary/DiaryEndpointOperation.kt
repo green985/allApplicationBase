@@ -6,15 +6,15 @@ import com.oyetech.kmpmodels.postbody.DiaryQuotePutBody
 import com.oyetech.kmpmodels.postbody.EntryDurationClearPostBody
 import com.oyetech.kmpmodels.postbody.EntryPostBody
 import com.oyetech.kmpmodels.postbody.TagPostBody
-import com.oyetech.kmpmodels.response.TagResponse
 import com.oyetech.kmpmodels.response.DiaryArchiveResponse
 import com.oyetech.kmpmodels.response.DiaryQuoteResponse
 import com.oyetech.kmpmodels.response.EntryResponse
+import com.oyetech.kmpmodels.response.TagResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
-import io.ktor.client.request.patch
 import io.ktor.client.request.parameter
+import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
@@ -44,6 +44,9 @@ class DiaryEndpointOperation(
         println("[DiaryEndpoint] GET /v1/kmpFunctions/diary/days/$date/entries")
         return httpClient.get(EndpointStrings.diaryEntriesForDate(date)).bodyOrError()
     }
+
+    suspend fun getAreaEntries(areaId: String): List<EntryResponse> =
+        httpClient.get(EndpointStrings.diaryAreaEntries(areaId)).bodyOrError()
 
     suspend fun startEntryTimer(entryId: String): EntryResponse =
         httpClient.post(EndpointStrings.diaryEntryTimerStart(entryId)).bodyOrError()

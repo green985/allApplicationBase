@@ -22,6 +22,10 @@ object StringKeys {
     const val dailyContent = "Günlük içerik"
     const val yesterday = "Dün"
     const val tomorrow = "Yarın"
+    const val areas = "Arealar"
+    const val returnToToday = "Bugüne dön"
+    const val noAreaEntries = "Bu alana ait kayıt yok."
+    fun areaEntriesTitle(area: String): String = "$area · Tüm tarihler"
 
     const val diary = "Günlük"
     const val downloadDiaryHtml = "Günlüğü HTML indir"
