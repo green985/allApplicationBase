@@ -6,15 +6,15 @@ import com.oyetech.kmpmodels.postbody.DiaryQuotePutBody
 import com.oyetech.kmpmodels.postbody.EntryDurationClearPostBody
 import com.oyetech.kmpmodels.postbody.EntryPostBody
 import com.oyetech.kmpmodels.postbody.TagPostBody
-import com.oyetech.kmpmodels.response.TagResponse
 import com.oyetech.kmpmodels.response.DiaryArchiveResponse
 import com.oyetech.kmpmodels.response.DiaryQuoteResponse
 import com.oyetech.kmpmodels.response.EntryResponse
+import com.oyetech.kmpmodels.response.TagResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
-import io.ktor.client.request.patch
 import io.ktor.client.request.parameter
+import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
@@ -26,11 +26,23 @@ class DiaryEndpointOperation(
         areaId: String,
         query: String? = null,
         limit: Int = 6,
+        offset: Int = 0,
     ): List<TagResponse> =
         httpClient.get(EndpointStrings.diaryAreaTags(areaId)) {
             parameter("limit", limit)
+            parameter("offset", offset)
             if (query != null) parameter("query", query)
         }.bodyOrError()
+
+    suspend fun getAllAreaTags(areaId: String): List<TagResponse> {
+        val tags = mutableListOf<TagResponse>()
+        val pageSize = 20
+        while (true) {
+            val page = getAreaTags(areaId, limit = pageSize, offset = tags.size)
+            tags.addAll(page)
+            if (page.size < pageSize) return tags
+        }
+    }
 
     suspend fun createTag(request: TagPostBody): TagResponse =
         httpClient.post(EndpointStrings.diaryTags) {
@@ -44,6 +56,9 @@ class DiaryEndpointOperation(
         println("[DiaryEndpoint] GET /v1/kmpFunctions/diary/days/$date/entries")
         return httpClient.get(EndpointStrings.diaryEntriesForDate(date)).bodyOrError()
     }
+
+    suspend fun getAreaEntries(areaId: String): List<EntryResponse> =
+        httpClient.get(EndpointStrings.diaryAreaEntries(areaId)).bodyOrError()
 
     suspend fun startEntryTimer(entryId: String): EntryResponse =
         httpClient.post(EndpointStrings.diaryEntryTimerStart(entryId)).bodyOrError()

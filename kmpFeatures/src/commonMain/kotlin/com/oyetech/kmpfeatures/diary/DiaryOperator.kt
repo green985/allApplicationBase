@@ -58,14 +58,48 @@ class DiaryOperator(
     private var tagSearchJob: Job? = null
     private var tagCreateJob: Job? = null
     private var tagContext = 0L
+    private var entriesContext = 0L
+    private var quoteContext = 0L
+    private var listTagsContext = 0L
 
     init {
         loadQuoteForSelectedDate()
         loadEntriesForSelectedDate()
     }
 
+    private fun DiaryUiState.withEntries(
+        next: List<EntryEntity>,
+        now: Instant = Clock.System.now(),
+    ): DiaryUiState {
+        val items = renderEntryItems(next, now, selectedListArea, selectedListTagId)
+        val entryTags = next.filter { it.areaId == selectedListArea?.name }
+            .mapNotNull { it.tag }
+            .map { tag ->
+                DiaryTagUiState(
+                    id = tag.id,
+                    name = tag.name,
+                    displayLabel = "#${tag.name}",
+                    isSelected = tag.id == selectedListTagId,
+                )
+            }
+        return copy(
+            entries = next,
+            entryItems = items,
+            listTagOptions = (listTagOptions + entryTags).distinctBy { it.id }
+                .sortedBy { it.name.lowercase() },
+            areaEntriesEmptyMessage = if (selectedListTagId == null) {
+                StringKeys.noAreaEntries
+            } else {
+                StringKeys.noAreaTagEntries
+            },
+            isAreaEntriesEmpty = selectedListArea != null && items.isEmpty() &&
+                    entriesOperation == OperationState.Idle,
+        )
+    }
+
     private fun exportDiaryHtml() {
         val snapshot = state.value
+        if (!snapshot.isDailyContentVisible) return
         if (snapshot.entriesOperation != OperationState.Idle ||
             snapshot.quoteOperation is OperationState.Loading ||
             (snapshot.quoteOperation is OperationState.Error && !snapshot.quoteIsDirty) ||
@@ -232,10 +266,8 @@ class DiaryOperator(
                 val completed = entryEntity(response)
                 val next = entries.map { if (it.id == entryId) completed else it }
                 copy(
-                    entries = next,
-                    entryItems = renderEntryItems(next),
                     entryOperation = OperationState.Idle,
-                ).withEditorState()
+                ).withEntries(next).withEditorState()
             },
             onError = { error ->
                 snackbarDelegate.triggerSnackbarState(message = error.message)
@@ -271,10 +303,8 @@ class DiaryOperator(
                 val next = entries.map { if (it.id == entryId) updated else it }
                 startTimerTicker(next)
                 val nextState = copy(
-                    entries = next,
-                    entryItems = renderEntryItems(next),
                     entryOperation = OperationState.Idle,
-                )
+                ).withEntries(next)
                 if (editingEntryId == entryId) {
                     nextState.closeEditor()
                 } else {
@@ -306,10 +336,8 @@ class DiaryOperator(
                 val updated = entryEntity(response)
                 val next = entries.map { if (it.id == entryId) updated else it }
                 copy(
-                    entries = next,
-                    entryItems = renderEntryItems(next),
                     entryOperation = OperationState.Idle,
-                ).withEditorState()
+                ).withEntries(next).withEditorState()
             },
             onError = { error ->
                 snackbarDelegate.triggerSnackbarState(message = error.message)
@@ -332,7 +360,7 @@ class DiaryOperator(
                             it.timerEndsAt?.let { end -> end <= now } == true
                 }
                 updateState {
-                    copy(entryItems = renderEntryItems(entries, now)).withEditorState(now)
+                    withEntries(entries, now).withEditorState(now)
                 }
                 finished.forEach {
                     snackbarDelegate.triggerSnackbarState(message = StringKeys.timerFinished)
@@ -460,6 +488,33 @@ class DiaryOperator(
             DiaryAction.NextDayClicked -> {
                 selectDay(state.value.dayOffset + 1)
             }
+
+            DiaryAction.TodayClicked -> selectDay(0)
+            DiaryAction.AreaMenuClicked -> updateState {
+                copy(isAreaMenuVisible = !isAreaMenuVisible)
+            }
+
+            DiaryAction.AreaMenuDismissed -> updateState {
+                copy(isAreaMenuVisible = false)
+            }
+
+            is DiaryAction.AreaFilterSelected -> selectAreaFilter(action.area)
+            is DiaryAction.ListTagFilterSelected -> {
+                val snapshot = state.value
+                if (snapshot.selectedListArea == null) return
+                if (action.tagId != null && snapshot.listTagOptions.none { it.id == action.tagId }) return
+                updateState {
+                    copy(
+                        selectedListTagId = action.tagId,
+                        isAllListTagsSelected = action.tagId == null,
+                        listTagOptions = listTagOptions.map {
+                            it.copy(isSelected = it.id == action.tagId)
+                        },
+                    ).withEntries(entries)
+                }
+            }
+
+            DiaryAction.RetryListTagsLoadClicked -> loadListTags()
 
             is DiaryAction.QuoteChanged -> {
                 updateState {
@@ -645,9 +700,14 @@ class DiaryOperator(
                 timerStartRequested = false
                 entryAutosaveJob.cancelPendingSave()
                 updateState {
-                    closeEditor().copy(isEditorVisible = true, entryOperation = OperationState.Idle)
+                    closeEditor().copy(
+                        isEditorVisible = true,
+                        selectedArea = selectedListArea,
+                        entryOperation = OperationState.Idle,
+                    )
                         .withEditorState()
                 }
+                loadTagSuggestions()
             }
 
             DiaryAction.EntryDialogDismissed -> {
@@ -747,6 +807,18 @@ class DiaryOperator(
         selectedTag = tag,
         tagQuery = "",
         tagSuggestions = tagSuggestions.map { it.copy(isSelected = it.id == tag.id) },
+        listTagOptions = if (tag.areaId == selectedListArea?.name) {
+            (
+                    listTagOptions + DiaryTagUiState(
+                        id = tag.id,
+                        name = tag.name,
+                        displayLabel = "#${tag.name}",
+                        isSelected = tag.id == selectedListTagId,
+                    )
+                    ).distinctBy { it.id }.sortedBy { it.name.lowercase() }
+        } else {
+            listTagOptions
+        },
         entryIsDirty = true,
         entryRevision = entryRevision + 1,
         tagOperation = OperationState.Idle,
@@ -817,6 +889,7 @@ class DiaryOperator(
 
     private fun selectDay(offset: Int) {
         if (state.value.entryOperation is OperationState.Loading) return
+        listTagsContext++
         cancelTagRequests()
         timerStartRequested = false
         quoteAutosaveJob.cancelPendingSave()
@@ -830,45 +903,119 @@ class DiaryOperator(
                 entries = emptyList(),
                 entryItems = emptyList(),
                 entriesOperation = OperationState.Idle,
+                selectedListArea = null,
+                selectedListTagId = null,
+                isAllListTagsSelected = true,
+                listTagOptions = emptyList(),
+                listTagsOperation = OperationState.Idle,
+                areaFilterLabel = "",
+                isDailyContentVisible = true,
+                isAreaMenuVisible = false,
+                isAreaEntriesEmpty = false,
             )
         }
         loadQuoteForSelectedDate()
         loadEntriesForSelectedDate()
     }
 
+    private fun selectAreaFilter(area: AreaEntry) {
+        if (state.value.entryOperation is OperationState.Loading) return
+        cancelTagRequests()
+        timerStartRequested = false
+        quoteAutosaveJob.cancelPendingSave()
+        entryAutosaveJob.cancelPendingSave()
+        timerJob?.cancel()
+        quoteContext++
+        updateState {
+            closeEditor().copy(
+                selectedListArea = area,
+                selectedListTagId = null,
+                isAllListTagsSelected = true,
+                listTagOptions = emptyList(),
+                listTagsOperation = OperationState.Idle,
+                areaFilterLabel = StringKeys.areaEntriesTitle(areaLabel(area.name)),
+                isAreaMenuVisible = false,
+                isDailyContentVisible = false,
+                isAreaEntriesEmpty = false,
+                entries = emptyList(),
+                entryItems = emptyList(),
+                entriesOperation = OperationState.Idle,
+            )
+        }
+        loadEntriesForSelectedDate()
+        loadListTags()
+    }
+
+    private fun loadListTags() {
+        val area = state.value.selectedListArea ?: return
+        val context = ++listTagsContext
+        executeOperation(
+            onStart = { copy(listTagsOperation = OperationState.Loading) },
+            operation = { diaryEndpointOperation.getAllAreaTags(area.name) },
+            onSuccess = { tags ->
+                if (context != listTagsContext || selectedListArea != area) {
+                    this
+                } else {
+                    copy(
+                        listTagOptions = tags.map {
+                            DiaryTagUiState(
+                                id = it.id,
+                                name = it.name,
+                                displayLabel = "#${it.name}",
+                                isSelected = it.id == selectedListTagId,
+                            )
+                        },
+                        listTagsOperation = OperationState.Idle,
+                    ).withEntries(entries)
+                }
+            },
+            onError = { error ->
+                if (context != listTagsContext || selectedListArea != area) this else copy(
+                    listTagsOperation = OperationState.Error(error),
+                )
+            },
+        )
+    }
+
     private fun loadEntriesForSelectedDate() {
+        val context = ++entriesContext
         val dateSnapshot = state.value.selectedDate
+        val areaSnapshot = state.value.selectedListArea
         executeOperation(
             onStart = {
-                copy(entriesOperation = OperationState.Loading)
+                copy(entriesOperation = OperationState.Loading, isAreaEntriesEmpty = false)
             },
             operation = {
-                diaryEndpointOperation.getEntries(dateSnapshot.toString())
+                if (areaSnapshot == null) {
+                    diaryEndpointOperation.getEntries(dateSnapshot.toString())
+                } else {
+                    diaryEndpointOperation.getAreaEntries(areaSnapshot.name)
+                }
             },
             onSuccess = { responses ->
-                if (selectedDate != dateSnapshot) {
-                    copy(entriesOperation = OperationState.Idle)
+                if (entriesContext != context) {
+                    this
                 } else {
                     val loadedEntries = responses.map(::entryEntity)
                     startTimerTicker(loadedEntries)
                     copy(
-                        entries = loadedEntries,
-                        entryItems = renderEntryItems(loadedEntries),
                         entriesOperation = OperationState.Idle,
-                    ).withEditorState()
+                    ).withEntries(loadedEntries).withEditorState()
                 }
             },
             onError = { error ->
-                copy(
+                if (entriesContext != context) this else copy(
                     entries = emptyList(),
                     entryItems = emptyList(),
                     entriesOperation = OperationState.Error(error),
+                    isAreaEntriesEmpty = false,
                 )
             },
         )
     }
 
     private fun loadQuoteForSelectedDate() {
+        val context = ++quoteContext
         val dateSnapshot = state.value.selectedDate
         executeOperation(
             onStart = {
@@ -878,7 +1025,9 @@ class DiaryOperator(
                 diaryEndpointOperation.getQuote(dateSnapshot.toString())
             },
             onSuccess = { response ->
-                if (selectedDate == dateSnapshot && !quoteIsDirty) {
+                if (quoteContext != context) {
+                    this
+                } else if (selectedDate == dateSnapshot && !quoteIsDirty) {
                     copy(
                         dayQuote = response.quote,
                         quoteOperation = OperationState.Idle,
@@ -888,6 +1037,7 @@ class DiaryOperator(
                 }
             },
             onError = { error ->
+                if (quoteContext != context) return@executeOperation this
                 copy(
                     dayQuote = "",
                     quoteOperation = if (error.code == ErrorCode.NotFound) {
@@ -1014,7 +1164,7 @@ class DiaryOperator(
                             areaId = currentState.selectedArea?.name,
                             tagId = currentState.selectedTag?.id,
                             text = currentState.text,
-                            entryDate = dateSnapshot.toString(),
+                            entryDate = existingEntry?.entryDate ?: dateSnapshot.toString(),
                             durationSeconds = currentState.selectedDurationSeconds
                                 .takeUnless { it == existingEntry?.durationSeconds },
                             markAsCompleted = markAsCompleted.takeUnless {
@@ -1048,12 +1198,10 @@ class DiaryOperator(
                         entries.map { if (it.id == serverEntry.id) serverEntry else it }
                     }
                     val nextState = copy(
-                        entries = nextEntries,
-                        entryItems = renderEntryItems(nextEntries),
                         editingEntryId = serverEntry.id,
                         entryIsDirty = hasNewInput,
                         entryOperation = OperationState.Idle,
-                    )
+                    ).withEntries(nextEntries)
                     if (!isEditorVisible || (dismissRequested && !hasNewInput)) {
                         nextState.closeEditor()
                     } else {
@@ -1106,10 +1254,8 @@ class DiaryOperator(
             onSuccess = {
                 val remainingEntries = entries.filterNot { it.id == entryId }
                 val nextState = copy(
-                    entries = remainingEntries,
-                    entryItems = renderEntryItems(remainingEntries),
                     entryOperation = OperationState.Idle,
-                )
+                ).withEntries(remainingEntries)
                 if (editingEntryId == entryId) {
                     nextState.closeEditor()
                 } else {
@@ -1216,9 +1362,24 @@ class DiaryOperator(
         internal fun renderEntryItems(
             entries: List<EntryEntity>,
             now: Instant = Clock.System.now(),
+            selectedListArea: AreaEntry? = null,
+            selectedListTagId: String? = null,
         ): List<DiaryEntryUiState> {
             val areas = areaOptions()
-            return entries.sortedByDescending { it.createdAt }.map { entry ->
+            val visibleEntries = if (selectedListArea == null) {
+                entries.sortedByDescending { it.createdAt }
+            } else {
+                entries.filter {
+                    it.areaId == selectedListArea.name &&
+                            (selectedListTagId == null || it.tag?.id == selectedListTagId)
+                }
+                    .sortedWith(
+                        compareByDescending<EntryEntity> { it.entryDate }
+                            .thenByDescending { it.createdAt }
+                            .thenByDescending { it.id },
+                    )
+            }
+            return visibleEntries.map { entry ->
                 val status = timerStatus(entry, now)
                 val label = timerLabel(entry, now)
                 DiaryEntryUiState(
@@ -1226,6 +1387,9 @@ class DiaryOperator(
                     areaLabel = areaLabel(entry.areaId),
                     createdBy = entry.createdBy,
                     timeLabel = entry.createdAt?.let(::formatTime).orEmpty(),
+                    dateLabel = if (selectedListArea == null) null else entry.entryDate?.let {
+                        formatDate(LocalDate.parse(it))
+                    },
                     text = entry.text,
                     timerStatusLabel = label,
                     countdownLabel = if (status == EntryTimerStatus.RUNNING) label else null,

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -23,6 +22,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -32,6 +32,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TooltipAnchorPosition
@@ -42,27 +43,37 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import com.oyetech.kmpmodels.entity.AreaEntry
 import com.oyetech.kmpmodels.stringKeys.StringKeys
 import com.oyetech.kmpmodels.ui.event.DiaryAction
@@ -90,10 +101,15 @@ fun DiaryScreenSetup() {
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 fun DiaryScreen(
     uiState: DiaryUiState,
     onAction: (DiaryAction) -> Unit,
 ) {
+    val areaEmojiFont = FontFamily(Font(Res.font.diary_area_emoji))
+    val areaMenuSpacing = with(LocalDensity.current) { 8.dp.roundToPx() }
+    var areaMenuOffset by remember { mutableStateOf(IntOffset.Zero) }
+
     Scaffold { contentPadding ->
         Column(
             modifier = Modifier
@@ -113,17 +129,60 @@ fun DiaryScreen(
                 ) {
                     Text(StringKeys.yesterday)
                 }
-                Column {
-                    Text(
-                        text = uiState.selectedDateLabel,
-                        style = MaterialTheme.typography.titleLarge,
-                        color = AppColors.textPrimary,
-                    )
-                    Text(
-                        text = if (uiState.isTodaySelected) StringKeys.today else StringKeys.selectedDay,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = AppColors.textSecondary,
-                    )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Column {
+                        Text(
+                            text = uiState.selectedDateLabel,
+                            style = MaterialTheme.typography.titleLarge,
+                            color = AppColors.textPrimary,
+                        )
+                        Text(
+                            text = if (uiState.isTodaySelected) StringKeys.today else StringKeys.selectedDay,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = AppColors.textSecondary,
+                        )
+                    }
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                            TooltipAnchorPosition.Above,
+                        ),
+                        tooltip = { PlainTooltip { Text(StringKeys.returnToToday) } },
+                        state = rememberTooltipState(),
+                    ) {
+                        IconButton(
+                            enabled = uiState.canGoPrevious,
+                            onClick = { onAction(DiaryAction.TodayClicked) },
+                        ) {
+                            val iconColor = AppColors.textPrimary
+                            Icon(
+                                imageVector = remember(iconColor) {
+                                    ImageVector.Builder(
+                                        name = "Home",
+                                        defaultWidth = 24.dp,
+                                        defaultHeight = 24.dp,
+                                        viewportWidth = 24f,
+                                        viewportHeight = 24f,
+                                    ).apply {
+                                        path(fill = SolidColor(iconColor)) {
+                                            moveTo(12f, 3f)
+                                            lineTo(2f, 12f)
+                                            lineTo(5f, 12f)
+                                            lineTo(5f, 21f)
+                                            lineTo(10f, 21f)
+                                            lineTo(10f, 15f)
+                                            lineTo(14f, 15f)
+                                            lineTo(14f, 21f)
+                                            lineTo(19f, 21f)
+                                            lineTo(19f, 12f)
+                                            lineTo(22f, 12f)
+                                            close()
+                                        }
+                                    }.build()
+                                },
+                                contentDescription = StringKeys.returnToToday,
+                            )
+                        }
+                    }
                 }
                 Button(
                     enabled = uiState.canGoNext,
@@ -136,7 +195,60 @@ fun DiaryScreen(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Spacer(modifier = Modifier.weight(1f))
+                Box(modifier = Modifier.weight(1f)) {
+                    Box {
+                        Button(
+                            modifier = Modifier.onSizeChanged {
+                                areaMenuOffset = IntOffset(it.width + areaMenuSpacing, 0)
+                            },
+                            onClick = { onAction(DiaryAction.AreaMenuClicked) },
+                        ) {
+                            Text(StringKeys.areas)
+                        }
+                        if (uiState.isAreaMenuVisible) {
+                            Popup(
+                                alignment = Alignment.TopStart,
+                                offset = areaMenuOffset,
+                                onDismissRequest = { onAction(DiaryAction.AreaMenuDismissed) },
+                                properties = PopupProperties(focusable = true),
+                            ) {
+                                Surface(
+                                    shape = MaterialTheme.shapes.large,
+                                    shadowElevation = 6.dp,
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .horizontalScroll(rememberScrollState())
+                                            .padding(horizontal = 12.dp, vertical = 8.dp),
+                                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        uiState.areaOptions.forEach { area ->
+                                            TextButton(
+                                                enabled = uiState.canGoPrevious,
+                                                onClick = {
+                                                    onAction(DiaryAction.AreaFilterSelected(area.area))
+                                                },
+                                            ) {
+                                                Column(
+                                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                                                ) {
+                                                    Text(
+                                                        text = area.emoji,
+                                                        fontFamily = areaEmojiFont,
+                                                        style = MaterialTheme.typography.titleLarge,
+                                                    )
+                                                    Text(area.label, maxLines = 1, softWrap = false)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
                 FloatingActionButton(
                     onClick = { onAction(DiaryAction.AddEntryClicked) },
                 ) {
@@ -152,12 +264,14 @@ fun DiaryScreen(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Button(onClick = { onAction(DiaryAction.ExportDiaryHtmlClicked) }) {
-                                Text(
-                                    text = StringKeys.downloadDiaryHtml,
-                                    maxLines = 1,
-                                    softWrap = false,
-                                )
+                            if (uiState.isDailyContentVisible) {
+                                Button(onClick = { onAction(DiaryAction.ExportDiaryHtmlClicked) }) {
+                                    Text(
+                                        text = StringKeys.downloadDiaryHtml,
+                                        maxLines = 1,
+                                        softWrap = false,
+                                    )
+                                }
                             }
                             Button(
                                 enabled = uiState.canExportArchive,
@@ -173,17 +287,61 @@ fun DiaryScreen(
                     }
                 }
             }
-            OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = uiState.dayQuote,
-                onValueChange = { onAction(DiaryAction.QuoteChanged(it)) },
-                label = { Text(StringKeys.todaysQuote) },
-                placeholder = { Text(StringKeys.writeTodaysQuote) },
-                singleLine = true,
-            )
+            if (uiState.isDailyContentVisible) {
+                OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = uiState.dayQuote,
+                    onValueChange = { onAction(DiaryAction.QuoteChanged(it)) },
+                    label = { Text(StringKeys.todaysQuote) },
+                    placeholder = { Text(StringKeys.writeTodaysQuote) },
+                    singleLine = true,
+                )
+            } else {
+                Text(
+                    text = uiState.areaFilterLabel,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = AppColors.textPrimary,
+                )
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    FilterChip(
+                        selected = uiState.isAllListTagsSelected,
+                        onClick = { onAction(DiaryAction.ListTagFilterSelected(null)) },
+                        label = { Text(StringKeys.allTags) },
+                    )
+                    uiState.listTagOptions.forEach { tag ->
+                        FilterChip(
+                            selected = tag.isSelected,
+                            onClick = { onAction(DiaryAction.ListTagFilterSelected(tag.id)) },
+                            label = { Text(tag.displayLabel) },
+                        )
+                    }
+                }
+                when (val operation = uiState.listTagsOperation) {
+                    OperationState.Idle -> Unit
+                    OperationState.Loading -> Unit
+                    is OperationState.Error -> {
+                        Text(operation.error.message, color = AppColors.textSecondary)
+                        TextButton(
+                            onClick = { onAction(DiaryAction.RetryListTagsLoadClicked) },
+                        ) {
+                            Text(StringKeys.retry)
+                        }
+                    }
+                }
+            }
             when (val operation = uiState.entriesOperation) {
                 OperationState.Idle -> Unit
-                OperationState.Loading -> CircularProgressIndicator()
+                OperationState.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
                 is OperationState.Error -> {
                     Text(
                         text = operation.error.message,
@@ -195,6 +353,9 @@ fun DiaryScreen(
                         Text(StringKeys.retry)
                     }
                 }
+            }
+            if (uiState.isAreaEntriesEmpty) {
+                Text(uiState.areaEntriesEmptyMessage, color = AppColors.textSecondary)
             }
             uiState.entryItems.forEach { entry ->
                 DiaryEntryCard(
@@ -292,6 +453,13 @@ private fun DiaryEntryCard(
                     if (entry.canCancelTimer) Button(onClick = onCancel) { Text(StringKeys.cancelTimer) }
                     if (entry.canMarkCompleted) Button(onClick = onComplete) { Text(StringKeys.alreadyDone) }
                 }
+            }
+            entry.dateLabel?.let { dateLabel ->
+                Text(
+                    text = dateLabel,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = AppColors.textSecondary,
+                )
             }
             Text(
                 text = entry.timeLabel,
@@ -445,9 +613,6 @@ private fun EntryEditor(
                                 onClick = { onAction(DiaryAction.TagSelected(tag.id)) },
                                 label = { Text(tag.displayLabel) },
                             )
-                        }
-                        if (uiState.tagOperation is OperationState.Loading) {
-                            CircularProgressIndicator()
                         }
                         if (uiState.tagCreateOperation is OperationState.Loading) {
                             CircularProgressIndicator()

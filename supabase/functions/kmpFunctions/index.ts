@@ -143,8 +143,12 @@ function mapTag(row: TagRow): DiaryTag {
 async function getAreaTags(request: Request, areaId: string, userId: string): Promise<Response> {
   const params = new URL(request.url).searchParams;
   const limitValue = params.get("limit") ?? "6";
-  if (!validAreas.has(areaId) || !/^\d+$/.test(limitValue)) {
-    return response(null, "Geçerli bir alan ve limit gerekli.", false, 400);
+  const offsetValue = params.get("offset") ?? "0";
+  const offset = Number(offsetValue);
+  if (!validAreas.has(areaId) || !/^\d+$/.test(limitValue) ||
+    !/^\d+$/.test(offsetValue) || !Number.isSafeInteger(offset) ||
+    !Number.isSafeInteger(offset + 20)) {
+    return response(null, "Geçerli bir alan, limit ve offset gerekli.", false, 400);
   }
   const limit = Math.min(20, Math.max(1, Number(limitValue)));
   const query = normalizeTagName(params.get("query") ?? "");
@@ -159,7 +163,9 @@ async function getAreaTags(request: Request, areaId: string, userId: string): Pr
   const { data, error } = await tags
     .order("last_used_at", { ascending: false, nullsFirst: false })
     .order("usage_count", { ascending: false })
-    .order("name", { ascending: true }).limit(limit);
+    .order("name", { ascending: true })
+    .order("id", { ascending: true })
+    .range(offset, offset + limit - 1);
   if (error) {
     console.error("getAreaTags failed", error.code);
     return response(null, "Etiket önerileri yüklenemedi.", false, 500);
@@ -305,6 +311,35 @@ async function getEntries(date: string, userId: string): Promise<Response> {
     "Günün diary kayıtları başarıyla getirildi.",
     true,
   );
+}
+
+async function getAreaEntries(areaId: string, userId: string): Promise<Response> {
+  if (!validAreas.has(areaId)) {
+    return response(null, "Geçerli bir alan gerekli.", false, 400);
+  }
+  const entries: DiaryEntry[] = [];
+  const pageSize = 500;
+  const requestedAt = new Date().toISOString();
+  for (let offset = 0; ; offset += pageSize) {
+    const { data, error } = await supabase
+      .from("diary_entries")
+      .select(entrySelect)
+      .eq("user_id", userId)
+      .eq("area_id", areaId)
+      .lte("created_at", requestedAt)
+      .order("entry_date", { ascending: false })
+      .order("created_at", { ascending: false })
+      .order("id", { ascending: false })
+      .range(offset, offset + pageSize - 1)
+      .returns<Parameters<typeof mapEntry>[0][]>();
+    if (error || !data) {
+      console.error("getAreaEntries failed", error?.code);
+      return response(null, "Alanın kayıtları getirilemedi.", false, 500);
+    }
+    entries.push(...data.map(mapEntry));
+    if (data.length < pageSize) break;
+  }
+  return response(entries, "Alanın kayıtları getirildi.", true);
 }
 
 async function exportDiaryArchive(userId: string): Promise<Response> {
@@ -650,6 +685,12 @@ Deno.serve(async (request) => {
     const params = new URL(request.url).searchParams;
     if (params.has("userId") || params.has("user_id")) {
       return response(null, "Kullanıcı kimliği oturumdan belirlenir.", false, 400);
+    }
+    if (diaryRoute.length === 4 && diaryRoute[0] === "diary" &&
+      diaryRoute[1] === "areas" && diaryRoute[3] === "entries") {
+      return request.method === "GET"
+        ? await getAreaEntries(diaryRoute[2], userId)
+        : response(null, "Method not allowed.", false, 405);
     }
     if (diaryRoute.length === 4 && diaryRoute[0] === "diary" &&
       diaryRoute[1] === "areas" && diaryRoute[3] === "tags") {

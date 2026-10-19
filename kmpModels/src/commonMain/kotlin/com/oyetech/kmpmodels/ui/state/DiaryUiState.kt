@@ -16,6 +16,16 @@ data class DiaryUiState(
     val entryItems: List<DiaryEntryUiState> = emptyList(),
     val areaOptions: List<DiaryAreaUiState> = emptyList(),
     val areaOptionRows: List<List<DiaryAreaUiState>> = emptyList(),
+    val isAreaMenuVisible: Boolean = false,
+    val selectedListArea: AreaEntry? = null,
+    val areaFilterLabel: String = "",
+    val isDailyContentVisible: Boolean = true,
+    val isAreaEntriesEmpty: Boolean = false,
+    val areaEntriesEmptyMessage: String = "",
+    val selectedListTagId: String? = null,
+    val isAllListTagsSelected: Boolean = true,
+    val listTagOptions: List<DiaryTagUiState> = emptyList(),
+    val listTagsOperation: OperationState = OperationState.Idle,
     val timerPresetOptions: List<DiaryTimerPresetUiState> = emptyList(),
     val isEditorVisible: Boolean,
     val editingEntryId: String? = null,
@@ -79,6 +89,7 @@ data class DiaryEntryUiState(
     val isTimerStatusVisible: Boolean = false,
     val tagLabel: String? = null,
     val areaEmoji: String = "",
+    val dateLabel: String? = null,
 )
 
 data class DiaryTagUiState(
