@@ -377,11 +377,21 @@ class DiaryOperator(
             hasTagQueryError = tagNameTooLong,
             tagQueryError = if (tagNameTooLong) StringKeys.tagNameTooLong else "",
             canCreateTag = isEditorVisible && selectedArea != null &&
-                tagName.isNotEmpty() && !tagNameTooLong &&
-                tagOperation !is OperationState.Loading &&
-                tagCreateOperation !is OperationState.Loading &&
-                tagSuggestions.none { normalizeTagName(it.name).equals(tagName, ignoreCase = true) } &&
-                selectedTag?.name?.let { normalizeTagName(it).equals(tagName, ignoreCase = true) } != true,
+                    tagName.isNotEmpty() && !tagNameTooLong &&
+                    tagOperation !is OperationState.Loading &&
+                    tagCreateOperation !is OperationState.Loading &&
+                    tagSuggestions.none {
+                        normalizeTagName(it.name).equals(
+                            tagName,
+                            ignoreCase = true
+                        )
+                    } &&
+                    selectedTag?.name?.let {
+                        normalizeTagName(it).equals(
+                            tagName,
+                            ignoreCase = true
+                        )
+                    } != true,
             createTagLabel = StringKeys.createTag(tagName),
             timerStatus = status,
             timerLabel = entry?.let { timerLabel(it, now) }.orEmpty(),
@@ -700,7 +710,11 @@ class DiaryOperator(
         }
     }
 
-    private fun DiaryUiState.matchesTagRequest(context: Long, area: AreaEntry, query: String): Boolean =
+    private fun DiaryUiState.matchesTagRequest(
+        context: Long,
+        area: AreaEntry,
+        query: String,
+    ): Boolean =
         tagContext == context && isEditorVisible && selectedArea == area && tagQuery == query
 
     private fun loadTagSuggestions() {
@@ -765,10 +779,18 @@ class DiaryOperator(
             onSuccess = { response ->
                 if (!matchesTagRequest(context, area, query)) this else {
                     scheduleEntrySave()
-                    copy(tagSuggestions = (
-                        listOf(DiaryTagUiState(response.id, response.name, "#${response.name}", true)) +
-                            tagSuggestions.filterNot { it.id == response.id }
-                        ).take(6),
+                    copy(
+                        tagSuggestions = (
+                                listOf(
+                                    DiaryTagUiState(
+                                        response.id,
+                                        response.name,
+                                        "#${response.name}",
+                                        true
+                                    )
+                                ) +
+                                        tagSuggestions.filterNot { it.id == response.id }
+                                ).take(6),
                     ).withSelectedTag(tagEntity(response))
                 }
             },

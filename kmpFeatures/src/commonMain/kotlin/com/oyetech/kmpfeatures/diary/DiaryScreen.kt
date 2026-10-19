@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -266,6 +267,7 @@ private fun DiaryEntryCard(
                     }
                     entry.tagLabel?.let { label ->
                         Text(
+                            modifier = Modifier.padding(4.dp),
                             text = label,
                             style = MaterialTheme.typography.titleMedium,
                             color = AppColors.textSecondary,
@@ -417,35 +419,70 @@ private fun EntryEditor(
                     style = MaterialTheme.typography.labelLarge,
                     color = AppColors.textSecondary,
                 )
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    uiState.tagSuggestions.forEach { tag ->
-                        FilterChip(
-                            selected = tag.isSelected,
-                            onClick = { onAction(DiaryAction.TagSelected(tag.id)) },
-                            label = { Text(tag.displayLabel) },
-                        )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.Top,
+                ) {
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .weight(1f, fill = false)
+                            .widthIn(max = 280.dp),
+                        value = uiState.tagQuery,
+                        onValueChange = { onAction(DiaryAction.TagQueryChanged(it)) },
+                        label = { Text(StringKeys.tagSearchPlaceholder) },
+                        singleLine = true,
+                        isError = uiState.hasTagQueryError,
+                        supportingText = { Text(uiState.tagQueryError) },
+                    )
+                    FlowRow(
+                        modifier = Modifier.weight(2f),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        uiState.tagSuggestions.forEach { tag ->
+                            FilterChip(
+                                selected = tag.isSelected,
+                                onClick = { onAction(DiaryAction.TagSelected(tag.id)) },
+                                label = { Text(tag.displayLabel) },
+                            )
+                        }
+                        if (uiState.tagOperation is OperationState.Loading) {
+                            CircularProgressIndicator()
+                        }
+                        if (uiState.tagCreateOperation is OperationState.Loading) {
+                            CircularProgressIndicator()
+                        }
+                        if (uiState.canCreateTag) {
+                            TextButton(onClick = { onAction(DiaryAction.CreateTagClicked) }) {
+                                Text(
+                                    text = uiState.createTagLabel,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
+                        }
                     }
-                }
-                if (uiState.canClearTag) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(uiState.selectedTagLabel, color = AppColors.textSecondary)
-                        TextButton(onClick = { onAction(DiaryAction.TagCleared) }) {
-                            Text(StringKeys.clearTag)
+                    if (uiState.canClearTag) {
+                        Row(
+                            modifier = Modifier.align(Alignment.CenterVertically),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                modifier = Modifier.widthIn(max = 160.dp),
+                                text = uiState.selectedTagLabel,
+                                color = AppColors.textSecondary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                            TextButton(onClick = { onAction(DiaryAction.TagCleared) }) {
+                                Text(StringKeys.clearTag, maxLines = 1, softWrap = false)
+                            }
                         }
                     }
                 }
-                OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = uiState.tagQuery,
-                    onValueChange = { onAction(DiaryAction.TagQueryChanged(it)) },
-                    label = { Text(StringKeys.tagSearchPlaceholder) },
-                    singleLine = true,
-                    isError = uiState.hasTagQueryError,
-                    supportingText = { Text(uiState.tagQueryError) },
-                )
                 when (val operation = uiState.tagOperation) {
                     OperationState.Idle -> Unit
-                    OperationState.Loading -> CircularProgressIndicator()
+                    OperationState.Loading -> Unit
                     is OperationState.Error -> {
                         Text(operation.error.message, color = AppColors.textSecondary)
                         TextButton(onClick = { onAction(DiaryAction.RetryTagsLoadClicked) }) {
@@ -455,14 +492,9 @@ private fun EntryEditor(
                 }
                 when (val operation = uiState.tagCreateOperation) {
                     OperationState.Idle -> Unit
-                    OperationState.Loading -> CircularProgressIndicator()
+                    OperationState.Loading -> Unit
                     is OperationState.Error ->
                         Text(operation.error.message, color = AppColors.textSecondary)
-                }
-                if (uiState.canCreateTag) {
-                    TextButton(onClick = { onAction(DiaryAction.CreateTagClicked) }) {
-                        Text(uiState.createTagLabel)
-                    }
                 }
             }
             Text(
@@ -470,24 +502,34 @@ private fun EntryEditor(
                 style = MaterialTheme.typography.labelLarge,
                 color = AppColors.textSecondary,
             )
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Checkbox(
-                    checked = uiState.isEntryCompleted,
-                    onCheckedChange = { onAction(DiaryAction.EntryCompletionChanged(it)) },
-                )
-                Text(StringKeys.alreadyDone)
-            }
-            SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-                uiState.timerPresetOptions.forEachIndexed { index, option ->
-                    SegmentedButton(
-                        selected = uiState.selectedTimerPreset == option.preset,
-                        enabled = option.isEnabled,
-                        onClick = { onAction(DiaryAction.TimerPresetSelected(option.preset)) },
-                        shape = SegmentedButtonDefaults.itemShape(
-                            index,
-                            uiState.timerPresetOptions.size
-                        ),
-                    ) { Text(option.label) }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(
+                        checked = uiState.isEntryCompleted,
+                        onCheckedChange = { onAction(DiaryAction.EntryCompletionChanged(it)) },
+                    )
+                    Text(StringKeys.alreadyDone)
+                }
+                SingleChoiceSegmentedButtonRow(
+                    modifier = Modifier
+                        .weight(1f)
+                        .horizontalScroll(rememberScrollState()),
+                ) {
+                    uiState.timerPresetOptions.forEachIndexed { index, option ->
+                        SegmentedButton(
+                            selected = uiState.selectedTimerPreset == option.preset,
+                            enabled = option.isEnabled,
+                            onClick = { onAction(DiaryAction.TimerPresetSelected(option.preset)) },
+                            shape = SegmentedButtonDefaults.itemShape(
+                                index,
+                                uiState.timerPresetOptions.size
+                            ),
+                        ) { Text(option.label) }
+                    }
                 }
             }
             if (uiState.isCustomDurationVisible) {
