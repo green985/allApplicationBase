@@ -12,6 +12,14 @@ sealed interface DiaryAction {
     data class AreaFilterSelected(val area: AreaEntry) : DiaryAction
     data class ListTagFilterSelected(val tagId: String?) : DiaryAction
     data object RetryListTagsLoadClicked : DiaryAction
+    data object ListAllDatesClicked : DiaryAction
+    data object ListWeeklyClicked : DiaryAction
+    data object ListMonthlyClicked : DiaryAction
+    data object ListCustomDateRangeClicked : DiaryAction
+    data object ListDateRangeDismissed : DiaryAction
+    data class ListDateRangeStartChanged(val value: String) : DiaryAction
+    data class ListDateRangeEndChanged(val value: String) : DiaryAction
+    data object ApplyListDateRangeClicked : DiaryAction
     data class QuoteChanged(val value: String) : DiaryAction
     data class AreaSelected(val value: AreaEntry) : DiaryAction
     data class TagQueryChanged(val value: String) : DiaryAction

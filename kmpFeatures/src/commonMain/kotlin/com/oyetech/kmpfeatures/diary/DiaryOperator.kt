@@ -16,15 +16,9 @@ import com.oyetech.kmpmodels.postbody.DiaryQuotePutBody
 import com.oyetech.kmpmodels.postbody.EntryDurationClearPostBody
 import com.oyetech.kmpmodels.postbody.EntryPostBody
 import com.oyetech.kmpmodels.postbody.TagPostBody
-import com.oyetech.kmpmodels.response.DiaryArchiveResponse
-import com.oyetech.kmpmodels.response.EntryResponse
-import com.oyetech.kmpmodels.response.TagResponse
 import com.oyetech.kmpmodels.stringKeys.StringKeys
 import com.oyetech.kmpmodels.ui.event.DiaryAction
-import com.oyetech.kmpmodels.ui.state.DiaryAreaUiState
-import com.oyetech.kmpmodels.ui.state.DiaryEntryUiState
 import com.oyetech.kmpmodels.ui.state.DiaryTagUiState
-import com.oyetech.kmpmodels.ui.state.DiaryTimerPresetUiState
 import com.oyetech.kmpmodels.ui.state.DiaryUiState
 import com.oyetech.kmpmodels.ui.state.ErrorCode
 import com.oyetech.kmpmodels.ui.state.OperationState
@@ -33,12 +27,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
-import kotlinx.serialization.json.Json
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Instant
 
 class DiaryOperator(
     operatorScope: CoroutineScope,
@@ -65,36 +56,6 @@ class DiaryOperator(
     init {
         loadQuoteForSelectedDate()
         loadEntriesForSelectedDate()
-    }
-
-    private fun DiaryUiState.withEntries(
-        next: List<EntryEntity>,
-        now: Instant = Clock.System.now(),
-    ): DiaryUiState {
-        val items = renderEntryItems(next, now, selectedListArea, selectedListTagId)
-        val entryTags = next.filter { it.areaId == selectedListArea?.name }
-            .mapNotNull { it.tag }
-            .map { tag ->
-                DiaryTagUiState(
-                    id = tag.id,
-                    name = tag.name,
-                    displayLabel = "#${tag.name}",
-                    isSelected = tag.id == selectedListTagId,
-                )
-            }
-        return copy(
-            entries = next,
-            entryItems = items,
-            listTagOptions = (listTagOptions + entryTags).distinctBy { it.id }
-                .sortedBy { it.name.lowercase() },
-            areaEntriesEmptyMessage = if (selectedListTagId == null) {
-                StringKeys.noAreaEntries
-            } else {
-                StringKeys.noAreaTagEntries
-            },
-            isAreaEntriesEmpty = selectedListArea != null && items.isEmpty() &&
-                    entriesOperation == OperationState.Idle,
-        )
     }
 
     private fun exportDiaryHtml() {
@@ -170,82 +131,6 @@ class DiaryOperator(
             },
         )
     }
-
-    private fun diaryHtml(
-        days: List<DiaryUiState>,
-        title: String,
-        archive: DiaryArchiveResponse? = null,
-    ): String = buildString {
-        append("<!doctype html><html lang=\"tr\"><head><meta charset=\"UTF-8\">")
-        append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">")
-        append("<title>${title.escapeHtml()}</title>")
-        append(
-            """<style>
-                body { font-family: sans-serif; max-width: 1100px; margin: auto; padding: 24px; }
-                blockquote { margin: 16px 0; padding: 12px; border-left: 3px solid; white-space: pre-wrap; overflow-wrap: anywhere; }
-                table { width: 100%; border-collapse: collapse; }
-                th, td { border: 1px solid #ccc; padding: 10px; text-align: left; vertical-align: top; }
-                td { white-space: pre-wrap; overflow-wrap: anywhere; }
-                .entries { overflow-x: auto; }
-                section { margin-bottom: 40px; }
-            </style></head><body>
-            """.trimIndent(),
-        )
-        append("<h1>${title.escapeHtml()}</h1>")
-        days.forEach { day ->
-            append("<section><h2>${day.selectedDateLabel.escapeHtml()}</h2>")
-            appendDiaryDay(day)
-            append("</section>")
-        }
-        if (archive != null) {
-            val json = Json.encodeToString(archive).replace("<", "\\u003c")
-            append("<script type=\"application/json\" id=\"diary-archive-data\">$json</script>")
-        }
-        append("</body></html>")
-    }
-
-    private fun StringBuilder.appendDiaryDay(snapshot: DiaryUiState) {
-        append("<h3>${StringKeys.todaysQuote}</h3>")
-        append("<blockquote>${snapshot.dayQuote.escapeHtml()}</blockquote>")
-        if (snapshot.entries.isEmpty()) {
-            append("<p>${StringKeys.noDiaryEntries}</p>")
-        } else {
-            append("<div class=\"entries\"><table><thead><tr>")
-            listOf(
-                StringKeys.entryCreatedAt,
-                StringKeys.timerStartedAt,
-                StringKeys.area,
-                StringKeys.tag,
-                StringKeys.note,
-                StringKeys.duration,
-            ).forEach { append("<th scope=\"col\">${it.escapeHtml()}</th>") }
-            append("</tr></thead><tbody>")
-            snapshot.entries.sortedBy { it.createdAt }.forEach { entry ->
-                append("<tr>")
-                listOf(
-                    entry.createdAt?.let(::exportTimestamp) ?: "-",
-                    entry.timerStartedAt?.let(::exportTimestamp) ?: "-",
-                    areaLabel(entry.areaId),
-                    entry.tag?.name.orEmpty(),
-                    entry.text,
-                    entry.durationSeconds?.let(StringKeys::diaryExportDuration) ?: "-",
-                ).forEach { append("<td>${it.escapeHtml()}</td>") }
-                append("</tr>")
-            }
-            append("</tbody></table></div>")
-        }
-    }
-
-    private fun exportTimestamp(instant: Instant): String {
-        val local = instant.toLocalDateTime(TimeZone.currentSystemDefault())
-        return "${local.date} ${formatTime(instant)}"
-    }
-
-    private fun String.escapeHtml(): String = replace("&", "&amp;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
-        .replace("\"", "&quot;")
-        .replace("'", "&#39;")
 
     private fun completeEntry(entryId: String) {
         if (state.value.entryOperation is OperationState.Loading) return
@@ -382,103 +267,6 @@ class DiaryOperator(
         }
     }
 
-    private fun DiaryUiState.withEditorState(now: Instant = Clock.System.now()): DiaryUiState {
-        val entry = entries.firstOrNull { it.id == editingEntryId }
-        val status = entry?.let { timerStatus(it, now) } ?: when {
-            isEntryCompleted -> EntryTimerStatus.FINISHED
-            selectedDurationSeconds != null -> EntryTimerStatus.PENDING
-            else -> EntryTimerStatus.NONE
-        }
-        val isCustom = selectedTimerPreset == EntryTimerPreset.CUSTOM
-        val validCustom = !isCustom || customDurationSeconds(customDurationMinutes) != null
-        val hasContent = selectedArea != null || text.isNotBlank() ||
-                selectedDurationSeconds != null || isEntryCompleted
-        val validText = text.length <= MAX_ENTRY_TEXT_LENGTH
-        val isSaving = entryOperation is OperationState.Loading
-        val canChange = status != EntryTimerStatus.RUNNING
-        val tagName = normalizeTagName(tagQuery)
-        val tagNameTooLong = tagName.count { it !in '\uDC00'..'\uDFFF' } > 40
-        return copy(
-            isTagInputVisible = selectedArea != null,
-            selectedTagLabel = selectedTag?.let { "#${it.name}" }.orEmpty(),
-            canClearTag = selectedTag != null,
-            hasTagQueryError = tagNameTooLong,
-            tagQueryError = if (tagNameTooLong) StringKeys.tagNameTooLong else "",
-            canCreateTag = isEditorVisible && selectedArea != null &&
-                    tagName.isNotEmpty() && !tagNameTooLong &&
-                    tagOperation !is OperationState.Loading &&
-                    tagCreateOperation !is OperationState.Loading &&
-                    tagSuggestions.none {
-                        normalizeTagName(it.name).equals(
-                            tagName,
-                            ignoreCase = true
-                        )
-                    } &&
-                    selectedTag?.name?.let {
-                        normalizeTagName(it).equals(
-                            tagName,
-                            ignoreCase = true
-                        )
-                    } != true,
-            createTagLabel = StringKeys.createTag(tagName),
-            timerStatus = status,
-            timerLabel = entry?.let { timerLabel(it, now) }.orEmpty(),
-            primaryButtonLabel = if (editingEntryId != null &&
-                status == EntryTimerStatus.PENDING && selectedDurationSeconds != null && !isEntryCompleted
-            ) {
-                StringKeys.start
-            } else {
-                StringKeys.save
-            },
-            canCreateOrUpdateEntry = hasContent && validCustom && validText,
-            hasEntryTextError = !validText,
-            entryTextError = if (validText) {
-                ""
-            } else {
-                StringKeys.entryTextTooLong(
-                    MAX_ENTRY_TEXT_LENGTH
-                )
-            },
-            isCustomDurationVisible = isCustom,
-            customDurationError = if (isCustom && !validCustom && customDurationMinutes.isNotEmpty()) {
-                StringKeys.customDurationInvalid(MAX_CUSTOM_DURATION_MINUTES)
-            } else {
-                ""
-            },
-            hasCustomDurationError = isCustom && !validCustom && customDurationMinutes.isNotEmpty(),
-            canChangeDuration = canChange,
-            canCancelEditorTimer = status == EntryTimerStatus.RUNNING,
-            timerPresetOptions = timerPresetOptions().map {
-                it.copy(isEnabled = canChange)
-            },
-            canGoPrevious = !isSaving,
-            canGoNext = !isSaving,
-        )
-    }
-
-    private fun DiaryUiState.closeEditor(): DiaryUiState = copy(
-        isEditorVisible = false,
-        editingEntryId = null,
-        selectedArea = null,
-        selectedTag = null,
-        tagQuery = "",
-        tagSuggestions = emptyList(),
-        tagOperation = OperationState.Idle,
-        tagCreateOperation = OperationState.Idle,
-        text = "",
-        selectedTimerPreset = null,
-        customDurationMinutes = "",
-        selectedDurationSeconds = null,
-        isEntryCompleted = false,
-        entryIsDirty = false,
-        dismissRequested = false,
-        entryOperation = if (entryOperation is OperationState.Loading) {
-            entryOperation
-        } else {
-            OperationState.Idle
-        },
-    ).withEditorState()
-
     override fun handleAction(action: DiaryAction) {
         when (action) {
             DiaryAction.PreviousDayClicked -> {
@@ -515,6 +303,35 @@ class DiaryOperator(
             }
 
             DiaryAction.RetryListTagsLoadClicked -> loadListTags()
+            DiaryAction.ListAllDatesClicked -> selectListDatePreset(null)
+            DiaryAction.ListWeeklyClicked -> selectListDatePreset(7)
+            DiaryAction.ListMonthlyClicked -> selectListDatePreset(30)
+            DiaryAction.ListCustomDateRangeClicked -> {
+                if (state.value.selectedListArea == null) return
+                val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+                updateState {
+                    copy(
+                        isDateRangeDialogVisible = true,
+                        dateRangeStartInput = (listStartDate ?: today).toString(),
+                        dateRangeEndInput = (listEndDate ?: today).toString(),
+                        dateRangeErrorMessage = null,
+                    )
+                }
+            }
+
+            DiaryAction.ListDateRangeDismissed -> updateState {
+                copy(isDateRangeDialogVisible = false, dateRangeErrorMessage = null)
+            }
+
+            is DiaryAction.ListDateRangeStartChanged -> updateState {
+                copy(dateRangeStartInput = action.value, dateRangeErrorMessage = null)
+            }
+
+            is DiaryAction.ListDateRangeEndChanged -> updateState {
+                copy(dateRangeEndInput = action.value, dateRangeErrorMessage = null)
+            }
+
+            DiaryAction.ApplyListDateRangeClicked -> applyListDateRange()
 
             is DiaryAction.QuoteChanged -> {
                 updateState {
@@ -803,28 +620,6 @@ class DiaryOperator(
         )
     }
 
-    private fun DiaryUiState.withSelectedTag(tag: TagEntry): DiaryUiState = copy(
-        selectedTag = tag,
-        tagQuery = "",
-        tagSuggestions = tagSuggestions.map { it.copy(isSelected = it.id == tag.id) },
-        listTagOptions = if (tag.areaId == selectedListArea?.name) {
-            (
-                    listTagOptions + DiaryTagUiState(
-                        id = tag.id,
-                        name = tag.name,
-                        displayLabel = "#${tag.name}",
-                        isSelected = tag.id == selectedListTagId,
-                    )
-                    ).distinctBy { it.id }.sortedBy { it.name.lowercase() }
-        } else {
-            listTagOptions
-        },
-        entryIsDirty = true,
-        entryRevision = entryRevision + 1,
-        tagOperation = OperationState.Idle,
-        tagCreateOperation = OperationState.Idle,
-    ).withEditorState()
-
     private fun selectTag(tag: TagEntry) {
         cancelTagRequests()
         updateState { withSelectedTag(tag) }
@@ -908,6 +703,14 @@ class DiaryOperator(
                 isAllListTagsSelected = true,
                 listTagOptions = emptyList(),
                 listTagsOperation = OperationState.Idle,
+                isAllDatesSelected = true,
+                isWeeklyDateFilterSelected = false,
+                isMonthlyDateFilterSelected = false,
+                isCustomDateFilterSelected = false,
+                listStartDate = null,
+                listEndDate = null,
+                isDateRangeDialogVisible = false,
+                dateRangeErrorMessage = null,
                 areaFilterLabel = "",
                 isDailyContentVisible = true,
                 isAreaMenuVisible = false,
@@ -940,10 +743,63 @@ class DiaryOperator(
                 entries = emptyList(),
                 entryItems = emptyList(),
                 entriesOperation = OperationState.Idle,
-            )
+            ).withEntries(emptyList())
         }
         loadEntriesForSelectedDate()
         loadListTags()
+    }
+
+    private fun selectListDatePreset(days: Int?) {
+        if (state.value.selectedListArea == null) return
+        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+        updateState {
+            copy(
+                isAllDatesSelected = days == null,
+                isWeeklyDateFilterSelected = days == 7,
+                isMonthlyDateFilterSelected = days == 30,
+                isCustomDateFilterSelected = false,
+                listStartDate = days?.let { LocalDate.fromEpochDays(today.toEpochDays() - it + 1) },
+                listEndDate = today.takeIf { days != null },
+                isDateRangeDialogVisible = false,
+                dateRangeErrorMessage = null,
+            ).withEntries(entries)
+        }
+    }
+
+    private fun applyListDateRange() {
+        val snapshot = state.value
+        if (snapshot.selectedListArea == null || !snapshot.isDateRangeDialogVisible) return
+        val start = try {
+            LocalDate.parse(snapshot.dateRangeStartInput.trim())
+        } catch (_: IllegalArgumentException) {
+            null
+        }
+        val end = try {
+            LocalDate.parse(snapshot.dateRangeEndInput.trim())
+        } catch (_: IllegalArgumentException) {
+            null
+        }
+        val error = when {
+            start == null || end == null -> StringKeys.invalidDateRange
+            start > end -> StringKeys.reversedDateRange
+            else -> null
+        }
+        if (error != null) {
+            updateState { copy(dateRangeErrorMessage = error) }
+            return
+        }
+        updateState {
+            copy(
+                isAllDatesSelected = false,
+                isWeeklyDateFilterSelected = false,
+                isMonthlyDateFilterSelected = false,
+                isCustomDateFilterSelected = true,
+                listStartDate = checkNotNull(start),
+                listEndDate = checkNotNull(end),
+                isDateRangeDialogVisible = false,
+                dateRangeErrorMessage = null,
+            ).withEntries(entries)
+        }
     }
 
     private fun loadListTags() {
@@ -1283,60 +1139,6 @@ class DiaryOperator(
     }
 
     companion object {
-        private const val MAX_CUSTOM_DURATION_MINUTES = 1440L
-        private const val MAX_ENTRY_TEXT_LENGTH = 3000
-        private val diaryAreas = listOf(
-            AreaEntry.WORK,
-            AreaEntry.BODY,
-            AreaEntry.MIND,
-            AreaEntry.CHARACTER,
-            AreaEntry.LIFE,
-        )
-
-        private fun customDurationSeconds(minutes: String): Long? =
-            minutes.takeIf { it.isNotEmpty() && it.all { char -> char in '0'..'9' } }
-                ?.toLongOrNull()?.takeIf { it in 1..MAX_CUSTOM_DURATION_MINUTES }?.times(60)
-
-        private fun presetFor(seconds: Long?): EntryTimerPreset? =
-            if (seconds == null) {
-                null
-            } else {
-                EntryTimerPreset.values()
-                    .firstOrNull { it.durationSeconds == seconds } ?: EntryTimerPreset.CUSTOM
-            }
-
-        private fun timerStatus(
-            entry: EntryEntity,
-            now: Instant = Clock.System.now(),
-        ): EntryTimerStatus = when {
-            entry.timerCancelledAt != null -> EntryTimerStatus.CANCELLED
-            entry.completedAt != null -> EntryTimerStatus.FINISHED
-            entry.timerEndsAt?.let { it <= now } == true -> EntryTimerStatus.FINISHED
-            entry.timerStartedAt != null && entry.timerEndsAt != null -> EntryTimerStatus.RUNNING
-            entry.durationSeconds != null -> EntryTimerStatus.PENDING
-            else -> EntryTimerStatus.NONE
-        }
-
-        private fun timerLabel(
-            entry: EntryEntity,
-            now: Instant = Clock.System.now(),
-        ): String = when (timerStatus(entry, now)) {
-            EntryTimerStatus.NONE -> ""
-            EntryTimerStatus.PENDING -> StringKeys.pending
-            EntryTimerStatus.RUNNING -> entry.timerEndsAt?.let { remainingLabel(it, now) }
-                ?: StringKeys.pending
-
-            EntryTimerStatus.FINISHED -> StringKeys.finished
-            EntryTimerStatus.CANCELLED -> StringKeys.cancelled
-        }
-
-        private fun remainingLabel(end: Instant, now: Instant): String {
-            val seconds = (end - now).inWholeSeconds.coerceAtLeast(0)
-            return "${(seconds / 60).toString().padStart(2, '0')}:${
-                (seconds % 60).toString().padStart(2, '0')
-            }"
-        }
-
         internal fun initialState(): DiaryUiState {
             val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
             return DiaryUiState(
@@ -1357,129 +1159,6 @@ class DiaryOperator(
                 dayQuote = "",
                 isHtmlExportAvailable = diaryHtmlDownloader != null,
             )
-        }
-
-        internal fun renderEntryItems(
-            entries: List<EntryEntity>,
-            now: Instant = Clock.System.now(),
-            selectedListArea: AreaEntry? = null,
-            selectedListTagId: String? = null,
-        ): List<DiaryEntryUiState> {
-            val areas = areaOptions()
-            val visibleEntries = if (selectedListArea == null) {
-                entries.sortedByDescending { it.createdAt }
-            } else {
-                entries.filter {
-                    it.areaId == selectedListArea.name &&
-                            (selectedListTagId == null || it.tag?.id == selectedListTagId)
-                }
-                    .sortedWith(
-                        compareByDescending<EntryEntity> { it.entryDate }
-                            .thenByDescending { it.createdAt }
-                            .thenByDescending { it.id },
-                    )
-            }
-            return visibleEntries.map { entry ->
-                val status = timerStatus(entry, now)
-                val label = timerLabel(entry, now)
-                DiaryEntryUiState(
-                    id = entry.id,
-                    areaLabel = areaLabel(entry.areaId),
-                    createdBy = entry.createdBy,
-                    timeLabel = entry.createdAt?.let(::formatTime).orEmpty(),
-                    dateLabel = if (selectedListArea == null) null else entry.entryDate?.let {
-                        formatDate(LocalDate.parse(it))
-                    },
-                    text = entry.text,
-                    timerStatusLabel = label,
-                    countdownLabel = if (status == EntryTimerStatus.RUNNING) label else null,
-                    isTimerRunning = status == EntryTimerStatus.RUNNING,
-                    canStartTimer = status == EntryTimerStatus.PENDING && entry.durationSeconds != null,
-                    canCancelTimer = status == EntryTimerStatus.RUNNING,
-                    canMarkCompleted = status == EntryTimerStatus.NONE ||
-                            status == EntryTimerStatus.PENDING || status == EntryTimerStatus.RUNNING,
-                    isAreaVisible = entry.areaId != null,
-                    tagLabel = entry.tag?.let { "#${it.name}" },
-                    areaEmoji = areas.firstOrNull { it.area.name == entry.areaId }?.emoji.orEmpty(),
-                    isTimerStatusVisible = status != EntryTimerStatus.NONE,
-                )
-            }
-        }
-
-        private fun entryEntity(response: EntryResponse): EntryEntity =
-            EntryEntity(
-                id = response.id,
-                areaId = response.areaId,
-                tag = response.tag?.let(::tagEntity),
-                text = response.text,
-                entryDate = response.entryDate,
-                durationSeconds = response.durationSeconds,
-                timerStartedAt = response.timerStartedAt?.let(Instant::parse),
-                timerEndsAt = response.timerEndsAt?.let(Instant::parse),
-                timerCancelledAt = response.timerCancelledAt?.let(Instant::parse),
-                completedAt = response.completedAt?.let(Instant::parse),
-                createdBy = response.createdBy.orEmpty(),
-                note = response.note,
-                createdAt = response.createdAt?.let(Instant::parse),
-                updatedAt = response.updatedAt?.let(Instant::parse),
-            )
-
-        private fun tagEntity(response: TagResponse): TagEntry =
-            TagEntry(response.id, response.name, response.areaId)
-
-        private fun normalizeTagName(value: String): String =
-            value.trim().replace(Regex("\\s+"), " ")
-
-        private fun areaOptions(): List<DiaryAreaUiState> =
-            diaryAreas.map { area ->
-                val (emoji, description) = when (area) {
-                    AreaEntry.WORK -> "🏗️" to StringKeys.workAreaDescription
-                    AreaEntry.BODY -> "💪" to StringKeys.bodyAreaDescription
-                    AreaEntry.MIND -> "🧠" to StringKeys.mindAreaDescription
-                    AreaEntry.CHARACTER -> "🧭" to StringKeys.characterAreaDescription
-                    AreaEntry.LIFE -> "🌍" to StringKeys.lifeAreaDescription
-                }
-                DiaryAreaUiState(
-                    area = area,
-                    label = areaLabel(area.name),
-                    emoji = emoji,
-                    description = description,
-                )
-            }
-
-        private fun timerPresetOptions(): List<DiaryTimerPresetUiState> =
-            EntryTimerPreset.values().filter { it != EntryTimerPreset.ALREADY_DONE }.map { preset ->
-                DiaryTimerPresetUiState(
-                    preset = preset,
-                    label = when (preset) {
-                        EntryTimerPreset.ALREADY_DONE -> StringKeys.alreadyDone
-                        EntryTimerPreset.FIVE_MINUTES -> StringKeys.fiveMinutes
-                        EntryTimerPreset.TEN_MINUTES -> StringKeys.tenMinutes
-                        EntryTimerPreset.FIFTEEN_MINUTES -> StringKeys.fifteenMinutes
-                        EntryTimerPreset.TWENTY_MINUTES -> StringKeys.twentyMinutes
-                        EntryTimerPreset.CUSTOM -> StringKeys.custom
-                    },
-                )
-            }
-
-        private fun formatDate(date: LocalDate): String =
-            "${date.day} ${StringKeys.turkishMonths[date.monthNumber - 1]} ${date.year}"
-
-        private fun formatTime(instant: kotlin.time.Instant): String {
-            val localTime = instant.toLocalDateTime(TimeZone.currentSystemDefault()).time
-            return "${localTime.hour.toString().padStart(2, '0')}:${
-                localTime.minute.toString().padStart(2, '0')
-            }"
-        }
-
-        private fun areaLabel(areaId: String?): String = when (areaId) {
-            null -> ""
-            AreaEntry.WORK.name -> StringKeys.workArea
-            AreaEntry.BODY.name -> StringKeys.bodyArea
-            AreaEntry.MIND.name -> StringKeys.mindArea
-            AreaEntry.CHARACTER.name -> StringKeys.characterArea
-            AreaEntry.LIFE.name -> StringKeys.lifeArea
-            else -> areaId
         }
     }
 }
