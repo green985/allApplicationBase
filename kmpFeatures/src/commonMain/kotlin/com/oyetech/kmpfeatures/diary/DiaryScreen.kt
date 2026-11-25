@@ -18,12 +18,15 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
@@ -33,6 +36,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -405,7 +409,48 @@ fun DiaryScreen(
             }
         }
     }
-    if (uiState.isDateRangeDialogVisible) {
+    val weeklyDatePickerInitialMillis = uiState.weeklyDatePickerInitialMillis
+    if (uiState.isDateRangeDialogVisible && uiState.isWeeklyExportDateRange && weeklyDatePickerInitialMillis != null) {
+        val pickerState =
+            rememberDatePickerState(initialSelectedDateMillis = weeklyDatePickerInitialMillis)
+        DatePickerDialog(
+            onDismissRequest = { onAction(DiaryAction.WeeklyDatePickerDismissed) },
+            confirmButton = {
+                TextButton(
+                    enabled = pickerState.selectedDateMillis != null,
+                    onClick = {
+                        pickerState.selectedDateMillis?.let {
+                            onAction(
+                                DiaryAction.WeeklyDatePickerConfirmed(
+                                    it
+                                )
+                            )
+                        }
+                    },
+                ) {
+                    Text(StringKeys.diaryWeeklySelectDate)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { onAction(DiaryAction.WeeklyDatePickerDismissed) }) {
+                    Text(StringKeys.cancelDateRange)
+                }
+            },
+        ) {
+            DatePicker(
+                state = pickerState,
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                title = {
+                    Text(
+                        if (uiState.isPickingWeeklyStartDate) StringKeys.rangeStartDate else StringKeys.rangeEndDate,
+                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                },
+                showModeToggle = false,
+            )
+        }
+    } else if (uiState.isDateRangeDialogVisible) {
         AlertDialog(
             onDismissRequest = { onAction(DiaryAction.ListDateRangeDismissed) },
             title = {
@@ -413,22 +458,34 @@ fun DiaryScreen(
             },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = uiState.dateRangeStartInput,
-                        onValueChange = { onAction(DiaryAction.ListDateRangeStartChanged(it)) },
-                        label = { Text(StringKeys.rangeStartDate) },
-                        placeholder = { Text(StringKeys.dateInputFormat) },
-                        singleLine = true,
-                    )
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = uiState.dateRangeEndInput,
-                        onValueChange = { onAction(DiaryAction.ListDateRangeEndChanged(it)) },
-                        label = { Text(StringKeys.rangeEndDate) },
-                        placeholder = { Text(StringKeys.dateInputFormat) },
-                        singleLine = true,
-                    )
+                    if (uiState.isWeeklyExportDateRange) {
+                        WeeklyReportDateField(
+                            StringKeys.rangeStartDate,
+                            uiState.dateRangeStartInput
+                        ) {
+                            onAction(DiaryAction.WeeklyDatePickerOpened(isStartDate = true))
+                        }
+                        WeeklyReportDateField(StringKeys.rangeEndDate, uiState.dateRangeEndInput) {
+                            onAction(DiaryAction.WeeklyDatePickerOpened(isStartDate = false))
+                        }
+                    } else {
+                        OutlinedTextField(
+                            modifier = Modifier.fillMaxWidth(),
+                            value = uiState.dateRangeStartInput,
+                            onValueChange = { onAction(DiaryAction.ListDateRangeStartChanged(it)) },
+                            label = { Text(StringKeys.rangeStartDate) },
+                            placeholder = { Text(StringKeys.dateInputFormat) },
+                            singleLine = true,
+                        )
+                        OutlinedTextField(
+                            modifier = Modifier.fillMaxWidth(),
+                            value = uiState.dateRangeEndInput,
+                            onValueChange = { onAction(DiaryAction.ListDateRangeEndChanged(it)) },
+                            label = { Text(StringKeys.rangeEndDate) },
+                            placeholder = { Text(StringKeys.dateInputFormat) },
+                            singleLine = true,
+                        )
+                    }
                     uiState.dateRangeErrorMessage?.let { message ->
                         Text(message, color = AppColors.error)
                     }
@@ -455,6 +512,16 @@ fun DiaryScreen(
                 uiState = uiState,
                 onAction = onAction,
             )
+        }
+    }
+}
+
+@Composable
+private fun WeeklyReportDateField(label: String, date: String, onClick: () -> Unit) {
+    OutlinedButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(label, style = MaterialTheme.typography.labelMedium)
+            Text(date, style = MaterialTheme.typography.bodyLarge)
         }
     }
 }

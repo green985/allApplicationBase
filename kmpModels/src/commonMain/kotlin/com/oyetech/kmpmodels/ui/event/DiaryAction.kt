@@ -48,6 +48,9 @@ sealed interface DiaryAction {
     data object ExportDiaryHtmlClicked : DiaryAction
     data object ExportDiaryArchiveClicked : DiaryAction
     data object ExportDiaryWeeklyClicked : DiaryAction
+    data class WeeklyDatePickerOpened(val isStartDate: Boolean) : DiaryAction
+    data class WeeklyDatePickerConfirmed(val utcMillis: Long) : DiaryAction
+    data object WeeklyDatePickerDismissed : DiaryAction
     data object EntryDialogDismissed : DiaryAction
     data object EntryDialogCancelled : DiaryAction
     data object SaveEntryClicked : DiaryAction

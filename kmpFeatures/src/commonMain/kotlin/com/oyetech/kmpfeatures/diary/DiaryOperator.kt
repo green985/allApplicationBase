@@ -29,9 +29,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.drop
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Instant
+
+private const val MILLIS_PER_DAY = 86_400_000L
 
 class DiaryOperator(
     operatorScope: CoroutineScope,
@@ -585,11 +589,44 @@ class DiaryOperator(
                     copy(
                         isDateRangeDialogVisible = true,
                         isWeeklyExportDateRange = true,
+                        weeklyDatePickerInitialMillis = null,
                         dateRangeStartInput = weekStart.toString(),
                         dateRangeEndInput = diaryWeekEnd(weekStart).toString(),
                         dateRangeErrorMessage = null,
                     )
                 }
+            }
+
+            is DiaryAction.WeeklyDatePickerOpened -> {
+                val snapshot = state.value
+                if (!snapshot.isDateRangeDialogVisible || !snapshot.isWeeklyExportDateRange) return
+                val date = LocalDate.parse(
+                    if (action.isStartDate) snapshot.dateRangeStartInput else snapshot.dateRangeEndInput,
+                )
+                updateState {
+                    copy(
+                        weeklyDatePickerInitialMillis = date.toEpochDays() * MILLIS_PER_DAY,
+                        isPickingWeeklyStartDate = action.isStartDate,
+                    )
+                }
+            }
+
+            is DiaryAction.WeeklyDatePickerConfirmed -> {
+                if (state.value.weeklyDatePickerInitialMillis == null) return
+                val date = Instant.fromEpochMilliseconds(action.utcMillis)
+                    .toLocalDateTime(TimeZone.UTC).date.toString()
+                updateState {
+                    copy(
+                        dateRangeStartInput = if (isPickingWeeklyStartDate) date else dateRangeStartInput,
+                        dateRangeEndInput = if (isPickingWeeklyStartDate) dateRangeEndInput else date,
+                        dateRangeErrorMessage = null,
+                        weeklyDatePickerInitialMillis = null,
+                    )
+                }
+            }
+
+            DiaryAction.WeeklyDatePickerDismissed -> updateState {
+                copy(weeklyDatePickerInitialMillis = null)
             }
 
             is DiaryAction.StartEntryTimerClicked -> startEntryTimer(action.entryId)

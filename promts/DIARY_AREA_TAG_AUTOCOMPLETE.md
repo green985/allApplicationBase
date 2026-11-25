@@ -495,7 +495,8 @@ supabase functions deploy kmpFunctions
 ### HTML arşivi ve haftalık rapor
 
 **Tüm günleri tek HTML indir** bütün kayıtları (Yapılacaklar dahil) ve gün sözlerini arşivler.
-**Haftalık indir**, seçili günün Pazar–Cumartesi aralığıyla açılır; yalnızca onaylanan tarih
+**Haftalık indir**, seçili günün Pazar–Cumartesi aralığıyla açılır. Başlangıç ve bitiş
+alanlarına dokunarak tarihleri takvimden seçebilirsin; yalnızca onaylanan tarih
 aralığını (iki uç dahil) indirir. Arşivde haftalar Pazar günü başlar. Her hafta için kullanılan
 etiketlerin süre toplamları ve alanların kayıt sayıları gösterilir; kayıtlar alan altında
 etiketlerine göre listelenir. Etiketsiz ve alansız kayıtlar ayrı kategorilerde yer alır.

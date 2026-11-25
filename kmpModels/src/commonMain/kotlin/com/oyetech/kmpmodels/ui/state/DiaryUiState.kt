@@ -34,6 +34,8 @@ data class DiaryUiState(
     val listEndDate: LocalDate? = null,
     val isDateRangeDialogVisible: Boolean = false,
     val isWeeklyExportDateRange: Boolean = false,
+    val weeklyDatePickerInitialMillis: Long? = null,
+    val isPickingWeeklyStartDate: Boolean = false,
     val dateRangeStartInput: String = "",
     val dateRangeEndInput: String = "",
     val dateRangeErrorMessage: String? = null,

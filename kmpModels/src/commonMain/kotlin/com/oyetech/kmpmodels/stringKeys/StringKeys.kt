@@ -25,6 +25,7 @@ object StringKeys {
     const val bulkEntryInvalidArea = "Alan geçersiz."
     fun bulkEntryInvalidText(maxLength: Int): String =
         "text, en fazla $maxLength karakterlik bir metin olmalıdır."
+
     const val bulkEntryInvalidTag = "Etiket bu alana ve hesabınıza ait olmalıdır."
     const val bulkEntryTagsNotReady = "Etiketleri yükleyip yeniden önizleyin."
     const val bulkEntryInvalidDuration = "durationSeconds, 1–86400 arasında bir tam sayı olmalıdır."
@@ -36,8 +37,8 @@ object StringKeys {
     const val bulkEntryExampleTitle = "Örnek JSON"
     const val bulkEntryExampleHint =
         "Yeni bir toplu kayıt için yeni requestId kullanın; aynı isteği tekrar denerken değiştirmeyin. " +
-            "Etiket için yukarıdaki tagId değerlerinden aynı alana ait olanı kullanın veya tagId alanını kaldırın. " +
-            "Süre saniye cinsindendir; süre eklemek zamanlayıcıyı başlatmaz. markAsCompleted: true, kaydı Yapıldı olarak işaretler."
+                "Etiket için yukarıdaki tagId değerlerinden aynı alana ait olanı kullanın veya tagId alanını kaldırın. " +
+                "Süre saniye cinsindendir; süre eklemek zamanlayıcıyı başlatmaz. markAsCompleted: true, kaydı Yapıldı olarak işaretler."
     const val bulkEntryGoogleRequired = "Toplu kayıt için web üzerinde Google ile giriş gerekli."
     const val bulkEntryDiaryNotReady =
         "Önce açık kaydı kapatın ve kaydetmenin tamamlanmasını bekleyin."
@@ -92,6 +93,7 @@ object StringKeys {
     const val downloadDiaryWeekly = "Haftalık indir"
     const val diaryWeeklyReport = "Haftalık günlük raporu"
     const val diaryWeeklyDownloadConfirm = "HTML indir"
+    const val diaryWeeklySelectDate = "Tarihi seç"
     const val diaryWeeklyEmpty = "Bu tarih aralığında günlük kaydı veya söz bulunamadı."
     const val diaryArchive = "Günlük arşivi"
     const val diaryArchiveNotReady =
@@ -106,6 +108,7 @@ object StringKeys {
         seconds % 60 == 0L -> "${seconds / 60} dk"
         else -> "${seconds / 60} dk ${seconds % 60} sn"
     }
+
     const val addEntry = "+"
     const val today = "Bugün"
     const val selectedDay = "Seçili gün"
