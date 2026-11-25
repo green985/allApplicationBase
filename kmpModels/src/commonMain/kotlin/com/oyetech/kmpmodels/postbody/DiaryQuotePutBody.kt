@@ -4,5 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class DiaryQuotePutBody(
-    val quote: String,
+    val quote: String? = null,
+    val thoughts: String? = null,
 )

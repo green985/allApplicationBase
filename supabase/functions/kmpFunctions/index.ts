@@ -2,6 +2,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const fixedUserId = "02af726d-aa75-4301-a410-049d214841f9";
 const entrySelect = "id, user_id, area_id, text, entry_date, created_at, updated_at, duration_seconds, timer_started_at, timer_ends_at, timer_cancelled_at, completed_at, is_reminder, tag:diary_tags(id, name, area_id)";
+const quoteSelect = "quote_date, quote, thoughts, created_at, updated_at";
 const maxDurationSeconds = 1440 * 60;
 const maxTextLength = 10_000;
 const validAreas = new Set(["WORK", "BODY", "MIND", "CHARACTER", "LIFE"]);
@@ -21,6 +22,7 @@ type GenericResponse<T> = {
 type DiaryQuote = {
   date: string;
   quote: string;
+  thoughts: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -220,12 +222,14 @@ function hasClientTimerTimes(body: Record<string, unknown>): boolean {
 function mapQuote(row: {
   quote_date: string;
   quote: string;
+  thoughts: string;
   created_at: string;
   updated_at: string;
 }): DiaryQuote {
   return {
     date: row.quote_date,
     quote: row.quote,
+    thoughts: row.thoughts,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -268,7 +272,7 @@ function mapEntry(row: {
 async function getQuote(date: string, userId: string): Promise<Response> {
   const { data, error } = await supabase
     .from("diary_quotes")
-    .select("quote_date, quote, created_at, updated_at")
+    .select(quoteSelect)
     .eq("user_id", userId)
     .eq("quote_date", date)
     .maybeSingle();
@@ -286,10 +290,16 @@ async function getQuote(date: string, userId: string): Promise<Response> {
 
 async function updateQuote(request: Request, date: string, userId: string): Promise<Response> {
   const body = await request.json().catch(() => null) as Record<string, unknown> | null;
-  const quote = typeof body?.quote === "string" ? body.quote.trim() : "";
-
-  if (!quote) {
-    return response(null, "Quote alanı boş olamaz.", false, 400);
+  const quote = body?.quote;
+  const thoughts = body?.thoughts;
+  if (quote !== undefined && (typeof quote !== "string" || !quote.trim())) {
+    return response(null, "Günün sözü boş olamaz.", false, 400);
+  }
+  if (thoughts !== undefined && (typeof thoughts !== "string" || [...thoughts].length > maxTextLength)) {
+    return response(null, `Günün düşünceleri en fazla ${maxTextLength} karakter olabilir.`, false, 400);
+  }
+  if (quote === undefined && thoughts === undefined) {
+    return response(null, "Günün sözü veya düşünceleri gerekli.", false, 400);
   }
 
   const { data, error } = await supabase
@@ -298,12 +308,13 @@ async function updateQuote(request: Request, date: string, userId: string): Prom
       {
         user_id: userId,
         quote_date: date,
-        quote,
+        ...(typeof quote === "string" ? { quote: quote.trim() } : {}),
+        ...(typeof thoughts === "string" ? { thoughts } : {}),
         updated_at: new Date().toISOString(),
       },
       { onConflict: "user_id,quote_date" },
     )
-    .select("quote_date, quote, created_at, updated_at")
+    .select(quoteSelect)
     .single();
 
   if (error) {
@@ -445,7 +456,7 @@ async function exportDiaryArchive(userId: string): Promise<Response> {
   for (let offset = 0; ; offset += pageSize) {
     const { data, error } = await supabase
       .from("diary_quotes")
-      .select("quote_date, quote, created_at, updated_at")
+      .select(quoteSelect)
       .eq("user_id", userId)
       .lte("created_at", exportedAt)
       .order("quote_date")

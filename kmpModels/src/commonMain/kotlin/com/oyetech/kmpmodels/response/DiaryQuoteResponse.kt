@@ -8,6 +8,7 @@ data class DiaryQuoteResponse(
     val quote: String,
     val createdAt: String? = null,
     val updatedAt: String? = null,
+    val thoughts: String = "",
 )
 
 @Serializable

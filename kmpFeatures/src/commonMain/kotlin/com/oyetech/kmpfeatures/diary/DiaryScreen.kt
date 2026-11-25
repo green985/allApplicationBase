@@ -294,14 +294,32 @@ fun DiaryScreen(
                 }
             }
             if (uiState.isDailyContentVisible) {
-                OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = uiState.dayQuote,
-                    onValueChange = { onAction(DiaryAction.QuoteChanged(it)) },
-                    label = { Text(StringKeys.todaysQuote) },
-                    placeholder = { Text(StringKeys.writeTodaysQuote) },
-                    singleLine = true,
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    OutlinedTextField(
+                        modifier = Modifier.weight(1f),
+                        value = uiState.dayQuote,
+                        onValueChange = { onAction(DiaryAction.QuoteChanged(it)) },
+                        label = { Text(StringKeys.todaysQuote) },
+                        placeholder = { Text(StringKeys.writeTodaysQuote) },
+                        singleLine = true,
+                    )
+                    TextButton(onClick = { onAction(DiaryAction.DailyThoughtsToggled) }) {
+                        Text(if (uiState.isDailyThoughtsExpanded) StringKeys.hideDailyThoughts else StringKeys.showDailyThoughts)
+                    }
+                }
+                if (uiState.isDailyThoughtsExpanded) {
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = uiState.dailyThoughts,
+                        onValueChange = { onAction(DiaryAction.DailyThoughtsChanged(it)) },
+                        label = { Text(StringKeys.dailyThoughts) },
+                        placeholder = { Text(StringKeys.dailyThoughtsPlaceholder) },
+                        minLines = 3,
+                        maxLines = 8,
+                        isError = uiState.dailyThoughtsError != null,
+                        supportingText = { uiState.dailyThoughtsError?.let { Text(it) } },
+                    )
+                }
             } else {
                 Text(
                     text = uiState.areaFilterLabel,

@@ -112,6 +112,10 @@ private fun StringBuilder.appendDiaryDay(
             append("</dl></details>")
         }
     }
+    if (snapshot.dailyThoughts.isNotBlank()) {
+        append("<p><strong>${StringKeys.dailyThoughts}</strong></p>")
+        append("<blockquote>${snapshot.dailyThoughts.escapeHtml()}</blockquote>")
+    }
     if (snapshot.entries.isEmpty()) {
         append("<p>${StringKeys.noDiaryEntries}</p>")
     } else {

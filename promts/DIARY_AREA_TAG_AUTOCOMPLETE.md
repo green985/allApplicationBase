@@ -494,6 +494,10 @@ supabase functions deploy kmpFunctions
 
 ### HTML arşivi ve haftalık rapor
 
+Günün sözü yanındaki **Düşünceleri aç** düğmesi, seçili güne ait çok satırlı not alanını açar.
+Not, günlük kayıtlarıyla aynı 10.000 karakter sınırını kullanır ve otomatik kaydedilir.
+Günlük, haftalık ve tüm arşiv HTML çıktılarında **Günün düşünceleri** başlığıyla yer alır.
+
 **Tüm günleri tek HTML indir** bütün kayıtları (Yapılacaklar dahil) ve gün sözlerini arşivler.
 **Haftalık indir**, seçili günün Pazar–Cumartesi aralığıyla açılır. Başlangıç ve bitiş
 alanlarına dokunarak tarihleri takvimden seçebilirsin; yalnızca onaylanan tarih

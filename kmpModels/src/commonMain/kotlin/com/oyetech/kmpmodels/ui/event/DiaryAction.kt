@@ -26,6 +26,8 @@ sealed interface DiaryAction {
     data class ListDateRangeEndChanged(val value: String) : DiaryAction
     data object ApplyListDateRangeClicked : DiaryAction
     data class QuoteChanged(val value: String) : DiaryAction
+    data object DailyThoughtsToggled : DiaryAction
+    data class DailyThoughtsChanged(val value: String) : DiaryAction
     data class AreaSelected(val value: AreaEntry) : DiaryAction
     data class TagQueryChanged(val value: String) : DiaryAction
     data class TagSelected(val tagId: String) : DiaryAction

@@ -16,6 +16,7 @@ import com.oyetech.kmpmodels.entity.TagEntry
 import com.oyetech.kmpmodels.navigation.RouteKMP
 import com.oyetech.kmpmodels.postbody.DiaryQuotePutBody
 import com.oyetech.kmpmodels.postbody.EntryPostBody
+import com.oyetech.kmpmodels.postbody.MAX_ENTRY_TEXT_LENGTH
 import com.oyetech.kmpmodels.postbody.TagPostBody
 import com.oyetech.kmpmodels.stringKeys.StringKeys
 import com.oyetech.kmpmodels.ui.event.DiaryAction
@@ -134,7 +135,7 @@ class DiaryOperator(
     private fun exportDiaryArchive(range: ClosedRange<LocalDate>? = null) {
         val snapshot = state.value
         if (!snapshot.canExportArchive) return
-        if (snapshot.isEditorVisible || snapshot.entryIsDirty || snapshot.quoteIsDirty ||
+        if (snapshot.isEditorVisible || snapshot.entryIsDirty || snapshot.quoteIsDirty || snapshot.dailyThoughtsIsDirty ||
             snapshot.entryOperation is OperationState.Loading ||
             snapshot.quoteOperation is OperationState.Loading
         ) {
@@ -166,6 +167,7 @@ class DiaryOperator(
                         selectedDateLabel = formatDate(date),
                         entries = entriesByDate[date].orEmpty().map(::entryEntity),
                         dayQuote = quotesByDate[date]?.quote.orEmpty(),
+                        dailyThoughts = quotesByDate[date]?.thoughts.orEmpty(),
                     )
                 }
                 val fileName = if (range == null) {
@@ -351,7 +353,7 @@ class DiaryOperator(
             DiaryAction.BulkEntryClicked -> {
                 if (!state.value.isBulkEntryAvailable) return
                 val snapshot = state.value
-                if (snapshot.isEditorVisible || snapshot.entryIsDirty || snapshot.quoteIsDirty ||
+                if (snapshot.isEditorVisible || snapshot.entryIsDirty || snapshot.quoteIsDirty || snapshot.dailyThoughtsIsDirty ||
                     snapshot.entryOperation is OperationState.Loading ||
                     snapshot.quoteOperation is OperationState.Loading
                 ) {
@@ -435,6 +437,26 @@ class DiaryOperator(
                     copy(
                         dayQuote = action.value,
                         quoteIsDirty = true,
+                        quoteRevision = quoteRevision + 1,
+                    )
+                }
+                scheduleQuoteSave()
+            }
+
+            DiaryAction.DailyThoughtsToggled -> updateState {
+                copy(isDailyThoughtsExpanded = !isDailyThoughtsExpanded)
+            }
+
+            is DiaryAction.DailyThoughtsChanged -> {
+                val tooLong =
+                    action.value.count { it !in '\uDC00'..'\uDFFF' } > MAX_ENTRY_TEXT_LENGTH
+                updateState {
+                    copy(
+                        dailyThoughts = action.value,
+                        dailyThoughtsIsDirty = true,
+                        dailyThoughtsError = if (tooLong) StringKeys.entryTextTooLong(
+                            MAX_ENTRY_TEXT_LENGTH
+                        ) else null,
                         quoteRevision = quoteRevision + 1,
                     )
                 }
@@ -726,7 +748,7 @@ class DiaryOperator(
             DiaryAction.RetryQuoteSaveClicked -> scheduleQuoteSave()
             DiaryAction.RetryEntrySaveClicked -> saveEntry()
             DiaryAction.RetryEntriesLoadClicked -> loadEntriesForSelectedDate()
-            DiaryAction.BackClicked -> navigationUseCase.goBack()
+            DiaryAction.BackClicked -> if (!hasUnsavedDailyThoughts()) navigationUseCase.goBack()
             DiaryAction.ErrorDismissed -> updateState {
                 copy(
                     quoteOperation = OperationState.Idle,
@@ -920,16 +942,16 @@ class DiaryOperator(
             previousJob = quoteAutosaveJob,
             canSave = {
                 val currentState = state.value
-                currentState.quoteIsDirty &&
-                        currentState.quoteOperation !is OperationState.Loading &&
-                        currentState.dayQuote.isNotBlank()
+                currentState.quoteOperation !is OperationState.Loading &&
+                        ((currentState.quoteIsDirty && currentState.dayQuote.isNotBlank()) ||
+                                (currentState.dailyThoughtsIsDirty && currentState.dailyThoughtsError == null))
             },
             onSave = { saveQuoteSnapshot() },
         )
     }
 
     private fun selectDay(offset: Int) {
-        if (state.value.entryOperation is OperationState.Loading) return
+        if (state.value.entryOperation is OperationState.Loading || hasUnsavedDailyThoughts()) return
         listTagsContext++
         cancelTagRequests()
         timerStartRequested = false
@@ -939,6 +961,9 @@ class DiaryOperator(
         updateState {
             stateFor(offset).closeEditor().copy(
                 dayQuote = "",
+                dailyThoughts = "",
+                dailyThoughtsIsDirty = false,
+                dailyThoughtsError = null,
                 quoteIsDirty = false,
                 quoteOperation = OperationState.Idle,
                 entries = emptyList(),
@@ -965,6 +990,12 @@ class DiaryOperator(
         }
         loadQuoteForSelectedDate()
         loadEntriesForSelectedDate()
+    }
+
+    private fun hasUnsavedDailyThoughts(): Boolean {
+        if (!state.value.dailyThoughtsIsDirty) return false
+        snackbarDelegate.triggerSnackbarState(message = StringKeys.dailyThoughtsNotSaved)
+        return true
     }
 
     private fun selectAreaFilter(area: AreaEntry) {
@@ -1135,19 +1166,19 @@ class DiaryOperator(
             onSuccess = { response ->
                 if (quoteContext != context) {
                     this
-                } else if (selectedDate == dateSnapshot && !quoteIsDirty) {
+                } else {
+                    if (quoteIsDirty || dailyThoughtsIsDirty) scheduleQuoteSave()
                     copy(
-                        dayQuote = response.quote,
+                        dayQuote = if (quoteIsDirty) dayQuote else response.quote,
+                        dailyThoughts = if (dailyThoughtsIsDirty) dailyThoughts else response.thoughts,
                         quoteOperation = OperationState.Idle,
                     )
-                } else {
-                    copy(quoteOperation = OperationState.Idle)
                 }
             },
             onError = { error ->
                 if (quoteContext != context) return@executeOperation this
+                if (quoteIsDirty || dailyThoughtsIsDirty) scheduleQuoteSave()
                 copy(
-                    dayQuote = "",
                     quoteOperation = if (error.code == ErrorCode.NotFound) {
                         OperationState.Idle
                     } else {
@@ -1162,7 +1193,12 @@ class DiaryOperator(
         quoteAutosaveJob.cancelPendingSave()
         val snapshot = state.value
         val revision = snapshot.quoteRevision
-        val quoteSnapshot = snapshot.dayQuote
+        val request = DiaryQuotePutBody(
+            quote = snapshot.dayQuote.takeIf { snapshot.quoteIsDirty && it.isNotBlank() },
+            thoughts = snapshot.dailyThoughts.takeIf { snapshot.dailyThoughtsIsDirty && snapshot.dailyThoughtsError == null },
+        )
+        if (request.quote == null && request.thoughts == null) return
+        val context = quoteContext
         val dateSnapshot = snapshot.selectedDate
 
         executeOperation(
@@ -1172,29 +1208,27 @@ class DiaryOperator(
             operation = {
                 diaryEndpointOperation.updateQuote(
                     date = dateSnapshot.toString(),
-                    request = DiaryQuotePutBody(quote = quoteSnapshot),
+                    request = request,
                 )
             },
             onSuccess = {
-                val nextState = if (selectedDate != dateSnapshot) {
-                    copy(quoteOperation = OperationState.Idle)
-                } else {
-                    copy(
-                        quoteIsDirty = quoteRevision != revision,
-                        quoteOperation = OperationState.Idle,
-                    )
-                }
-                if (quoteRevision != revision) scheduleQuoteSave()
-                nextState
+                if (quoteContext != context) return@executeOperation this
+                val changed = quoteRevision != revision
+                if (changed) scheduleQuoteSave()
+                copy(
+                    quoteIsDirty = quoteIsDirty && (changed || request.quote == null),
+                    dailyThoughtsIsDirty = dailyThoughtsIsDirty && (changed || request.thoughts == null),
+                    quoteOperation = OperationState.Idle,
+                )
             },
             onError = { error ->
+                if (quoteContext != context) return@executeOperation this
                 snackbarDelegate.triggerSnackbarState(
                     message = error.message,
                     actionLabel = "Retry",
                     onAction = { dispatch(DiaryAction.RetryQuoteSaveClicked) },
                 )
                 copy(
-                    quoteIsDirty = true,
                     quoteOperation = OperationState.Error(error),
                 )
             },
