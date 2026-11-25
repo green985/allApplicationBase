@@ -489,18 +489,32 @@ async function createEntriesBulk(request: Request, userId: string): Promise<Resp
   }
   for (const [index, entry] of body.entries.entries()) {
     const fail = (message: string) => response(null, `${index + 1}. kayıt — ${message}`, false, 400);
-    if (!isEntryBody(entry) ||
-      Object.keys(entry).some((key) => !["entryDate", "areaId", "text"].includes(key))) {
-      return fail("Yalnız entryDate, areaId ve text alanları kabul edilir.");
+    if (!isEntryBody(entry) || Object.keys(entry).some((key) =>
+      !["entryDate", "areaId", "text", "tagId", "durationSeconds", "markAsCompleted"].includes(key)
+    )) {
+      return fail("Desteklenmeyen kayıt alanı.");
     }
     if (!isValidDate(entry.entryDate) || entry.entryDate.startsWith("0000")) {
       return fail("Tarih geçersiz.");
     }
-    if (typeof entry.areaId !== "string" || !validAreas.has(entry.areaId)) {
+    if (entry.areaId != null && (typeof entry.areaId !== "string" || !validAreas.has(entry.areaId))) {
       return fail("Alan geçersiz.");
     }
-    if (typeof entry.text !== "string" || !entry.text.trim() || [...entry.text].length > maxTextLength) {
-      return fail("Metin boş olamaz ve en fazla 3000 karakter olabilir.");
+    if (entry.text !== undefined && (typeof entry.text !== "string" || [...entry.text].length > maxTextLength)) {
+      return fail("text, en fazla 3000 karakterlik bir metin olmalıdır.");
+    }
+    if (entry.tagId != null && (entry.areaId == null || !isUuid(entry.tagId))) {
+      return fail("Etiket bu alana ve hesabınıza ait olmalıdır.");
+    }
+    if (entry.durationSeconds != null && !isValidDuration(entry.durationSeconds)) {
+      return fail("durationSeconds, 1–86400 arasında bir tam sayı olmalıdır.");
+    }
+    if (entry.markAsCompleted !== undefined && typeof entry.markAsCompleted !== "boolean") {
+      return fail("markAsCompleted, true veya false olmalıdır.");
+    }
+    if (entry.areaId == null && !(typeof entry.text === "string" && entry.text.trim()) &&
+      entry.durationSeconds == null && entry.markAsCompleted !== true) {
+      return fail("Alan, not, süre veya Yapıldı seçimi gerekli.");
     }
   }
   const { data, error } = await supabase.rpc("create_diary_entries_bulk", {

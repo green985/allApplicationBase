@@ -6,7 +6,7 @@ object StringKeys {
     const val bulkEntryPreview = "Önizle"
     const val bulkEntryPreviewTitle = "Kaydedilecek kayıtlar"
     const val bulkEntryPreviewHint =
-        "Henüz kayıt yapılmadı. Tarih, alan ve metni kontrol edip Kaydet’e basın."
+        "Henüz kayıt yapılmadı. Kayıt bilgilerini kontrol edip Kaydet’e basın."
     const val bulkEntrySubmit = "Kaydet"
     const val bulkEntrySuccess = "Kaydedilen kayıtlar"
     const val bulkEntryTagsTitle = "Alanlar ve etiketler"
@@ -15,10 +15,23 @@ object StringKeys {
         "Geçerli JSON gerekli; yalnız requestId ve entries kabul edilir."
     const val bulkEntryInvalidRequestId = "requestId geçerli bir UUID olmalıdır."
     const val bulkEntryEmpty = "En az bir kayıt gerekli."
-    const val bulkEntryInvalidFields = "Yalnız entryDate, areaId ve text alanları kabul edilir."
+    const val bulkEntryInvalidFields = "Desteklenmeyen kayıt alanı."
     const val bulkEntryInvalidDate = "Tarih geçersiz."
     const val bulkEntryInvalidArea = "Alan geçersiz."
-    const val bulkEntryInvalidText = "Metin boş olamaz ve en fazla 3000 karakter olabilir."
+    const val bulkEntryInvalidText = "text, en fazla 3000 karakterlik bir metin olmalıdır."
+    const val bulkEntryInvalidTag = "Etiket bu alana ve hesabınıza ait olmalıdır."
+    const val bulkEntryTagsNotReady = "Etiketleri yükleyip yeniden önizleyin."
+    const val bulkEntryInvalidDuration = "durationSeconds, 1–86400 arasında bir tam sayı olmalıdır."
+    const val bulkEntryInvalidCompletion = "markAsCompleted, true veya false olmalıdır."
+    const val bulkEntryMissingContent = "Alan, not, süre veya Yapıldı seçimi gerekli."
+    const val bulkEntryNoArea = "Alan yok"
+    const val bulkEntryNoTag = "Etiket yok"
+    const val bulkEntryNotCompleted = "Yapılmadı"
+    const val bulkEntryExampleTitle = "Örnek JSON"
+    const val bulkEntryExampleHint =
+        "Yeni bir toplu kayıt için yeni requestId kullanın; aynı isteği tekrar denerken değiştirmeyin. " +
+            "Etiket için yukarıdaki tagId değerlerinden aynı alana ait olanı kullanın veya tagId alanını kaldırın. " +
+            "Süre saniye cinsindendir; süre eklemek zamanlayıcıyı başlatmaz. markAsCompleted: true, kaydı Yapıldı olarak işaretler."
     const val bulkEntryGoogleRequired = "Toplu kayıt için web üzerinde Google ile giriş gerekli."
     const val bulkEntryDiaryNotReady =
         "Önce açık kaydı kapatın ve kaydetmenin tamamlanmasını bekleyin."

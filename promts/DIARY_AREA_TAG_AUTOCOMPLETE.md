@@ -161,8 +161,15 @@ GET   /diary/days/{date}/entries
 `GET /diary/tags`, doğrulanmış Google oturumundaki kullanıcıya ait tüm etiketleri
 `{ id, name, areaId }` listesi olarak döndürür; admin modu kabul edilmez.
 Toplu Entry Ekle ekranı açıldığında bu listeyi yükler ve alanlara göre gösterir.
-Toplu kayıtta **Önizle** tarih, alan ve metni sunucuya göndermeden listeler.
+Toplu kayıtta **Önizle** tarih, alan, metin, etiket, süre ve Yapıldı bilgisini sunucuya göndermeden listeler.
 **Kaydet** yalnızca önizlenen JSON için etkinleşir; JSON düzenlenirse yeniden önizleme gerekir.
+
+Etiketlerin altındaki örnek JSON, `POST /diary/entries/addMultipleEntry` isteğinin
+biçimini gösterir. `entryDate` zorunludur; alan, metin, süre veya `markAsCompleted: true`
+seçeneklerinden en az biri gerekir. `tagId` verilmezse veya `null` ise etiketsiz kayıt
+oluşturulur; verildiğinde oturum kullanıcısına ve aynı `areaId` değerine ait olmalıdır.
+`durationSeconds` 1–86400 arası bir tam sayıdır ve zamanlayıcıyı başlatmaz.
+`markAsCompleted: true` tamamlanma zamanını sunucuda oluşturur.
 
 ### POST tag oluşturma
 

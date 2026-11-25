@@ -11,8 +11,9 @@ data class DiaryBulkUiState(
     val isLoadingTags: Boolean = false,
     val tagsErrorMessage: String = "",
     val tagGroups: List<DiaryBulkTagGroup> = emptyList(),
+    val exampleJson: String = "",
 )
 
-data class DiaryBulkPreviewItem(val destinationLabel: String, val text: String)
+data class DiaryBulkPreviewItem(val destinationLabel: String, val text: String, val details: String)
 
 data class DiaryBulkTagGroup(val areaLabel: String, val tagsLabel: String)

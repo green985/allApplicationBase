@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -27,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import com.oyetech.kmpmodels.stringKeys.StringKeys
 import com.oyetech.kmpmodels.ui.event.DiaryBulkAction
@@ -117,7 +119,8 @@ fun DiaryBulkScreen(
             uiState.previewItems.forEach { item ->
                 Column {
                     Text(item.destinationLabel, style = MaterialTheme.typography.titleSmall)
-                    Text(item.text)
+                    Text(item.details)
+                    if (item.text.isNotEmpty()) Text(item.text)
                 }
             }
             Button(
@@ -138,10 +141,17 @@ fun DiaryBulkScreen(
                     Text(StringKeys.retry)
                 }
             }
-            uiState.tagGroups.forEach { group ->
-                Column {
-                    Text(group.areaLabel, style = MaterialTheme.typography.titleSmall)
-                    Text(group.tagsLabel)
+            SelectionContainer {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    uiState.tagGroups.forEach { group ->
+                        Column {
+                            Text(group.areaLabel, style = MaterialTheme.typography.titleSmall)
+                            Text(group.tagsLabel)
+                        }
+                    }
+                    Text(StringKeys.bulkEntryExampleTitle, style = MaterialTheme.typography.titleMedium)
+                    Text(StringKeys.bulkEntryExampleHint)
+                    Text(uiState.exampleJson, fontFamily = FontFamily.Monospace)
                 }
             }
         }
