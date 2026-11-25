@@ -10,6 +10,8 @@ object EndpointStrings {
     const val diaryAddMultipleEntry = "$diaryEntries/addMultipleEntry"
     const val diaryArchive = "$kmpFunctionsBaseUrl/diary/export"
     const val diaryTags = "$kmpFunctionsBaseUrl/diary/tags"
+    const val diaryReminders = "$kmpFunctionsBaseUrl/diary/reminders"
+    const val diaryReminderCount = "$diaryReminders/count"
 
     fun diaryAreaTags(areaId: String): String =
         "$kmpFunctionsBaseUrl/diary/areas/$areaId/tags"

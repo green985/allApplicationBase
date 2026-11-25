@@ -56,17 +56,35 @@ class DiaryOperator(
     private var entriesContext = 0L
     private var quoteContext = 0L
     private var listTagsContext = 0L
+    private var reminderAccount: String? = null
+    private var reminderCountJob: Job? = null
+    private var reminderListJob: Job? = null
 
     init {
         loadQuoteForSelectedDate()
         loadEntriesForSelectedDate()
         launch {
             googleLoginOperation.session.collect { session ->
+                val available = googleLoginOperation.supportsSessions &&
+                        session.isAuthenticated && !session.isAdmin
                 updateState {
-                    copy(
-                        isBulkEntryAvailable = googleLoginOperation.supportsSessions &&
-                                session.isAuthenticated && !session.isAdmin,
-                    )
+                    copy(isBulkEntryAvailable = available)
+                }
+                val account = session.userId.takeIf { available }
+                if (reminderAccount != account) {
+                    reminderAccount = account
+                    reminderCountJob?.cancel()
+                    reminderListJob?.cancel()
+                    updateState {
+                        copy(
+                            isReminderListVisible = false,
+                            reminderCountLabel = null,
+                            reminderItems = emptyList(),
+                            reminderListOperation = OperationState.Idle,
+                            isReminderListEmpty = false,
+                        )
+                    }
+                    if (account != null) loadReminderCount()
                 }
             }
         }
@@ -288,6 +306,22 @@ class DiaryOperator(
 
     override fun handleAction(action: DiaryAction) {
         when (action) {
+            DiaryAction.RemindersOpened -> {
+                if (!canChangeReminders()) return
+                updateState { copy(isReminderListVisible = true) }
+                loadReminders()
+                loadReminderCount()
+            }
+
+            DiaryAction.RemindersClosed -> if (!state.value.isReminderChanging) {
+                updateState { copy(isReminderListVisible = false) }
+            }
+
+            is DiaryAction.AddReminderClicked -> changeReminder(action.entryId, copyToToday = false)
+            is DiaryAction.CopyReminderToTodayClicked -> changeReminder(
+                action.entryId,
+                copyToToday = true
+            )
             DiaryAction.BulkEntryClicked -> {
                 if (!state.value.isBulkEntryAvailable) return
                 val snapshot = state.value
@@ -604,6 +638,101 @@ class DiaryOperator(
                     quoteOperation = OperationState.Idle,
                     entryOperation = OperationState.Idle,
                 ).withEditorState()
+            }
+        }
+    }
+
+    private fun canChangeReminders(): Boolean {
+        val snapshot = state.value
+        return snapshot.isBulkEntryAvailable && !snapshot.isReminderChanging &&
+                !snapshot.isEditorVisible && snapshot.entryOperation !is OperationState.Loading
+    }
+
+    private fun loadReminderCount() {
+        if (reminderAccount == null) return
+        reminderCountJob?.cancel()
+        reminderCountJob = executeOperation(
+            onStart = { this },
+            operation = { diaryEndpointOperation.getReminderCount() },
+            onSuccess = { count -> copy(reminderCountLabel = count.toString()) },
+            onError = { error ->
+                snackbarDelegate.triggerSnackbarState(message = error.message)
+                copy(reminderCountLabel = null)
+            },
+        )
+    }
+
+    private fun loadReminders() {
+        reminderListJob?.cancel()
+        reminderListJob = executeOperation(
+            onStart = {
+                copy(
+                    reminderListOperation = OperationState.Loading,
+                    isReminderListEmpty = false
+                )
+            },
+            operation = {
+                diaryEndpointOperation.getReminders().map(::entryEntity).let { entries ->
+                    val datesById = entries.associate { it.id to it.entryDate }
+                    renderEntryItems(entries).map { item ->
+                        val date = datesById[item.id]
+                        item.copy(dateLabel = date?.let { formatDate(LocalDate.parse(it)) })
+                    }
+                }
+            },
+            onSuccess = { items ->
+                copy(
+                    reminderListOperation = OperationState.Idle,
+                    reminderItems = items,
+                    isReminderListEmpty = items.isEmpty(),
+                )
+            },
+            onError = { error ->
+                copy(
+                    reminderItems = emptyList(),
+                    reminderListOperation = OperationState.Error(error)
+                )
+            },
+        )
+    }
+
+    private fun changeReminder(entryId: String, copyToToday: Boolean) {
+        val account = reminderAccount ?: return
+        if (!canChangeReminders()) return
+        val snapshot = state.value
+        if (copyToToday != snapshot.isReminderListVisible) return
+        if (copyToToday && snapshot.reminderItems.none { it.id == entryId }) return
+        if (!copyToToday && snapshot.entries.none { it.id == entryId }) return
+        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+        val job = executeOperation(
+            onStart = { copy(isReminderChanging = true) },
+            operation = {
+                if (copyToToday) diaryEndpointOperation.copyReminderToToday(
+                    entryId,
+                    today.toString()
+                )
+                else diaryEndpointOperation.addReminder(entryId)
+            },
+            onSuccess = {
+                if (reminderAccount != account) copy(isReminderChanging = false)
+                else if (copyToToday) {
+                    snackbarDelegate.triggerSnackbarState(message = StringKeys.diaryReminderCopied)
+                    copy(isReminderChanging = false)
+                } else copy(isReminderChanging = false).withEntries(entries.filterNot { it.id == entryId })
+            },
+            onError = { error ->
+                snackbarDelegate.triggerSnackbarState(message = error.message)
+                copy(isReminderChanging = false)
+            },
+        )
+        launch {
+            job.join()
+            if (reminderAccount == account) {
+                loadEntriesForSelectedDate()
+                if (!copyToToday) {
+                    loadReminderCount()
+                    if (state.value.isReminderListVisible) loadReminders()
+                }
             }
         }
     }

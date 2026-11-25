@@ -5,6 +5,10 @@ import com.oyetech.kmpmodels.entity.EntryTimerPreset
 
 sealed interface DiaryAction {
     data object BulkEntryClicked : DiaryAction
+    data object RemindersOpened : DiaryAction
+    data object RemindersClosed : DiaryAction
+    data class AddReminderClicked(val entryId: String) : DiaryAction
+    data class CopyReminderToTodayClicked(val entryId: String) : DiaryAction
     data object PreviousDayClicked : DiaryAction
     data object NextDayClicked : DiaryAction
     data object TodayClicked : DiaryAction

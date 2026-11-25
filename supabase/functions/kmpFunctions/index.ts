@@ -316,6 +316,7 @@ async function getEntries(date: string, userId: string): Promise<Response> {
     .select(entrySelect)
     .eq("user_id", userId)
     .eq("entry_date", date)
+    .eq("is_reminder", false)
     .order("created_at", { ascending: false })
     .returns<Parameters<typeof mapEntry>[0][]>();
 
@@ -344,6 +345,7 @@ async function getAreaEntries(areaId: string, userId: string): Promise<Response>
       .select(entrySelect)
       .eq("user_id", userId)
       .eq("area_id", areaId)
+      .eq("is_reminder", false)
       .lte("created_at", requestedAt)
       .order("entry_date", { ascending: false })
       .order("created_at", { ascending: false })
@@ -358,6 +360,58 @@ async function getAreaEntries(areaId: string, userId: string): Promise<Response>
     if (data.length < pageSize) break;
   }
   return response(entries, "Alanın kayıtları getirildi.", true);
+}
+
+async function getReminders(userId: string, countOnly: boolean): Promise<Response> {
+  if (countOnly) {
+    const { count, error } = await supabase.from("diary_entries")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId).eq("is_reminder", true);
+    if (error || count === null) {
+      console.error("getReminderCount failed", error?.code);
+      return response(null, "Yapılacakların sayısı alınamadı.", false, 500);
+    }
+    return response(count, "Yapılacakların sayısı getirildi.", true);
+  }
+
+  const entries: DiaryEntry[] = [];
+  let afterId: string | undefined;
+  while (true) {
+    let query = supabase.from("diary_entries").select(entrySelect)
+      .eq("user_id", userId).eq("is_reminder", true).order("id").limit(500);
+    if (afterId !== undefined) query = query.gt("id", afterId);
+    const { data, error } = await query.returns<Parameters<typeof mapEntry>[0][]>();
+    if (error || !data) {
+      console.error("getReminders failed", error?.code);
+      return response(null, "Yapılacaklar getirilemedi.", false, 500);
+    }
+    if (data.length === 0) return response(entries, "Yapılacaklar getirildi.", true);
+    entries.push(...data.map(mapEntry));
+    afterId = data[data.length - 1].id;
+  }
+}
+
+async function changeReminder(request: Request, userId: string, entryId: string, copyToToday: boolean): Promise<Response> {
+  if (!isUuid(entryId)) return response(null, "Geçerli bir entry id gerekli.", false, 400);
+  let today: string | null = null;
+  if (copyToToday) {
+    const body: unknown = await request.json().catch(() => null);
+    if (!isEntryBody(body) || !isValidDate(body.entryDate) || body.entryDate.startsWith("0000")) {
+      return response(null, "Geçerli bir tarih gerekli.", false, 400);
+    }
+    today = body.entryDate;
+  }
+  const { error } = await supabase.rpc("change_diary_reminder", {
+    p_user_id: userId, p_entry_id: entryId, p_today: today,
+  });
+  if (error) {
+    if (error.code === "P0002") return response(null, error.message, false, 404);
+    if (error.code === "22023") return response(null, error.message, false, 400);
+    if (error.code === "PT409") return response(null, error.message, false, 409);
+    console.error("changeReminder failed", error.code);
+    return response(null, "Yapılacak kaydı güncellenemedi.", false, 500);
+  }
+  return response(true, copyToToday ? "Bugün için yeni kayıt açıldı." : "Kayıt Yapılacaklara eklendi.", true);
 }
 
 async function exportDiaryArchive(userId: string): Promise<Response> {
@@ -738,9 +792,13 @@ Deno.serve(async (request) => {
     const isTagsRoute = diaryRoute.length === 2 && diaryRoute[0] === "diary" &&
       diaryRoute[1] === "tags";
     const isAllTagsRequest = isTagsRoute && request.method === "GET";
+    const isRemindersRoute = diaryRoute[0] === "diary" && diaryRoute[1] === "reminders";
     const accessMode = request.headers.get("X-KMP-Access-Mode");
     let userId: string;
     if (accessMode === "admin") {
+      if (isRemindersRoute) {
+        return response(null, "Yapılacaklar için Google ile giriş gerekli.", false, 403);
+      }
       if (isAddMultipleEntryRoute) {
         return response(null, "Toplu kayıt için Google ile giriş gerekli; admin modu kullanılamaz.", false, 403);
       }
@@ -769,6 +827,10 @@ Deno.serve(async (request) => {
       if (!data.user) {
         return response(null, "Google ile giriş gerekli.", false, 401);
       }
+      if (isRemindersRoute && (data.user.is_anonymous ||
+        !data.user.identities?.some((identity) => identity.provider === "google"))) {
+        return response(null, "Yapılacaklar için doğrulanmış Google oturumu gerekli.", false, 403);
+      }
       if (isAddMultipleEntryRoute && (data.user.is_anonymous ||
         !data.user.identities?.some((identity) => identity.provider === "google"))) {
         return response(null, "Toplu kayıt için doğrulanmış Google oturumu gerekli.", false, 403);
@@ -787,6 +849,18 @@ Deno.serve(async (request) => {
       return request.method === "POST"
         ? await createEntriesBulk(request, userId)
         : response(null, "Method not allowed.", false, 405);
+    }
+    if (isRemindersRoute) {
+      const [, , item, action] = diaryRoute;
+      if (request.method === "GET" &&
+        (diaryRoute.length === 2 || (diaryRoute.length === 3 && item === "count"))) {
+        return await getReminders(userId, item === "count");
+      }
+      if (request.method === "POST" &&
+        (diaryRoute.length === 3 || (diaryRoute.length === 4 && action === "copyToToday"))) {
+        return await changeReminder(request, userId, item, action === "copyToToday");
+      }
+      return response(null, "Method not allowed.", false, 405);
     }
     if (diaryRoute.length === 4 && diaryRoute[0] === "diary" &&
       diaryRoute[1] === "areas" && diaryRoute[3] === "entries") {

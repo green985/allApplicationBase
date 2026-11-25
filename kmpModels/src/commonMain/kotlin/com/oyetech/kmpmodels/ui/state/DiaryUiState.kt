@@ -82,6 +82,12 @@ data class DiaryUiState(
     val tagOperation: OperationState = OperationState.Idle,
     val tagCreateOperation: OperationState = OperationState.Idle,
     val isBulkEntryAvailable: Boolean = false,
+    val isReminderListVisible: Boolean = false,
+    val reminderCountLabel: String? = null,
+    val reminderItems: List<DiaryEntryUiState> = emptyList(),
+    val reminderListOperation: OperationState = OperationState.Idle,
+    val isReminderChanging: Boolean = false,
+    val isReminderListEmpty: Boolean = false,
 )
 
 data class DiaryEntryUiState(

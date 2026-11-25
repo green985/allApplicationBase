@@ -14,7 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -89,6 +92,10 @@ fun DiaryScreen(
     var areaMenuOffset by remember { mutableStateOf(IntOffset.Zero) }
 
     Scaffold { contentPadding ->
+        if (uiState.isReminderListVisible) {
+            DiaryReminderList(uiState, onAction, Modifier.padding(contentPadding))
+            return@Scaffold
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -97,6 +104,13 @@ fun DiaryScreen(
                 .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
+            if (uiState.isBulkEntryAvailable) {
+                Button(onClick = { onAction(DiaryAction.RemindersOpened) }) {
+                    BadgedBox(badge = { uiState.reminderCountLabel?.let { Badge { Text(it) } } }) {
+                        Text(StringKeys.diaryReminders)
+                    }
+                }
+            }
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -374,8 +388,13 @@ fun DiaryScreen(
                     onStart = { onAction(DiaryAction.StartEntryTimerClicked(entry.id)) },
                     onCancel = { onAction(DiaryAction.CancelEntryTimerClicked(entry.id)) },
                     onComplete = { onAction(DiaryAction.EntryCompletedClicked(entry.id)) },
+                    onAddReminder = if (uiState.isBulkEntryAvailable) {
+                        { onAction(DiaryAction.AddReminderClicked(entry.id)) }
+                    } else null,
+                    isAddReminderEnabled = !uiState.isReminderChanging && !entry.isTimerRunning,
                 )
             }
+
             Button(onClick = { onAction(DiaryAction.BackClicked) }) {
                 Text(StringKeys.back)
             }
@@ -429,6 +448,50 @@ fun DiaryScreen(
                 uiState = uiState,
                 onAction = onAction,
             )
+        }
+    }
+}
+
+@Composable
+private fun DiaryReminderList(
+    uiState: DiaryUiState,
+    onAction: (DiaryAction) -> Unit,
+    modifier: Modifier,
+) {
+    Column(
+        modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        TextButton(
+            enabled = !uiState.isReminderChanging,
+            onClick = { onAction(DiaryAction.RemindersClosed) },
+        ) { Text(StringKeys.back) }
+        Text(StringKeys.diaryReminders, style = MaterialTheme.typography.headlineSmall)
+        when (val operation = uiState.reminderListOperation) {
+            OperationState.Idle -> Unit
+            OperationState.Loading -> CircularProgressIndicator()
+            is OperationState.Error -> {
+                Text(operation.error.message)
+                TextButton(onClick = { onAction(DiaryAction.RemindersOpened) }) { Text(StringKeys.retry) }
+            }
+        }
+        if (uiState.isReminderListEmpty) Text(StringKeys.diaryRemindersEmpty)
+        uiState.reminderItems.forEach { entry ->
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    entry.dateLabel?.let { Text(it) }
+                    if (entry.isAreaVisible) Text(entry.areaLabel)
+                    entry.tagLabel?.let { Text(it) }
+                    Text(entry.text)
+                    Button(
+                        enabled = !uiState.isReminderChanging,
+                        onClick = { onAction(DiaryAction.CopyReminderToTodayClicked(entry.id)) },
+                    ) { Text(StringKeys.diaryCopyReminderToToday) }
+                }
+            }
         }
     }
 }

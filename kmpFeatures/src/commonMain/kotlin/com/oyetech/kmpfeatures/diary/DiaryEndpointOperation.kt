@@ -80,6 +80,20 @@ class DiaryEndpointOperation(
     suspend fun getAreaEntries(areaId: String): List<EntryResponse> =
         httpClient.get(EndpointStrings.diaryAreaEntries(areaId)).bodyOrError()
 
+    suspend fun getReminders(): List<EntryResponse> =
+        httpClient.get(EndpointStrings.diaryReminders).bodyOrError()
+
+    suspend fun getReminderCount(): Int =
+        httpClient.get(EndpointStrings.diaryReminderCount).bodyOrError()
+
+    suspend fun addReminder(entryId: String): Boolean =
+        httpClient.post("${EndpointStrings.diaryReminders}/$entryId").bodyOrError()
+
+    suspend fun copyReminderToToday(entryId: String, today: String): Boolean =
+        httpClient.post("${EndpointStrings.diaryReminders}/$entryId/copyToToday") {
+            setBody(mapOf("entryDate" to today))
+        }.bodyOrError()
+
     suspend fun startEntryTimer(entryId: String): EntryResponse =
         httpClient.post(EndpointStrings.diaryEntryTimerStart(entryId)).bodyOrError()
 

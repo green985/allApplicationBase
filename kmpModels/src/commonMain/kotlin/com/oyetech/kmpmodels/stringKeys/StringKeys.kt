@@ -1,6 +1,11 @@
 package com.oyetech.kmpmodels.stringKeys
 
 object StringKeys {
+    const val diaryReminders = "Yapılacaklar"
+    const val diaryAddReminder = "Yapılacaklara ekle"
+    const val diaryCopyReminderToToday = "Bugün için yeni kayıt aç"
+    const val diaryReminderCopied = "Bugün için yeni kayıt açıldı."
+    const val diaryRemindersEmpty = "Yapılacak kayıt yok."
     const val bulkEntryTitle = "Toplu Entry Ekle"
     const val bulkEntryJsonLabel = "JSON kayıtları"
     const val bulkEntryPreview = "Önizle"

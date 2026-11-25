@@ -171,6 +171,16 @@ oluşturulur; verildiğinde oturum kullanıcısına ve aynı `areaId` değerine 
 `durationSeconds` 1–86400 arası bir tam sayıdır ve zamanlayıcıyı başlatmaz.
 `markAsCompleted: true` tamamlanma zamanını sunucuda oluşturur.
 
+### Yapılacaklar
+
+Günlükte Yapılacaklara eklenen kayıtlar gün ve alan listelerinden gizlenir.
+`GET /diary/reminders/count` rozeti, `GET /diary/reminders` ayrı listeyi besler.
+`POST /diary/reminders/{entryId}` kaydı işaretler.
+`POST /diary/reminders/{entryId}/copyToToday` yerel bugünün tarihini `entryDate`
+olarak alır ve alanı, etiketi, notu ve süreyi bugünün yeni kaydına kopyalar.
+Kaynak kayıt Yapılacaklar listesinde değişmeden kalır. Yeni kayıt
+tamamlanmış sayılmaz ve zamanlayıcısı başlamaz.
+
 ### POST tag oluşturma
 
 Request:
