@@ -32,6 +32,7 @@ internal fun renderEntryItems(
     selectedListTagId: String? = null,
     listStartDate: LocalDate? = null,
     listEndDate: LocalDate? = null,
+    showDates: Boolean = selectedListArea != null,
 ): List<DiaryEntryUiState> {
     val areas = areaOptions()
     val visibleEntries = if (selectedListArea == null) {
@@ -63,16 +64,23 @@ internal fun renderEntryItems(
             areaLabel = areaLabel(entry.areaId),
             createdBy = entry.createdBy,
             timeLabel = entry.createdAt?.let(::formatTime).orEmpty(),
-            dateLabel = if (selectedListArea == null) null else entry.entryDate?.let {
+            dateLabel = if (!showDates) null else entry.entryDate?.let {
                 formatDate(LocalDate.parse(it))
             },
             text = entry.text,
+            durationLabel = entry.durationSeconds?.let {
+                "${StringKeys.duration}: ${
+                    StringKeys.diaryExportDuration(
+                        it
+                    )
+                }"
+            },
             timerStatusLabel = label,
             countdownLabel = if (status == EntryTimerStatus.RUNNING) label else null,
             isTimerRunning = status == EntryTimerStatus.RUNNING,
-            canStartTimer = status == EntryTimerStatus.PENDING && entry.durationSeconds != null,
-            canCancelTimer = status == EntryTimerStatus.RUNNING,
-            canMarkCompleted = status == EntryTimerStatus.NONE ||
+            canStartTimer = !entry.isReminder && status == EntryTimerStatus.PENDING && entry.durationSeconds != null,
+            canCancelTimer = !entry.isReminder && status == EntryTimerStatus.RUNNING,
+            canMarkCompleted = entry.isReminder || status == EntryTimerStatus.NONE ||
                     status == EntryTimerStatus.PENDING || status == EntryTimerStatus.RUNNING,
             isAreaVisible = entry.areaId != null,
             tagLabel = entry.tag?.let { "#${it.name}" },
@@ -98,6 +106,7 @@ internal fun entryEntity(response: EntryResponse): EntryEntity =
         note = response.note,
         createdAt = response.createdAt?.let(Instant::parse),
         updatedAt = response.updatedAt?.let(Instant::parse),
+        isReminder = response.isReminder,
     )
 
 internal fun tagEntity(response: TagResponse): TagEntry =

@@ -15,7 +15,6 @@ import com.oyetech.kmpmodels.entity.EntryTimerStatus
 import com.oyetech.kmpmodels.entity.TagEntry
 import com.oyetech.kmpmodels.navigation.RouteKMP
 import com.oyetech.kmpmodels.postbody.DiaryQuotePutBody
-import com.oyetech.kmpmodels.postbody.EntryDurationClearPostBody
 import com.oyetech.kmpmodels.postbody.EntryPostBody
 import com.oyetech.kmpmodels.postbody.TagPostBody
 import com.oyetech.kmpmodels.stringKeys.StringKeys
@@ -68,7 +67,7 @@ class DiaryOperator(
                 val available = googleLoginOperation.supportsSessions &&
                         session.isAuthenticated && !session.isAdmin
                 updateState {
-                    copy(isBulkEntryAvailable = available)
+                    copy(isBulkEntryAvailable = available).withEditorState()
                 }
                 val account = session.userId.takeIf { available }
                 if (reminderAccount != account) {
@@ -80,6 +79,7 @@ class DiaryOperator(
                             isReminderListVisible = false,
                             reminderCountLabel = null,
                             reminderItems = emptyList(),
+                            reminderEntries = emptyList(),
                             reminderListOperation = OperationState.Idle,
                             isReminderListEmpty = false,
                         )
@@ -127,7 +127,7 @@ class DiaryOperator(
         )
     }
 
-    private fun exportDiaryArchive() {
+    private fun exportDiaryArchive(range: ClosedRange<LocalDate>? = null) {
         val snapshot = state.value
         if (!snapshot.canExportArchive) return
         if (snapshot.isEditorVisible || snapshot.entryIsDirty || snapshot.quoteIsDirty ||
@@ -138,16 +138,24 @@ class DiaryOperator(
             return
         }
         executeOperation(
-            onStart = { copy(canExportArchive = false) },
+            onStart = {
+                copy(
+                    canExportArchive = false,
+                    isDateRangeDialogVisible = false,
+                    isWeeklyExportDateRange = false,
+                )
+            },
             operation = {
                 val download = checkNotNull(diaryHtmlDownloader) {
                     "HTML download is not supported on this platform"
                 }
-                val archive = diaryEndpointOperation.getDiaryArchive()
+                val archive = diaryEndpointOperation.getDiaryArchive().inDateRange(range)
                 val entriesByDate = archive.entries.groupBy { LocalDate.parse(it.entryDate) }
                 val quotesByDate = archive.quotes.associateBy { LocalDate.parse(it.date) }
                 val dates = (entriesByDate.keys + quotesByDate.keys).sorted()
-                check(dates.isNotEmpty()) { StringKeys.diaryArchiveEmpty }
+                check(dates.isNotEmpty()) {
+                    if (range == null) StringKeys.diaryArchiveEmpty else StringKeys.diaryWeeklyEmpty
+                }
                 val days = dates.map { date ->
                     snapshot.copy(
                         selectedDate = date,
@@ -156,10 +164,18 @@ class DiaryOperator(
                         dayQuote = quotesByDate[date]?.quote.orEmpty(),
                     )
                 }
-                download(
-                    "diary-archive-${Clock.System.todayIn(TimeZone.currentSystemDefault())}.html",
-                    diaryHtml(days, StringKeys.diaryArchive, archive),
-                )
+                val fileName = if (range == null) {
+                    "diary-archive-${Clock.System.todayIn(TimeZone.currentSystemDefault())}.html"
+                } else {
+                    "diary-weekly-${range.start}-${range.endInclusive}.html"
+                }
+                val title = if (range == null) StringKeys.diaryArchive
+                else "${StringKeys.diaryWeeklyReport} · ${formatDate(range.start)} – ${
+                    formatDate(
+                        range.endInclusive
+                    )
+                }"
+                download(fileName, diaryHtml(days, title, archive))
             },
             onSuccess = { copy(canExportArchive = true) },
             onError = { error ->
@@ -171,8 +187,9 @@ class DiaryOperator(
 
     private fun completeEntry(entryId: String) {
         if (state.value.entryOperation is OperationState.Loading) return
-        val entry = state.value.entries.firstOrNull { it.id == entryId } ?: return
-        executeOperation(
+        val entry = (state.value.entries + state.value.reminderEntries)
+            .firstOrNull { it.id == entryId } ?: return
+        val job = executeOperation(
             onStart = { copy(entryOperation = OperationState.Loading).withEditorState() },
             operation = {
                 diaryEndpointOperation.updateEntry(
@@ -186,20 +203,24 @@ class DiaryOperator(
             },
             onSuccess = { response ->
                 val completed = entryEntity(response)
-                val next = entries.map { if (it.id == entryId) completed else it }
                 copy(
                     entryOperation = OperationState.Idle,
-                ).withEntries(next).withEditorState()
+                ).withSavedEntry(completed).withEditorState()
             },
             onError = { error ->
                 snackbarDelegate.triggerSnackbarState(message = error.message)
                 copy(entryOperation = OperationState.Error(error)).withEditorState()
             },
         )
+        if (entry.isReminder) refreshRemindersAfterEntryOperation(job)
     }
 
     private fun startEntryTimer(entryId: String) {
         val currentState = state.value
+        if (currentState.reminderEntries.any { it.id == entryId } ||
+            (currentState.editingEntryId == entryId &&
+                    (currentState.isEntryReminder || currentState.editedEntry?.isReminder == true))
+        ) return
         if (currentState.entryOperation is OperationState.Loading) {
             if (currentState.editingEntryId == entryId && entrySaveJob?.isActive == true) {
                 timerStartRequested = true
@@ -322,6 +343,7 @@ class DiaryOperator(
                 action.entryId,
                 copyToToday = true
             )
+
             DiaryAction.BulkEntryClicked -> {
                 if (!state.value.isBulkEntryAvailable) return
                 val snapshot = state.value
@@ -378,6 +400,7 @@ class DiaryOperator(
                 updateState {
                     copy(
                         isDateRangeDialogVisible = true,
+                        isWeeklyExportDateRange = false,
                         dateRangeStartInput = (listStartDate ?: today).toString(),
                         dateRangeEndInput = (listEndDate ?: today).toString(),
                         dateRangeErrorMessage = null,
@@ -386,7 +409,11 @@ class DiaryOperator(
             }
 
             DiaryAction.ListDateRangeDismissed -> updateState {
-                copy(isDateRangeDialogVisible = false, dateRangeErrorMessage = null)
+                copy(
+                    isDateRangeDialogVisible = false,
+                    isWeeklyExportDateRange = false,
+                    dateRangeErrorMessage = null
+                )
             }
 
             is DiaryAction.ListDateRangeStartChanged -> updateState {
@@ -512,6 +539,21 @@ class DiaryOperator(
                 updateState {
                     copy(
                         isEntryCompleted = action.checked,
+                        isEntryReminder = isEntryReminder && !action.checked,
+                        entryIsDirty = true,
+                        entryRevision = entryRevision + 1,
+                    ).withEditorState()
+                }
+                scheduleEntrySave()
+            }
+
+            is DiaryAction.EntryReminderChanged -> {
+                if (!state.value.isEditorVisible || !state.value.canToggleEntryReminder) return
+                timerStartRequested = false
+                updateState {
+                    copy(
+                        isEntryReminder = action.checked,
+                        isEntryCompleted = isEntryCompleted && !action.checked,
                         entryIsDirty = true,
                         entryRevision = entryRevision + 1,
                     ).withEditorState()
@@ -536,6 +578,19 @@ class DiaryOperator(
             DiaryAction.SaveEntryWithoutClosingClicked -> saveEntry()
             DiaryAction.ExportDiaryHtmlClicked -> exportDiaryHtml()
             DiaryAction.ExportDiaryArchiveClicked -> exportDiaryArchive()
+            DiaryAction.ExportDiaryWeeklyClicked -> {
+                if (!state.value.canExportArchive) return
+                val weekStart = diaryWeekStart(state.value.selectedDate)
+                updateState {
+                    copy(
+                        isDateRangeDialogVisible = true,
+                        isWeeklyExportDateRange = true,
+                        dateRangeStartInput = weekStart.toString(),
+                        dateRangeEndInput = diaryWeekEnd(weekStart).toString(),
+                        dateRangeErrorMessage = null,
+                    )
+                }
+            }
 
             is DiaryAction.StartEntryTimerClicked -> startEntryTimer(action.entryId)
             is DiaryAction.CancelEntryTimerClicked -> cancelEntryTimer(action.entryId)
@@ -549,11 +604,15 @@ class DiaryOperator(
                 cancelTagRequests()
                 timerStartRequested = false
                 entryAutosaveJob.cancelPendingSave()
-                val entry = state.value.entries.firstOrNull { it.id == action.entryId } ?: return
+                val snapshot = state.value
+                val entry = (snapshot.entries + snapshot.reminderEntries)
+                    .firstOrNull { it.id == action.entryId } ?: return
                 updateState {
                     copy(
                         isEditorVisible = true,
                         editingEntryId = entry.id,
+                        editedEntry = entry,
+                        isEntryReminder = entry.isReminder,
                         selectedArea = AreaEntry.values().firstOrNull { it.name == entry.areaId },
                         selectedTag = entry.tag,
                         tagQuery = "",
@@ -620,9 +679,7 @@ class DiaryOperator(
                 val currentState = state.value
                 if (!currentState.canCreateOrUpdateEntry) return
                 val entryId = currentState.editingEntryId
-                if (entryId != null && currentState.timerStatus == EntryTimerStatus.PENDING &&
-                    currentState.selectedDurationSeconds != null && !currentState.isEntryCompleted
-                ) {
+                if (entryId != null && currentState.canStartEditorTimer) {
                     startEntryTimer(entryId)
                 } else {
                     saveEntry(closeEditor = true)
@@ -671,25 +728,16 @@ class DiaryOperator(
                     isReminderListEmpty = false
                 )
             },
-            operation = {
-                diaryEndpointOperation.getReminders().map(::entryEntity).let { entries ->
-                    val datesById = entries.associate { it.id to it.entryDate }
-                    renderEntryItems(entries).map { item ->
-                        val date = datesById[item.id]
-                        item.copy(dateLabel = date?.let { formatDate(LocalDate.parse(it)) })
-                    }
-                }
-            },
+            operation = { diaryEndpointOperation.getReminders().map(::entryEntity) },
             onSuccess = { items ->
                 copy(
                     reminderListOperation = OperationState.Idle,
-                    reminderItems = items,
-                    isReminderListEmpty = items.isEmpty(),
-                )
+                ).withReminderEntries(items)
             },
             onError = { error ->
                 copy(
                     reminderItems = emptyList(),
+                    reminderEntries = emptyList(),
                     reminderListOperation = OperationState.Error(error)
                 )
             },
@@ -929,7 +977,9 @@ class DiaryOperator(
 
     private fun applyListDateRange() {
         val snapshot = state.value
-        if (snapshot.selectedListArea == null || !snapshot.isDateRangeDialogVisible) return
+        if (!snapshot.isDateRangeDialogVisible ||
+            (!snapshot.isWeeklyExportDateRange && snapshot.selectedListArea == null)
+        ) return
         val start = try {
             LocalDate.parse(snapshot.dateRangeStartInput.trim())
         } catch (_: IllegalArgumentException) {
@@ -947,6 +997,10 @@ class DiaryOperator(
         }
         if (error != null) {
             updateState { copy(dateRangeErrorMessage = error) }
+            return
+        }
+        if (snapshot.isWeeklyExportDateRange) {
+            exportDiaryArchive(checkNotNull(start)..checkNotNull(end))
             return
         }
         updateState {
@@ -1153,7 +1207,9 @@ class DiaryOperator(
         val editingEntryId = currentState.editingEntryId
         val dateSnapshot = currentState.selectedDate
         val markAsCompleted = currentState.isEntryCompleted
-        val existingEntry = currentState.entries.firstOrNull { it.id == editingEntryId }
+        val existingEntry = (currentState.entries + currentState.reminderEntries)
+            .firstOrNull { it.id == editingEntryId } ?: currentState.editedEntry
+        val isReminder = currentState.isEntryReminder && !markAsCompleted
         var savedEntryId: String? = null
         val saveJob = executeOperation(
             onStart = {
@@ -1172,10 +1228,11 @@ class DiaryOperator(
                             entryDate = dateSnapshot.toString(),
                             durationSeconds = currentState.selectedDurationSeconds,
                             markAsCompleted = markAsCompleted,
+                            isReminder = true.takeIf { isReminder },
                         ),
                     )
                 } else {
-                    val updatedEntry = diaryEndpointOperation.updateEntry(
+                    diaryEndpointOperation.updateEntry(
                         entryId = editingEntryId,
                         request = EntryPostBody(
                             areaId = currentState.selectedArea?.name,
@@ -1185,21 +1242,14 @@ class DiaryOperator(
                             durationSeconds = currentState.selectedDurationSeconds
                                 .takeUnless { it == existingEntry?.durationSeconds },
                             markAsCompleted = markAsCompleted.takeUnless {
-                                it == (existingEntry?.completedAt != null)
+                                it == (existingEntry?.completedAt != null) && !(it && existingEntry?.isReminder == true)
                             },
+                            isReminder = isReminder.takeUnless { it == (existingEntry?.isReminder == true) },
                         ),
+                        clearDuration = currentState.selectedTimerPreset == null &&
+                                currentState.selectedDurationSeconds == null &&
+                                existingEntry?.durationSeconds != null,
                     )
-                    if (currentState.selectedTimerPreset == null &&
-                        currentState.selectedDurationSeconds == null &&
-                        existingEntry?.durationSeconds != null
-                    ) {
-                        diaryEndpointOperation.clearEntryDuration(
-                            entryId = editingEntryId,
-                            request = EntryDurationClearPostBody(durationSeconds = null),
-                        )
-                    } else {
-                        updatedEntry
-                    }
                 }
             },
             onSuccess = { response ->
@@ -1209,16 +1259,11 @@ class DiaryOperator(
                     this
                 } else {
                     val hasNewInput = entryRevision != revision
-                    val nextEntries = if (editingEntryId == null) {
-                        listOf(serverEntry) + entries.filterNot { it.id == serverEntry.id }
-                    } else {
-                        entries.map { if (it.id == serverEntry.id) serverEntry else it }
-                    }
                     val nextState = copy(
                         editingEntryId = serverEntry.id,
                         entryIsDirty = hasNewInput,
                         entryOperation = OperationState.Idle,
-                    ).withEntries(nextEntries)
+                    ).withSavedEntry(serverEntry)
                     if (!isEditorVisible || (dismissRequested && !hasNewInput)) {
                         nextState.closeEditor()
                     } else {
@@ -1248,6 +1293,10 @@ class DiaryOperator(
         launch {
             saveJob.join()
             if (savedEntryId != null && state.value.selectedDate == dateSnapshot) {
+                val wasReminder = existingEntry?.isReminder == true
+                if (isReminder || wasReminder) {
+                    refreshReminderLists(countChanged = isReminder != wasReminder)
+                }
                 if (state.value.entryIsDirty) {
                     scheduleEntrySave()
                 } else if (timerStartRequested) {
@@ -1263,7 +1312,8 @@ class DiaryOperator(
             return
         }
 
-        executeOperation(
+        val wasReminder = state.value.reminderEntries.any { it.id == entryId }
+        val job = executeOperation(
             onStart = { copy(entryOperation = OperationState.Loading).withEditorState() },
             operation = {
                 diaryEndpointOperation.deleteEntry(entryId)
@@ -1273,6 +1323,7 @@ class DiaryOperator(
                 val nextState = copy(
                     entryOperation = OperationState.Idle,
                 ).withEntries(remainingEntries)
+                    .withReminderEntries(reminderEntries.filterNot { it.id == entryId })
                 if (editingEntryId == entryId) {
                     nextState.closeEditor()
                 } else {
@@ -1286,6 +1337,22 @@ class DiaryOperator(
                 copy(entryOperation = OperationState.Error(error)).withEditorState()
             },
         )
+        if (wasReminder) refreshRemindersAfterEntryOperation(job)
+    }
+
+    private fun refreshRemindersAfterEntryOperation(job: Job) {
+        launch {
+            job.join()
+            if (state.value.entryOperation == OperationState.Idle) refreshReminderLists(countChanged = true)
+        }
+    }
+
+    private fun refreshReminderLists(countChanged: Boolean) {
+        if (reminderListJob?.isActive == true) {
+            if (state.value.isReminderListVisible) loadReminders() else reminderListJob?.cancel()
+        }
+        if (state.value.entriesOperation is OperationState.Loading) loadEntriesForSelectedDate()
+        if (countChanged) loadReminderCount()
     }
 
     private fun stateFor(offset: Int): DiaryUiState {

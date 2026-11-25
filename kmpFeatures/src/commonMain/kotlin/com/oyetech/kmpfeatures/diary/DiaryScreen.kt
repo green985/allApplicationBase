@@ -17,7 +17,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -275,6 +274,12 @@ fun DiaryScreen(
                                     softWrap = false,
                                 )
                             }
+                            Button(
+                                enabled = uiState.canExportArchive,
+                                onClick = { onAction(DiaryAction.ExportDiaryWeeklyClicked) },
+                            ) {
+                                Text(StringKeys.downloadDiaryWeekly, maxLines = 1, softWrap = false)
+                            }
                         }
                     }
                 }
@@ -403,7 +408,9 @@ fun DiaryScreen(
     if (uiState.isDateRangeDialogVisible) {
         AlertDialog(
             onDismissRequest = { onAction(DiaryAction.ListDateRangeDismissed) },
-            title = { Text(StringKeys.customDateRange) },
+            title = {
+                Text(if (uiState.isWeeklyExportDateRange) StringKeys.diaryWeeklyReport else StringKeys.customDateRange)
+            },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     OutlinedTextField(
@@ -429,7 +436,7 @@ fun DiaryScreen(
             },
             confirmButton = {
                 TextButton(onClick = { onAction(DiaryAction.ApplyListDateRangeClicked) }) {
-                    Text(StringKeys.applyDateRange)
+                    Text(if (uiState.isWeeklyExportDateRange) StringKeys.diaryWeeklyDownloadConfirm else StringKeys.applyDateRange)
                 }
             },
             dismissButton = {
@@ -477,21 +484,16 @@ private fun DiaryReminderList(
         }
         if (uiState.isReminderListEmpty) Text(StringKeys.diaryRemindersEmpty)
         uiState.reminderItems.forEach { entry ->
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    entry.dateLabel?.let { Text(it) }
-                    if (entry.isAreaVisible) Text(entry.areaLabel)
-                    entry.tagLabel?.let { Text(it) }
-                    Text(entry.text)
-                    Button(
-                        enabled = !uiState.isReminderChanging,
-                        onClick = { onAction(DiaryAction.CopyReminderToTodayClicked(entry.id)) },
-                    ) { Text(StringKeys.diaryCopyReminderToToday) }
-                }
-            }
+            DiaryEntryCard(
+                entry = entry,
+                onClick = { onAction(DiaryAction.EntryEditClicked(entry.id)) },
+                onDelete = { onAction(DiaryAction.EntryDeleteClicked(entry.id)) },
+                onStart = { onAction(DiaryAction.StartEntryTimerClicked(entry.id)) },
+                onCancel = { onAction(DiaryAction.CancelEntryTimerClicked(entry.id)) },
+                onComplete = { onAction(DiaryAction.EntryCompletedClicked(entry.id)) },
+                onCopyReminder = { onAction(DiaryAction.CopyReminderToTodayClicked(entry.id)) },
+                actionsEnabled = !uiState.isReminderChanging && uiState.entryOperation !is OperationState.Loading,
+            )
         }
     }
 }

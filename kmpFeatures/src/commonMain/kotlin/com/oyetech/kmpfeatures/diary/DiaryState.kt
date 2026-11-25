@@ -4,14 +4,13 @@ import com.oyetech.kmpmodels.entity.EntryEntity
 import com.oyetech.kmpmodels.entity.EntryTimerPreset
 import com.oyetech.kmpmodels.entity.EntryTimerStatus
 import com.oyetech.kmpmodels.entity.TagEntry
+import com.oyetech.kmpmodels.postbody.MAX_ENTRY_TEXT_LENGTH
 import com.oyetech.kmpmodels.stringKeys.StringKeys
 import com.oyetech.kmpmodels.ui.state.DiaryTagUiState
 import com.oyetech.kmpmodels.ui.state.DiaryUiState
 import com.oyetech.kmpmodels.ui.state.OperationState
 import kotlin.time.Clock
 import kotlin.time.Instant
-
-private const val MAX_ENTRY_TEXT_LENGTH = 3000
 
 internal fun DiaryUiState.withEntries(
     next: List<EntryEntity>,
@@ -59,8 +58,25 @@ internal fun DiaryUiState.withEntries(
     )
 }
 
+internal fun DiaryUiState.withReminderEntries(next: List<EntryEntity>): DiaryUiState =
+    copy(
+        reminderEntries = next,
+        reminderItems = renderEntryItems(next, showDates = true),
+        isReminderListEmpty = next.isEmpty(),
+    )
+
+internal fun DiaryUiState.withSavedEntry(entry: EntryEntity): DiaryUiState {
+    val matchesList = selectedListArea?.let { it.name == entry.areaId }
+        ?: (entry.entryDate == selectedDate.toString())
+    val normal = entries.filterNot { it.id == entry.id }
+    val reminders = reminderEntries.filterNot { it.id == entry.id }
+    return withEntries(if (!entry.isReminder && matchesList) normal + entry else normal)
+        .withReminderEntries(if (entry.isReminder) reminders + entry else reminders)
+        .let { if (editingEntryId == entry.id) it.copy(editedEntry = entry) else it }
+}
+
 internal fun DiaryUiState.withEditorState(now: Instant = Clock.System.now()): DiaryUiState {
-    val entry = entries.firstOrNull { it.id == editingEntryId }
+    val entry = (entries + reminderEntries).firstOrNull { it.id == editingEntryId } ?: editedEntry
     val status = entry?.let { timerStatus(it, now) } ?: when {
         isEntryCompleted -> EntryTimerStatus.FINISHED
         selectedDurationSeconds != null -> EntryTimerStatus.PENDING
@@ -70,9 +86,11 @@ internal fun DiaryUiState.withEditorState(now: Instant = Clock.System.now()): Di
     val validCustom = !isCustom || customDurationSeconds(customDurationMinutes) != null
     val hasContent = selectedArea != null || text.isNotBlank() ||
             selectedDurationSeconds != null || isEntryCompleted
-    val validText = text.length <= MAX_ENTRY_TEXT_LENGTH
+    val validText = text.count { it !in '\uDC00'..'\uDFFF' } <= MAX_ENTRY_TEXT_LENGTH
     val isSaving = entryOperation is OperationState.Loading
     val canChange = status != EntryTimerStatus.RUNNING
+    val canStart = editingEntryId != null && status == EntryTimerStatus.PENDING &&
+            selectedDurationSeconds != null && !isEntryCompleted && !isEntryReminder && entry?.isReminder != true
     val tagName = normalizeTagName(tagQuery)
     val tagNameTooLong = tagName.count { it !in '\uDC00'..'\uDFFF' } > 40
     return copy(
@@ -100,9 +118,7 @@ internal fun DiaryUiState.withEditorState(now: Instant = Clock.System.now()): Di
         createTagLabel = StringKeys.createTag(tagName),
         timerStatus = status,
         timerLabel = entry?.let { timerLabel(it, now) }.orEmpty(),
-        primaryButtonLabel = if (editingEntryId != null &&
-            status == EntryTimerStatus.PENDING && selectedDurationSeconds != null && !isEntryCompleted
-        ) {
+        primaryButtonLabel = if (canStart) {
             StringKeys.start
         } else {
             StringKeys.save
@@ -124,7 +140,9 @@ internal fun DiaryUiState.withEditorState(now: Instant = Clock.System.now()): Di
         },
         hasCustomDurationError = isCustom && !validCustom && customDurationMinutes.isNotEmpty(),
         canChangeDuration = canChange,
-        canCancelEditorTimer = status == EntryTimerStatus.RUNNING,
+        canCancelEditorTimer = !isEntryReminder && status == EntryTimerStatus.RUNNING,
+        canStartEditorTimer = canStart,
+        canToggleEntryReminder = isBulkEntryAvailable && canChange && !isSaving,
         timerPresetOptions = timerPresetOptions().map {
             it.copy(isEnabled = canChange)
         },
@@ -136,6 +154,8 @@ internal fun DiaryUiState.withEditorState(now: Instant = Clock.System.now()): Di
 internal fun DiaryUiState.closeEditor(): DiaryUiState = copy(
     isEditorVisible = false,
     editingEntryId = null,
+    editedEntry = null,
+    isEntryReminder = false,
     selectedArea = null,
     selectedTag = null,
     tagQuery = "",

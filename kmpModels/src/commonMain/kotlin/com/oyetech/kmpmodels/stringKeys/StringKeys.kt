@@ -23,7 +23,8 @@ object StringKeys {
     const val bulkEntryInvalidFields = "Desteklenmeyen kayıt alanı."
     const val bulkEntryInvalidDate = "Tarih geçersiz."
     const val bulkEntryInvalidArea = "Alan geçersiz."
-    const val bulkEntryInvalidText = "text, en fazla 3000 karakterlik bir metin olmalıdır."
+    fun bulkEntryInvalidText(maxLength: Int): String =
+        "text, en fazla $maxLength karakterlik bir metin olmalıdır."
     const val bulkEntryInvalidTag = "Etiket bu alana ve hesabınıza ait olmalıdır."
     const val bulkEntryTagsNotReady = "Etiketleri yükleyip yeniden önizleyin."
     const val bulkEntryInvalidDuration = "durationSeconds, 1–86400 arasında bir tam sayı olmalıdır."
@@ -88,6 +89,10 @@ object StringKeys {
     const val diary = "Günlük"
     const val downloadDiaryHtml = "Günlüğü HTML indir"
     const val downloadDiaryArchive = "Tüm günleri tek HTML indir"
+    const val downloadDiaryWeekly = "Haftalık indir"
+    const val diaryWeeklyReport = "Haftalık günlük raporu"
+    const val diaryWeeklyDownloadConfirm = "HTML indir"
+    const val diaryWeeklyEmpty = "Bu tarih aralığında günlük kaydı veya söz bulunamadı."
     const val diaryArchive = "Günlük arşivi"
     const val diaryArchiveNotReady =
         "Arşiv indirmeden önce açık kaydı kapatın ve kaydın tamamlanmasını bekleyin."
@@ -96,7 +101,11 @@ object StringKeys {
     const val entryCreatedAt = "Oluşturulma zamanı"
     const val timerStartedAt = "Timer başlangıcı"
     const val noDiaryEntries = "Bu güne ait kayıt yok."
-    fun diaryExportDuration(seconds: Long): String = "${seconds / 60} dk ${seconds % 60} sn"
+    fun diaryExportDuration(seconds: Long): String = when {
+        seconds < 60 -> "$seconds sn"
+        seconds % 60 == 0L -> "${seconds / 60} dk"
+        else -> "${seconds / 60} dk ${seconds % 60} sn"
+    }
     const val addEntry = "+"
     const val today = "Bugün"
     const val selectedDay = "Seçili gün"

@@ -1,9 +1,9 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const fixedUserId = "02af726d-aa75-4301-a410-049d214841f9";
-const entrySelect = "id, user_id, area_id, text, entry_date, created_at, updated_at, duration_seconds, timer_started_at, timer_ends_at, timer_cancelled_at, completed_at, tag:diary_tags(id, name, area_id)";
+const entrySelect = "id, user_id, area_id, text, entry_date, created_at, updated_at, duration_seconds, timer_started_at, timer_ends_at, timer_cancelled_at, completed_at, is_reminder, tag:diary_tags(id, name, area_id)";
 const maxDurationSeconds = 1440 * 60;
-const maxTextLength = 3000;
+const maxTextLength = 10_000;
 const validAreas = new Set(["WORK", "BODY", "MIND", "CHARACTER", "LIFE"]);
 const jsonHeaders = {
   "Content-Type": "application/json",
@@ -38,6 +38,7 @@ type DiaryEntry = {
   timerEndsAt: string | null;
   timerCancelledAt: string | null;
   completedAt: string | null;
+  isReminder: boolean;
   tag: DiaryTag | null;
 };
 
@@ -243,6 +244,7 @@ function mapEntry(row: {
   timer_ends_at: string | null;
   timer_cancelled_at: string | null;
   completed_at: string | null;
+  is_reminder: boolean;
   tag?: TagRow | null;
 }): DiaryEntry {
   return {
@@ -258,6 +260,7 @@ function mapEntry(row: {
     timerEndsAt: row.timer_ends_at,
     timerCancelledAt: row.timer_cancelled_at,
     completedAt: row.completed_at,
+    isReminder: row.is_reminder,
     tag: row.tag ? mapTag(row.tag) : null,
   };
 }
@@ -459,7 +462,7 @@ async function exportDiaryArchive(userId: string): Promise<Response> {
   return response({ entries, quotes }, "Günlük arşivi getirildi.", true);
 }
 
-async function createEntry(request: Request, userId: string): Promise<Response> {
+async function createEntry(request: Request, userId: string, canSetReminder: boolean): Promise<Response> {
   const body: unknown = await request.json().catch(() => null);
   if (!isEntryBody(body) || hasClientTimerTimes(body)) {
     return response(null, "Geçerli bir entry isteği gerekli.", false, 400);
@@ -469,6 +472,7 @@ async function createEntry(request: Request, userId: string): Promise<Response> 
     (body.tagId != null && !isUuid(body.tagId)) ||
     (body.text !== undefined && typeof body.text !== "string") ||
     (body.durationSeconds != null && !isValidDuration(body.durationSeconds)) ||
+    (body.isReminder !== undefined && typeof body.isReminder !== "boolean") ||
     (body.markAsCompleted !== undefined && typeof body.markAsCompleted !== "boolean")
   ) {
     return response(null, "Entry alanları geçersiz.", false, 400);
@@ -478,12 +482,15 @@ async function createEntry(request: Request, userId: string): Promise<Response> 
   const entryDate = typeof body?.entryDate === "string" ? body.entryDate : "";
   const durationSeconds = typeof body?.durationSeconds === "number" ? body.durationSeconds : null;
   const markAsCompleted = body?.markAsCompleted === true;
+  if (body.isReminder !== undefined && !canSetReminder) {
+    return response(null, "Yapılacaklar için doğrulanmış Google oturumu gerekli.", false, 403);
+  }
 
   if (areaId !== null && !validAreas.has(areaId)) {
     return response(null, "Geçerli bir areaId gerekli.", false, 400);
   }
 
-  if (text.length > maxTextLength) {
+  if ([...text].length > maxTextLength) {
     return response(null, `Text ${maxTextLength} karakteri geçemez.`, false, 400);
   }
 
@@ -508,6 +515,7 @@ async function createEntry(request: Request, userId: string): Promise<Response> 
       text,
       duration_seconds: durationSeconds,
       completed_at: markAsCompleted ? new Date().toISOString() : null,
+      is_reminder: body.isReminder === true && !markAsCompleted,
     })
     .select(entrySelect)
     .returns<Parameters<typeof mapEntry>[0][]>()
@@ -555,7 +563,7 @@ async function createEntriesBulk(request: Request, userId: string): Promise<Resp
       return fail("Alan geçersiz.");
     }
     if (entry.text !== undefined && (typeof entry.text !== "string" || [...entry.text].length > maxTextLength)) {
-      return fail("text, en fazla 3000 karakterlik bir metin olmalıdır.");
+      return fail(`text, en fazla ${maxTextLength} karakterlik bir metin olmalıdır.`);
     }
     if (entry.tagId != null && (entry.areaId == null || !isUuid(entry.tagId))) {
       return fail("Etiket bu alana ve hesabınıza ait olmalıdır.");
@@ -589,7 +597,7 @@ async function createEntriesBulk(request: Request, userId: string): Promise<Resp
   return response(data, "Kayıtlar eklendi.", true, 201);
 }
 
-async function updateEntry(request: Request, entryId: string, userId: string): Promise<Response> {
+async function updateEntry(request: Request, entryId: string, userId: string, canSetReminder: boolean): Promise<Response> {
   const body: unknown = await request.json().catch(() => null);
   if (!isEntryBody(body) || hasClientTimerTimes(body)) {
     return response(null, "Geçerli bir entry isteği gerekli.", false, 400);
@@ -600,6 +608,7 @@ async function updateEntry(request: Request, entryId: string, userId: string): P
     (body.text !== undefined && typeof body.text !== "string") ||
     (body.entryDate !== undefined && !isValidDate(body.entryDate)) ||
     (body.durationSeconds !== undefined && body.durationSeconds !== null && !isValidDuration(body.durationSeconds)) ||
+    (body.isReminder !== undefined && typeof body.isReminder !== "boolean") ||
     (body.markAsCompleted !== undefined && typeof body.markAsCompleted !== "boolean")
   ) {
     return response(null, "Entry alanları geçersiz.", false, 400);
@@ -611,6 +620,9 @@ async function updateEntry(request: Request, entryId: string, userId: string): P
   const durationSeconds = body.durationSeconds === null ? null :
     typeof body.durationSeconds === "number" ? body.durationSeconds : undefined;
   const markAsCompleted = body?.markAsCompleted === true;
+  if (body.isReminder !== undefined && !canSetReminder) {
+    return response(null, "Yapılacaklar için doğrulanmış Google oturumu gerekli.", false, 403);
+  }
 
   if (
     areaId === undefined &&
@@ -618,7 +630,8 @@ async function updateEntry(request: Request, entryId: string, userId: string): P
     text === undefined &&
     entryDate === undefined &&
     durationSeconds === undefined &&
-    body.markAsCompleted === undefined
+    body.markAsCompleted === undefined &&
+    body.isReminder === undefined
   ) {
     return response(null, "Güncellenecek alan gerekli.", false, 400);
   }
@@ -627,7 +640,7 @@ async function updateEntry(request: Request, entryId: string, userId: string): P
     return response(null, "Geçerli bir areaId gerekli.", false, 400);
   }
 
-  if (text !== undefined && text.length > maxTextLength) {
+  if (text !== undefined && [...text].length > maxTextLength) {
     return response(null, `Text ${maxTextLength} karakteri geçemez.`, false, 400);
   }
 
@@ -648,14 +661,21 @@ async function updateEntry(request: Request, entryId: string, userId: string): P
   if (body.markAsCompleted !== undefined) {
     updates.completed_at = markAsCompleted ? new Date().toISOString() : null;
   }
+  if (markAsCompleted) updates.is_reminder = false;
+  else if (body.isReminder !== undefined) updates.is_reminder = body.isReminder;
   updates.updated_at = new Date().toISOString();
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("diary_entries")
     .update(updates)
     .eq("id", entryId)
-    .eq("user_id", userId)
-    .select(entrySelect)
+    .eq("user_id", userId);
+  if (updates.is_reminder === true) {
+    query = query.or(
+      `timer_ends_at.is.null,timer_ends_at.lte.${updates.updated_at},completed_at.not.is.null,timer_cancelled_at.not.is.null`,
+    );
+  }
+  const { data, error } = await query.select(entrySelect)
     .returns<Parameters<typeof mapEntry>[0][]>()
     .maybeSingle();
 
@@ -673,6 +693,9 @@ async function updateEntry(request: Request, entryId: string, userId: string): P
   }
 
   if (!data) {
+    if (updates.is_reminder === true) {
+      return response(null, "Kayıt bulunamadı veya zamanlayıcısı çalışıyor.", false, 409);
+    }
     return response(null, "Diary kaydı bulunamadı.", false, 404);
   }
 
@@ -795,6 +818,7 @@ Deno.serve(async (request) => {
     const isRemindersRoute = diaryRoute[0] === "diary" && diaryRoute[1] === "reminders";
     const accessMode = request.headers.get("X-KMP-Access-Mode");
     let userId: string;
+    let canSetReminder = false;
     if (accessMode === "admin") {
       if (isRemindersRoute) {
         return response(null, "Yapılacaklar için Google ile giriş gerekli.", false, 403);
@@ -827,8 +851,9 @@ Deno.serve(async (request) => {
       if (!data.user) {
         return response(null, "Google ile giriş gerekli.", false, 401);
       }
-      if (isRemindersRoute && (data.user.is_anonymous ||
-        !data.user.identities?.some((identity) => identity.provider === "google"))) {
+      canSetReminder = !data.user.is_anonymous &&
+        data.user.identities?.some((identity) => identity.provider === "google") === true;
+      if (isRemindersRoute && !canSetReminder) {
         return response(null, "Yapılacaklar için doğrulanmış Google oturumu gerekli.", false, 403);
       }
       if (isAddMultipleEntryRoute && (data.user.is_anonymous ||
@@ -911,7 +936,7 @@ Deno.serve(async (request) => {
           : response(null, "Geçerli bir tarih gerekli.", false, 400);
       }
       if (request.method === "POST" && route.length === 2) {
-        return await createEntry(request, userId);
+        return await createEntry(request, userId, canSetReminder);
       }
       const isItemMethod = route.length === 3 && ["PATCH", "DELETE"].includes(request.method);
       const isTimerMethod = route.length === 5 && request.method === "POST";
@@ -920,7 +945,7 @@ Deno.serve(async (request) => {
         if (!entryId || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(entryId)) {
           return response(null, "Geçerli bir entry id gerekli.", false, 400);
         }
-        if (request.method === "PATCH") return await updateEntry(request, entryId, userId);
+        if (request.method === "PATCH") return await updateEntry(request, entryId, userId, canSetReminder);
         if (request.method === "DELETE") return await deleteEntry(entryId, userId);
         if (route[4] === "start") return await startEntryTimer(entryId, userId);
         if (route[4] === "cancel") return await cancelEntryTimer(entryId, userId);

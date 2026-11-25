@@ -33,12 +33,15 @@ internal fun DiaryEntryCard(
     onComplete: () -> Unit,
     onAddReminder: (() -> Unit)? = null,
     isAddReminderEnabled: Boolean = true,
+    onCopyReminder: (() -> Unit)? = null,
+    actionsEnabled: Boolean = true,
 ) {
     val areaEmojiFont = FontFamily(Font(Res.font.diary_area_emoji))
 
     Card(
         modifier = Modifier.fillMaxWidth(),
         onClick = onClick,
+        enabled = actionsEnabled,
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -85,13 +88,17 @@ internal fun DiaryEntryCard(
                     )
                 }
                 Column {
-                    Button(onClick = onDelete) { Text(StringKeys.delete) }
+                    Button(onClick = onDelete, enabled = actionsEnabled) { Text(StringKeys.delete) }
+                    entry.durationLabel?.let { Text(it, color = AppColors.textSecondary) }
                     if (entry.isTimerStatusVisible) {
                         Text(entry.timerStatusLabel, color = AppColors.textSecondary)
                     }
                     if (entry.canStartTimer) Button(onClick = onStart) { Text(StringKeys.start) }
                     if (entry.canCancelTimer) Button(onClick = onCancel) { Text(StringKeys.cancelTimer) }
-                    if (entry.canMarkCompleted) Button(onClick = onComplete) { Text(StringKeys.alreadyDone) }
+                    if (entry.canMarkCompleted) Button(
+                        onClick = onComplete,
+                        enabled = actionsEnabled
+                    ) { Text(StringKeys.alreadyDone) }
                 }
             }
             entry.dateLabel?.let { dateLabel ->
@@ -109,6 +116,11 @@ internal fun DiaryEntryCard(
             if (onAddReminder != null) {
                 TextButton(onClick = onAddReminder, enabled = isAddReminderEnabled) {
                     Text(StringKeys.diaryAddReminder)
+                }
+                if (onCopyReminder != null) {
+                    TextButton(onClick = onCopyReminder, enabled = actionsEnabled) {
+                        Text(StringKeys.diaryCopyReminderToToday)
+                    }
                 }
             }
         }

@@ -38,6 +38,7 @@ sealed interface DiaryAction {
     data class TimerPresetSelected(val preset: EntryTimerPreset) : DiaryAction
     data class CustomDurationChanged(val minutes: String) : DiaryAction
     data class EntryCompletionChanged(val checked: Boolean) : DiaryAction
+    data class EntryReminderChanged(val checked: Boolean) : DiaryAction
     data object SaveEntryWithoutClosingClicked : DiaryAction
     data class StartEntryTimerClicked(val entryId: String) : DiaryAction
     data class CancelEntryTimerClicked(val entryId: String) : DiaryAction
@@ -46,6 +47,7 @@ sealed interface DiaryAction {
     data object AddEntryClicked : DiaryAction
     data object ExportDiaryHtmlClicked : DiaryAction
     data object ExportDiaryArchiveClicked : DiaryAction
+    data object ExportDiaryWeeklyClicked : DiaryAction
     data object EntryDialogDismissed : DiaryAction
     data object EntryDialogCancelled : DiaryAction
     data object SaveEntryClicked : DiaryAction

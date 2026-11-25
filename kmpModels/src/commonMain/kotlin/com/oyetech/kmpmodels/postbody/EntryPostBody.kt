@@ -1,8 +1,10 @@
 package com.oyetech.kmpmodels.postbody
 
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.Serializable
+
+const val MAX_ENTRY_TEXT_LENGTH = 10_000
 
 @Serializable
 data class EntryPostBody(
@@ -15,4 +17,5 @@ data class EntryPostBody(
     @OptIn(ExperimentalSerializationApi::class)
     @EncodeDefault
     val tagId: String? = null,
+    val isReminder: Boolean? = null,
 )

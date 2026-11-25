@@ -259,6 +259,16 @@ internal fun EntryEditor(
                 style = MaterialTheme.typography.labelLarge,
                 color = AppColors.textSecondary,
             )
+            if (uiState.isBulkEntryAvailable) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(
+                        checked = uiState.isEntryReminder,
+                        enabled = uiState.canToggleEntryReminder,
+                        onCheckedChange = { onAction(DiaryAction.EntryReminderChanged(it)) },
+                    )
+                    Text(StringKeys.diaryAddReminder)
+                }
+            }
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),

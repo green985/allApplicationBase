@@ -23,6 +23,10 @@ import io.ktor.client.request.setBody
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonObject
 
 class DiaryEndpointOperation(
     private val httpClient: HttpClient,
@@ -130,13 +134,19 @@ class DiaryEndpointOperation(
     suspend fun updateEntry(
         entryId: String,
         request: EntryPostBody,
+        clearDuration: Boolean = false,
     ): EntryResponse {
         println(
             "[DiaryEndpoint] PATCH /v1/diary/entries/$entryId " +
                     "areaId=\"${request.areaId}\" text=\"${request.text}\"",
         )
         return httpClient.patch(EndpointStrings.diaryEntry(entryId)) {
-            setBody(request)
+            if (clearDuration) {
+                val body = Json.encodeToJsonElement(EntryPostBody.serializer(), request).jsonObject
+                setBody(JsonObject(body + ("durationSeconds" to JsonNull)))
+            } else {
+                setBody(request)
+            }
         }.bodyOrError()
     }
 

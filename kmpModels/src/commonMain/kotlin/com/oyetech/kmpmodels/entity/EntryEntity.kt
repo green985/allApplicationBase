@@ -17,4 +17,5 @@ data class EntryEntity(
     val createdAt: Instant? = null,
     val updatedAt: Instant? = null,
     val tag: TagEntry? = null,
+    val isReminder: Boolean = false,
 )

@@ -33,6 +33,7 @@ data class DiaryUiState(
     val listStartDate: LocalDate? = null,
     val listEndDate: LocalDate? = null,
     val isDateRangeDialogVisible: Boolean = false,
+    val isWeeklyExportDateRange: Boolean = false,
     val dateRangeStartInput: String = "",
     val dateRangeEndInput: String = "",
     val dateRangeErrorMessage: String? = null,
@@ -88,6 +89,11 @@ data class DiaryUiState(
     val reminderListOperation: OperationState = OperationState.Idle,
     val isReminderChanging: Boolean = false,
     val isReminderListEmpty: Boolean = false,
+    val reminderEntries: List<EntryEntity> = emptyList(),
+    val editedEntry: EntryEntity? = null,
+    val isEntryReminder: Boolean = false,
+    val canToggleEntryReminder: Boolean = false,
+    val canStartEditorTimer: Boolean = false,
 )
 
 data class DiaryEntryUiState(
@@ -107,6 +113,7 @@ data class DiaryEntryUiState(
     val tagLabel: String? = null,
     val areaEmoji: String = "",
     val dateLabel: String? = null,
+    val durationLabel: String? = null,
 )
 
 data class DiaryTagUiState(

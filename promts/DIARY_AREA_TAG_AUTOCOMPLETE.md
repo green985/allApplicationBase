@@ -173,9 +173,16 @@ oluşturulur; verildiğinde oturum kullanıcısına ve aynı `areaId` değerine 
 
 ### Yapılacaklar
 
+Gün, alan ve Yapılacaklar listelerinde süre tanımlı kayıtların süresi kartta gösterilir.
+Tekli ve toplu girişlerde kayıt metni en fazla 10.000 karakter olabilir.
+
 Günlükte Yapılacaklara eklenen kayıtlar gün ve alan listelerinden gizlenir.
 `GET /diary/reminders/count` rozeti, `GET /diary/reminders` ayrı listeyi besler.
 `POST /diary/reminders/{entryId}` kaydı işaretler.
+Kayıt düzenleyicisindeki **Yapılacaklara ekle** seçimi `isReminder` olarak
+tekli kayıt oluşturma ve güncelleme isteklerine gider. Yapılacaklar aynı kayıt
+kartını ve düzenleyicisini kullanır. **Yapıldı** seçimi işareti kaldırır;
+süre tanımlı olsa bile Yapılacaklar kaydının zamanlayıcısı başlatılamaz.
 `POST /diary/reminders/{entryId}/copyToToday` yerel bugünün tarihini `entryDate`
 olarak alır ve alanı, etiketi, notu ve süreyi bugünün yeni kaydına kopyalar.
 Kaynak kayıt Yapılacaklar listesinde değişmeden kalır. Yeni kayıt
@@ -484,6 +491,15 @@ supabase functions deploy kmpFunctions
 - Android Google login için geniş platform refactoru
 - Quote veya timer endpointlerini yeniden tasarlama
 - Legacy Android feature migrasyonu
+
+### HTML arşivi ve haftalık rapor
+
+**Tüm günleri tek HTML indir** bütün kayıtları (Yapılacaklar dahil) ve gün sözlerini arşivler.
+**Haftalık indir**, seçili günün Pazar–Cumartesi aralığıyla açılır; yalnızca onaylanan tarih
+aralığını (iki uç dahil) indirir. Arşivde haftalar Pazar günü başlar. Her hafta için kullanılan
+etiketlerin süre toplamları ve alanların kayıt sayıları gösterilir; kayıtlar alan altında
+etiketlerine göre listelenir. Etiketsiz ve alansız kayıtlar ayrı kategorilerde yer alır.
+Tamamlanan ve tamamlanmayan süre, kayda girilen süreyi ifade eder; ölçülmüş çalışma süresi değildir.
 
 ## Doğrulama
 

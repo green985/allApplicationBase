@@ -7,6 +7,7 @@ import com.oyetech.kmpfeatures.operator.BaseFeatureOperator
 import com.oyetech.kmpmodels.entity.AreaEntry
 import com.oyetech.kmpmodels.postbody.DiaryBulkEntryPostBody
 import com.oyetech.kmpmodels.postbody.DiaryBulkPostBody
+import com.oyetech.kmpmodels.postbody.MAX_ENTRY_TEXT_LENGTH
 import com.oyetech.kmpmodels.response.TagResponse
 import com.oyetech.kmpmodels.stringKeys.StringKeys
 import com.oyetech.kmpmodels.ui.event.DiaryBulkAction
@@ -280,9 +281,11 @@ class DiaryBulkOperator(
             if (area != null && AreaEntry.entries.none { it.name == area }) {
                 fail(StringKeys.bulkEntryInvalidArea)
             }
-            val text = entry["text"]?.let { stringValue(it) ?: fail(StringKeys.bulkEntryInvalidText) }.orEmpty()
-            if (text.count { it !in '\uDC00'..'\uDFFF' } > 3000) {
-                fail(StringKeys.bulkEntryInvalidText)
+            val text = entry["text"]?.let {
+                stringValue(it) ?: fail(StringKeys.bulkEntryInvalidText(MAX_ENTRY_TEXT_LENGTH))
+            }.orEmpty()
+            if (text.count { it !in '\uDC00'..'\uDFFF' } > MAX_ENTRY_TEXT_LENGTH) {
+                fail(StringKeys.bulkEntryInvalidText(MAX_ENTRY_TEXT_LENGTH))
             }
             val duration = entry["durationSeconds"]?.takeUnless { it == JsonNull }?.let {
                 (it as? JsonPrimitive)?.takeUnless { it.isString }?.longOrNull
