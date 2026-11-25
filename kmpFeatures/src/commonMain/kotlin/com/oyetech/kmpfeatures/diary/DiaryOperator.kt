@@ -1,6 +1,7 @@
 package com.oyetech.kmpfeatures.diary
 
 import com.oyetech.kmpdomain.delegate.snackbar.SnackbarDelegate
+import com.oyetech.kmpdomain.error.ResponseContractException
 import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import com.oyetech.kmpfeatures.auth.GoogleLoginOperation
 import com.oyetech.kmpfeatures.di.diaryHtmlDownloader
@@ -1170,7 +1171,7 @@ class DiaryOperator(
                     if (quoteIsDirty || dailyThoughtsIsDirty) scheduleQuoteSave()
                     copy(
                         dayQuote = if (quoteIsDirty) dayQuote else response.quote,
-                        dailyThoughts = if (dailyThoughtsIsDirty) dailyThoughts else response.thoughts,
+                        dailyThoughts = if (dailyThoughtsIsDirty) dailyThoughts else response.thoughts.orEmpty(),
                         quoteOperation = OperationState.Idle,
                     )
                 }
@@ -1206,10 +1207,13 @@ class DiaryOperator(
                 copy(quoteOperation = OperationState.Loading)
             },
             operation = {
-                diaryEndpointOperation.updateQuote(
+                val saved = diaryEndpointOperation.updateQuote(
                     date = dateSnapshot.toString(),
                     request = request,
                 )
+                if (request.thoughts != null && saved.thoughts != request.thoughts) {
+                    throw ResponseContractException(StringKeys.dailyThoughtsNotSaved)
+                }
             },
             onSuccess = {
                 if (quoteContext != context) return@executeOperation this
