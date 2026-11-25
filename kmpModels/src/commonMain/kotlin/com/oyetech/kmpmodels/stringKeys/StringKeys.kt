@@ -26,6 +26,7 @@ object StringKeys {
     fun bulkEntryError(index: Int, message: String): String = "$index. kayıt — $message"
     fun bulkEntryResult(date: String, area: String, time: String, text: String): String =
         "$date · $area · $time’te eklendi · $text"
+
     const val kmpFeatures = "KMP Features"
     const val kmpFeaturesReady = "KMP Features is ready"
     const val adminLogin = "Admin giriş"

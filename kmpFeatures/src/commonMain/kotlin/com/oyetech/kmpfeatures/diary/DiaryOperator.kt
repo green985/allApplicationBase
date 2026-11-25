@@ -300,6 +300,7 @@ class DiaryOperator(
                 }
                 navigationUseCase.navigateTo(RouteKMP.DiaryBulk)
             }
+
             DiaryAction.PreviousDayClicked -> {
                 selectDay(state.value.dayOffset - 1)
             }
