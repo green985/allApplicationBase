@@ -7,6 +7,7 @@ object EndpointStrings {
     const val registerGoogleUser = "$baseUrl/v1/registerGoogleUser"
     private const val kmpFunctionsBaseUrl = "$baseUrl/v1/kmpFunctions"
     const val diaryEntries = "$kmpFunctionsBaseUrl/diary/entries"
+    const val diaryAddMultipleEntry = "$diaryEntries/addMultipleEntry"
     const val diaryArchive = "$kmpFunctionsBaseUrl/diary/export"
     const val diaryTags = "$kmpFunctionsBaseUrl/diary/tags"
 

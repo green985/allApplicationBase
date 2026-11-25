@@ -2,6 +2,7 @@ package com.oyetech.kmpfeatures.navigation
 
 import androidx.navigation.compose.composable
 import com.oyetech.kmpfeatures.daily.DailyPagerScreenSetup
+import com.oyetech.kmpfeatures.diary.DiaryBulkScreenSetup
 import com.oyetech.kmpfeatures.diary.DiaryScreenSetup
 import com.oyetech.kmpfeatures.example.OperatorExampleScreenSetup
 import com.oyetech.kmpfeatures.home.HomeScreenSetup
@@ -10,6 +11,7 @@ import com.oyetech.kmpmodels.navigation.RouteKMP
 
 fun androidx.navigation.NavGraphBuilder.kmpFeaturesNavGraph(
     canOpenDiary: Boolean = true,
+    canOpenDiaryBulk: Boolean = false,
 ) {
     composable(KmpFeaturesRoutes.path(RouteKMP.Home)) {
         HomeScreenSetup()
@@ -29,5 +31,12 @@ fun androidx.navigation.NavGraphBuilder.kmpFeaturesNavGraph(
     }
     composable(KmpFeaturesRoutes.path(RouteKMP.OperatorExample)) {
         OperatorExampleScreenSetup()
+    }
+    composable(KmpFeaturesRoutes.path(RouteKMP.DiaryBulk)) {
+        if (canOpenDiaryBulk) {
+            DiaryBulkScreenSetup()
+        } else {
+            LoginScreenSetup()
+        }
     }
 }

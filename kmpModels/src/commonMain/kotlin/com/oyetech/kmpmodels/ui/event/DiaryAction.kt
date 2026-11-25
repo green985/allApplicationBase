@@ -4,6 +4,7 @@ import com.oyetech.kmpmodels.entity.AreaEntry
 import com.oyetech.kmpmodels.entity.EntryTimerPreset
 
 sealed interface DiaryAction {
+    data object BulkEntryClicked : DiaryAction
     data object PreviousDayClicked : DiaryAction
     data object NextDayClicked : DiaryAction
     data object TodayClicked : DiaryAction

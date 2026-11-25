@@ -265,6 +265,11 @@ fun DiaryScreen(
                     }
                 }
             }
+            if (uiState.isBulkEntryAvailable) {
+                Button(onClick = { onAction(DiaryAction.BulkEntryClicked) }) {
+                    Text(StringKeys.bulkEntryTitle)
+                }
+            }
             if (uiState.isDailyContentVisible) {
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
@@ -345,6 +350,7 @@ fun DiaryScreen(
                         CircularProgressIndicator()
                     }
                 }
+
                 is OperationState.Error -> {
                     Text(
                         text = operation.error.message,

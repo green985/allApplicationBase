@@ -104,6 +104,8 @@ fun KmpFeaturesApp() {
                     ) {
                         kmpFeaturesNavGraph(
                             canOpenDiary = !googleLoginOperation.supportsSessions || session.isAuthenticated,
+                            canOpenDiaryBulk = googleLoginOperation.supportsSessions &&
+                                    session.isAuthenticated && !session.isAdmin,
                         )
                     }
                 }

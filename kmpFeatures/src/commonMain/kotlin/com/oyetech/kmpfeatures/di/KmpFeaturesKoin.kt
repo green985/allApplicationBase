@@ -5,6 +5,7 @@ import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
 import com.oyetech.kmpfeatures.auth.GoogleIdentityProvider
 import com.oyetech.kmpfeatures.auth.GoogleLoginOperation
 import com.oyetech.kmpfeatures.daily.DailyPagerOperator
+import com.oyetech.kmpfeatures.diary.DiaryBulkOperator
 import com.oyetech.kmpfeatures.diary.DiaryEndpointOperation
 import com.oyetech.kmpfeatures.diary.DiaryOperator
 import com.oyetech.kmpfeatures.example.OperatorExampleOperator
@@ -55,6 +56,15 @@ object KmpFeaturesKoin {
                 navigationUseCase = get(),
                 diaryEndpointOperation = get(),
                 snackbarDelegate = get(),
+                googleLoginOperation = get(),
+            )
+        }
+        factory { parameters ->
+            DiaryBulkOperator(
+                operatorScope = parameters.get<CoroutineScope>(),
+                navigationUseCase = get(),
+                diaryEndpointOperation = get(),
+                googleLoginOperation = get(),
             )
         }
         factory { parameters ->

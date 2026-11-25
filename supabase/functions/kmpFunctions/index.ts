@@ -140,6 +140,24 @@ function mapTag(row: TagRow): DiaryTag {
   return { id: row.id, name: row.name, areaId: row.area_id };
 }
 
+async function getAllTags(userId: string): Promise<Response> {
+  const tags: DiaryTag[] = [];
+  let afterId: string | undefined;
+  while (true) {
+    let query = supabase.from("diary_tags").select("id, name, area_id")
+      .eq("user_id", userId).order("id").limit(500);
+    if (afterId !== undefined) query = query.gt("id", afterId);
+    const { data, error } = await query;
+    if (error) {
+      console.error("getAllTags failed", error.code);
+      return response(null, "Etiketler yüklenemedi.", false, 500);
+    }
+    if (data.length === 0) return response(tags, "Etiketler getirildi.", true);
+    tags.push(...data.map(mapTag));
+    afterId = data[data.length - 1].id;
+  }
+}
+
 async function getAreaTags(request: Request, areaId: string, userId: string): Promise<Response> {
   const params = new URL(request.url).searchParams;
   const limitValue = params.get("limit") ?? "6";
@@ -457,6 +475,52 @@ async function createEntry(request: Request, userId: string): Promise<Response> 
   );
 }
 
+async function createEntriesBulk(request: Request, userId: string): Promise<Response> {
+  const body: unknown = await request.json().catch(() => null);
+  if (!isEntryBody(body) ||
+    Object.keys(body).some((key) => !["requestId", "entries"].includes(key))) {
+    return response(null, "Geçerli JSON gerekli; yalnız requestId ve entries kabul edilir.", false, 400);
+  }
+  if (!isUuid(body.requestId)) {
+    return response(null, "requestId geçerli bir UUID olmalıdır.", false, 400);
+  }
+  if (!Array.isArray(body.entries) || body.entries.length === 0) {
+    return response(null, "En az bir kayıt gerekli.", false, 400);
+  }
+  for (const [index, entry] of body.entries.entries()) {
+    const fail = (message: string) => response(null, `${index + 1}. kayıt — ${message}`, false, 400);
+    if (!isEntryBody(entry) ||
+      Object.keys(entry).some((key) => !["entryDate", "areaId", "text"].includes(key))) {
+      return fail("Yalnız entryDate, areaId ve text alanları kabul edilir.");
+    }
+    if (!isValidDate(entry.entryDate) || entry.entryDate.startsWith("0000")) {
+      return fail("Tarih geçersiz.");
+    }
+    if (typeof entry.areaId !== "string" || !validAreas.has(entry.areaId)) {
+      return fail("Alan geçersiz.");
+    }
+    if (typeof entry.text !== "string" || !entry.text.trim() || [...entry.text].length > maxTextLength) {
+      return fail("Metin boş olamaz ve en fazla 3000 karakter olabilir.");
+    }
+  }
+  const { data, error } = await supabase.rpc("create_diary_entries_bulk", {
+    p_user_id: userId,
+    p_request_id: body.requestId,
+    p_entries: body.entries,
+  });
+  if (error || !data) {
+    console.error("createEntriesBulk failed", error?.code);
+    if (error?.code === "PT409") {
+      return response(null, "Bu requestId daha önce farklı içerikle kullanıldı.", false, 409);
+    }
+    if (error?.code === "22023") {
+      return response(null, error.message, false, 400);
+    }
+    return response(null, "Kayıtlar eklenemedi. Aynı JSON ile tekrar deneyin.", false, 500);
+  }
+  return response(data, "Kayıtlar eklendi.", true, 201);
+}
+
 async function updateEntry(request: Request, entryId: string, userId: string): Promise<Response> {
   const body: unknown = await request.json().catch(() => null);
   if (!isEntryBody(body) || hasClientTimerTimes(body)) {
@@ -654,9 +718,21 @@ Deno.serve(async (request) => {
 
   const segments = pathSegments(request);
   try {
+    const diaryRoute = segments.slice(segments.indexOf("diary"));
+    const isAddMultipleEntryRoute = diaryRoute.length === 3 && diaryRoute[0] === "diary" &&
+      diaryRoute[1] === "entries" && diaryRoute[2] === "addMultipleEntry";
+    const isTagsRoute = diaryRoute.length === 2 && diaryRoute[0] === "diary" &&
+      diaryRoute[1] === "tags";
+    const isAllTagsRequest = isTagsRoute && request.method === "GET";
     const accessMode = request.headers.get("X-KMP-Access-Mode");
     let userId: string;
     if (accessMode === "admin") {
+      if (isAddMultipleEntryRoute) {
+        return response(null, "Toplu kayıt için Google ile giriş gerekli; admin modu kullanılamaz.", false, 403);
+      }
+      if (isAllTagsRequest) {
+        return response(null, "Etiket listesi için Google ile giriş gerekli; admin modu kullanılamaz.", false, 403);
+      }
       // Intentionally public legacy data; this mode never selects a Google user's ID.
       userId = fixedUserId;
     } else {
@@ -679,12 +755,24 @@ Deno.serve(async (request) => {
       if (!data.user) {
         return response(null, "Google ile giriş gerekli.", false, 401);
       }
+      if (isAddMultipleEntryRoute && (data.user.is_anonymous ||
+        !data.user.identities?.some((identity) => identity.provider === "google"))) {
+        return response(null, "Toplu kayıt için doğrulanmış Google oturumu gerekli.", false, 403);
+      }
+      if (isAllTagsRequest && (data.user.is_anonymous ||
+        !data.user.identities?.some((identity) => identity.provider === "google"))) {
+        return response(null, "Etiket listesi için doğrulanmış Google oturumu gerekli.", false, 403);
+      }
       userId = data.user.id;
     }
-    const diaryRoute = segments.slice(segments.indexOf("diary"));
     const params = new URL(request.url).searchParams;
     if (params.has("userId") || params.has("user_id")) {
       return response(null, "Kullanıcı kimliği oturumdan belirlenir.", false, 400);
+    }
+    if (isAddMultipleEntryRoute) {
+      return request.method === "POST"
+        ? await createEntriesBulk(request, userId)
+        : response(null, "Method not allowed.", false, 405);
     }
     if (diaryRoute.length === 4 && diaryRoute[0] === "diary" &&
       diaryRoute[1] === "areas" && diaryRoute[3] === "entries") {
@@ -698,7 +786,8 @@ Deno.serve(async (request) => {
         ? await getAreaTags(request, diaryRoute[2], userId)
         : response(null, "Method not allowed.", false, 405);
     }
-    if (diaryRoute.length === 2 && diaryRoute[0] === "diary" && diaryRoute[1] === "tags") {
+    if (isTagsRoute) {
+      if (isAllTagsRequest) return await getAllTags(userId);
       return request.method === "POST"
         ? await createTag(request, userId)
         : response(null, "Method not allowed.", false, 405);

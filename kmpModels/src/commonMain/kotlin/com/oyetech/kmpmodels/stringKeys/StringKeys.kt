@@ -1,6 +1,31 @@
 package com.oyetech.kmpmodels.stringKeys
 
 object StringKeys {
+    const val bulkEntryTitle = "Toplu Entry Ekle"
+    const val bulkEntryJsonLabel = "JSON kayıtları"
+    const val bulkEntryPreview = "Önizle"
+    const val bulkEntryPreviewTitle = "Kaydedilecek kayıtlar"
+    const val bulkEntryPreviewHint =
+        "Henüz kayıt yapılmadı. Tarih, alan ve metni kontrol edip Kaydet’e basın."
+    const val bulkEntrySubmit = "Kaydet"
+    const val bulkEntrySuccess = "Kaydedilen kayıtlar"
+    const val bulkEntryTagsTitle = "Alanlar ve etiketler"
+    const val bulkEntryAreaHasNoTags = "Bu alanda etiket yok."
+    const val bulkEntryInvalidJson =
+        "Geçerli JSON gerekli; yalnız requestId ve entries kabul edilir."
+    const val bulkEntryInvalidRequestId = "requestId geçerli bir UUID olmalıdır."
+    const val bulkEntryEmpty = "En az bir kayıt gerekli."
+    const val bulkEntryInvalidFields = "Yalnız entryDate, areaId ve text alanları kabul edilir."
+    const val bulkEntryInvalidDate = "Tarih geçersiz."
+    const val bulkEntryInvalidArea = "Alan geçersiz."
+    const val bulkEntryInvalidText = "Metin boş olamaz ve en fazla 3000 karakter olabilir."
+    const val bulkEntryGoogleRequired = "Toplu kayıt için web üzerinde Google ile giriş gerekli."
+    const val bulkEntryDiaryNotReady =
+        "Önce açık kaydı kapatın ve kaydetmenin tamamlanmasını bekleyin."
+
+    fun bulkEntryError(index: Int, message: String): String = "$index. kayıt — $message"
+    fun bulkEntryResult(date: String, area: String, time: String, text: String): String =
+        "$date · $area · $time’te eklendi · $text"
     const val kmpFeatures = "KMP Features"
     const val kmpFeaturesReady = "KMP Features is ready"
     const val adminLogin = "Admin giriş"

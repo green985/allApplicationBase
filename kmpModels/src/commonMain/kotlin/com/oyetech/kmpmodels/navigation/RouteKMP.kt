@@ -17,5 +17,8 @@ sealed interface RouteKMP {
     data object Diary : RouteKMP
 
     @Serializable
+    data object DiaryBulk : RouteKMP
+
+    @Serializable
     data object OperatorExample : RouteKMP
 }

@@ -81,6 +81,7 @@ data class DiaryUiState(
     val hasTagQueryError: Boolean = false,
     val tagOperation: OperationState = OperationState.Idle,
     val tagCreateOperation: OperationState = OperationState.Idle,
+    val isBulkEntryAvailable: Boolean = false,
 )
 
 data class DiaryEntryUiState(

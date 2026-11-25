@@ -135,6 +135,7 @@ Yeni route'lar:
 ```text
 GET  /diary/areas/{areaId}/tags?limit=6
 GET  /diary/areas/{areaId}/tags?query=med&limit=6
+GET  /diary/tags
 POST /diary/tags
 ```
 
@@ -154,6 +155,14 @@ GET   /diary/days/{date}/entries
 - Limit server tarafından güvenli aralıkta sınırlandırılmalı; UI varsayılanı 6 olmalı.
 - Yalnız oturum kullanıcısının tag'leri dönmeli.
 - Sonuç boşsa başarılı boş liste dönmeli.
+
+### GET tüm etiketler
+
+`GET /diary/tags`, doğrulanmış Google oturumundaki kullanıcıya ait tüm etiketleri
+`{ id, name, areaId }` listesi olarak döndürür; admin modu kabul edilmez.
+Toplu Entry Ekle ekranı açıldığında bu listeyi yükler ve alanlara göre gösterir.
+Toplu kayıtta **Önizle** tarih, alan ve metni sunucuya göndermeden listeler.
+**Kaydet** yalnızca önizlenen JSON için etkinleşir; JSON düzenlenirse yeniden önizleme gerekir.
 
 ### POST tag oluşturma
 

@@ -2,11 +2,13 @@ package com.oyetech.kmpfeatures.diary
 
 import com.oyetech.kmpfeatures.network.EndpointStrings
 import com.oyetech.kmpfeatures.network.bodyOrError
+import com.oyetech.kmpmodels.postbody.DiaryBulkPostBody
 import com.oyetech.kmpmodels.postbody.DiaryQuotePutBody
 import com.oyetech.kmpmodels.postbody.EntryDurationClearPostBody
 import com.oyetech.kmpmodels.postbody.EntryPostBody
 import com.oyetech.kmpmodels.postbody.TagPostBody
 import com.oyetech.kmpmodels.response.DiaryArchiveResponse
+import com.oyetech.kmpmodels.response.DiaryBulkEntryResponse
 import com.oyetech.kmpmodels.response.DiaryQuoteResponse
 import com.oyetech.kmpmodels.response.EntryResponse
 import com.oyetech.kmpmodels.response.TagResponse
@@ -18,10 +20,25 @@ import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class DiaryEndpointOperation(
     private val httpClient: HttpClient,
 ) {
+    private val mutableBulkRevision = MutableStateFlow(0L)
+    val bulkRevision = mutableBulkRevision.asStateFlow()
+
+    /** Retrying unchanged content with the same requestId returns the original server result. */
+    suspend fun createEntriesBulk(request: DiaryBulkPostBody): List<DiaryBulkEntryResponse> {
+        val saved = httpClient.post(EndpointStrings.diaryAddMultipleEntry) {
+            setBody(request)
+        }.bodyOrError<List<DiaryBulkEntryResponse>>()
+        mutableBulkRevision.update { it + 1 }
+        return saved
+    }
+
     suspend fun getAreaTags(
         areaId: String,
         query: String? = null,
@@ -43,6 +60,9 @@ class DiaryEndpointOperation(
             if (page.size < pageSize) return tags
         }
     }
+
+    suspend fun getAllTags(): List<TagResponse> =
+        httpClient.get(EndpointStrings.diaryTags).bodyOrError()
 
     suspend fun createTag(request: TagPostBody): TagResponse =
         httpClient.post(EndpointStrings.diaryTags) {

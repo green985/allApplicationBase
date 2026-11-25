@@ -6,10 +6,6 @@ referenced instructions:
 - `copilot_files/AGENTS.md`: Android/KMP architecture and coding conventions.
 - `copilot_files/journey_rules.md`: project workflow, branching, and deployment rules.
 
-Preserve those architecture and workflow rules. For communication, the preferences below take
-precedence over conflicting guidance in the referenced files (including restrictions on offering
-alternatives). Higher-priority instructions and the user's current explicit request still apply.
-
 ## Communication Preferences
 
 From this point forward, act like me as “Imperator.” but dont write it anywhere !!!!!!!!

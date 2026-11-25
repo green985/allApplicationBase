@@ -2,6 +2,7 @@ package com.oyetech.kmpfeatures.diary
 
 import com.oyetech.kmpdomain.delegate.snackbar.SnackbarDelegate
 import com.oyetech.kmpdomain.usecase.navigation.NavigationUseCase
+import com.oyetech.kmpfeatures.auth.GoogleLoginOperation
 import com.oyetech.kmpfeatures.di.diaryHtmlDownloader
 import com.oyetech.kmpfeatures.di.playTimerFinishedSound
 import com.oyetech.kmpfeatures.operator.BaseFeatureOperator
@@ -12,6 +13,7 @@ import com.oyetech.kmpmodels.entity.EntryEntity
 import com.oyetech.kmpmodels.entity.EntryTimerPreset
 import com.oyetech.kmpmodels.entity.EntryTimerStatus
 import com.oyetech.kmpmodels.entity.TagEntry
+import com.oyetech.kmpmodels.navigation.RouteKMP
 import com.oyetech.kmpmodels.postbody.DiaryQuotePutBody
 import com.oyetech.kmpmodels.postbody.EntryDurationClearPostBody
 import com.oyetech.kmpmodels.postbody.EntryPostBody
@@ -25,6 +27,7 @@ import com.oyetech.kmpmodels.ui.state.OperationState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.drop
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
@@ -36,6 +39,7 @@ class DiaryOperator(
     private val navigationUseCase: NavigationUseCase,
     private val diaryEndpointOperation: DiaryEndpointOperation,
     private val snackbarDelegate: SnackbarDelegate,
+    private val googleLoginOperation: GoogleLoginOperation,
 ) : BaseFeatureOperator<DiaryUiState, DiaryAction, Nothing>(
     initialState = initialState(),
     operatorScope = operatorScope,
@@ -56,6 +60,21 @@ class DiaryOperator(
     init {
         loadQuoteForSelectedDate()
         loadEntriesForSelectedDate()
+        launch {
+            googleLoginOperation.session.collect { session ->
+                updateState {
+                    copy(
+                        isBulkEntryAvailable = googleLoginOperation.supportsSessions &&
+                                session.isAuthenticated && !session.isAdmin,
+                    )
+                }
+            }
+        }
+        launch {
+            diaryEndpointOperation.bulkRevision.drop(1).collect {
+                loadEntriesForSelectedDate()
+            }
+        }
     }
 
     private fun exportDiaryHtml() {
@@ -269,6 +288,18 @@ class DiaryOperator(
 
     override fun handleAction(action: DiaryAction) {
         when (action) {
+            DiaryAction.BulkEntryClicked -> {
+                if (!state.value.isBulkEntryAvailable) return
+                val snapshot = state.value
+                if (snapshot.isEditorVisible || snapshot.entryIsDirty || snapshot.quoteIsDirty ||
+                    snapshot.entryOperation is OperationState.Loading ||
+                    snapshot.quoteOperation is OperationState.Loading
+                ) {
+                    snackbarDelegate.triggerSnackbarState(message = StringKeys.bulkEntryDiaryNotReady)
+                    return
+                }
+                navigationUseCase.navigateTo(RouteKMP.DiaryBulk)
+            }
             DiaryAction.PreviousDayClicked -> {
                 selectDay(state.value.dayOffset - 1)
             }

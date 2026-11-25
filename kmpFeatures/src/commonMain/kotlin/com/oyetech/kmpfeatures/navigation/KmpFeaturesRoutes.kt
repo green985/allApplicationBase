@@ -8,6 +8,7 @@ object KmpFeaturesRoutes {
         RouteKMP.Login -> "login"
         RouteKMP.DailyPager -> "dailyPager"
         RouteKMP.Diary -> "diary"
+        RouteKMP.DiaryBulk -> "diaryBulk"
         RouteKMP.OperatorExample -> "operatorExample"
     }
 }
